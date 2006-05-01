@@ -212,6 +212,27 @@ const void *HashTable::get( const void *id, unsigned long int nSkip )
 		}
 	}
 
+	if( bAllowDupes )
+	{
+		int nOldPos = nPos;
+		for( nPos++; nPos != nOldPos; nPos=(nPos+1)%nTableSize )
+		{
+			if( !isFilled( nPos ) ) return NULL;
+			if( hFunc->cmpIDs( id, aTable[nPos].id ) &&
+				aTable[nPos].bDeleted == false )
+			{
+				if( nSkip == 0 )
+				{
+					return aTable[nPos].data;
+				}
+				else
+				{
+					nSkip--;
+				}
+			}
+		}
+	}
+
 	return NULL;
 }
 
