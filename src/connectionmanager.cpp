@@ -13,11 +13,19 @@
 #include "connectionmanager.h"
 #include <fcntl.h>
 
-ConnectionManager::ConnectionManager() :
+ConnectionManager::ConnectionManager( int nInitPool ) :
 	xLog( MultiLog::getInstance() )
 {
-	nMasterSocket = -1;
+	//nMasterSocket = -1;
 	pMonitor = NULL;
+	for( int j = 0; j < nInitPool; j++ )
+	{
+		lInactive.insert( lInactive.begin(), new Connection() );
+	}
+	FD_ZERO (&fdActive);
+	FD_ZERO (&fdRead);
+	FD_ZERO (&fdWrite);
+	FD_ZERO (&fdException);
 }
 
 ConnectionManager::~ConnectionManager()
@@ -33,13 +41,13 @@ ConnectionManager::~ConnectionManager()
 	}
 }
 
-bool ConnectionManager::startServer( int nPort, int nInitPool )
+bool ConnectionManager::startServer( int nPort )
 {
 	/* Create the socket and set it up to accept connections. */
 	struct sockaddr_in name;
 
 	/* Create the socket. */
-	nMasterSocket = socket (PF_INET, SOCK_STREAM, 0);
+	int nMasterSocket = socket (PF_INET, SOCK_STREAM, 0);
 	if (nMasterSocket < 0)
 	{
 		xLog.LineLog( MultiLog::LError, "Couldn't create a listen socket.");
@@ -55,7 +63,13 @@ bool ConnectionManager::startServer( int nPort, int nInitPool )
 	name.sin_addr.s_addr = htonl( INADDR_ANY );
 
 	int opt = 1;
-	setsockopt( nMasterSocket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt));	
+	setsockopt(
+		nMasterSocket,
+		SOL_SOCKET,
+		SO_REUSEADDR,
+		(char *)&opt,
+		sizeof(opt)
+		);
 
 	if (bind (nMasterSocket, (struct sockaddr *) &name, sizeof (name)) < 0)
 	{
@@ -70,28 +84,21 @@ bool ConnectionManager::startServer( int nPort, int nInitPool )
 	}
 
 	/* Initialize the set of active sockets. */
-	FD_ZERO (&fdActive);
-	FD_ZERO (&fdRead);
-	FD_ZERO (&fdWrite);
-	FD_ZERO (&fdException);
 	FD_SET (nMasterSocket, &fdActive);
 
-	for( int j = 0; j < nInitPool; j++ )
-	{
-		lInactive.insert( lInactive.begin(), new Connection() );
-	}
+	sMasterSocket[nMasterSocket] = nPort;
 
 	return true;
 }
 
-bool ConnectionManager::startServer( int nPort, int nInitPool, int nNumTries, int nTimeout )
+bool ConnectionManager::startServer( int nPort, int nNumTries, int nTimeout )
 {
 	struct timeval xTimeout;
 
 	for( int j = 0; j < nNumTries; j++ )
 	{
 		xLog.LineLog( MultiLog::LStatus, "Attempting to create server socket (attempt [%d/%d])...", j+1, nNumTries );
-		if( startServer( nPort, nInitPool ) == true )
+		if( startServer( nPort ) == true )
 		{
 			return true;
 		}
@@ -146,9 +153,9 @@ bool ConnectionManager::scanConnections( int nTimeout, bool bForceTimeout )
 	{
 		if( FD_ISSET( i, &fdRead ) )
 		{
-			if( i == nMasterSocket )
+			if( sMasterSocket.find( i ) != sMasterSocket.end() )
 			{
-				addConnection();
+				addConnection( i );
 			}
 			else
 			{
@@ -234,8 +241,13 @@ bool ConnectionManager::shutdownServer()
 		axConPool[i].close();
 	}
 */
-	shutdown( nMasterSocket, SHUT_RDWR );
-	close( nMasterSocket );
+	std::map<int,int>::iterator i;
+	for( i = sMasterSocket.begin(); i != sMasterSocket.end(); i++ )
+	{
+		int nSocket = (*i).first;
+		shutdown( nSocket, SHUT_RDWR );
+		close( nSocket );
+	}
 
 	return true;
 }
@@ -255,7 +267,7 @@ bool ConnectionManager::broadcastMessage( const char *lpData, int nExcludeSocket
 	return true;
 }
 
-bool ConnectionManager::addConnection()
+bool ConnectionManager::addConnection( int nSocket )
 {
 	struct sockaddr_in clientname;
 	size_t size;
@@ -263,9 +275,9 @@ bool ConnectionManager::addConnection()
 
 	size = sizeof( clientname );
 #ifdef __CYGWIN__
-	newSocket = accept( nMasterSocket, (struct sockaddr *) &clientname, (int *)&size );
+	newSocket = accept( nSocket, (struct sockaddr *) &clientname, (int *)&size );
 #else
-	newSocket = accept( nMasterSocket, (struct sockaddr *) &clientname, &size );
+	newSocket = accept( nSocket, (struct sockaddr *) &clientname, &size );
 #endif
 	if( newSocket < 0 )
 	{
@@ -305,7 +317,7 @@ bool ConnectionManager::addConnection()
 	Connection *pCon = getInactiveConnection();
 	pCon->open( newSocket );
 
-	pMonitor->onNewConnection( pCon );
+	pMonitor->onNewConnection( pCon, (*sMasterSocket.find(nSocket)).second );
 
 	lActive.insert( lActive.end(), pCon );
 

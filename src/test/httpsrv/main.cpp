@@ -10,7 +10,8 @@ int main()
 
 	srv.setConnectionMonitor( &http );
 
-	srv.startServer( 7331, 40 );
+	printf("Listening on port 7331\n");
+	srv.startServer( 7331 );
 
 	for(;;)
 	{

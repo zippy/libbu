@@ -25,10 +25,12 @@ public:
 
 	/** Receives the notification that new connection was received.
 	  *@param pCon The connection that was created.
+	  *@param nSocket The socket that the client connected to, used to determine
+	  * which protocol to apply.
 	  *@returns Should return a true value if everything is OK, a false to
 	  * force a shutdown.
 	  */
-	virtual bool onNewConnection( Connection *pCon ) = 0;
+	virtual bool onNewConnection( Connection *pCon, int nPort ) = 0;
 
 	/** Receives the notification that a connection was closed.
 	  *@param pCon The connection that was closed.

@@ -36,7 +36,7 @@ LinkMessage* TelnetMonitor::processIRM( LinkMessage *pMsg )
 {
 }
 	
-bool TelnetMonitor::onNewConnection( Connection *pCon )
+bool TelnetMonitor::onNewConnection( Connection *pCon, int nPort )
 {
 	ProtocolTelnet *pt = new ProtocolTelnet();
 	pCon->setProtocol( pt );

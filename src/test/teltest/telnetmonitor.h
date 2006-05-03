@@ -16,7 +16,7 @@ public:
 	bool timeSlice();
 	LinkMessage* processIRM( LinkMessage *pMsgIn );
 	
-	bool onNewConnection( Connection *pCon );
+	bool onNewConnection( Connection *pCon, int nPort );
 	bool onClosedConnection( Connection *pCon );
 
 private:

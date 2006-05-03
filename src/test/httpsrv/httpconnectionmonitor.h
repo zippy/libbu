@@ -9,7 +9,7 @@ public:
 	HttpConnectionMonitor();
 	~HttpConnectionMonitor();
 	
-	bool onNewConnection( Connection *pCon );
+	bool onNewConnection( Connection *pCon, int nPort );
 	bool onClosedConnection( Connection *pCon );
 };
 

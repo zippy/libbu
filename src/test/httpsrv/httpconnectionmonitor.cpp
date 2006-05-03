@@ -10,8 +10,9 @@ HttpConnectionMonitor::~HttpConnectionMonitor()
 {
 }
 
-bool HttpConnectionMonitor::onNewConnection( Connection *pCon )
+bool HttpConnectionMonitor::onNewConnection( Connection *pCon, int nPort )
 {
+	printf("Got connection on port %d\n", nPort );
 	Http hp( pCon );
 
 	pCon->readInput( 60, 0 );

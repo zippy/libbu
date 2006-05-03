@@ -10,7 +10,7 @@ int main()
 
 	srv.setConnectionMonitor( &telnet );
 
-	srv.startServer( 4001, 40 );
+	srv.startServer( 4001 );
 
 	for(;;)
 	{

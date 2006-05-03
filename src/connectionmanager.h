@@ -12,6 +12,7 @@
 #include "connectionmonitor.h"
 #include <sys/types.h>
 #include <list>
+#include <map>
 
 /** Manges incoming network connections as a server.  Creates and works with
   * Connection objects.  All operations are performed on TCP/IP v4 right now,
@@ -26,7 +27,7 @@ public:
 	 * actually start a server, bind to a port, or create a connection pool.
 	 * That's all handled by startServer().
 	 */
-	ConnectionManager();
+	ConnectionManager( int nInitPool=40 );
 
 	/**
 	 * Cleans up everything, and even clears out all still-connected Connection
@@ -42,7 +43,7 @@ public:
 	 *@returns True if the socket was bound to the port and serving was
 	 * started.  False if there was a problem connecting to the port.
 	 */
-	bool startServer( int nPort, int nInitPool );
+	bool startServer( int nPort );
 
 	/**
 	 * This is identicle to the simpler startServer function except that it
@@ -59,7 +60,7 @@ public:
 	 *@returns True if the socket was bound to the port and serving was
 	 * started.  False if there was a problem connecting to the port.
 	 */
-	bool startServer( int nPort, int nInitPool, int nNumTries, int nTimeout );
+	bool startServer( int nPort, int nNumTries, int nTimeout );
 
 	/**
 	 * Scans all open connections, halting the calling processes until data
@@ -98,9 +99,11 @@ private:
 	 * accept the connection, set the initial modes, and add it to the master
 	 * list of active connections, as well as fire off any messages that need
 	 * to be handled by anything else.
+	 *@param nSocket The handle of the listening socket that had an incoming
+	 * connection.
 	 *@returns True if everything worked, False otherwise.
 	 */
-	bool addConnection();
+	bool addConnection( int nSocket );
 
 	/**
 	 * Seraches the internal lists of connections for one with a specific
@@ -122,7 +125,8 @@ private:
 	 */
 	Connection *getInactiveConnection();
 
-	int nMasterSocket; /**< The listening or server socket. */
+	std::map<int,int> sMasterSocket;
+	//int nMasterSocket; /**< The listening or server socket. */
 	fd_set fdActive; /**< The active socket set. */
 	fd_set fdRead; /**< The sockets ready for a read. */
 	fd_set fdWrite; /**< The sockets ready for a write. */
