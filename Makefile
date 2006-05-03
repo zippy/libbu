@@ -1,7 +1,7 @@
 OBJS:=$(patsubst %.cpp,%.o,$(wildcard src/*.cpp))
 TOBJS:=$(patsubst %.cpp,%.o,$(wildcard src/test/*.cpp))
 TDIRS:=$(filter-out %.o %.cpp %.h %.d,$(wildcard src/test/*))
-TESTS:=$(patsubst src/test/%.o,%,$(TOBJS)) $(patsubst src/test/%,%,$(TDIRS))
+TESTS:=$(patsubst src/test/%.o,tests/%,$(TOBJS)) $(patsubst src/test/%,tests/%,$(TDIRS))
 ATOBJS:=$(TOBJS) $(patsubst %.cpp,%.o,$(foreach dr,$(TDIRS),$(wildcard $(dr)/*.cpp)))
 LIB:=libbu++.a
 DATE:=$(shell date +%F)
@@ -39,7 +39,7 @@ $(LIB): $(OBJS)
 
 $(TESTS): $(ATOBJS) $(LIB)
 	echo "$(TXTLNK)$@"
-	g++ $(LDFLAGS) -ggdb $(filter %$@.o, $(TOBJS) ) $(patsubst %.cpp,%.o,$(wildcard $(filter %$@, $(TDIRS))/*.cpp)) -L. -lbu++ -o $@
+	g++ $(LDFLAGS) -ggdb $(filter %$(patsubst tests/%,%,$@).o, $(TOBJS) ) $(patsubst %.cpp,%.o,$(wildcard $(filter %$(patsubst tests/%,%,$@), $(TDIRS))/*.cpp)) -L. -lbu++ -o $@
 	
 tests: $(TESTS)
 
