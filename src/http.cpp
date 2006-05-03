@@ -146,7 +146,7 @@ bool Http::buildResponse( short nResponseCode, const char *sResponse )
 	time( &curTime );
 	gmtime_r( &curTime, &tResTime );
 
-	sServerStr = "YFHttp/0.0.1";
+	sServerStr = "libbu++ Http/0.0.1";
 	bResPersistant = false;
 
 	//char buf[30];

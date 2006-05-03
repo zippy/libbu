@@ -26,20 +26,20 @@ clean:
 
 # This bit I cribbed from the docs, seems to work great though!
 %.d: %.cpp
-	g++ $(CXXFLAGS) -Isrc -M $(CPPFLAGS) $< | sed 's,\($(notdir $*)\)\.o[: ]*,$(dir $*)\1.o $@: ,g' > $@
 	echo "$(TXTDEP)$@"
+	g++ $(CXXFLAGS) -Isrc -M $(CPPFLAGS) $< | sed 's,\($(notdir $*)\)\.o[: ]*,$(dir $*)\1.o $@: ,g' > $@
 
 %.o: %.cpp
-	g++ $(CXXFLAGS) -Isrc $(foreach dr,$(filter $(dir $@),$(foreach ddr,$(TDIRS),$(ddr)/)),-I$(dr)) -ggdb -c -o $@ $<
 	echo "$(TXTCPP)$@"
+	g++ $(CXXFLAGS) -Isrc $(foreach dr,$(filter $(dir $@),$(foreach ddr,$(TDIRS),$(ddr)/)),-I$(dr)) -ggdb -c -o $@ $<
 
 $(LIB): $(OBJS)
-	ar cr $(LIB) $(OBJS)
 	echo "$(TXTARC)$@"
+	ar cr $(LIB) $(OBJS)
 
 $(TESTS): $(ATOBJS) $(LIB)
-	g++ $(LDFLAGS) -ggdb $(filter %$@.o, $(TOBJS) ) $(patsubst %.cpp,%.o,$(wildcard $(filter %$@, $(TDIRS))/*.cpp)) -L. -lbu++ -o $@
 	echo "$(TXTLNK)$@"
+	g++ $(LDFLAGS) -ggdb $(filter %$@.o, $(TOBJS) ) $(patsubst %.cpp,%.o,$(wildcard $(filter %$@, $(TDIRS))/*.cpp)) -L. -lbu++ -o $@
 	
 tests: $(TESTS)
 

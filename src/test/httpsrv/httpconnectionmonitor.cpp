@@ -49,15 +49,22 @@ bool HttpConnectionMonitor::onNewConnection( Connection *pCon )
 	else
 	{
 		printf("Non get:  %s\n", hp.getRequestTypeStr() );
+		pCon->appendOutput("HTTP/1.1 100 Continue\r\n\r\n");
 	}
 	pCon->writeOutput();
+	//for( int j = 0; j < 50; j++ )
+	{
+		pCon->readInput( 1, 0 );
+		//printf("Size so far:  %d\n", pCon->getInputAmnt() );
+	}
 	
 	if( pCon->hasInput() )
 	{
 		std::string s( pCon->getInput(), pCon->getInputAmnt() );
 		
-		printf("Reamining data\n==============\n%s\n==============\n",
-			s.c_str() );
+		pCon->printInputDebug();
+		//printf("Reamining data\n==============\n%s\n==============\n",
+		//	s.c_str() );
 	}
 
 	pCon->disconnect();
