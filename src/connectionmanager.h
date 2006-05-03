@@ -122,7 +122,6 @@ private:
 	 */
 	Connection *getInactiveConnection();
 
-	MultiLog *pLog; /**< A pointer to the active MultiLog  */
 	int nMasterSocket; /**< The listening or server socket. */
 	fd_set fdActive; /**< The active socket set. */
 	fd_set fdRead; /**< The sockets ready for a read. */
@@ -130,6 +129,7 @@ private:
 	fd_set fdException; /**< The sockets that have gotten errors. */
 	std::list<Connection *> lInactive;	/**< The pool of inactive Connections */
 	std::list<Connection *> lActive;	/**< The pool of active Connections */
+	MultiLog &xLog;	/**< A handle to the active multilog. */
 	
 	/** The ConnectionMonitor to notify of new connections. */
 	ConnectionMonitor *pMonitor; 

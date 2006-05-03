@@ -13,9 +13,9 @@
 #include "connectionmanager.h"
 #include <fcntl.h>
 
-ConnectionManager::ConnectionManager()
+ConnectionManager::ConnectionManager() :
+	xLog( MultiLog::getInstance() )
 {
-	pLog = MultiLog::getLog();
 	nMasterSocket = -1;
 	pMonitor = NULL;
 }
@@ -42,7 +42,7 @@ bool ConnectionManager::startServer( int nPort, int nInitPool )
 	nMasterSocket = socket (PF_INET, SOCK_STREAM, 0);
 	if (nMasterSocket < 0)
 	{
-		pLog->LineLog( MultiLog::LError, "Couldn't create a listen socket.");
+		xLog.LineLog( MultiLog::LError, "Couldn't create a listen socket.");
 		return false;
 	}
 
@@ -59,13 +59,13 @@ bool ConnectionManager::startServer( int nPort, int nInitPool )
 
 	if (bind (nMasterSocket, (struct sockaddr *) &name, sizeof (name)) < 0)
 	{
-		pLog->LineLog( MultiLog::LError, "Couldn't bind to the listen socket.");
+		xLog.LineLog( MultiLog::LError, "Couldn't bind to the listen socket.");
 		return false;
 	}
 
 	if (listen (nMasterSocket, 1) < 0)
 	{
-		pLog->LineLog( MultiLog::LError, "Couldn't begin listening to the server socket.");
+		xLog.LineLog( MultiLog::LError, "Couldn't begin listening to the server socket.");
 		return false;
 	}
 
@@ -90,18 +90,18 @@ bool ConnectionManager::startServer( int nPort, int nInitPool, int nNumTries, in
 
 	for( int j = 0; j < nNumTries; j++ )
 	{
-		pLog->LineLog( MultiLog::LStatus, "Attempting to create server socket (attempt [%d/%d])...", j+1, nNumTries );
+		xLog.LineLog( MultiLog::LStatus, "Attempting to create server socket (attempt [%d/%d])...", j+1, nNumTries );
 		if( startServer( nPort, nInitPool ) == true )
 		{
 			return true;
 		}
 		else if( j < nNumTries-1 )
 		{
-			pLog->LineLog( MultiLog::LStatus, "Waiting for %d secconds to allow port to clear...", nTimeout );
+			xLog.LineLog( MultiLog::LStatus, "Waiting for %d secconds to allow port to clear...", nTimeout );
 			xTimeout.tv_sec = nTimeout;
 			xTimeout.tv_usec = 0;
 			if (select(0, (fd_set *) 0, (fd_set *) 0, (fd_set *) 0, &xTimeout) < 0) {
-				pLog->LineLog( MultiLog::LError, "Error using select to sleep for a while.");
+				xLog.LineLog( MultiLog::LError, "Error using select to sleep for a while.");
 			}
 			usleep( nTimeout );
 		}
@@ -127,7 +127,7 @@ bool ConnectionManager::scanConnections( int nTimeout, bool bForceTimeout )
 	// if there are ANY connections there...
 	if( TEMP_FAILURE_RETRY( select( FD_SETSIZE, &fdRead, (fd_set *)0/*&fdWrite*/, &fdException, &xTimeout ) ) < 0 )
 	{
-		pLog->LineLog( MultiLog::LError, "Error attempting to scan open connections.");
+		xLog.LineLog( MultiLog::LError, "Error attempting to scan open connections.");
 		perror("ConnectionManager");
 		return false;
 	}
@@ -137,7 +137,7 @@ bool ConnectionManager::scanConnections( int nTimeout, bool bForceTimeout )
 	if( bForceTimeout )
 	{
 		if (select(0, (fd_set *) 0, (fd_set *) 0, (fd_set *) 0, &xTimeout) < 0) {
-			pLog->LineLog( MultiLog::LError, "Error using select to sleep for a while.");
+			xLog.LineLog( MultiLog::LError, "Error using select to sleep for a while.");
 		}
 	}
 
@@ -155,14 +155,14 @@ bool ConnectionManager::scanConnections( int nTimeout, bool bForceTimeout )
 				Connection *pCon = findActiveConnection( i );
 				if( pCon == NULL )
 				{
-					pLog->LineLog( MultiLog::LError, "A connection object was lost, or never created!");
+					xLog.LineLog( MultiLog::LError, "A connection object was lost, or never created!");
 					return false;
 				}
 
 				/* Data arriving on an already-connected socket. */
 				if( pCon->readInput() != true )
 				{
-					pLog->LineLog( MultiLog::LStatus, "Closing connection due to disconnect.");
+					xLog.LineLog( MultiLog::LStatus, "Closing connection due to disconnect.");
 					close( i );
 					FD_CLR( i, &fdActive );
 					pMonitor->onClosedConnection( pCon );
@@ -203,7 +203,7 @@ bool ConnectionManager::scanConnections( int nTimeout, bool bForceTimeout )
 			std::list<Connection *>::iterator l = i;
 			i--;
 			lActive.erase( l );
-			pLog->LineLog( MultiLog::LStatus, "Closing connection due to server request.");
+			xLog.LineLog( MultiLog::LStatus, "Closing connection due to server request.");
 		}
 	}
 
@@ -269,13 +269,13 @@ bool ConnectionManager::addConnection()
 #endif
 	if( newSocket < 0 )
 	{
-		pLog->LineLog( MultiLog::LError, "Error accepting a new connection!" );
+		xLog.LineLog( MultiLog::LError, "Error accepting a new connection!" );
 		return false;
 	}
 //	char *tmpa = inet_ntoa(clientname.sin_addr);
 	char tmpa[20];
 	inet_ntop( AF_INET, (void *)&clientname.sin_addr, tmpa, 20 );
-	pLog->LineLog( MultiLog::LStatus, "New connection from host %s, port %hd.", tmpa, ntohs (clientname.sin_port) );
+	xLog.LineLog( MultiLog::LStatus, "New connection from host %s, port %hd.", tmpa, ntohs (clientname.sin_port) );
 /*
 	int nCnt = 0;
 	for( int j = 0; j < nPoolSize; j++ )
@@ -285,7 +285,7 @@ bool ConnectionManager::addConnection()
 			nCnt++;
 		}
 	}
-	pLog->LineLog( MultiLog::LStatus, "Connections %d/%d.", nCnt, nPoolSize );
+	xLog.LineLog( MultiLog::LStatus, "Connections %d/%d.", nCnt, nPoolSize );
 	*/
 //	free( tmpa );
 	FD_SET( newSocket, &fdActive );

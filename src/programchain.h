@@ -81,7 +81,7 @@ private:
 	 * Shuts down all operation no matter what point in the operation we were.
 	 */
 	void emergencyShutdown();
-	MultiLog *pLog;	/**< A pointer to a log. */
+	MultiLog &xLog; /**< A reference to the log. */
 	LinkedList lLink; /**< The linked list that contains all of the links. */
 };
 

@@ -7,6 +7,7 @@
 
 #include "ringlist.h"
 #include "linkedlist.h"
+#include "singleton.h"
 
 /**
  * Calls the DetailLog function but includes pre-processor macros to fill in
@@ -19,6 +20,8 @@
  */
 #define LineLog( LEVEL, FORMAT, ...) DetailLog( LEVEL, __FILE__, __LINE__, __PRETTY_FUNCTION__, FORMAT, ##__VA_ARGS__ )
 
+#define MultiLineLog( LEVEL, FORMAT, ...) MultiLog::getInstance().DetailLog( LEVEL, __FILE__, __LINE__, __PRETTY_FUNCTION__, FORMAT, ##__VA_ARGS__ )
+
 /** MultiLog keeps track of logfile info in a myriad of varieties, and is
   * easily configurable between them all.  It allows output to the standard
   * output, error output, files, networks, and streams, which includes memory
@@ -27,8 +30,9 @@
   * the log.  Instead of instantiating a new copy, call the getLog method.
   *@author Mike Buland
   */
-class MultiLog
+class MultiLog : public Singleton<MultiLog>
 {
+	friend class Singleton<MultiLog>;
 public:
 	/**
 	 * Keeps track of a single log entry, in a standard format, that can be
@@ -46,16 +50,16 @@ public:
 		char *lpText;	/**< The text content of this log entry. */
 	} LogEntry;
 	
-private:
+protected:
 	/**
 	 * Private constructor, this ensures that this is a singleton.
 	 */
 	MultiLog();
 
 	/**
-	 * The only instance of MultiLog ever.
+	 * Destroy the multilog.
 	 */
-	static MultiLog *singleLog;
+	~MultiLog();
 
 	/**
 	 * Append a new logentry to the log list, possibly pushing an old entry off.
@@ -79,11 +83,6 @@ private:
 	LinkedList *lChannel;
 	
 public:
-	/**
-	 * Destroy the multilog.
-	 *@todo Why is this public?  Does it need to be?
-	 */
-	~MultiLog();
 
 	/** Sends info to the logfile.
 	  *@param nLevel The type of data being logged (error, info, etc.)
@@ -105,20 +104,6 @@ public:
 	  *@author Mike Buland
 	  */
 	void DetailLog( int nLevel, const char *lpFile, int nLine, const char *lpFunction, const char *lpFormat, ...);
-
-	/** Gets a pointer to the only instantion of the MultiLog that can exist.
-	  * If there is no instantion in existance, it creates one, so it's
-	  * foolproof.
-	  *@returns A pointer to the only MultiLog instantion.
-	  *@author Mike Buland
-	  */
-	static MultiLog *getLog();
-
-	/** Performs standard cleanup and deletes the only instantiation of MultiLog
-	  * that can exist.  This is just the same as delete and will nicely close
-	  * all open logs.  always call this when you are done with your MultiLog.
-	  */
-	static void cleanup();
 
 	/**
 	 * Adds a logging channel to the MultiLog channel chain.  Every added

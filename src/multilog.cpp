@@ -1,20 +1,3 @@
-/***************************************************************************
-                          multilog.cpp  -  description
-                             -------------------
-    begin                : Sat Sep 6 2003
-    copyright            : (C) 2003 by Mike Buland
-    email                : eichlan@yf-soft.com
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
-
 #include "multilog.h"
 #include <stdio.h>
 #include <time.h>
@@ -23,28 +6,9 @@
 
 #include "multilogchannel.h"
 
-// This section is what we need to make this a singleton
-// this makes this class easy to use from anywhere, without
-// worrying about re-creating every output form and all of that crazy jazz
-MultiLog *MultiLog::singleLog = NULL;
-
-MultiLog *MultiLog::getLog()
+void testlog( const char *text )
 {
-	if( singleLog == NULL )
-	{
-		singleLog = new MultiLog;
-		atexit( cleanup );
-	}
-	return singleLog;
-}
-
-void MultiLog::cleanup()
-{
-	if( singleLog != NULL )
-	{
-		delete singleLog;
-		singleLog = NULL;
-	}
+	MultiLineLog( 4, text );
 }
 
 MultiLog::MultiLog()

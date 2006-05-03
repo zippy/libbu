@@ -30,12 +30,25 @@ template <class T>
 class Singleton
 {
 protected:
+	/**
+	 * Private constructor.  This constructor is empty but has a body so that
+	 * you can make your own override of it.  Be sure that you're override is
+	 * also protected.
+	 */
 	Singleton() {};
 
 private:
+	/**
+	 * Copy constructor, defined so that you could write your own as well.
+	 */
 	Singleton( const Singleton& );
 
 public:
+	/**
+	 * Get a handle to the contained instance of the contained class.  It is
+	 * a reference.
+	 *@returns A reference to the contained object.
+	 */
 	static T &getInstance()
 	{
 		static T i;

@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -7,9 +6,46 @@
 #include <string.h>
 #include "multilogtext.h"
 
-MultiLogText::MultiLogText( const char *sFileName, const char *lpFormat )
+bool fileexists( const char *sPath )
+{
+	int nFileDesc = open( sPath, O_RDONLY );
+	if( nFileDesc < 0 )
+	{
+		return false;
+	}
+	else
+	{
+		close( nFileDesc );
+		return true;
+	}
+}
+
+MultiLogText::MultiLogText( const char *sFileName, const char *lpFormat, bool bRotateLog, int nMaxLogs )
 {
 	this->lpFormat = NULL;
+	
+	if( bRotateLog )
+	{
+		if( fileexists( sFileName ) == false )
+		{
+			return;
+		}
+	
+		int nLen = strlen( sFileName );
+		char *buf = new char[nLen+6];
+		sprintf( buf, "%s.", sFileName );
+
+		for( int j = 1; j < nMaxLogs; j++ )
+		{
+			sprintf( &buf[nLen+1], "%d", j );
+			if( !fileexists( buf ) )
+			{
+				rename( sFileName, buf );
+				break;
+			}
+		}
+	}
+
 	nFD = open( sFileName, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH );
 	setLogFormat( lpFormat );
 }

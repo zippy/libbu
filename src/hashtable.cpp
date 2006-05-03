@@ -347,7 +347,6 @@ bool HashTable::del( const void *id, int nSkip )
 			if( nSkip == 0 )
 			{
 				aTable[nPos].bDeleted = true;
-//				aTable[nPos].
 				nSize--;
 #ifdef HASH_DEBUG_VIS
 				printDebugLine( (const char *)id );

@@ -34,7 +34,7 @@ public:
 	 *@param lpFormat The format using the above specifications to be used for
 	 * every log entry.
 	 */
-	MultiLogText( const char *sFileName, const char *lpFormat );
+	MultiLogText( const char *sFileName, const char *lpFormat, bool bRotateLog=false, int nMaxLogs=0 );
 	
 	/**
 	 * Construct a MultiLogText object around a specific file and format.
