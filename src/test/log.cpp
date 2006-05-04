@@ -4,8 +4,6 @@
 #include "multilog.h"
 #include "multilogtext.h"
 
-void testlog( const char *text );
-
 class Test
 {
 public:
@@ -27,7 +25,5 @@ int main()
 
 	MultiLineLog( MultiLog::LError, "Hi there!");
 	Test t;
-
-	testlog("external test");
 }
 

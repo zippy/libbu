@@ -6,11 +6,6 @@
 
 #include "multilogchannel.h"
 
-void testlog( const char *text )
-{
-	MultiLineLog( 4, text );
-}
-
 MultiLog::MultiLog()
 {
 	lChannel = new LinkedList();

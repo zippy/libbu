@@ -5,7 +5,7 @@
 #include <time.h>
 #include <string.h>
 #include "multilogtext.h"
-
+/*
 bool fileexists( const char *sPath )
 {
 	int nFileDesc = open( sPath, O_RDONLY );
@@ -18,12 +18,12 @@ bool fileexists( const char *sPath )
 		close( nFileDesc );
 		return true;
 	}
-}
+}*/
 
 MultiLogText::MultiLogText( const char *sFileName, const char *lpFormat, bool bRotateLog, int nMaxLogs )
 {
 	this->lpFormat = NULL;
-	
+	/*
 	if( bRotateLog )
 	{
 		if( fileexists( sFileName ) == false )
@@ -44,7 +44,7 @@ MultiLogText::MultiLogText( const char *sFileName, const char *lpFormat, bool bR
 				break;
 			}
 		}
-	}
+	}*/
 
 	nFD = open( sFileName, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH );
 	setLogFormat( lpFormat );
