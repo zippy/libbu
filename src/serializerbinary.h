@@ -13,6 +13,9 @@ public:
 
 	virtual void close();
 
+	virtual void write(void *, int32_t);
+	virtual void read(void *, int32_t);
+
 	virtual Serializer &operator<<(bool);
 	virtual Serializer &operator<<(int8_t);
 	virtual Serializer &operator<<(int16_t);

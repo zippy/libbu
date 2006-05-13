@@ -35,6 +35,16 @@ void SerializerBinary::close()
 	}
 }
 
+void SerializerBinary::write(void * pData, int32_t nSize)
+{
+	fwrite(pData, nSize, 1, fhFile);
+}
+
+void SerializerBinary::read(void * pData, int32_t nSize)
+{
+	fread(pData, nSize, 1, fhFile);
+}
+
 Serializer &SerializerBinary::operator<<(bool p)
 {
 	fwrite(&p, sizeof(p), 1, fhFile);

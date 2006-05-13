@@ -15,6 +15,9 @@ public:
 	virtual ~Serializer();
 	virtual void close()=0;
 
+	virtual void write(void *, int32_t)=0;
+	virtual void read(void *, int32_t)=0;
+
 	virtual Serializer &operator<<(bool)=0;
 	virtual Serializer &operator<<(int8_t)=0;
 	virtual Serializer &operator<<(int16_t)=0;
