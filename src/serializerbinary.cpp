@@ -1,4 +1,5 @@
 #include "serializerbinary.h"
+#include "serializable.h"
 
 SerializerBinary::SerializerBinary(FILE *fhFile, bool bLoading):
 	Serializer(bLoading),
@@ -35,7 +36,7 @@ void SerializerBinary::close()
 	}
 }
 
-void SerializerBinary::write(void * pData, int32_t nSize)
+void SerializerBinary::write(const void * pData, int32_t nSize)
 {
 	fwrite(pData, nSize, 1, fhFile);
 }
@@ -62,7 +63,6 @@ Serializer &SerializerBinary::operator<<(int16_t p)
 }
 Serializer &SerializerBinary::operator<<(int32_t p)
 {
-	printf("int: %d, size: %d\n", p, sizeof(p));
 	fwrite(&p, sizeof(p), 1, fhFile);
 	return *this;
 }
@@ -109,9 +109,7 @@ Serializer &SerializerBinary::operator<<(long double p)
 
 Serializer &SerializerBinary::operator>>(bool &p)
 {
-	bool bTmp;
-	fread(&bTmp, sizeof(p), 1, fhFile);
-	p = bTmp;
+	fread(&p, sizeof(p), 1, fhFile);
 	return *this;
 }
 Serializer &SerializerBinary::operator>>(int8_t &p)
@@ -126,9 +124,7 @@ Serializer &SerializerBinary::operator>>(int16_t &p)
 }
 Serializer &SerializerBinary::operator>>(int32_t &p)
 {
-	printf("reding before: %d", p);
 	fread(&p, sizeof(p), 1, fhFile);
-	printf(" after: %d\n", p);
 	return *this;
 }
 Serializer &SerializerBinary::operator>>(int64_t &p)

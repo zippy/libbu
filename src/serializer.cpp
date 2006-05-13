@@ -1,5 +1,6 @@
 #include "serializer.h"
 #include "serializable.h"
+#include <list>
 
 Serializer::Serializer(bool bLoading):
 	bLoading(bLoading)
@@ -159,16 +160,16 @@ Serializer::Serializer &operator&(long double &p)
 }*/
 
 
-Serializer &Serializer::operator<<(Serializable &p)
+Serializer &operator<<(Serializer &s, Serializable &p)
 {
-	p.serialize(*this);
-	return *this;
+	p.serialize( s );
+	return s;
 }
 
-Serializer &Serializer::operator>>(Serializable &p)
+Serializer &operator>>(Serializer &s, Serializable &p)
 {
-	p.serialize(*this);
-	return *this;
+	p.serialize( s );
+	return s;
 }
 
 /*Serializer::Serializer &operator&(Serializable &p)
@@ -182,4 +183,21 @@ Serializer &Serializer::operator>>(Serializable &p)
 		return *this >> p;
 	}
 }*/
+
+Serializer &operator<<( Serializer &ar, std::string &s )
+{
+	ar << s.length();
+	ar.write( s.c_str(), s.length() );
+}
+
+Serializer &operator>>( Serializer &ar, std::string &s )
+{
+	int l;
+	ar >> l;
+	char *tmp = new char[l+1];
+	tmp[l] = '\0';
+	ar.read( tmp, l );
+	s = tmp;
+	delete tmp;
+}
 

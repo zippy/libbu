@@ -13,9 +13,9 @@ public:
 
 	virtual void close();
 
-	virtual void write(void *, int32_t);
+	virtual void write(const void *, int32_t);
 	virtual void read(void *, int32_t);
-
+	
 	virtual Serializer &operator<<(bool);
 	virtual Serializer &operator<<(int8_t);
 	virtual Serializer &operator<<(int16_t);
@@ -41,6 +41,7 @@ public:
 	virtual Serializer &operator>>(float &);
 	virtual Serializer &operator>>(double &);
 	virtual Serializer &operator>>(long double &);
+
 private:
 	FILE *fhFile;
 	bool bCloseFile;

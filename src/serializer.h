@@ -2,6 +2,8 @@
 #define SERIALIZABLE_H
 
 #include <stdint.h>
+#include <string>
+#include <list>
 //#include "serializable.h"
 
 class Serializer
@@ -15,9 +17,9 @@ public:
 	virtual ~Serializer();
 	virtual void close()=0;
 
-	virtual void write(void *, int32_t)=0;
+	virtual void write(const void *, int32_t)=0;
 	virtual void read(void *, int32_t)=0;
-
+	
 	virtual Serializer &operator<<(bool)=0;
 	virtual Serializer &operator<<(int8_t)=0;
 	virtual Serializer &operator<<(int16_t)=0;
@@ -59,9 +61,13 @@ public:
 	virtual Serializer &operator&(long double &);
 	*/
 
-	virtual Serializer &operator<<(class Serializable &);
-	virtual Serializer &operator>>(class Serializable &);
 	//virtual Serializer &operator&(Serializable &);
 };
+
+Serializer &operator<<(Serializer &, class Serializable &);
+Serializer &operator>>(Serializer &, class Serializable &);
+
+Serializer &operator<<(Serializer &, std::string &);
+Serializer &operator>>(Serializer &, std::string &);
 
 #endif

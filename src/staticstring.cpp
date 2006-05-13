@@ -1,4 +1,5 @@
 #include "staticstring.h"
+#include "serializer.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -180,5 +181,20 @@ char *StaticString::operator-( int nAmnt )
 void StaticString::clear()
 {
 	memset( lpStr, 0, nLen+1 );
+}
+
+void StaticString::serialize( Serializer &ar )
+{
+	if( ar.isLoading() )
+	{
+		ar >> nLen;
+		setLength( nLen );
+		ar.read( lpStr, nLen );
+	}
+	else
+	{
+		ar << nLen;
+		ar.write( lpStr, nLen );
+	}
 }
 

@@ -2,6 +2,7 @@
 #define STATIC_STRING_H
 
 #include <string>
+#include "serializable.h"
 
 /**
  * Simple string managing class.  Allows for dynamically allocated string data
@@ -10,7 +11,7 @@
  * and making accessing meta-info like length fast and reliable as well.
  *@author Mike Buland
  */
-class StaticString
+class StaticString : public Serializable
 {
 public:
 	StaticString();
@@ -39,6 +40,8 @@ public:
 	char *operator-( int nAmnt );
 
 	void clear();
+
+	virtual void serialize( class Serializer &ar );
 
 private:
 	char *lpStr;
