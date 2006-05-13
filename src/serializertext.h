@@ -13,7 +13,7 @@ public:
 
 	virtual void close();
 
-	virtual void write(void *, int32_t);
+	virtual void write(const void *, int32_t);
 	virtual void read(void *, int32_t);
 
 	virtual Serializer &operator<<(bool);

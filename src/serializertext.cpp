@@ -35,7 +35,7 @@ void SerializerText::close()
 	}
 }
 
-void SerializerText::write(void * pData, int32_t nSize)
+void SerializerText::write(const void * pData, int32_t nSize)
 {
 	fwrite(pData, nSize, 1, fhFile);
 	fprintf(fhFile, "\n");
