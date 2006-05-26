@@ -1,10 +1,10 @@
 #include "xmlreader.h"
+#include "xmlexception.h"
 #include <string.h>
 
-XmlReader::XmlReader( bool bStrip )
+XmlReader::XmlReader( bool bStrip ) :
+	bStrip( bStrip )
 {
-	nError = 0;
-	this->bStrip = bStrip;
 }
 
 XmlReader::~XmlReader()
@@ -68,13 +68,12 @@ bool XmlReader::node()
 		}
 		else
 		{
-			reportError("Close node in singleNode malformed!");
-			return false;
+			throw XmlException("Close node in singleNode malformed!");
 		}
 	}
 	else
 	{
-		reportError("Close node expected, but not found.");
+		throw XmlException("Close node expected, but not found.");
 		return false;
 	}
 
@@ -108,8 +107,7 @@ bool XmlReader::startNode()
 					}
 					else
 					{
-						reportError("Got a mismatched node close tag.");
-						return false;
+						throw XmlException("Got a mismatched node close tag.");
 					}
 				}
 				else
@@ -127,8 +125,7 @@ bool XmlReader::startNode()
 			}
 			else
 			{
-				reportError("Got extra junk data instead of node close tag.");
-				return false;
+				throw XmlException("Got extra junk data instead of node close tag.");
 			}
 		}
 		else
@@ -146,8 +143,7 @@ bool XmlReader::startNode()
 	}
 	else
 	{
-		reportError("Expected to find node opening char, '<'.\n");
-		return false;
+		throw XmlException("Expected to find node opening char, '<'.");
 	}
 
 	return true;
@@ -306,7 +302,7 @@ bool XmlReader::param()
 	}
 	else
 	{
-		reportError("Expected an equals to seperate the params.");
+		throw XmlException("Expected an equals to seperate the params.");
 		return false;
 	}
 
@@ -352,8 +348,7 @@ bool XmlReader::content()
 						}
 						else
 						{
-							reportError("Mismatched close tag found.");
-							return false;
+							throw XmlException("Mismatched close tag found: <%s> to <%s>.", getCurrent()->getName(), fbName.getData() );
 						}
 					}
 					else
@@ -370,8 +365,7 @@ bool XmlReader::content()
 				}
 				else
 				{
-					reportError("Malformed close tag.");
-					return false;
+					throw XmlException("Malformed close tag.");
 				}
 			}
 			else
@@ -398,15 +392,5 @@ bool XmlReader::content()
 			usedChar();
 		}
 	}
-}
-
-void XmlReader::reportError( const char *sError )
-{
-	printf("XmlReader error: %s\n", sError );
-}
-
-int XmlReader::getError()
-{
-	return nError;
 }
 

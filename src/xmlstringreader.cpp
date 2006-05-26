@@ -1,4 +1,5 @@
 #include "xmlstringreader.h"
+#include "xmlexception.h"
 #include <string.h>
 
 XmlStringReader::XmlStringReader( const char *sString, bool bStrip )
@@ -24,7 +25,7 @@ char XmlStringReader::getChar( int nAdd )
 	}
 	else
 	{
-		return '\0';
+		throw XmlException("End of XML stream read.");
 	}
 }
 

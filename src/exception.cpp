@@ -2,7 +2,8 @@
 #include <stdarg.h>
 
 Exception::Exception( const char *lpFormat, ... ) throw() :
-	nErrorCode( 0 )
+	nErrorCode( 0 ),
+	sWhat( NULL )
 {
 	va_list ap;
 
@@ -12,7 +13,8 @@ Exception::Exception( const char *lpFormat, ... ) throw() :
 }
 
 Exception::Exception( int nCode, const char *lpFormat, ... ) throw() :
-	nErrorCode( nCode )
+	nErrorCode( nCode ),
+	sWhat( NULL )
 {
 	va_list ap;
 
@@ -29,11 +31,16 @@ Exception::Exception( int nCode ) throw() :
 
 Exception::~Exception() throw()
 {
-	delete[] sWhat;
+	if( sWhat )
+	{
+		delete[] sWhat;
+		sWhat = NULL;
+	}
 }
 
 void Exception::setWhat( const char *lpFormat, va_list &vargs )
 {
+	if( sWhat ) delete[] sWhat;
 	int nSize;
 
 	nSize = vsnprintf( NULL, 0, lpFormat, vargs );

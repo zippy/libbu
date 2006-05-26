@@ -1,4 +1,5 @@
 #include "xmlfilereader.h"
+#include "xmlexception.h"
 #include <string.h>
 
 XmlFileReader::XmlFileReader( const char *sFile, bool bStrip )
@@ -8,7 +9,7 @@ XmlFileReader::XmlFileReader( const char *sFile, bool bStrip )
 
 	if( fh == NULL )
 	{
-		reportError("Couldn't open file.");
+		throw XmlException("Couldn't open file: %s", sFile );
 		//nError = 1;
 	}
 	else
@@ -50,7 +51,7 @@ char XmlFileReader::getChar( int nIndex )
 	}
 	else
 	{
-		return '\0';
+		throw XmlException("End of XML stream read.");
 	}
 }
 

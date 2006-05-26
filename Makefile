@@ -1,4 +1,7 @@
 OBJS:=$(patsubst %.cpp,%.o,$(wildcard src/*.cpp))
+USRCS:=$(wildcard src/unit/*.cpp)
+UOBJS:=$(patsubst %.cpp,%.o,$(USRCS))
+UNIT:=$(foreach ut,$(patsubst %.cpp,%,$(wildcard src/unit/*.cpp)),unit/$(notdir $(ut)))
 TOBJS:=$(patsubst %.cpp,%.o,$(wildcard src/test/*.cpp))
 TDIRS:=$(filter-out %.o %.cpp %.h %.d,$(wildcard src/test/*))
 TESTS:=$(patsubst src/test/%.o,tests/%,$(TOBJS)) $(patsubst src/test/%,tests/%,$(TDIRS))
@@ -12,17 +15,17 @@ TXTDEP:="\ dep:\ \ \ "
 TXTARC:="\ \ ar:\ \ \ "
 
 .PHONY: all clean dist tests depclean cleanapi
-.SILENT: clean $(OBJS) $(TOBJS) $(ATOBJS) $(TESTS) $(patsubst %.o,%.d,$(OBJS) $(TOBJS) $(ATOBJS) $(TESTS)) $(LIB)
+.SILENT: clean $(OBJS) $(TOBJS) $(ATOBJS) $(UNIT) $(UOBJS) $(TESTS) $(patsubst %.o,%.d,$(OBJS) $(TOBJS) $(ATOBJS) $(TESTS)) $(LIB)
 
-all: libbu++.a tests
+all: libbu++.a tests unit
 
 depclean:
-	-rm $(patsubst %.o,%.d,$(OBJS) $(ATOBJS))
+	-rm $(patsubst %.o,%.d,$(OBJS) $(ATOBJS) $(UOBJS))
 
--include $(patsubst %.o,%.d,$(OBJS) $(ATOBJS))
+-include $(patsubst %.o,%.d,$(OBJS) $(ATOBJS) $(UOBJS))
 
 clean:
-	-rm $(OBJS) $(ATOBJS) $(TESTS) $(LIB)
+	-rm $(OBJS) $(ATOBJS) $(UOBJS) $(TESTS) $(LIB)
 
 # This bit I cribbed from the docs, seems to work great though!
 %.d: %.cpp
@@ -41,7 +44,13 @@ $(TESTS): $(ATOBJS) $(LIB)
 	echo "$(TXTLNK)$@"
 	g++ $(LDFLAGS) -ggdb $(filter %$(patsubst tests/%,%,$@).o, $(TOBJS) ) $(patsubst %.cpp,%.o,$(wildcard $(filter %$(patsubst tests/%,%,$@), $(TDIRS))/*.cpp)) -L. -lbu++ -o $@
 	
+$(UNIT): $(USRCS) $(LIB)
+	echo "$(TXTLNK)$@"
+	g++ $(LDFLAGS) -ggdb -Isrc -Isrc/unit src/$@.cpp -L. -lbu++ -lcpptest -o $@
+
 tests: $(TESTS)
+
+unit: $(UNIT)
 
 dist: clean depclean
 	mkdir libbu++-$(DATE)

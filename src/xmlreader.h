@@ -38,19 +38,6 @@ public:
 	~XmlReader();
 
 	/**
-	 * Get the error code if an error happened.
-	 *@returns The error code (I don't know what they are either)
-	 */
-	int getError();
-
-	/**
-	 * Report an error to something, this is a really strange mechanism and
-	 * should probably just be replaced with the multi-log system.
-	 *@param sError The error to report.
-	 */
-	void reportError( const char *sError );
-
-	/**
 	 * Build a document based on some kind of input.  This is called
 	 * automatically by the constructor.
 	 */
@@ -127,7 +114,6 @@ private:
 	FlexBuf fbParamName;	/**< buffer for the current param's name. */
 	FlexBuf fbParamValue;	/**< buffer for the current param's value. */
 	bool bStrip;	/**< Are we stripping whitespace? */
-	int nError;		/**< Is there an error? */
 };
 
 #endif
