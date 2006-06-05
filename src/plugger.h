@@ -17,13 +17,13 @@ typedef struct PluginInfo
 	void (*destroyPlugin)( class Plugin * );
 } PluginInfo;
 
-#define PluginInterface( classname, name, ver, rev )					\
+#define PluginInterface( classname, baseclass, name, ver, rev )			\
 extern "C" {															\
-	class Plugin *create ##classname()									\
+	class baseclass *create ##classname()								\
 	{																	\
 		return new classname();											\
 	}																	\
-	void destroy ##classname( class Plugin *pCls )						\
+	void destroy ##classname( class baseclass *pCls )					\
 	{																	\
 		delete pCls;													\
 	}																	\
