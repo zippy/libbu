@@ -17,7 +17,7 @@ TXTARC:="\ \ ar:\ \ \ "
 .PHONY: all clean dist tests depclean cleanapi
 .SILENT: clean $(OBJS) $(TOBJS) $(ATOBJS) $(UNIT) $(UOBJS) $(TESTS) $(patsubst %.o,%.d,$(OBJS) $(TOBJS) $(ATOBJS) $(UOBJS) $(TESTS)) $(LIB)
 
-all: libbu++.a tests unit
+all: libbu++.a
 
 depclean:
 	-rm $(patsubst %.o,%.d,$(OBJS) $(ATOBJS) $(UOBJS))
