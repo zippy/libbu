@@ -16,7 +16,8 @@ int main( int argc, char *argv[] )
 				"Set the bool off." },
 		{ "char",		'c', PPROC_CHAR,		NULL,	&cChar,
 				"Set the char." },
-		{ NULL, '\0', 0, NULL, NULL, NULL }
+		{ NULL,			'\0',0, 				NULL, 	NULL,
+				NULL }
 	};
 
 	processParams( argc, argv, table );

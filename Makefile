@@ -42,7 +42,7 @@ $(LIB): $(OBJS)
 
 $(TESTS): $(ATOBJS) $(LIB)
 	echo "$(TXTLNK)$@"
-	g++ $(LDFLAGS) -ggdb $(filter %$(patsubst tests/%,%,$@).o, $(TOBJS) ) $(patsubst %.cpp,%.o,$(wildcard $(filter %$(patsubst tests/%,%,$@), $(TDIRS))/*.cpp)) -L. -lbu++ -o $@
+	g++ $(LDFLAGS) -ggdb $(filter %$(patsubst tests/%,%,$@).o, $(TOBJS) ) $(patsubst %.cpp,%.o,$(wildcard $(filter %$(patsubst tests/%,%,$@), $(TDIRS))/*.cpp)) -L. -lbu++ -ldl -o $@
 	
 $(UNIT): $(USRCS) $(LIB)
 	echo "$(TXTLNK)$@"
