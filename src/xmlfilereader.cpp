@@ -55,10 +55,10 @@ char XmlFileReader::getChar( int nIndex )
 	}
 }
 
-void XmlFileReader::usedChar()
+void XmlFileReader::usedChar( int nAmnt )
 {
-	if( fbDataIn.getLength() > 0 )
+	if( fbDataIn.getLength()-nAmnt >= 0 )
 	{
-		fbDataIn.usedData( 1 );
+		fbDataIn.usedData( nAmnt );
 	}
 }

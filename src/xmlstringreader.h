@@ -40,7 +40,7 @@ public:
 
 private:
 	char getChar( int nIndex = 0 );
-	void usedChar();
+	void usedChar( int nAmnt = 1 );
 	const char *sString;	/**< Internal pointer to the input string. */
 	int nIndex;		/**< Our index into the string */
 	int nLength;	/**< The computed length of the string */

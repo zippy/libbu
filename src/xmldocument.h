@@ -148,6 +148,14 @@ public:
 	XmlNode *getRoot();
 
 	/**
+	 * Get a pointer to the root object of this XmlDocument, and remove the
+	 * ownership from this object.
+	 *@returns A pointer to an internally owned XmlNode.  Do not delete this
+	 * XmlNode.
+	 */
+	XmlNode *detatchRoot();
+
+	/**
 	 * Get the current context node, which could be the same as the root node.
 	 *@returns A pointer to an internally owned XmlNode.  Do not delete this
 	 * XmlNode.

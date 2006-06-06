@@ -332,8 +332,7 @@ bool XmlReader::content()
 					}
 					setContent( fbContent.getData() );
 				}
-				usedChar();
-				usedChar();
+				usedChar( 2 );
 				gcall( ws() );
 				FlexBuf fbName;
 				while( true )
@@ -366,6 +365,46 @@ bool XmlReader::content()
 				else
 				{
 					throw XmlException("Malformed close tag.");
+				}
+			}
+			else if( getChar(1) == '!' )
+			{
+				// We know it's a comment, let's see if it's proper
+				if( getChar(2) != '-' ||
+					getChar(3) != '-' )
+				{
+					// Not a valid XML comment
+					throw XmlException("Malformed comment start tag found.");
+				}
+
+				usedChar( 4 );
+				
+				// Now burn text until we find the close tag
+				for(;;)
+				{
+					if( getChar() == '-' )
+					{
+						if( getChar( 1 ) == '-' )
+						{
+							// The next one has to be a '>' now
+							if( getChar( 2 ) != '>' )
+							{
+								throw XmlException("Malformed comment close tag found.  You cannot have a '--' that isn't followed by a '>' in a comment.");
+							}
+							usedChar( 3 );
+							break;
+						}
+						else
+						{
+							// Found a dash followed by a non dash, that's ok...
+							usedChar( 2 );
+						}
+					}
+					else
+					{
+						// Burn comment chars
+						usedChar();
+					}
 				}
 			}
 			else

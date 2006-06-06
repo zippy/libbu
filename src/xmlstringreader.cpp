@@ -29,10 +29,10 @@ char XmlStringReader::getChar( int nAdd )
 	}
 }
 
-void XmlStringReader::usedChar()
+void XmlStringReader::usedChar( int nAmnt )
 {
-	if( nLength >= nIndex+1 )
+	if( nLength >= nIndex+nAmnt )
 	{
-		nIndex++;
+		nIndex += nAmnt;
 	}
 }

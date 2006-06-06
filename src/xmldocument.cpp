@@ -50,6 +50,13 @@ XmlNode *XmlDocument::getRoot()
 	return pRoot;
 }
 
+XmlNode *XmlDocument::detatchRoot()
+{
+	XmlNode *pTemp = pRoot;
+	pRoot = NULL;
+	return pTemp;
+}
+
 XmlNode *XmlDocument::getCurrent()
 {
 	return pCurrent;

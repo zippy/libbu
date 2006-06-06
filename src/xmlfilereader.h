@@ -39,7 +39,7 @@ public:
 
 private:
 	char getChar( int nIndex = 0 );
-	void usedChar();
+	void usedChar( int nAmnt = 1 );
 	FILE *fh;			/**< The file handle. */
 	FlexBuf fbDataIn;	/**< The input buffer. */
 };

@@ -57,7 +57,7 @@ private:
 	/**
 	 * Called to increment the current stream position by a single character.
 	 */
-	virtual void usedChar() = 0;
+	virtual void usedChar( int nAmnt = 1) = 0;
 
 	/**
 	 * Automoton function: is whitespace.
