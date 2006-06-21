@@ -272,11 +272,16 @@ public:
 	 * Reads all pending input from the connection, blocking up to nSec
 	 * seconds and nUSec micro-seconds for the data.  This uses select to
 	 * simulate blocking, but has the same effect as standard io blocking.
-	 * If you don't want to block, just set both values to zero.
+	 * If you don't want to block, just set both values to zero.  The back
+	 * parameters are optional, set to null to not use them.  The variables
+	 * you pass in through the back parameters will contain the remaining
+	 * time if data arrived before the max timeout was reached.
 	 *@param nSec Max seconds to wait.
 	 *@param nUSec Max micro-seconds to wait.
+	 *@param pnSecBack The number of seconds remaining.
+	 *@param pnUSecBack The number of micro-seconds remaining.
 	 */
-	bool readInput( int nSec, int nUSec );
+	bool readInput( int nSec, int nUSec, int *pnSecBack=NULL, int *pnUSecBack=NULL );
 
 	/** Writes all data that is pending to the socket.
 	  *@returns True if all data was written succesfully, false otherwise.

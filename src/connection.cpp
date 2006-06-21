@@ -238,7 +238,7 @@ bool Connection::readInput()
 	return true;
 }
 
-bool Connection::readInput( int nSec, int nUSec )
+bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack )
 {
 	fd_set rfds;
 	struct timeval tv;
@@ -252,7 +252,9 @@ bool Connection::readInput( int nSec, int nUSec )
 	tv.tv_usec = nUSec;
 
 	retval = select( nSocket+1, &rfds, NULL, NULL, &tv );
-	/* Don't rely on the value of tv now! */
+
+	if( pnSecBack ) (*pnSecBack) = tv.tv_sec;
+	if( pnUSecBack ) (*pnUSecBack) = tv.tv_usec;
 
 	if (retval == -1)
 	{
