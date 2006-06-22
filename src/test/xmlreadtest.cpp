@@ -14,14 +14,14 @@ int main( int argc, char *argv[] )
 	if( argv[1][0] == 'f' )
 	{
 		XmlFileReader r( argv[2], true );
-		XmlFileWriter w( argv[3], "\t", r.detatchRoot() );
-		w.write();
+//		XmlFileWriter w( argv[3], "\t", r.detatchRoot() );
+//		w.write();
 	}
 	else if( argv[1][0] == 's' )
 	{
 		XmlStringReader r( argv[2], true );
-		XmlWriter w( argv[3], "\t", r.detatchRoot() );
-		w.write();
+//		XmlWriter w( argv[3], "\t", r.detatchRoot() );
+//		w.write();
 	}
 
 	return 0;

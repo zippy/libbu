@@ -28,14 +28,14 @@ void fillItIn( XmlWriter &w )
 int main()
 {
 	printf("Testing XmlWriter...\n");
-	XmlFileWriter wf("test.xml", "\t");
+	//XmlFileWriter wf("test.xml", "\t");
 
-	fillItIn( wf );
+	//fillItIn( wf );
 
-	XmlStringWriter ws("\t");
-	fillItIn( ws );
+	//XmlStringWriter ws("\t");
+	//fillItIn( ws );
 
-	printf("Now the string version:\n\n%s\n", ws.getString().c_str() );
+	//printf("Now the string version:\n\n%s\n", ws.getString().c_str() );
 
 	return 0;
 }

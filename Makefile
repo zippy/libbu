@@ -34,7 +34,7 @@ clean:
 
 %.o: %.cpp
 	echo "$(TXTCPP)$@"
-	g++ $(CXXFLAGS) -Isrc $(foreach dr,$(filter $(dir $@),$(foreach ddr,$(TDIRS),$(ddr)/)),-I$(dr)) -ggdb -c -o $@ $<
+	g++ -fPIC $(CXXFLAGS) -Isrc $(foreach dr,$(filter $(dir $@),$(foreach ddr,$(TDIRS),$(ddr)/)),-I$(dr)) -ggdb -c -o $@ $<
 
 $(LIB): $(OBJS)
 	echo "$(TXTARC)$@"

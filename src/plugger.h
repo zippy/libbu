@@ -13,23 +13,9 @@ typedef struct PluginInfo
 	const char *sAuthor;
 	unsigned short nVersion;
 	unsigned short nRevision;
-	class Plugin *(*createPlugin)();
-	void (*destroyPlugin)( class Plugin * );
+	void *(*createPlugin)();
+	void (*destroyPlugin)( void * );
 } PluginInfo;
-
-#define PluginInterface( classname, baseclass, name, ver, rev )			\
-extern "C" {															\
-	class baseclass *create ##classname()								\
-	{																	\
-		return new classname();											\
-	}																	\
-	void destroy ##classname( class baseclass *pCls )					\
-	{																	\
-		delete pCls;													\
-	}																	\
-	PluginInfo classname = { #classname, name, ver, rev, 				\
-		create ##classname, destroy ##classname };						\
-}
 
 typedef struct PluginReg
 {
@@ -38,9 +24,42 @@ typedef struct PluginReg
 	PluginInfo *pInfo;
 } PluginReg;
 
+#define PluginInterface( classname, baseclass, name, ver, rev )			\
+extern "C" {															\
+	baseclass *create ##classname()								\
+	{																	\
+		return new classname();											\
+	}																	\
+	void destroy ##classname( baseclass *pCls )					\
+	{																	\
+		delete pCls;													\
+	}																	\
+	PluginInfo classname = {						\
+		#classname, name, ver, rev,										\
+		create ##classname, destroy ##classname };						\
+}
+
+#define PluginInterface2( pluginname, classname, baseclass, name, ver, rev ) \
+extern "C" {															\
+	baseclass *create ##classname()										\
+	{																	\
+		return new classname();											\
+	}																	\
+	void destroy ##classname( baseclass *pCls )							\
+	{																	\
+		delete pCls;													\
+	}																	\
+	PluginInfo pluginname = {											\
+		#pluginname, name, ver, rev,									\
+		(void *(*)())(create ##classname),								\
+		(void (*)( void * ))(destroy ##classname) };					\
+}
+
 template<class T>
 class Plugger
 {
+public:
+
 public:
 	Plugger() :
 		hPlugin( new HashFunctionString(), 11 ),
@@ -96,9 +115,9 @@ public:
 		if( pReg == NULL )
 			return NULL;
 
-		T *p = pReg->pInfo->createPlugin();
+		T *p = (T *)pReg->pInfo->createPlugin();
 		hObj.insert( p, pReg );
-		printf("pReg:  %08X, pPlug: %08X\n", pReg, p );
+		//printf("pReg:  %08X, pPlug: %08X\n", pReg, p );
 	
 		return p;
 	}
@@ -106,7 +125,7 @@ public:
 	void destroy( T *pPlug )
 	{
 		PluginReg *pReg = (PluginReg *)hObj[pPlug];
-		printf("pReg:  %08X, pPlug: %08X\n", pReg, pPlug );
+		//printf("pReg:  %08X, pPlug: %08X\n", pReg, pPlug );
 		if( pReg == NULL )
 			return;
 
