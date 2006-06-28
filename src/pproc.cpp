@@ -4,9 +4,19 @@
 
 void pprocHelp( PPROC *pproc )
 {
+	int maxlen = 0;
 	for( int j = 0; pproc[j].proc || pproc[j].stateVar; j++ )
 	{
-		printf("%c, %s - %s\n",
+		int len = strlen( pproc[j].lpWord );
+		if( len > maxlen ) maxlen = len;
+	}
+
+	char fmt[100];
+	sprintf( fmt, "  -%%c, --%%-%ds  %%s\n", maxlen );
+
+	for( int j = 0; pproc[j].proc || pproc[j].stateVar; j++ )
+	{
+		printf( fmt,
 			pproc[j].cChar,
 			pproc[j].lpWord,
 			pproc[j].shortHelp );

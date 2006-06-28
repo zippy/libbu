@@ -14,13 +14,7 @@ XmlFileReader::XmlFileReader( const char *sFile, bool bStrip )
 	}
 	else
 	{
-		char buf[50];
-		fgets( buf, 50, fh );
-
-		if( !strcmp( buf, "<?xml version=\"1.0\"?>\n" ) )
-		{
-			buildDoc();
-		}
+		buildDoc();
 	}
 }
 
