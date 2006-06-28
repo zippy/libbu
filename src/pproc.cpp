@@ -75,6 +75,8 @@ void grabParamAsData( PPROC *pproc, char *str, int *aind, int *cind )
 			break;
 			
 		case PPROC_STRING:
+			strcpy( (char *)(pproc->stateVar), str );
+			(*aind)++;
 			break;
 	}
 }
@@ -136,7 +138,15 @@ void processParams( int argc, char *argv[], PPROC *pproc )
 						if( pproc[k].stateVar != NULL )
 						{
 							int tmp = 1;
-							grabParamAsData( &pproc[k], argv[j], &j, &tmp );
+							if( argv[j][2] == '\0' )
+							{
+								grabParamAsData( &pproc[k], argv[j+1], &j, &tmp );
+							}
+							else
+							{
+								j--;
+								grabParamAsData( &pproc[k], (&argv[j+1][2]), &j, &tmp );
+							}
 						}
 						break;
 					}
