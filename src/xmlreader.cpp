@@ -1,14 +1,32 @@
 #include "xmlreader.h"
 #include "xmlexception.h"
 #include <string.h>
+#include "hashfunctionstring.h"
 
 XmlReader::XmlReader( bool bStrip ) :
-	bStrip( bStrip )
+	bStrip( bStrip ),
+	htEntity( new HashFunctionString(), 11 )
 {
 }
 
 XmlReader::~XmlReader()
 {
+	void *i = htEntity.getFirstItemPos();
+	while( (i = htEntity.getNextItemPos( i ) ) )
+	{
+		free( (char *)(htEntity.getItemID( i )) );
+		delete (StaticString *)htEntity.getItemData( i );
+	}
+}
+
+void XmlReader::addEntity( const char *name, const char *value )
+{
+	if( htEntity[name] ) return;
+
+	char *sName = strdup( name );
+	StaticString *sValue = new StaticString( value );
+
+	htEntity.insert( sName, sValue );
 }
 
 #define gcall( x ) if( x == false ) return false;
@@ -39,9 +57,127 @@ bool XmlReader::buildDoc()
 {
 	// take care of initial whitespace
 	gcall( ws() );
+	textDecl();
+	entity();
+	addEntity("gt", ">");
+	addEntity("lt", "<");
+	addEntity("amp", "&");
+	addEntity("apos", "\'");
+	addEntity("quot", "\"");
 	gcall( node() );
 
 	return true;
+}
+
+void XmlReader::textDecl()
+{
+	char chr;
+	if( getChar() == '<' && getChar( 1 ) == '?' )
+	{
+		usedChar( 2 );
+		for(;;)
+		{
+			if( getChar() == '?' )
+			{
+				if( getChar( 1 ) == '>' )
+				{
+					usedChar( 2 );
+					return;
+				}
+			}
+			usedChar();
+		}
+	}
+}
+
+void XmlReader::entity()
+{
+	for(;;)
+	{
+		ws();
+
+		if( getChar() == '<' && getChar( 1 ) == '!' )
+		{
+			usedChar( 2 );
+			ws();
+			std::string buf;
+			for(;;)
+			{
+				char chr = getChar();
+				usedChar();
+				if( isws( chr ) ) break;
+				buf += chr;
+			}
+
+			if( strcmp( buf.c_str(), "ENTITY") == 0 )
+			{
+				ws();
+				std::string name;
+				for(;;)
+				{
+					char chr = getChar();
+					usedChar();
+					if( isws( chr ) ) break;
+					name += chr;
+				}
+				ws();
+				char quot = getChar();
+				usedChar();
+				if( quot != '\'' && quot != '\"' )
+				{
+					throw XmlException(
+						"Only quoted entity values are supported."
+						);
+				}
+				std::string value;
+				for(;;)
+				{
+					char chr = getChar();
+					usedChar();
+					if( chr == '&' )
+					{
+						StaticString *tmp = getEscape();
+						if( tmp == NULL ) throw XmlException("Entity thing");
+						value += tmp->getString();
+						delete tmp;
+					}
+					else if( chr == quot )
+					{
+						break;
+					}
+					else
+					{
+						value += chr;
+					}
+				}
+				ws();
+				if( getChar() == '>' )
+				{
+					usedChar();
+
+					addEntity( name.c_str(), value.c_str() );
+				}
+				else
+				{
+					throw XmlException(
+						"Malformed ENTITY:  unexpected '%c' found.",
+						getChar()
+						);
+				}
+			}
+			else
+			{
+				throw XmlException(
+					"Unsupported header symbol: %s",
+					buf.c_str()
+					);
+			}
+		}
+		else
+		{
+			return;
+		}
+	}
 }
 
 bool XmlReader::node()
@@ -190,13 +326,18 @@ bool XmlReader::paramlist()
 	return true;
 }
 
-char XmlReader::getEscape()
+StaticString *XmlReader::getEscape()
 {
-	// Right now, we just do # escapes...
 	if( getChar( 1 ) == '#' )
 	{
-		usedChar();
-		usedChar();
+		// If the entity starts with a # it's a character escape code
+		int base = 10;
+		usedChar( 2 );
+		if( getChar() == 'x' )
+		{
+			base = 16;
+			usedChar();
+		}
 		char buf[4];
 		int j = 0;
 		for( j = 0; getChar() != ';'; j++ )
@@ -206,11 +347,29 @@ char XmlReader::getEscape()
 		}
 		usedChar();
 		buf[j] = '\0';
-		return (char)atoi( buf );
+		buf[0] = (char)strtol( buf, (char **)NULL, base );
+		buf[1] = '\0';
+
+		return new StaticString( buf );
 	}
 	else
 	{
-		return '\0';
+		// ...otherwise replace with the appropriate string...
+		std::string buf;
+		usedChar();
+		for(;;)
+		{
+			char cbuf = getChar();
+			usedChar();
+			if( cbuf == ';' ) break;
+			buf += cbuf;
+		}
+
+		StaticString *tmp = (StaticString *)htEntity[buf.c_str()];
+		if( tmp == NULL ) return NULL;
+
+		StaticString *ret = new StaticString( *tmp );
+		return ret;
 	}
 }
 
@@ -260,9 +419,10 @@ bool XmlReader::param()
 				{
 					if( chr == '&' )
 					{
-						chr = getEscape();
-						if( chr == '\0' ) return false;
-						fbValue.appendData( chr );
+						StaticString *tmp = getEscape();
+						if( tmp == NULL ) return false;
+						fbValue.appendData( tmp->getString() );
+						delete tmp;
 					}
 					else
 					{
@@ -287,9 +447,10 @@ bool XmlReader::param()
 				{
 					if( chr == '&' )
 					{
-						chr = getEscape();
-						if( chr == '\0' ) return false;
-						fbValue.appendData( chr );
+						StaticString *tmp = getEscape();
+						if( tmp == NULL ) return false;
+						fbValue.appendData( tmp->getString() );
+						delete tmp;
 					}
 					else
 					{
@@ -424,6 +585,13 @@ bool XmlReader::content()
 			}
 
 			if( bStrip ) gcall( ws() );
+		}
+		else if( chr == '&' )
+		{
+			StaticString *tmp = getEscape();
+			if( tmp == NULL ) return false;
+			fbContent.appendData( tmp->getString() );
+			delete tmp;
 		}
 		else
 		{

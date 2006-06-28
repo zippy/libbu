@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include "xmldocument.h"
 #include "flexbuf.h"
+#include "hashtable.h"
+#include "staticstring.h"
 
 /**
  * Takes care of reading in xml formatted data from a file.  This could/should
@@ -90,7 +92,25 @@ private:
 	 */
 	bool name();
 
-	char getEscape();
+	/**
+	 * Automoton function: textDecl.  Processes the xml text decleration, if
+	 * there is one.
+	 */
+	void textDecl();
+
+	/**
+	 * Automoton function: entity.  Processes an entity from the header.
+	 */
+	void entity();
+
+	/**
+	 * Adds an entity to the list, if it doesn't already exist.
+	 *@param name The name of the entity
+	 *@param value The value of the entity
+	 */
+	void addEntity( const char *name, const char *value );
+
+	StaticString *getEscape();
 
 	/**
 	 * Automoton function: paramlist.  Processes a list of node params.
@@ -114,6 +134,8 @@ private:
 	FlexBuf fbParamName;	/**< buffer for the current param's name. */
 	FlexBuf fbParamValue;	/**< buffer for the current param's value. */
 	bool bStrip;	/**< Are we stripping whitespace? */
+
+	HashTable htEntity;		/**< Entity type definitions. */
 };
 
 #endif
