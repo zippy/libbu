@@ -396,3 +396,18 @@ ParamProc::ArgSpec *ParamProc::checkLetr( const char arg )
 	return NULL;
 }
 
+int ParamProc::cmdParam( int argc, char *argv[] )
+{
+	printf("Unhandled command parameter \"%s\" found!\n", argv[0] );
+}
+
+int ParamProc::unknownParam( int argc, char *argv[] )
+{
+	printf("Unknown parameter \"%s\" found!\n", argv[0] );
+}
+
+int ParamProc::help( int argc, char *argv[] )
+{
+	// Insert help here later on
+}
+

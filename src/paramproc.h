@@ -130,6 +130,11 @@ public:
 	ArgSpec *checkWord( const char *arg );
 	ArgSpec *checkLetr( const char arg );
 
+public:
+	virtual int cmdParam( int argc, char *argv[] );
+	virtual int unknownParam( int argc, char *argv[] );
+	virtual int help( int argc, char *argv[] );
+
 private:
 	std::list<ArgSpec *> lArg;
 };
