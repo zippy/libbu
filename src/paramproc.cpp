@@ -141,6 +141,12 @@ void ParamProc::addParam( const char *lpWord, char cChar, Proc proc,
 		as->sValue = lpValue;
 
 	lArg.push_back( as );
+
+	if( !lBan.empty() )
+	{
+		if( lBan.back()->pBefore == NULL )
+			lBan.back()->pBefore = as;
+	}
 }
 
 void ParamProc::addParam( const char *lpWord, char cChar, Proc proc,
@@ -203,7 +209,7 @@ void ParamProc::process( int argc, char *argv[] )
 {
 	for( int arg = 1; arg < argc; arg++ )
 	{
-		printf(":::%d:::%s\n", arg, argv[arg] );
+		//printf(":::%d:::%s\n", arg, argv[arg] );
 		if( argv[arg][0] == '-' )
 		{
 			if( argv[arg][1] == '-' )
@@ -269,6 +275,10 @@ void ParamProc::process( int argc, char *argv[] )
 						}
 					}
 					continue;
+				}
+				else
+				{
+					unknownParam( argc-arg, argv+arg );
 				}
 			}
 			else
@@ -347,15 +357,23 @@ void ParamProc::process( int argc, char *argv[] )
 							}
 						}
 					}
+					else
+					{
+						unknownParam( argc-arg, argv+arg );
+					}
 				}
 			}
+		}
+		else
+		{
+			cmdParam( argc-arg, argv+arg );
 		}
 	}
 }
 
 ParamProc::ArgSpec *ParamProc::checkWord( const char *arg )
 {
-	printf("Checking \"%s\"...\n", arg );
+	//printf("Checking \"%s\"...\n", arg );
 	std::list<ArgSpec *>::const_iterator i;
 	for( i = lArg.begin(); i != lArg.end(); i++ )
 	{
@@ -380,7 +398,7 @@ ParamProc::ArgSpec *ParamProc::checkWord( const char *arg )
 
 ParamProc::ArgSpec *ParamProc::checkLetr( const char arg )
 {
-	printf("Checking \'%c\'...\n", arg );
+	//printf("Checking \'%c\'...\n", arg );
 	std::list<ArgSpec *>::const_iterator i;
 	for( i = lArg.begin(); i != lArg.end(); i++ )
 	{
@@ -408,6 +426,62 @@ int ParamProc::unknownParam( int argc, char *argv[] )
 
 int ParamProc::help( int argc, char *argv[] )
 {
-	// Insert help here later on
+	std::list<Banner *>::const_iterator b = lBan.begin();
+	std::list<ArgSpec *>::const_iterator i;
+	int len=0;
+	for( i = lArg.begin(); i != lArg.end(); i++ )
+	{
+		if( len < (*i)->sWord.getLength() )
+			len = (*i)->sWord.getLength();
+	}
+	char fmt[10];
+	sprintf( fmt, "%%-%ds   ", len );
+
+	for( i = lArg.begin(); i != lArg.end(); i++ )
+	{
+		if( b != lBan.end() )
+		{
+			if( (*b)->pBefore == (*i) )
+			{
+				printf( (*b)->sBanner.getString() );
+				b++;
+			}
+		}
+		printf("  ");
+		if( (*i)->cChar )
+		{
+			printf("-%c, ", (*i)->cChar );
+		}
+		else
+		{
+			printf("    ");
+		}
+		if( (*i)->sWord.getString() )
+		{
+			printf("--");
+			printf( fmt, (*i)->sWord.getString() );
+		}
+		else
+		{
+			printf("  ");
+			printf(fmt, "" );
+		}
+		printf("%s\n", (*i)->sDesc.getString() );
+	}
+	if( b != lBan.end() )
+	{
+		if( (*b)->pBefore == NULL )
+		{
+			printf( (*b)->sBanner.getString() );
+		}
+	}
+}
+
+void ParamProc::addHelpBanner( const char *sHelpBanner )
+{
+	Banner *pBan = new Banner;
+	pBan->sBanner = sHelpBanner;
+	pBan->pBefore = NULL;
+	lBan.push_back( pBan );
 }
 

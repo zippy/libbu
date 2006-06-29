@@ -127,6 +127,9 @@ public:
 		);
 
 	void process( int argc, char *argv[] );
+	void addHelpBanner( const char *sHelpBanner );
+
+private:
 	ArgSpec *checkWord( const char *arg );
 	ArgSpec *checkLetr( const char arg );
 
@@ -136,6 +139,12 @@ public:
 	virtual int help( int argc, char *argv[] );
 
 private:
+	typedef struct Banner
+	{
+		StaticString sBanner;
+		ArgSpec *pBefore;
+	} Banner;
+	std::list<Banner *> lBan;
 	std::list<ArgSpec *> lArg;
 };
 
