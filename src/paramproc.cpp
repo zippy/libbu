@@ -269,10 +269,12 @@ void ParamProc::process( int argc, char *argv[] )
 								argc-arg-1, argv+arg+1 );
 
 							if( ret > add )
-								arg += ret;
+								add = 0;
 							else
-								arg += add;
+								add -= ret;
+							arg += ret;
 						}
+						arg += add;
 					}
 					continue;
 				}
@@ -316,12 +318,11 @@ void ParamProc::process( int argc, char *argv[] )
 									delete tmp;
 									break;
 								}
-								if( bUsed )
-								{
-									delete tmp;
-									break;
-								}
 								delete tmp;
+							}
+							if( bUsed )
+							{
+								break;
 							}
 						}
 						else
@@ -349,11 +350,11 @@ void ParamProc::process( int argc, char *argv[] )
 									arg += ret;
 									break;
 								}
-								if( bUsed )
-								{
-									arg++;
-									break;
-								}
+							}
+							if( bUsed )
+							{
+								arg++;
+								break;
 							}
 						}
 					}
