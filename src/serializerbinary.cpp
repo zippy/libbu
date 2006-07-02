@@ -29,7 +29,7 @@ SerializerBinary::~SerializerBinary()
 
 void SerializerBinary::close()
 {
-	if (fhFile != NULL)
+	if (fhFile != NULL && bCloseFile )
 	{
 		fclose(fhFile);
 		fhFile = NULL;
