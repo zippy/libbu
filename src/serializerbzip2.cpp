@@ -53,7 +53,12 @@ void SerializerBZip2::close()
 	{
 		if( isLoading() )
 		{
+			void *unused;
+			int nUnused;
+			BZ2_bzReadGetUnused( &bzerror, bzFile, &unused, &nUnused );
 			BZ2_bzReadClose( &bzerror, bzFile );
+			if( nUnused )
+				fseek( fhFile, -nUnused, SEEK_CUR );
 		}
 		else
 		{
