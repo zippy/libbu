@@ -31,6 +31,11 @@ void HashTable::set( int j, const void *newID, const void *newData )
 	aTable[j].data = newData;
 }
 
+void HashTable::clear()
+{
+	memset( aTable, 0, sizeof(HashNode) * nTableSize );
+}
+
 bool HashTable::isFilled( int j )
 {
 	return (aTable[j].id != NULL)||(aTable[j].bDeleted);

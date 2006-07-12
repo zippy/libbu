@@ -175,6 +175,13 @@ public:
 	 */
 	bool del( const void *id, int nSkip=0 );
 
+	/**
+	 * Deletes every entry in the hash table.  See the notes on del to see what
+	 * this means, except that since no data is being kept, the entire table is
+	 * just marked as usable space.
+	 */
+	void clear();
+
 private:
 	/**
 	 * Contains info related to a position in the hashtable.  Used for
