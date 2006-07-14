@@ -34,7 +34,7 @@ public:
 	 * such an operation could take considerable time, depending on the pending
 	 * data and state of the receiving end.
 	 */
-	~Connection();
+	virtual ~Connection();
 
 	/**
 	 * Open a connection to a remote server.  This sets up this connection as

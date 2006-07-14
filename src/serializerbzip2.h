@@ -9,7 +9,7 @@ class SerializerBZip2 : public Serializer
 public:
 	SerializerBZip2(FILE *fhFile, bool bLoading);
 	SerializerBZip2(char *sFileName, bool bLoading);
-	~SerializerBZip2();
+	virtual ~SerializerBZip2();
 
 	virtual void close();
 

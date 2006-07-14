@@ -24,7 +24,7 @@ public:
 	/**
 	 * Destroy the ArrayList
 	 */
-	~ArrayList();
+	virtual ~ArrayList();
 
 	void *getAt( int nIndex );
 	void append( void *pData );

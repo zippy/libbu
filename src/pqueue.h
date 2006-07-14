@@ -19,7 +19,7 @@ public:
 	/**
 	 * Cleanup all contained queues.
 	 */
-	~PQueue();
+	virtual ~PQueue();
 
 	/** Add a new item to the queue at the specified priority.  A lower
 	  * number means a higher priority!

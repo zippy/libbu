@@ -27,7 +27,7 @@ public:
 	  *@author Mike Buland
 	  */
 	TokenString( const char *lpNewTokenString=NULL );
-	~TokenString();
+	virtual ~TokenString();
 
 	/** Performs a tokenizing parse on the given command line, setting it as
 	  * the internal command line for all future tokenizing (excluding

@@ -33,7 +33,7 @@ public:
 	/**
 	 * Delete the node and cleanup all memory.
 	 */
-	~XmlNode();
+	virtual ~XmlNode();
 
 	/**
 	 * Change the name of the node.

@@ -18,7 +18,7 @@ public:
 	StaticString( const char *lpNewStr, int nNewLen=-1 );
 	StaticString( StaticString &xSrcStr, int nNewLen=-1 );
 	StaticString( int nLength );
-	~StaticString();
+	virtual ~StaticString();
 
 	char *getString();
 	int getLength();

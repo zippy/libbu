@@ -55,7 +55,7 @@ public:
 	/**
 	 * Standard Deconstructor.
 	 */
-	~Http();
+	virtual ~Http();
 
 	/**
 	 * Perform all parsing needed to figure out what an HTTP client wants from

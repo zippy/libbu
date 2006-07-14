@@ -20,7 +20,7 @@ public:
 	/**
 	 * Destroy your chain.
 	 */
-	~ProgramChain();
+	virtual ~ProgramChain();
 
 	/** Adds a link to the end of the chain.
 	  *@param pLink A pointer to the link to add to the chain.

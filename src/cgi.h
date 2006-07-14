@@ -43,7 +43,7 @@ public:
 	/**
 	 * Destroy the cgi object.
 	 */
-	~Cgi(  );
+	virtual ~Cgi(  );
 
 	/**
 	 * Get's the value for a variable as a character string.  The name is the

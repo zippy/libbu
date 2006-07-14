@@ -28,7 +28,7 @@ public:
 	/**
 	 * Clean up the data structures, but not the contained elements.
 	 */
-	~RingList();
+	virtual ~RingList();
 	
 	/**
 	 * Get an element at the specified index.

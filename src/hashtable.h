@@ -69,7 +69,7 @@ public:
 	 * Destroys the hashtable, cleaning up all internal storage, but not stored
 	 * elements.  Also deletes the HashFunction passed in in the constructor.
 	 */
-	~HashTable();
+	virtual ~HashTable();
 
 	/** Inserts an item into the hashtable.  This function will trigger a
 	  * rehash if adding another item would force the table's load factor over

@@ -21,7 +21,7 @@ public:
 	md5();
 
 	/** Deconstruct */
-	~md5();
+	virtual ~md5();
 
 	/**
 	 * Create a sum of a standard c string, null terminated.  This is probably

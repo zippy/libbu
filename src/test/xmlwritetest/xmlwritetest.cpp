@@ -1,5 +1,6 @@
 #include "xmlfilewriter.h"
 #include "xmlstringwriter.h"
+#include "xmlstringreader.h"
 
 void fillItIn( XmlWriter &w )
 {
@@ -28,6 +29,12 @@ void fillItIn( XmlWriter &w )
 int main()
 {
 	printf("Testing XmlWriter...\n");
+
+	XmlStringReader *xsr = new XmlStringReader("<stuff/>");
+
+	printf("%08X\n%08X\n%08X\n", xsr, (XmlReader *)xsr, (XmlDocument *)xsr );
+
+	delete (XmlDocument *)xsr;
 	//XmlFileWriter wf("test.xml", "\t");
 
 	//fillItIn( wf );

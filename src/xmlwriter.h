@@ -36,7 +36,7 @@ public:
 	/**
 	 * Destroy the writer.
 	 */
-	~XmlWriter();
+	virtual ~XmlWriter();
 
 	/**
 	 * This override of the parent class closeNode function calls the parent

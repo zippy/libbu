@@ -32,7 +32,7 @@ public:
 	/**
 	 * Destroy the string writer and the internal string.
 	 */
-	~XmlStringWriter();
+	virtual ~XmlStringWriter();
 
 	/**
 	 * Get the string that was built.  This is only valid after the document has

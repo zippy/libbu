@@ -36,7 +36,7 @@ public:
 	/**
 	 * Destroy this string reader.
 	 */
-	~XmlStringReader();
+	virtual ~XmlStringReader();
 
 private:
 	char getChar( int nIndex = 0 );

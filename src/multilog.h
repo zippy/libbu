@@ -42,7 +42,7 @@ public:
 	typedef struct LogEntry
 	{
 		/** Safely delete a log entry. */
-		~LogEntry();
+		virtual ~LogEntry();
 		time_t xTime;	/**< The time the log entry was made. */
 		int nLevel;		/**< The log-level of the entry. */
 		char *lpFile;	/**< The name of the file this entry came from. */
@@ -59,7 +59,7 @@ protected:
 	/**
 	 * Destroy the multilog.
 	 */
-	~MultiLog();
+	virtual ~MultiLog();
 
 	/**
 	 * Append a new logentry to the log list, possibly pushing an old entry off.

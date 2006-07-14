@@ -9,7 +9,7 @@ class SerializerText : public Serializer
 public:
 	SerializerText(FILE *fhFile, bool bLoading);
 	SerializerText(char *sFileName, bool bLoading);
-	~SerializerText();
+	virtual ~SerializerText();
 
 	virtual void close();
 

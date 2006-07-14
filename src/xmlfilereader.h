@@ -35,7 +35,7 @@ public:
 	/**
 	 * Destroy the reader and cleanup.
 	 */
-	~XmlFileReader();
+	virtual ~XmlFileReader();
 
 private:
 	char getChar( int nIndex = 0 );

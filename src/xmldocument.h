@@ -27,7 +27,7 @@ public:
 	/**
 	 * Destroy all contained nodes.
 	 */
-	~XmlDocument();
+	virtual ~XmlDocument();
 
 	/**
 	 * Add a new node to the document.  The new node is appended to the end of

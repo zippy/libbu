@@ -27,7 +27,7 @@ public:
 	/**
 	 * Delete all list data, but do not delete any of the contained elements.
 	 */
-    ~LinkedList();
+	virtual ~LinkedList();
 
     void *getAt( int nIndex );
     void append( void *pData );

@@ -14,7 +14,7 @@ class ProtocolTelnet : public Protocol
 {
 public:
 	ProtocolTelnet();
-    ~ProtocolTelnet();
+	virtual ~ProtocolTelnet();
 
     bool onNewData();
 	bool onNewConnection();

@@ -9,7 +9,7 @@ class SerializerBinary : public Serializer
 public:
 	SerializerBinary(FILE *fhFile, bool bLoading);
 	SerializerBinary(char *sFileName, bool bLoading);
-	~SerializerBinary();
+	virtual ~SerializerBinary();
 
 	virtual void close();
 

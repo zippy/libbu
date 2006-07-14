@@ -37,7 +37,7 @@ public:
 	/**
 	 * Destroy this XmlReader.
 	 */
-	~XmlReader();
+	virtual ~XmlReader();
 
 	/**
 	 * Build a document based on some kind of input.  This is called

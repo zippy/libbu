@@ -49,7 +49,7 @@ public:
 	/**
 	 * Destroy the object.
 	 */
-	~MultiLogText();
+	virtual ~MultiLogText();
 	
 	bool openLog();
 	bool append( MultiLog::LogEntry *pEntry );

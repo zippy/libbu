@@ -19,7 +19,7 @@ public:
 	/**
 	 * Standard Deconstructor.
 	 */
-	~HashFunctionString();
+	virtual ~HashFunctionString();
 	unsigned long int hash( const void *id );
 	bool cmpIDs( const void *id1, const void *id2 );
 };

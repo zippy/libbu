@@ -33,7 +33,7 @@ public:
 	 * Cleans up everything, and even clears out all still-connected Connection
 	 * objects.
 	 */
-	~ConnectionManager();
+	virtual ~ConnectionManager();
 
 	/**
 	 * Starts a server socket and binds to it, listening for new connections.

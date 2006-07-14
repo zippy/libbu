@@ -20,7 +20,7 @@ public:
 	/**
 	 * Standard Deconstructor.
 	 */
-	~HashFunctionCaseString();
+	virtual ~HashFunctionCaseString();
 	unsigned long int hash( const void *id );
 	bool cmpIDs( const void *id1, const void *id2 );
 };

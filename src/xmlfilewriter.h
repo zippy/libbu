@@ -33,7 +33,7 @@ public:
 	/**
 	 * Destroy the writer.
 	 */
-	~XmlFileWriter();
+	virtual ~XmlFileWriter();
 
 private:
 	void writeString( const char *sString );

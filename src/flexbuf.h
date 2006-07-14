@@ -24,7 +24,7 @@ public:
 	/**
 	 * Clean up the FlexBuf, delete all buffers.
 	 */
-	~FlexBuf();
+	virtual ~FlexBuf();
 
 	/** Appends a whole string of data to the buffer.  The string
 	  * must be null terminated.
