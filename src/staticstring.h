@@ -38,6 +38,10 @@ public:
 	operator int();
 	char *operator+( int nAmnt );
 	char *operator-( int nAmnt );
+	bool operator==( const char *str );
+	bool operator==( StaticString &str );
+	bool operator!=( const char *str );
+	bool operator!=( StaticString &str );
 
 	void clear();
 

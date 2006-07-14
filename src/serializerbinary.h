@@ -8,7 +8,7 @@ class SerializerBinary : public Serializer
 {
 public:
 	SerializerBinary(FILE *fhFile, bool bLoading);
-	SerializerBinary(char *sFileName, bool bLoading);
+	SerializerBinary(const char *sFileName, bool bLoading);
 	virtual ~SerializerBinary();
 
 	virtual void close();

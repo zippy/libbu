@@ -12,6 +12,12 @@ private:
 	bool bLoading;
 public:
 	bool isLoading();
+
+	enum
+	{
+		load	=	true,
+		save	=	false
+	};
 	
 	Serializer(bool bLoading);
 	virtual ~Serializer();

@@ -10,12 +10,10 @@ HashFunctionString::~HashFunctionString()
 
 unsigned long int HashFunctionString::hash( const void *id )
 {
-	const char *str = (const char *)id;
 	unsigned long int nPos = 0;
-	for( int j = 0; str[j] != '\0'; j++ )
+	for( const char *s = (const char *)id; *s; s++ )
 	{
-		nPos = str[j] + (nPos << 6) + (nPos << 16) - nPos;
-//		nPos += nPos<<16|(((unsigned long int)str[j])<<((j*7)%24));
+		nPos = *s + (nPos << 6) + (nPos << 16) - nPos;
 	}
 	return nPos;
 }

@@ -8,7 +8,7 @@ SerializerBinary::SerializerBinary(FILE *fhFile, bool bLoading):
 {	
 }
 
-SerializerBinary::SerializerBinary(char *sFileName, bool bLoading):
+SerializerBinary::SerializerBinary(const char *sFileName, bool bLoading):
 	Serializer(bLoading),
 	bCloseFile(true)
 {

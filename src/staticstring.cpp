@@ -198,3 +198,30 @@ void StaticString::serialize( Serializer &ar )
 	}
 }
 
+bool StaticString::operator==( const char *str )
+{
+	const char *a = str, *b = lpStr;
+	for(; *a == *b; a++, b++ ) if( *a == '\0' && *b == '\0' ) return true;
+	return false;
+}
+
+bool StaticString::operator==( StaticString &str )
+{
+	const char *a = str.lpStr, *b = lpStr;
+	for(; *a == *b; a++, b++ ) if( *a == '\0' && *b == '\0' ) return true;
+	return false;
+}
+
+bool StaticString::operator!=( const char *str )
+{
+	const char *a = str, *b = lpStr;
+	for(; *a == *b; a++, b++ ) if( *a == '\0' && *b == '\0' ) return false;
+	return true;
+}
+
+bool StaticString::operator!=( StaticString &str )
+{
+	const char *a = str.lpStr, *b = lpStr;
+	for(; *a == *b; a++, b++ ) if( *a == '\0' && *b == '\0' ) return false;
+	return true;
+}
