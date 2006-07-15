@@ -10,6 +10,12 @@ XmlFileWriter::XmlFileWriter( const char *sFileName, const char *sIndent, XmlNod
 	fprintf( fh, "<?xml version=\"1.0\"?>\n");
 }
 
+XmlFileWriter::XmlFileWriter( FILE *fh, const char *sIndent, XmlNode *pRoot ) :
+	XmlWriter( sIndent, pRoot ),
+	fh( fh )
+{
+}
+
 XmlFileWriter::~XmlFileWriter()
 {
 	fclose( fh );

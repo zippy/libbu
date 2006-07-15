@@ -29,6 +29,7 @@ public:
 	 *@param sIndent The indent text to use, if any.
 	 */
 	XmlFileWriter( const char *sFileName, const char *sIndent=NULL, XmlNode *pRoot=NULL );
+	XmlFileWriter( FILE *fh, const char *sIndent=NULL, XmlNode *pRoot=NULL );
 
 	/**
 	 * Destroy the writer.
