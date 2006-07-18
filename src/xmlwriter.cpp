@@ -58,7 +58,7 @@ std::string XmlWriter::escape( std::string sIn )
 		if( ((*i >= ' ' && *i <= '9') ||
 			(*i >= 'a' && *i <= 'z') ||
 			(*i >= 'A' && *i <= 'Z') ) &&
-			(*i != '\"' && *i != '\'' )
+			(*i != '\"' && *i != '\'' && *i != '&')
 		  )
 		{
 			sOut += *i;
