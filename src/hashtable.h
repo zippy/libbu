@@ -90,6 +90,8 @@ public:
 	  *@returns A pointer to the data stored at the given id.
 	  */
 	const void *get( const void *id, unsigned long int nSkip=0 );
+	
+	const void *getKey( const void *id, unsigned long int nSkip=0 );
 
 	/** Gets the total capacity of the hashtable.  This is actually the number
 	  * of total positions available inside the hashtable at the moment.  This

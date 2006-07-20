@@ -241,6 +241,51 @@ const void *HashTable::get( const void *id, unsigned long int nSkip )
 	return NULL;
 }
 
+const void *HashTable::getKey( const void *id, unsigned long int nSkip )
+{
+	unsigned long int nPos = hFunc->hash( id )%nTableSize;
+
+	for( unsigned long int j=0; j < 32; nPos = (nPos+(1<<j))%nTableSize, j++ )
+	{
+		if( !isFilled( nPos ) ) return NULL;
+		if( hFunc->cmpIDs( id, aTable[nPos].id ) &&
+			aTable[nPos].bDeleted == false )
+		{
+			if( nSkip == 0 )
+			{
+				return aTable[nPos].id;
+			}
+			else
+			{
+				nSkip--;
+			}
+		}
+	}
+
+	if( bAllowDupes )
+	{
+		int nOldPos = nPos;
+		for( nPos++; nPos != nOldPos; nPos=(nPos+1)%nTableSize )
+		{
+			if( !isFilled( nPos ) ) return NULL;
+			if( hFunc->cmpIDs( id, aTable[nPos].id ) &&
+				aTable[nPos].bDeleted == false )
+			{
+				if( nSkip == 0 )
+				{
+					return aTable[nPos].id;
+				}
+				else
+				{
+					nSkip--;
+				}
+			}
+		}
+	}
+
+	return NULL;
+}
+
 void *HashTable::getFirstItemPos()
 {
 	HashPos *pos = new HashPos;
