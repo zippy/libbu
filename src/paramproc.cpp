@@ -113,6 +113,18 @@ ParamProc::ParamProc()
 
 ParamProc::~ParamProc()
 {
+	for( std::list<ArgSpec *>::iterator i = lArg.begin();
+		 i != lArg.end(); i++ )
+	{
+		delete *i;
+	}
+
+	for( std::list<Banner *>::iterator i = lBan.begin();
+		 i != lBan.end(); i++ )
+	{
+		delete *i;
+	}
+
 }
 /*
 void ParamProc::addParam( const char *lpWord, char cChar, Proc proc, ParamPtr val )
