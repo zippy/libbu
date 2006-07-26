@@ -1,5 +1,5 @@
 #include "xmlreader.h"
-#include "xmlexception.h"
+#include "exceptions.h"
 #include <string.h>
 #include "hashfunctionstring.h"
 

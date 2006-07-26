@@ -1,5 +1,5 @@
 #include "xmlfilereader.h"
-#include "xmlexception.h"
+#include "exceptions.h"
 #include <string.h>
 
 XmlFileReader::XmlFileReader( const char *sFile, bool bStrip )

@@ -1,5 +1,5 @@
-#ifndef EXCEPTION_H
-#define EXCEPTION_H
+#ifndef EXCEPTION_BASE_H
+#define EXCEPTION_BASE_H
 
 #include <string>
 #include <exception>
@@ -9,7 +9,7 @@
  * A generalized Exception base class.  This is nice for making general and
  * flexible child classes that can create new error code classes.
  */
-class Exception : public std::exception
+class ExceptionBase : public std::exception
 {
 public:
 	/**
@@ -19,27 +19,27 @@ public:
 	 * program can handle the exception in a better way.
 	 * @param sFormat The format of the text.  See printf for more info.
 	 */
-	Exception( const char *sFormat, ... ) throw();
+	ExceptionBase( const char *sFormat, ... ) throw();
 	
 	/**
 	 * 
 	 * @param nCode 
 	 * @param sFormat
 	 */
-	Exception( int nCode, const char *sFormat, ... ) throw();
+	ExceptionBase( int nCode, const char *sFormat, ... ) throw();
 	
 	/**
 	 * 
 	 * @param nCode 
 	 * @return 
 	 */
-	Exception( int nCode=0 ) throw();
+	ExceptionBase( int nCode=0 ) throw();
 	
 	/**
 	 * 
 	 * @return 
 	 */
-	virtual ~Exception() throw();
+	virtual ~ExceptionBase() throw();
 
 	/**
 	 * 
@@ -66,7 +66,7 @@ private:
 };
 
 #define subExceptionDecl( name )											\
-class name : public Exception												\
+class name : public ExceptionBase											\
 {																			\
 	public:																	\
 		name( const char *sFormat, ... ) throw ();							\
@@ -76,7 +76,7 @@ class name : public Exception												\
 
 #define subExceptionDef( name )												\
 name::name( const char *lpFormat, ... ) throw() :							\
-	Exception( 0 )															\
+	ExceptionBase( 0 )														\
 {																			\
 	va_list ap;																\
 	va_start( ap, lpFormat );												\
@@ -84,7 +84,7 @@ name::name( const char *lpFormat, ... ) throw() :							\
 	va_end( ap );															\
 }																			\
 name::name( int nCode, const char *lpFormat, ... ) throw() :				\
-	Exception( nCode )														\
+	ExceptionBase( nCode )													\
 {																			\
 	va_list ap;																\
 	va_start( ap, lpFormat );												\
@@ -92,7 +92,7 @@ name::name( int nCode, const char *lpFormat, ... ) throw() :				\
 	va_end( ap );															\
 }																			\
 name::name( int nCode ) throw() :											\
-	Exception( nCode )														\
+	ExceptionBase( nCode )													\
 {																			\
 }
 

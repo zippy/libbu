@@ -1,7 +1,7 @@
-#include "exception.h"
+#include "exceptionbase.h"
 #include <stdarg.h>
 
-Exception::Exception( const char *lpFormat, ... ) throw() :
+ExceptionBase::ExceptionBase( const char *lpFormat, ... ) throw() :
 	nErrorCode( 0 ),
 	sWhat( NULL )
 {
@@ -12,7 +12,7 @@ Exception::Exception( const char *lpFormat, ... ) throw() :
 	va_end(ap);
 }
 
-Exception::Exception( int nCode, const char *lpFormat, ... ) throw() :
+ExceptionBase::ExceptionBase( int nCode, const char *lpFormat, ... ) throw() :
 	nErrorCode( nCode ),
 	sWhat( NULL )
 {
@@ -23,13 +23,13 @@ Exception::Exception( int nCode, const char *lpFormat, ... ) throw() :
 	va_end(ap);
 }
 
-Exception::Exception( int nCode ) throw() :
+ExceptionBase::ExceptionBase( int nCode ) throw() :
 	nErrorCode( nCode ),
 	sWhat( NULL )
 {
 }
 
-Exception::~Exception() throw()
+ExceptionBase::~ExceptionBase() throw()
 {
 	if( sWhat )
 	{
@@ -38,7 +38,7 @@ Exception::~Exception() throw()
 	}
 }
 
-void Exception::setWhat( const char *lpFormat, va_list &vargs )
+void ExceptionBase::setWhat( const char *lpFormat, va_list &vargs )
 {
 	if( sWhat ) delete[] sWhat;
 	int nSize;
@@ -48,12 +48,12 @@ void Exception::setWhat( const char *lpFormat, va_list &vargs )
 	vsnprintf( sWhat, nSize+1, lpFormat, vargs );
 }
 
-const char *Exception::what() const throw()
+const char *ExceptionBase::what() const throw()
 {
 	return sWhat;
 }
 
-int Exception::getErrorCode()
+int ExceptionBase::getErrorCode()
 {
 	return nErrorCode;
 }
