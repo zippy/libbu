@@ -1,6 +1,9 @@
 #include "xmlexception.h"
 #include <stdarg.h>
 
+subExceptionDef( XmlException )
+
+/*
 XmlException::XmlException( const char *lpFormat, ... ) throw() :
 	Exception( 0 )
 {
@@ -25,3 +28,4 @@ XmlException::XmlException( int nCode ) throw() :
 	Exception( nCode )
 {
 }
+*/

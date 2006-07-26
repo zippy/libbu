@@ -65,4 +65,35 @@ private:
 	int nErrorCode;	/**< The code for the error that occured. */
 };
 
+#define subExceptionDecl( name )											\
+class name : public Exception												\
+{																			\
+	public:																	\
+		name( const char *sFormat, ... ) throw ();							\
+		name( int nCode, const char *sFormat, ... ) throw();				\
+		name( int nCode=0 ) throw ();										\
+};
+
+#define subExceptionDef( name )												\
+name::name( const char *lpFormat, ... ) throw() :							\
+	Exception( 0 )															\
+{																			\
+	va_list ap;																\
+	va_start( ap, lpFormat );												\
+	setWhat( lpFormat, ap );												\
+	va_end( ap );															\
+}																			\
+name::name( int nCode, const char *lpFormat, ... ) throw() :				\
+	Exception( nCode )														\
+{																			\
+	va_list ap;																\
+	va_start( ap, lpFormat );												\
+	setWhat( lpFormat, ap );												\
+	va_end( ap );															\
+}																			\
+name::name( int nCode ) throw() :											\
+	Exception( nCode )														\
+{																			\
+}
+
 #endif
