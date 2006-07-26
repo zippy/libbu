@@ -3,6 +3,7 @@
 
 #include <string>
 #include "serializable.h"
+//#include "hashable.h"
 
 /**
  * Simple string managing class.  Allows for dynamically allocated string data
@@ -11,12 +12,14 @@
  * and making accessing meta-info like length fast and reliable as well.
  *@author Mike Buland
  */
-class StaticString : public Serializable
+class StaticString : public Serializable//, public Hashable
 {
 public:
 	StaticString();
-	StaticString( const char *lpNewStr, int nNewLen=-1 );
-	StaticString( StaticString &xSrcStr, int nNewLen=-1 );
+	StaticString( const char *lpNewStr, int nNewLen );
+	StaticString( const char *lpNewStr );
+	StaticString( StaticString &xSrcStr, int nNewLen );
+	StaticString( StaticString &xSrcStr );
 	StaticString( int nLength );
 	virtual ~StaticString();
 
@@ -46,6 +49,8 @@ public:
 	void clear();
 
 	virtual void serialize( class Serializer &ar );
+
+	virtual unsigned long int getHashCode();
 
 private:
 	char *lpStr;

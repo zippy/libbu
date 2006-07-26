@@ -1,16 +1,16 @@
 #include <iostream>
-#include "exception.h"
+#include "exceptions.h"
 
 int main()
 {
 	try
 	{
-		throw Exception( 42, "There was an error on line: %d", __LINE__ );
+		throw ExceptionBase( 42, "There was an error on line: %d", __LINE__ );
 	}
-	catch( Exception &e )
+	catch( ExceptionBase &e )
 	{
 		std::cout << "Error "<< e.getErrorCode() << ": " << e.what() << "\n";
 	}
 
-	throw Exception( 112, "This exception wasn't caught!");
+	throw ExceptionBase( 112, "This exception wasn't caught!");
 }

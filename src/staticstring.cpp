@@ -25,11 +25,25 @@ StaticString::StaticString( const char *lpNewStr, int nNewLen )
 	setString( lpNewStr, nNewLen );
 }
 
+StaticString::StaticString( const char *lpNewStr )
+{
+	lpStr = NULL;
+	nLen = 0;
+	setString( lpNewStr, -1 );
+}
+
 StaticString::StaticString( StaticString &xSrcStr, int nNewLen )
 {
 	lpStr = NULL;
 	nLen = 0;
 	setString( xSrcStr, nNewLen );
+}
+
+StaticString::StaticString( StaticString &xSrcStr )
+{
+	lpStr = NULL;
+	nLen = 0;
+	setString( xSrcStr, -1 );
 }
 
 StaticString::~StaticString()
@@ -225,3 +239,14 @@ bool StaticString::operator!=( StaticString &str )
 	for(; *a == *b; a++, b++ ) if( *a == '\0' && *b == '\0' ) return false;
 	return true;
 }
+
+unsigned long int StaticString::getHashCode()
+{
+	unsigned long int nPos = nLen;
+	for( const char *s = (const char *)lpStr; *s; s++ )
+	{
+		nPos = *s + (nPos << 6) + (nPos << 16) - nPos;
+	}
+	return nPos;
+}
+
