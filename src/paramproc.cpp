@@ -488,6 +488,8 @@ int ParamProc::help( int argc, char *argv[] )
 			printf( (*b)->sBanner.getString() );
 		}
 	}
+
+	exit( 0 );
 }
 
 void ParamProc::addHelpBanner( const char *sHelpBanner )
