@@ -463,7 +463,14 @@ int ParamProc::help( int argc, char *argv[] )
 		printf("  ");
 		if( (*i)->cChar )
 		{
-			printf("-%c, ", (*i)->cChar );
+			if( (*i)->sWord.getString() )
+			{
+				printf("-%c, ", (*i)->cChar );
+			}
+			else
+			{
+				printf("-%c  ", (*i)->cChar );
+			}
 		}
 		else
 		{

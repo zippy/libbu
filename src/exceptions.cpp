@@ -2,4 +2,4 @@
 #include <stdarg.h>
 
 subExceptionDef( XmlException )
-
+subExceptionDef( FileException )

@@ -1,6 +1,6 @@
-#include "../xmlfilereader.h"
-#include "../xmlstringreader.h"
-#include "../xmlfilewriter.h"
+#include "xmlfilereader.h"
+#include "xmlstringreader.h"
+#include "xmlfilewriter.h"
 
 int main( int argc, char *argv[] )
 {

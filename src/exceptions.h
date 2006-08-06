@@ -5,5 +5,6 @@
 #include <stdarg.h>
 
 subExceptionDecl( XmlException )
+subExceptionDecl( FileException )
 
 #endif

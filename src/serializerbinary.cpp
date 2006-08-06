@@ -1,5 +1,6 @@
 #include "serializerbinary.h"
 #include "serializable.h"
+#include "exceptions.h"
 
 SerializerBinary::SerializerBinary(FILE *fhFile, bool bLoading):
 	Serializer(bLoading),
@@ -15,10 +16,14 @@ SerializerBinary::SerializerBinary(const char *sFileName, bool bLoading):
 	if (bLoading)
 	{
 		fhFile = fopen(sFileName, "rb");
+		if( fhFile == NULL )
+			throw FileException("Unable to open file: %s", sFileName );
 	}
 	else
 	{
 		fhFile = fopen(sFileName, "wb");
+		if( fhFile == NULL )
+			throw FileException("Unable to open file: %s", sFileName );
 	}
 }
 
