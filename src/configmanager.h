@@ -1,32 +1,24 @@
-#ifndef CONFIG_MANAGER_H
-#define CONFIG_MANAGER_H
+#ifndef CONFIG_MANAGER_BASE_H
+#define CONFIG_MANAGER_BASE_H
 
-#include "config.h"
-#include "singleton.h"
 #include <string>
+#include <list>
 
-class ConfigManager : public Singleton<ConfigManager>
+class ConfigManagerBase
 {
-	friend class Singleton<ConfigManager>;
-protected:
-	ConfigManager();
-	~ConfigManager();
+public:
+	ConfigManagerBase();
+	~ConfigManagerBase();
 	
 public:
+	void addSearchPath( const std::string &sPath );
 	void loadConfig( const char *lpProfile="default" );
 
 private:
 	bool parseConfig( const char *lpFileName, const char *lpProfile );
-	bool processProfile( class XmlNode *pBase );
+	virtual bool processProfile( class XmlNode *pBase )=0;
 
-public:  // Getters, these should be moved if we make this a base class...
-	std::string &getDefLanguage();
-	std::string &getBackend();
-
-private: // Properties, these should be moved if we make this a base class...
-	std::string sDefLang;	/**< The default language for all operations. */
-	std::string sBackend;	/**< The backend database plugin name. */
-	XmlNode *pBackend;		/**< The xml snippet describing the backend. */
+	std::list<std::string> lSearchPath;
 };
 
 #endif
