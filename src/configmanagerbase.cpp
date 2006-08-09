@@ -4,11 +4,11 @@
 #include "xmlfilereader.h"
 #include "configmanagerbase.h"
 
-ConfigManagerBase::ConfigManager()
+ConfigManagerBase::ConfigManagerBase()
 {
 }
 
-ConfigManagerBase::~ConfigManager()
+ConfigManagerBase::~ConfigManagerBase()
 {
 }
 
