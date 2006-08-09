@@ -17,13 +17,13 @@ void ConfigManagerBase::addSearchPath( const std::string &sPath )
 	lSearchPath.push_back( sPath );
 }
 
-void ConfigManagerBase::loadConfig( const char *lpProfile )
+void ConfigManagerBase::loadConfig( const std::string &sFileName, const char *lpProfile )
 {
 	// Try a few locations...
 	std::list<std::string>::const_iterator i;
 	for( i = lSearchPath.begin(); i != lSearchPath.end(); i++ )
 	{
-		if( parseConfig( (*i).c_str(), lpProfile ) )
+		if( parseConfig( (*i+sFileName).c_str(), lpProfile ) )
 		{
 			break;
 		}

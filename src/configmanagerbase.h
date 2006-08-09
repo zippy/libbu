@@ -12,7 +12,7 @@ public:
 	
 public:
 	void addSearchPath( const std::string &sPath );
-	void loadConfig( const char *lpProfile="default" );
+	void loadConfig( const std::string &sFileName, const char *lpProfile="default" );
 
 private:
 	bool parseConfig( const char *lpFileName, const char *lpProfile );
