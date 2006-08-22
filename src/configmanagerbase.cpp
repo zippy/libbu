@@ -23,7 +23,7 @@ void ConfigManagerBase::loadConfig( const std::string &sFileName, const char *lp
 	std::list<std::string>::const_iterator i;
 	for( i = lSearchPath.begin(); i != lSearchPath.end(); i++ )
 	{
-		if( parseConfig( (*i+sFileName).c_str(), lpProfile ) )
+		if( parseConfig( (*i + sFileName).c_str(), lpProfile ) )
 		{
 			break;
 		}
