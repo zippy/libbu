@@ -122,6 +122,13 @@ public:
 		return p;
 	}
 
+	bool hasPlugin( const char *lpName )
+	{
+		if( hPlugin[lpName] == NULL )
+			return false;
+		return true;
+	}
+
 	void destroy( T *pPlug )
 	{
 		PluginReg *pReg = (PluginReg *)hObj[pPlug];
