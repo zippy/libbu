@@ -13,6 +13,10 @@ public:
 			case 'd':
 				throw "Hello";
 				break;
+
+			case 'w':
+				getConnection()->appendOutput("Hello");
+				break;
 		};
 
 		return true;

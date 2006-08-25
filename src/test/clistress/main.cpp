@@ -6,10 +6,12 @@ int main()
 
 	c.open("localhost", 4001 );
 
-	c.appendOutput("d");
+	c.appendOutput("w");
 	c.writeOutput();
 
-	c.waitForInput( 5, 40, 0 );
+	c.waitForInput( 6, 5, 0 );
+
+	printf("read: %s\n", c.getInput() );
 
 	c.close();
 

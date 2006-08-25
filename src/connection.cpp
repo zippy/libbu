@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
@@ -238,19 +239,20 @@ int Connection::readInput()
 bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack )
 {
 	fd_set rfds;
-	struct timeval tv;
+	struct timeval tv, start, end;
+	struct timezone tz;
 	int retval;
 	
+	gettimeofday( &start, &tz );
+
 	FD_ZERO(&rfds);
 	FD_SET(nSocket, &rfds);
 
 	tv.tv_sec = nSec;
 	tv.tv_usec = nUSec;
 
+	//printf("Starting at %d %d\n", nSec, nUSec );
 	retval = select( nSocket+1, &rfds, NULL, NULL, &tv );
-
-	if( pnSecBack ) (*pnSecBack) = tv.tv_sec;
-	if( pnUSecBack ) (*pnUSecBack) = tv.tv_usec;
 
 	if( retval == -1 )
 	{
@@ -260,7 +262,7 @@ bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack
 	}
 	else if( retval )
 	{
-		printf("retval=%d, nSocket=%d,%d, sec=%d, usec=%d\n", retval, nSocket, FD_ISSET( nSocket, &rfds ), tv.tv_sec, tv.tv_usec );
+		//printf("retval=%d, nSocket=%d,%d, sec=%d, usec=%d\n", retval, nSocket, FD_ISSET( nSocket, &rfds ), tv.tv_sec, tv.tv_usec );
 		// None of them have data, but the connection is still active.
 		if( readInput() == 0 )
 		{
@@ -268,10 +270,32 @@ bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack
 			throw ConnectionException( excodeConnectionClosed, "Connection closed");
 		}
 	}
+
+	gettimeofday( &end, &tz );
+
+	int st, ust;
+	st = nSec - ( end.tv_sec - start.tv_sec );
+	if( ( end.tv_usec - start.tv_usec ) > nUSec )
+	{
+		(st)--;
+		ust = 1000000 - (end.tv_usec - start.tv_usec);
+	}
 	else
 	{
-		return true;
+		ust = nUSec - (end.tv_usec - start.tv_usec);
 	}
+
+	if( st < 0 )
+	{
+		st = ust = 0;
+	}
+
+	*pnSecBack = st;
+	*pnUSecBack = ust;
+
+	//printf("New time:  %d %d\n", *pnSecBack, *pnUSecBack );
+
+	return true;
 }
 
 void Connection::waitForInput( int nBytesIn, int nSec, int nUSec )
