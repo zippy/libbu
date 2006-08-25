@@ -167,7 +167,7 @@ bool ConnectionManager::scanConnections( int nTimeout, bool bForceTimeout )
 				}
 
 				/* Data arriving on an already-connected socket. */
-				if( pCon->readInput() != true )
+				if( pCon->readInput() == 0 )
 				{
 					xLog.LineLog( MultiLog::LStatus, "Closing connection due to disconnect.");
 					close( i );

@@ -215,6 +215,8 @@ int Connection::readInput()
 		}
 		else
 		{
+			if( nbytes == 0 )
+				break;
 			nTotalRead += nbytes;
 			appendInput( buffer, nbytes );
 			/* Data read. */
@@ -258,6 +260,7 @@ bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack
 	}
 	else if( retval )
 	{
+		printf("retval=%d, nSocket=%d,%d, sec=%d, usec=%d\n", retval, nSocket, FD_ISSET( nSocket, &rfds ), tv.tv_sec, tv.tv_usec );
 		// None of them have data, but the connection is still active.
 		if( readInput() == 0 )
 		{
