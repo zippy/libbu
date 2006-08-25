@@ -6,5 +6,6 @@
 
 subExceptionDecl( XmlException )
 subExceptionDecl( FileException )
+subExceptionDecl( ConnectionException )
 
 #endif

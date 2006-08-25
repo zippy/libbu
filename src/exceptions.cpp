@@ -3,3 +3,4 @@
 
 subExceptionDef( XmlException )
 subExceptionDef( FileException )
+subExceptionDef( ConnectionException )

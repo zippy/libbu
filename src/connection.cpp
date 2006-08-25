@@ -9,6 +9,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include "exceptions.h"
 
 Connection::Connection()
 {
@@ -244,10 +245,9 @@ bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack
 	struct timeval tv;
 	int retval;
 	
-	/* Watch stdin (fd 0) to see when it has input. */
 	FD_ZERO(&rfds);
 	FD_SET(nSocket, &rfds);
-	/* Wait up to five seconds. */
+
 	tv.tv_sec = nSec;
 	tv.tv_usec = nUSec;
 
@@ -256,7 +256,7 @@ bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack
 	if( pnSecBack ) (*pnSecBack) = tv.tv_sec;
 	if( pnUSecBack ) (*pnUSecBack) = tv.tv_usec;
 
-	if (retval == -1)
+	if( retval == -1 )
 	{
 		// Oh my god!!! some kind of horrible problem!!!!
 		return false;
@@ -269,6 +269,24 @@ bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack
 	else
 	{
 		return true;
+	}
+}
+
+void Connection::waitForInput( int nBytesIn, int nSec, int nUSec )
+{
+	int rlen = getInputAmnt();
+
+	if( rlen >= nBytesIn )
+		return;
+
+	while( rlen < nBytesIn )
+	{
+		if( nSec == 0 && nUSec == 0 )
+		{
+			throw ConnectionException("Socket Timeout");
+		}
+		readInput( nSec, nUSec, &nSec, &nUSec );
+		rlen = getInputAmnt();
 	}
 }
 

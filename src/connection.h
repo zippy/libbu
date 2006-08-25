@@ -283,6 +283,18 @@ public:
 	 */
 	bool readInput( int nSec, int nUSec, int *pnSecBack=NULL, int *pnUSecBack=NULL );
 
+	/**
+	 * Waits until at least nBytesIn are read into the input buffer and ready
+	 * to be used.  Wait at most nSec seconds plus nUSec micro seconds.
+	 * If the timeout is exceeded, this function throws an exception.  If this
+	 * function returns normally, you are guranteed to have at least nBytesIn
+	 * bytes in your input buffer.
+	 *@param nBytesIn Number of bytes to read.
+	 *@param nSec The max seconds to wait.
+	 *@param sUSec The max microseconds to wait.
+	 */
+	void waitForInput( int nBytesIn, int nSec, int nUSec );
+
 	/** Writes all data that is pending to the socket.
 	  *@returns True if all data was written succesfully, false otherwise.
 	  */
