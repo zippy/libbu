@@ -196,7 +196,7 @@ bool Connection::open( const char *sAddr, int nPort )
 	return true;
 }
 
-bool Connection::readInput()
+int Connection::readInput()
 {
 	char buffer[2048];
 	int nbytes;
@@ -204,39 +204,33 @@ bool Connection::readInput()
 
 	for(;;)
 	{
-		memset( buffer, 0, 2048 );
+		//memset( buffer, 0, 2048 );
 
 		nbytes = read( nSocket, buffer, 2048 );
 		if (nbytes < 0)
 		{
 			/* Read error. */
 			//perror("readInput");
-			return false;
-		}
-		else if (nbytes == 0)
-		{
-			/* End-of-file. */
-			//perror("readInput");
-			return false;
+			throw ConnectionException( excodeReadError, "Read error");
 		}
 		else
 		{
 			nTotalRead += nbytes;
 			appendInput( buffer, nbytes );
 			/* Data read. */
-			if( nbytes < 2047 )
+			if( nbytes < 2048 )
 			{
-				if( pProtocol != NULL && nTotalRead > 0 )
-				{
-					pProtocol->onNewData();
-				}
-
-				return true;
+				break;
 			}
 		}
 	}
 
-	return true;
+	if( pProtocol != NULL && nTotalRead > 0 )
+	{
+		pProtocol->onNewData();
+	}
+
+	return nTotalRead;
 }
 
 bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack )
@@ -259,12 +253,17 @@ bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack
 	if( retval == -1 )
 	{
 		// Oh my god!!! some kind of horrible problem!!!!
+		throw ConnectionException( excodeBadReadError, "Bad Read error");
 		return false;
 	}
 	else if( retval )
 	{
 		// None of them have data, but the connection is still active.
-		return readInput();
+		if( readInput() == 0 )
+		{
+			this->close();
+			throw ConnectionException( excodeConnectionClosed, "Connection closed");
+		}
 	}
 	else
 	{
@@ -283,7 +282,7 @@ void Connection::waitForInput( int nBytesIn, int nSec, int nUSec )
 	{
 		if( nSec == 0 && nUSec == 0 )
 		{
-			throw ConnectionException("Socket Timeout");
+			throw ConnectionException( excodeSocketTimeout, "Socket Timeout");
 		}
 		readInput( nSec, nUSec, &nSec, &nUSec );
 		rlen = getInputAmnt();

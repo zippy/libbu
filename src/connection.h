@@ -266,7 +266,7 @@ public:
 	 * readInput function to control blocking time.
 	 *@returns True socket is still connected, otherwise false.
 	 */
-	bool readInput();
+	int readInput();
 
 	/** 
 	 * Reads all pending input from the connection, blocking up to nSec
