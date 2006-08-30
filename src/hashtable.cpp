@@ -203,16 +203,18 @@ const void *HashTable::get( const void *id, unsigned long int nSkip )
 	for( unsigned long int j=0; j < 32; nPos = (nPos+(1<<j))%nTableSize, j++ )
 	{
 		if( !isFilled( nPos ) ) return NULL;
-		if( hFunc->cmpIDs( id, aTable[nPos].id ) &&
-			aTable[nPos].bDeleted == false )
+		if( aTable[nPos].bDeleted == false )
 		{
-			if( nSkip == 0 )
+			if( hFunc->cmpIDs( id, aTable[nPos].id ) )
 			{
-				return aTable[nPos].data;
-			}
-			else
-			{
-				nSkip--;
+				if( nSkip == 0 )
+				{
+					return aTable[nPos].data;
+				}
+				else
+				{
+					nSkip--;
+				}
 			}
 		}
 	}
@@ -223,16 +225,18 @@ const void *HashTable::get( const void *id, unsigned long int nSkip )
 		for( nPos++; nPos != nOldPos; nPos=(nPos+1)%nTableSize )
 		{
 			if( !isFilled( nPos ) ) return NULL;
-			if( hFunc->cmpIDs( id, aTable[nPos].id ) &&
-				aTable[nPos].bDeleted == false )
+			if( aTable[nPos].bDeleted == false )
 			{
-				if( nSkip == 0 )
+				if( hFunc->cmpIDs( id, aTable[nPos].id ) )
 				{
-					return aTable[nPos].data;
-				}
-				else
-				{
-					nSkip--;
+					if( nSkip == 0 )
+					{
+						return aTable[nPos].data;
+					}
+					else
+					{
+						nSkip--;
+					}
 				}
 			}
 		}
@@ -248,16 +252,18 @@ const void *HashTable::getKey( const void *id, unsigned long int nSkip )
 	for( unsigned long int j=0; j < 32; nPos = (nPos+(1<<j))%nTableSize, j++ )
 	{
 		if( !isFilled( nPos ) ) return NULL;
-		if( hFunc->cmpIDs( id, aTable[nPos].id ) &&
-			aTable[nPos].bDeleted == false )
+		if( aTable[nPos].bDeleted == false )
 		{
-			if( nSkip == 0 )
+			if( hFunc->cmpIDs( id, aTable[nPos].id ) )
 			{
-				return aTable[nPos].id;
-			}
-			else
-			{
-				nSkip--;
+				if( nSkip == 0 )
+				{
+					return aTable[nPos].id;
+				}
+				else
+				{
+					nSkip--;
+				}
 			}
 		}
 	}
@@ -268,16 +274,18 @@ const void *HashTable::getKey( const void *id, unsigned long int nSkip )
 		for( nPos++; nPos != nOldPos; nPos=(nPos+1)%nTableSize )
 		{
 			if( !isFilled( nPos ) ) return NULL;
-			if( hFunc->cmpIDs( id, aTable[nPos].id ) &&
-				aTable[nPos].bDeleted == false )
+			if( aTable[nPos].bDeleted == false )
 			{
-				if( nSkip == 0 )
+				if( hFunc->cmpIDs( id, aTable[nPos].id ) )
 				{
-					return aTable[nPos].id;
-				}
-				else
-				{
-					nSkip--;
+					if( nSkip == 0 )
+					{
+						return aTable[nPos].id;
+					}
+					else
+					{
+						nSkip--;
+					}
 				}
 			}
 		}

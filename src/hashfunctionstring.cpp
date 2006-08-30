@@ -1,4 +1,7 @@
 #include "hashfunctionstring.h"
+#ifndef NULL
+#define NULL ((void *) 0)
+#endif
 
 HashFunctionString::HashFunctionString()
 {
@@ -10,6 +13,11 @@ HashFunctionString::~HashFunctionString()
 
 unsigned long int HashFunctionString::hash( const void *id )
 {
+	if (id == NULL)
+	{
+		return 0;
+	}
+	
 	unsigned long int nPos = 0;
 	for( const char *s = (const char *)id; *s; s++ )
 	{
@@ -20,6 +28,15 @@ unsigned long int HashFunctionString::hash( const void *id )
 
 bool HashFunctionString::cmpIDs( const void *id1, const void *id2 )
 {
+	if (id1 == NULL || id2 == NULL)
+	{
+		return false;
+	}
+	if (id1 == id2)
+	{
+		return true;
+	}
+	
 	const char *str1 = (const char *)id1;
 	const char *str2 = (const char *)id2;
 

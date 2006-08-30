@@ -143,7 +143,7 @@ long *md5::c2l( const char *str, long len, long *nNewLen )
 	long mlen = OBLOC( len8 );
     long flen = (((mlen/16)+((mlen%16)?(1):(0))))*16;
 	long *aBin = new long[flen];
-	memset( aBin, 0, flen );
+	memset( aBin, 0, flen*4 );
 	
 	for( long i = 0; i < len8; i+=8 )
 	{
