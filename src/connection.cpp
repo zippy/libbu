@@ -330,7 +330,8 @@ bool Connection::clearInput()
 
 bool Connection::writeOutput()
 {
-	int nBytes = TEMP_FAILURE_RETRY( write( nSocket, xOutputBuf.getData(), min( 2048, xOutputBuf.getLength() ) ) );
+	//int nBytes = TEMP_FAILURE_RETRY( write( nSocket, xOutputBuf.getData(), min( 2048, xOutputBuf.getLength() ) ) );
+	int nBytes = TEMP_FAILURE_RETRY( write( nSocket, xOutputBuf.getData(), xOutputBuf.getLength() ) );
 	if( nBytes < 0 )
 	{
 		perror("writeOutput");
