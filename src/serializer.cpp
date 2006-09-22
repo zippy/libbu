@@ -192,7 +192,7 @@ Serializer &operator<<( Serializer &ar, std::string &s )
 
 Serializer &operator>>( Serializer &ar, std::string &s )
 {
-	(uint32_t) l;
+	uint32_t l;
 	ar >> l;
 	char *tmp = new char[l+1];
 	tmp[l] = '\0';
