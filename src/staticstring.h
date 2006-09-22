@@ -54,7 +54,7 @@ public:
 
 private:
 	char *lpStr;
-	int nLen;
+	uint32_t nLen;
 };
 
 #endif
