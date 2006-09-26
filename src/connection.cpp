@@ -10,6 +10,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <errno.h>
 #include "exceptions.h"
 
 Connection::Connection()
@@ -208,15 +209,16 @@ int Connection::readInput()
 		//memset( buffer, 0, 2048 );
 
 		nbytes = read( nSocket, buffer, 2048 );
-		if (nbytes < 0)
+		if( nbytes < 0 && errno != 0 && errno != EAGAIN )
 		{
+			printf("errno: %d, %s\n", errno, strerror( errno ) );
 			/* Read error. */
 			//perror("readInput");
-			throw ConnectionException( excodeReadError, "Read error");
+			throw ConnectionException( excodeReadError, "Read error: %s", strerror( errno ) );
 		}
 		else
 		{
-			if( nbytes == 0 )
+			if( nbytes <= 0 )
 				break;
 			nTotalRead += nbytes;
 			appendInput( buffer, nbytes );
