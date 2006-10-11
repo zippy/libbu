@@ -1,4 +1,4 @@
-.PHONY: pymake
+.PHONY: build
 
-pymake:
-	pymake
+build:
+	build

@@ -399,6 +399,7 @@ bool HashTable::del( const void *id, int nSkip )
 	for( unsigned long int j=0; j < 32; nPos = (nPos+(1<<j))%nTableSize, j++ )
 	{
 		if( !isFilled( nPos ) ) return false;
+		//printf("0x%08X \"%s\" == 0x%08X \"%s\" (%d)\n", id, id, aTable[nPos].id, aTable[nPos].id, nPos );
 		if( hFunc->cmpIDs( id, aTable[nPos].id ) &&
 			aTable[nPos].bDeleted == false )
 		{
