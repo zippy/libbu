@@ -368,8 +368,8 @@ XmlNode *XmlNode::getCopy()
 	{
 		XmlNode *pChild = ((XmlNode *)lChildren[j])->getCopy();
 		pNew->lChildren.setAt( j, pChild );
-		pChild->pParent = this;
-		hChildren.insert( pChild->getName(), pChild );
+		pChild->pParent = pNew;
+		pNew->hChildren.insert( pChild->getName(), pChild );
 	}
 
 	nSize = lPropNames.getSize();

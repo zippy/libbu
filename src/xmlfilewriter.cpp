@@ -23,6 +23,6 @@ XmlFileWriter::~XmlFileWriter()
 
 void XmlFileWriter::writeString( const char *sString )
 {
-	fprintf( fh, sString );
+	fputs( sString, fh );
 }
 

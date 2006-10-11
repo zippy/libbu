@@ -30,19 +30,19 @@ int main()
 {
 	printf("Testing XmlWriter...\n");
 
-	XmlStringReader *xsr = new XmlStringReader("<stuff/>");
+	//XmlStringReader *xsr = new XmlStringReader("<stuff/>");
 
-	printf("%08X\n%08X\n%08X\n", xsr, (XmlReader *)xsr, (XmlDocument *)xsr );
+	//printf("%08X\n%08X\n%08X\n", xsr, (XmlReader *)xsr, (XmlDocument *)xsr );
 
-	delete (XmlDocument *)xsr;
-	//XmlFileWriter wf("test.xml", "\t");
+	//delete (XmlDocument *)xsr;
+	XmlFileWriter wf("test.xml", "\t");
 
-	//fillItIn( wf );
+	fillItIn( wf );
 
-	//XmlStringWriter ws("\t");
-	//fillItIn( ws );
+	XmlStringWriter ws("\t");
+	fillItIn( ws );
 
-	//printf("Now the string version:\n\n%s\n", ws.getString().c_str() );
+	printf("Now the string version:\n\n%s\n", ws.getString().c_str() );
 
 	return 0;
 }
