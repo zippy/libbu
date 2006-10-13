@@ -199,7 +199,7 @@ bool ConnectionManager::scanConnections( int nTimeout, bool bForceTimeout )
 		{
 			(*i)->writeOutput();
 		}
-		if( (*i)->needDisconnect() )
+		if( (*i)->needDisconnect() && !(*i)->hasOutput() )
 		{
 			int prt = (*i)->getSocket();
 			close( prt );
