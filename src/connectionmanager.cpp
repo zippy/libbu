@@ -224,8 +224,8 @@ bool ConnectionManager::shutdownServer()
 		Connection *i = *(lActive.begin());
 		if( i->isActive() )
 		{
-			i->close();
 			pMonitor->onClosedConnection( i );
+			i->close();
 			lInactive.insert( lInactive.end(), i );
 			lActive.erase( lActive.begin() );
 		}
