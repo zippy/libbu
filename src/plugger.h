@@ -69,6 +69,14 @@ public:
 
 	virtual ~Plugger()
 	{
+		void *pos = hObj.getFirstItemPos();
+		while( (pos = hObj.getNextItemPos( pos )) )
+		{
+			T *pPlug = (T *)hObj.getItemID( pos );
+			PluginReg *pReg = (PluginReg *)hObj.getItemData( pos );
+			pReg->pInfo->destroyPlugin( pPlug );
+		}
+
 		std::list<PluginReg *>::iterator i;
 		for( i = lPlugin.begin(); i != lPlugin.end(); i++ )
 		{
