@@ -1,5 +1,5 @@
 #include "sha1.h"
-#include "file.h"
+#include "sfile.h"
 
 #define BS 	1024
 
@@ -16,7 +16,7 @@ int main( int argc, char *argv[] )
 	char buf[BS];
 
 	Sha1 s;
-	File fin( *argv, "rb" );
+	SFile fin( *argv, "rb" );
 	for(;;)
 	{
 		int nRead = fin.read( buf, BS );

@@ -1,15 +1,15 @@
-#ifndef FILE_H
-#define FILE_H
+#ifndef SFILE_H
+#define SFILE_H
 
 #include <stdint.h>
 
 #include "stream.h"
 
-class File : public Stream
+class SFile : public Stream
 {
 public:
-	File( const char *sName, const char *sFlags );
-	virtual ~File();
+	SFile( const char *sName, const char *sFlags );
+	virtual ~SFile();
 
 	virtual void close();
 	virtual size_t read( char *pBuf, size_t nBytes );
