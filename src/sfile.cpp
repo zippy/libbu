@@ -22,16 +22,48 @@ void SFile::close()
 size_t SFile::read( char *pBuf, size_t nBytes )
 {
 	if( !fh )
-		throw FileException("SFile not open.");
+		throw FileException("File not open.");
 
 	return fread( pBuf, 1, nBytes, fh );
 }
 
-size_t SFile::write( char *pBuf, size_t nBytes )
+size_t SFile::write( const char *pBuf, size_t nBytes )
 {
 	if( !fh )
-		throw FileException("SFile not open.");
+		throw FileException("File not open.");
 
 	return fwrite( pBuf, 1, nBytes, fh );
+}
+
+long SFile::tell()
+{
+	if( !fh )
+		throw FileException("File not open.");
+
+	return ftell( fh );
+}
+
+void SFile::seek( long offset )
+{
+	if( !fh )
+		throw FileException("File not open.");
+
+	fseek( fh, offset, SEEK_CUR );
+}
+
+void SFile::setPos( long pos )
+{
+	if( !fh )
+		throw FileException("File not open.");
+
+	fseek( fh, pos, SEEK_SET );
+}
+
+void SFile::setPosEnd( long pos )
+{
+	if( !fh )
+		throw FileException("File not open.");
+	
+	fseek( fh, pos, SEEK_END );
 }
 

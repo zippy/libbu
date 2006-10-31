@@ -13,7 +13,12 @@ public:
 
 	virtual void close();
 	virtual size_t read( char *pBuf, size_t nBytes );
-	virtual size_t write( char *pBuf, size_t nBytes );
+	virtual size_t write( const char *pBuf, size_t nBytes );
+
+	virtual long tell();
+	virtual void seek( long offset );
+	virtual void setPos( long pos );
+	virtual void setPosEnd( long pos );
 
 private:
 	FILE *fh;

@@ -292,8 +292,11 @@ bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack
 		st = ust = 0;
 	}
 
-	*pnSecBack = st;
-	*pnUSecBack = ust;
+	if( pnSecBack )
+	{
+		*pnSecBack = st;
+		*pnUSecBack = ust;
+	}
 
 	//printf("New time:  %d %d\n", *pnSecBack, *pnUSecBack );
 

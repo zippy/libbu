@@ -13,11 +13,11 @@ HttpConnectionMonitor::~HttpConnectionMonitor()
 bool HttpConnectionMonitor::onNewConnection( Connection *pCon, int nPort )
 {
 	printf("Got connection on port %d\n", nPort );
-	Http hp( pCon );
 
 	pCon->readInput( 60, 0 );
 	printf("#######################\n%s\n#######################\n", pCon->getInput() );
 
+	Http hp( pCon );
 	while( hp.parseRequest() == false );
 	printf("Done parsing.\n\n");
 
