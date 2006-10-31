@@ -77,7 +77,7 @@ bool ConnectionManager::startServer( int nPort )
 		return false;
 	}
 
-	if (listen (nMasterSocket, 1) < 0)
+	if (listen (nMasterSocket, 40) < 0)
 	{
 		xLog.LineLog( MultiLog::LError, "Couldn't begin listening to the server socket.");
 		return false;

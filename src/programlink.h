@@ -70,7 +70,7 @@ public:
 
 private:
 	/**
-	 * Set which chain we're assosiated with.  This is hope IRM messages make
+	 * Set which chain we're assosiated with.  This is how IRM messages make
 	 * it out to the rest of the world.
 	 *@param pNewChain A pointer to the containing program chain.
 	 */
