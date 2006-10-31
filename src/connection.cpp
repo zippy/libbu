@@ -311,7 +311,7 @@ void Connection::waitForInput( int nBytesIn, int nSec, int nUSec )
 	{
 		if( nSec == 0 && nUSec == 0 )
 		{
-			throw ConnectionException( excodeSocketTimeout, "Socket Timeout");
+			throw ConnectionException( excodeSocketTimeout, "Timed out while waiting for %d bytes.", nBytesIn );
 		}
 		readInput( nSec, nUSec, &nSec, &nUSec );
 		rlen = getInputAmnt();
