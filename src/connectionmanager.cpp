@@ -195,7 +195,7 @@ bool ConnectionManager::scanConnections( int nTimeout, bool bForceTimeout )
 			lActive.erase( l );
 			continue;
 		}
-		(*i)->poll();
+		(*i)->getProtocol()->poll();
 		if( (*i)->hasOutput() )
 		{
 			(*i)->writeOutput();
@@ -328,7 +328,8 @@ bool ConnectionManager::addConnection( int nSocket )
 void ConnectionManager::connect(
 	const char *lpAddress,
 	int nPort,
-	int nProtocolPort
+	int nProtocolPort,
+	Protocol *pNewProto
 	)
 {
 	Connection *pCon = getInactiveConnection();
@@ -336,8 +337,9 @@ void ConnectionManager::connect(
 	int nSocket = pCon->getSocket();
 	FD_SET( nSocket, &fdActive );
 
+	pCon->setProtocol( pNewProto );
 	pMonitor->onNewClientConnection( pCon, nProtocolPort );
-	pCon->getProtocol()->onNewClientConnection();
+	//pCon->getProtocol()->onNewClientConnection();
 
 	lActive.insert( lActive.end(), pCon );
 }

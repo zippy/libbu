@@ -93,7 +93,7 @@ public:
 	  */
 	void setConnectionMonitor( ConnectionMonitor *pNewMonitor );
 
-	void connect( const char *lpAddress, int nPort, int nProtocolPort );
+	void connect( const char *lpAddress, int nPort, int nProtocolPort, Protocol *pNewProto );
 
 private:
 	/**
