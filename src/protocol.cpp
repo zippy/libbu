@@ -12,8 +12,6 @@ Protocol::~Protocol()
 void Protocol::setConnection( Connection *pNewConnection )
 {
 	pConnection = pNewConnection;
-
-	onNewConnection();
 }
 
 Connection *Protocol::getConnection()

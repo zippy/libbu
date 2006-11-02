@@ -31,6 +31,10 @@ public:
 	  * force a shutdown.
 	  */
 	virtual bool onNewConnection( Connection *pCon, int nPort ) = 0;
+	virtual bool onNewClientConnection( Connection *pCon, int nPort )
+	{
+		return onNewConnection( pCon, nPort );
+	};
 
 	/** Receives the notification that a connection was closed.
 	  *@param pCon The connection that was closed.

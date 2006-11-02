@@ -36,6 +36,10 @@ public:
 	 */
 	virtual bool onNewConnection()=0;
 
+	virtual void onNewClientConnection(){};
+
+	virtual void poll(){};
+
 	/**
 	 * Sets the Protocol's Connection object.  This is rather important, and
 	 * handled usually by the ConnectionManager.

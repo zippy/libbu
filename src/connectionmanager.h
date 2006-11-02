@@ -93,6 +93,8 @@ public:
 	  */
 	void setConnectionMonitor( ConnectionMonitor *pNewMonitor );
 
+	void connect( const char *lpAddress, int nPort, int nProtocolPort );
+
 private:
 	/**
 	 * Take care of the work of actually accepting a connection. This will
