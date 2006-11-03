@@ -156,7 +156,7 @@ SBuffer *HttpGet::get()
 	printf("Connection content:\n\n%s\n\n", sData.c_str() );
 
 	Connection con;
-	con.open( "127.0.0.1", nPort );
+	con.open( sHost.c_str(), nPort );
 	con.appendOutput( sData.c_str(), sData.size() );
 	con.writeOutput();
 	while( con.readInput() );
