@@ -319,6 +319,8 @@ bool ConnectionManager::addConnection( int nSocket )
 	pCon->open( newSocket );
 
 	pMonitor->onNewConnection( pCon, (*sMasterSocket.find(nSocket)).second );
+	if( pCon->getProtocol() )
+		pCon->getProtocol()->onNewConnection();
 
 	lActive.insert( lActive.end(), pCon );
 
