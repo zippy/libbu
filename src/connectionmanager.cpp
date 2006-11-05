@@ -184,7 +184,6 @@ bool ConnectionManager::scanConnections( int nTimeout, bool bForceTimeout )
 			}
 		}
 	}
-	printf("Scanning %d connections.\n", lActive.size() );
 	std::list<Connection *>::iterator i;
 	for( i = lActive.begin(); i != lActive.end(); i++ )
 	{
@@ -200,7 +199,6 @@ bool ConnectionManager::scanConnections( int nTimeout, bool bForceTimeout )
 		if( (*i)->hasOutput() )
 		{
 			(*i)->writeOutput();
-			printf("Wrote pending output.\n");
 		}
 		if( (*i)->needDisconnect() && !(*i)->hasOutput() )
 		{
