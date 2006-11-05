@@ -184,6 +184,7 @@ bool ConnectionManager::scanConnections( int nTimeout, bool bForceTimeout )
 			}
 		}
 	}
+	printf("Scanning %d connections.\n", lActive.size() );
 	std::list<Connection *>::iterator i;
 	for( i = lActive.begin(); i != lActive.end(); i++ )
 	{
@@ -341,7 +342,8 @@ void ConnectionManager::connect(
 
 	pCon->setProtocol( pNewProto );
 	pMonitor->onNewClientConnection( pCon, nProtocolPort );
-	//pCon->getProtocol()->onNewClientConnection();
+	if( pCon->getProtocol() )
+		pCon->getProtocol()->onNewClientConnection();
 
 	lActive.insert( lActive.end(), pCon );
 }
