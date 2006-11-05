@@ -200,6 +200,7 @@ bool ConnectionManager::scanConnections( int nTimeout, bool bForceTimeout )
 		if( (*i)->hasOutput() )
 		{
 			(*i)->writeOutput();
+			printf("Wrote pending output.\n");
 		}
 		if( (*i)->needDisconnect() && !(*i)->hasOutput() )
 		{
