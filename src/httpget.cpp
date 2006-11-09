@@ -159,7 +159,8 @@ SBuffer *HttpGet::get()
 	con.open( sHost.c_str(), nPort );
 	con.appendOutput( sData.c_str(), sData.size() );
 	con.writeOutput();
-	while( con.readInput() );
+	while( con.readInput() )
+		printf("Read %db\n", con.getInputAmnt() );
 
 	int total = con.getInputAmnt();
 	const char *dat = con.getInput();

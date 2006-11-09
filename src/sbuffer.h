@@ -25,6 +25,11 @@ public:
 	virtual void setPos( long pos );
 	virtual void setPosEnd( long pos );
 
+	FlexBuf &getBuffer()
+	{
+		return fbData;
+	}
+
 private:
 	long nPos;
 	bool bOpen;
