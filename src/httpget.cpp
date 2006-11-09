@@ -157,6 +157,7 @@ SBuffer *HttpGet::get()
 
 	Connection con;
 	con.open( sHost.c_str(), nPort );
+	printf("Connected, sending request.\n");
 	con.appendOutput( sData.c_str(), sData.size() );
 	con.writeOutput();
 	while( con.readInput() )
