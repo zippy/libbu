@@ -43,6 +43,7 @@ public:
 
 	bool timeSlice()
 	{
+		return true;
 	}
 
 	bool onNewConnection( Connection *pCon, int nPort )

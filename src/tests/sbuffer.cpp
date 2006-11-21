@@ -6,7 +6,7 @@ int main()
 
 	buf.write("abcdefg", 7 );
 
-	printf("tell: %d\n", buf.tell() );
+	printf("tell: %ld\n", buf.tell() );
 
 	char abuf[6];
 	int nRead;

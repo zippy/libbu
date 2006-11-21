@@ -68,7 +68,7 @@ int main()
 	{
 		h.insert( names[j], (void *)(j+1) );
 		h.insert( names[j], (void *)(j+1) );
-		printf("Capacity: %d, Size: %d, Load: %f\n",
+		printf("Capacity: %lu, Size: %lu, Load: %f\n",
 			h.getCapacity(),
 			h.getSize(),
 			h.getLoad()
@@ -86,7 +86,7 @@ int main()
 	{
 		h.del( names[k] );
 		//h.insert( names[j], (void *)(j+1) );
-		printf("Capacity: %d, Size: %d, Load: %f\n",
+		printf("Capacity: %lu, Size: %lu, Load: %f\n",
 			h.getCapacity(),
 			h.getSize(),
 			h.getLoad()
@@ -98,7 +98,7 @@ int main()
 	for( ; names[j] != NULL; j++ )
 	{
 		h.insert( names[j], (void *)(j+1) );
-		printf("Capacity: %d, Size: %d, Load: %f\n",
+		printf("Capacity: %lu, Size: %lu, Load: %f\n",
 			h.getCapacity(),
 			h.getSize(),
 			h.getLoad()

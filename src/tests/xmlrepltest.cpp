@@ -17,7 +17,7 @@ int main()
 
 	printf("\n\n");
 
-	XmlNode *xNode = w.getRoot()->detatchNode( 1 );
+	//XmlNode *xNode = w.getRoot()->detatchNode( 1 );
 
 	//XmlWriter::writeNode( stdout, w.getRoot(), 0, NULL );
 

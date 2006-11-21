@@ -34,6 +34,7 @@ bool TelnetMonitor::timeSlice()
 
 LinkMessage* TelnetMonitor::processIRM( LinkMessage *pMsg )
 {
+	return NULL;
 }
 	
 bool TelnetMonitor::onNewConnection( Connection *pCon, int nPort )
