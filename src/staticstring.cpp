@@ -239,7 +239,7 @@ bool StaticString::operator!=( StaticString &str )
 	for(; *a == *b; a++, b++ ) if( *a == '\0' && *b == '\0' ) return false;
 	return true;
 }
-
+/*
 unsigned long int StaticString::getHashCode()
 {
 	unsigned long int nPos = nLen;
@@ -267,4 +267,4 @@ bool StaticString::compareForHash( Hashable &other )
 
 	return true;
 }
-
+*/
