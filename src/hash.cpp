@@ -1,5 +1,25 @@
 #include "hash.h"
 
+template<> uint32_t __calcHashCode<const int>( const int k )
+{
+	return k;
+}
+
+template<> bool __cmpHashKeys<const int>( const int a, const int b )
+{
+	return a == b;
+}
+
+template<> uint32_t __calcHashCode<int>( int k )
+{
+	return k;
+}
+
+template<> bool __cmpHashKeys<int>( int a, int b )
+{
+	return a == b;
+}
+
 template<>
 uint32_t __calcHashCode<const char *>( const char * k )
 {

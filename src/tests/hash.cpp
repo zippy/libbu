@@ -67,17 +67,33 @@ int main()
 	}
 
 	printf("Getting\n-------------------\n\n");
-	printf("%d\n", sTest.get( names[10] ) );
-	printf("%d\n", (int)sTest[names[10]] );
-	sTest[names[10]] = 22;
-	sTest["That one guy"] = 135;
-	printf("%d\n", (int)sTest[names[10]] );
+
+	sTest.erase("Homer the Great");
+	sTest["Bart's Comet"].erase();
 
 	for( Hash<std::string, int>::iterator i = sTest.begin();
 		 i != sTest.end(); i++ )
 	{
 		Hash<std::string, int>::iterator j = i;
 		printf("%d: %s\n", (*j).second, (*j).first.c_str() );
+	}
+
+	for( int j = 0; j < 33; j++ )
+	{
+		if( sTest[names[j]].isFilled() )
+		{
+			if( sTest[names[j]] != j )
+			{
+				printf("'%s' should be %d, is %d\n",
+					names[j], j,
+					sTest[names[j]].value()
+					);
+			}
+		}
+		else
+		{
+			printf("Missing element %d, '%s'\n", j, names[j] );
+		}
 	}
 }
 
