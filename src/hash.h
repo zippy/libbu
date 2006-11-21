@@ -31,45 +31,60 @@ struct HashProxy
 {
 	friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
 private:
-	HashProxy( Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &h, key k, value v ) :
+	HashProxy( Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &h, key *k, value *v, uint32_t hash ) :
 		hsh( h ),
-		tKey( k ),
-		tValue( v ),
-		bFilled( true )
-	{
-	}
-
-	HashProxy( Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &h, key k ) :
-		hsh( h ),
-		tKey( k ),
+		pKey( k ),
+		pValue( v ),
+		hash( hash ),
 		bFilled( false )
 	{
 	}
 
+	HashProxy( Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &h, value *pValue ) :
+		hsh( h ),
+		pValue( pValue ),
+		bFilled( true )
+	{
+	}
+
 	Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh;
-	key tKey;
-	value tValue;
+	key *pKey;
+	value *pValue;
 	bool bFilled;
+	uint32_t hash;
 
 public:
 	operator value()
 	{
 		if( bFilled == false )
 			throw "Nope, no data there";
-		return tValue;
+		return *pValue;
+	}
+
+	bool isFilled()
+	{
+		return bFilled;
 	}
 
 	value operator=( value nval )
 	{
-		hsh.insert( tKey, nval );
+		if( bFilled )
+		{
+			hsh.va.destroy( KEEP GOING HERE
+			hsh.insert( tKey, nval );
+		}
+		else
+		{
+		}
+
 		return nval;
 	}
-
 };
 
 template<typename key, typename value, typename sizecalc, typename keyalloc, typename valuealloc, typename challoc >
 class Hash
 {
+	friend HashProxy;
 public:
 	Hash() :
 		nCapacity( 11 ),
@@ -143,11 +158,11 @@ public:
 
 		if( bFill )
 		{
-			return HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc>( *this, aKeys[nPos], aValues[nPos] );
+			return HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc>( *this, &aValues[nPos] );
 		}
 		else
 		{
-			return HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc>( *this, k );
+			return HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc>( *this, &k, nPos, hash );
 		}
 	}
 
@@ -164,11 +179,7 @@ public:
 		}
 		else
 		{
-			va.construct( &aValues[nPos], v );
-			ka.construct( &aKeys[nPos], k );
-			fill( nPos );
-			aHashCodes[nPos] = hash;
-			nFilled++;
+			fill( nPos, k, v, hash );
 		}
 	}
 
@@ -276,11 +287,6 @@ public:
 		ca.deallocate( aOldHashCodes, nOldCapacity );
 	}
 
-	void fill( uint32_t loc )
-	{
-		bFilled[loc/32] |= (1<<(loc%32));
-	}
-
 	bool isFilled( uint32_t loc )
 	{
 		return (bFilled[loc/32]&(1<<(loc%32)))!=0;
@@ -370,6 +376,15 @@ public:
 	}
 
 private:
+	void fill( uint32_t loc, key &k, value &v, uint32_t hash )
+	{
+		bFilled[loc/32] |= (1<<(loc%32));
+		va.construct( &aValues[nPos], v );
+		ka.construct( &aKeys[nPos], k );
+		aHashCodes[nPos] = hash;
+		nFilled++;
+	}
+
 	std::pair<key,value> getAtPos( uint32_t nPos )
 	{
 		return std::pair<key,value>(aKeys[nPos],aValues[nPos]);
