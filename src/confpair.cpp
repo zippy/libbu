@@ -1,0 +1,2 @@
+#include "confpair.h"
+
