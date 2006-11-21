@@ -80,7 +80,7 @@ int main()
 
 	for( int j = 0; j < 33; j++ )
 	{
-		if( sTest[names[j]].isFilled() )
+		if( sTest.has(names[j]) )
 		{
 			if( sTest[names[j]] != j )
 			{

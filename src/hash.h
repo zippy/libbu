@@ -215,6 +215,15 @@ public:
 		}
 	}
 
+	bool has( key k )
+	{
+		uint32_t hash = __calcHashCode( k );
+		bool bFill;
+		uint32_t nPos = probe( hash, k, bFill );
+
+		return bFill;
+	}
+
 	typedef struct iterator
 	{
 		friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
