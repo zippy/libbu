@@ -61,7 +61,7 @@ int StaticString::getLength()
 	return nLen;
 }
 
-int StaticString::setLength( int nNewLength )
+void StaticString::setLength( int nNewLength )
 {
 	char *lpNewStr = new char[nNewLength+1];
 	if( lpStr != NULL )
@@ -153,7 +153,7 @@ StaticString::operator const char *()
 	return lpStr;
 }
 
-char StaticString::getAt( int nIndex )
+char StaticString::getAt( unsigned int nIndex )
 {
 	if( nIndex < 0 || nIndex >= nLen )
 		return '\0';
@@ -161,7 +161,7 @@ char StaticString::getAt( int nIndex )
 	return lpStr[nIndex];
 }
 
-void StaticString::setAt( int nIndex, char cVal )
+void StaticString::setAt( unsigned int nIndex, char cVal )
 {
 	if( nIndex < 0 || nIndex >= nLen )
 		return;
@@ -169,7 +169,7 @@ void StaticString::setAt( int nIndex, char cVal )
 	lpStr[nIndex] = cVal;
 }
 
-char &StaticString::operator[]( int nIndex )
+char &StaticString::operator[]( unsigned int nIndex )
 {
 	if( nIndex < 0 || nIndex >= nLen )
 		return lpStr[0];

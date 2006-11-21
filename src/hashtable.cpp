@@ -41,7 +41,7 @@ bool HashTable::isFilled( int j )
 	return (aTable[j].id != NULL)||(aTable[j].bDeleted);
 }
 
-bool HashTable::reHash( unsigned long int nNewSize )
+void HashTable::reHash( unsigned long int nNewSize )
 {
 	HashNode *aOldTable = aTable;
 	unsigned long int oldSize = nTableSize;
@@ -90,7 +90,7 @@ unsigned long int HashTable::probe( unsigned long int nStart, const void *id )
 		 */
 		if( isFilled( nStart ) )
 		{
-			int nOldStart = nStart;
+			unsigned long int nOldStart = nStart;
 			for(
 				nStart++;
 				isFilled( nStart ) && nStart != nOldStart;
@@ -221,7 +221,7 @@ const void *HashTable::get( const void *id, unsigned long int nSkip )
 
 	if( bAllowDupes )
 	{
-		int nOldPos = nPos;
+		unsigned long int nOldPos = nPos;
 		for( nPos++; nPos != nOldPos; nPos=(nPos+1)%nTableSize )
 		{
 			if( !isFilled( nPos ) ) return NULL;
@@ -270,7 +270,7 @@ const void *HashTable::getKey( const void *id, unsigned long int nSkip )
 
 	if( bAllowDupes )
 	{
-		int nOldPos = nPos;
+		unsigned long int nOldPos = nPos;
 		for( nPos++; nPos != nOldPos; nPos=(nPos+1)%nTableSize )
 		{
 			if( !isFilled( nPos ) ) return NULL;

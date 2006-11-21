@@ -2,8 +2,8 @@
 #include "sbuffer.h"
 
 SBuffer::SBuffer() :
-	bOpen( true ),
-	nPos( 0 )
+	nPos( 0 ),
+	bOpen( true )
 {
 }
 
@@ -19,7 +19,7 @@ void SBuffer::close()
 
 size_t SBuffer::read( char *pBuf, size_t nBytes )
 {
-	long nLeft = fbData.getLength() - nPos;
+	size_t nLeft = fbData.getLength() - nPos;
 	if( nBytes > nLeft )
 		nBytes = nLeft;
 

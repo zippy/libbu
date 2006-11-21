@@ -33,10 +33,10 @@ private:
 	std::string sProto;
 	std::string sHost;
 	std::string sPath;
+	int nPort;
 	std::string sUserAgent;
 	typedef std::pair<std::string,std::string> StringPair;
 	std::list<StringPair> lParams;
-	int nPort;
 	static char hexcode[];
 
 };

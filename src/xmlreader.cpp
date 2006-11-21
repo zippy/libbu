@@ -71,7 +71,6 @@ bool XmlReader::buildDoc()
 
 void XmlReader::textDecl()
 {
-	char chr;
 	if( getChar() == '<' && getChar( 1 ) == '?' )
 	{
 		usedChar( 2 );

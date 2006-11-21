@@ -114,7 +114,7 @@ void XmlDocument::addProperty( const char *sName, const short nValue )
 void XmlDocument::addProperty( const char *sName, const int nValue )
 {
 	char buf[12];
-	sprintf( buf, "%li", nValue );
+	sprintf( buf, "%d", nValue );
 	addProperty( sName, buf );
 }
 

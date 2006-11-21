@@ -449,7 +449,7 @@ void Connection::printDataDebug( const unsigned char *pData, long nDataLen, cons
 		nDataLen = (nBytesMax<nDataLen)?(nBytesMax):(nDataLen);
 	}
 
-	fprintf( fh, "%sDisplaying %d bytes of %s.\n", lpPrefix, nDataLen, lpName );
+	fprintf( fh, "%sDisplaying %ld bytes of %s.\n", lpPrefix, nDataLen, lpName );
 	int j = 0;
 	fprintf( fh, lpPrefix );
 	for( int l = 0; l < 8*3+2*8+2; l++ ) fprintf( fh, (l!=8*3)?("-"):("+") ); fprintf( fh, "\n");

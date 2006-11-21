@@ -181,7 +181,7 @@ const char *XmlNode::getProperty( const char *sName )
 	return tmp;
 }
 
-bool XmlNode::deleteProperty( int nIndex )
+void XmlNode::deleteProperty( int nIndex )
 {
 	hProperties.del( ((std::string *)lPropNames[nIndex])->c_str() );
 
@@ -217,18 +217,13 @@ const char *XmlNode::getName()
 	return sName.c_str();
 }
 
-bool XmlNode::deleteNode( int nIndex, const char *sReplacementText )
+void XmlNode::deleteNode( int nIndex, const char *sReplacementText )
 {
 	XmlNode *xRet = detatchNode( nIndex, sReplacementText );
 
-	if( xRet == NULL )
-	{
-		return false;
-	}
-	else
+	if( xRet != NULL )
 	{
 		delete xRet;
-		return true;
 	}
 }
 
@@ -317,16 +312,14 @@ XmlNode *XmlNode::detatchNode( int nIndex, const char *sReplacementText )
 	return xRet;
 }
 
-bool XmlNode::replaceNode( int nIndex, XmlNode *pNewNode )
+void XmlNode::replaceNode( int nIndex, XmlNode *pNewNode )
 {
 	if( nIndex < 0 || nIndex >= lChildren.getSize() )
-		return false;
+		return; //TODO: throw an exception
 	
 	delete (XmlNode *)lChildren[nIndex];
 	lChildren.setAt( nIndex, pNewNode );
 	pNewNode->pParent = this;
-
-	return true;
 }
 
 XmlNode *XmlNode::getCopy()
@@ -388,7 +381,7 @@ XmlNode *XmlNode::getCopy()
 	return pNew;
 }
 
-bool XmlNode::deleteNodeKeepChildren( int nIndex )
+void XmlNode::deleteNodeKeepChildren( int nIndex )
 {
 	// This is a tricky one...we need to do some patching to keep things all
 	// even...
@@ -396,7 +389,7 @@ bool XmlNode::deleteNodeKeepChildren( int nIndex )
 
 	if( xRet == NULL )
 	{
-		return false;
+		return;
 	}
 	else
 	{
@@ -443,12 +436,10 @@ bool XmlNode::deleteNodeKeepChildren( int nIndex )
 		}
 
 		deleteNode( nIndex+nSize );
-		return true;
 	}
-	
 }
 
-bool XmlNode::replaceNodeWithChildren( int nIndex, XmlNode *pNewNode )
+void XmlNode::replaceNodeWithChildren( int nIndex, XmlNode *pNewNode )
 {
 }
 

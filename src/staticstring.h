@@ -25,19 +25,19 @@ public:
 
 	char *getString();
 	int getLength();
-	int setLength( int nNewLength );
+	void setLength( int nNewLength );
 
 	void setString( const char *lpNewStr, int nNewLen=-1 );
 	void setString( StaticString &sNewStr, int nNewLen=-1 );
 
-	char getAt( int nIndex );
-	void setAt( int nIndex, char cVal );
+	char getAt( unsigned int nIndex );
+	void setAt( unsigned int nIndex, char cVal );
 
 	class StaticString &operator=( class StaticString &lpOtherStr );
 	class StaticString &operator=( std::string &lpOtherStr );
 	class StaticString &operator=( const char *lpNewStr );
 	operator const char *();
-	char &operator[]( int nIndex );
+	char &operator[]( unsigned int nIndex );
 	operator int();
 	char *operator+( int nAmnt );
 	char *operator-( int nAmnt );

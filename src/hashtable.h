@@ -246,7 +246,7 @@ private:
 	 *@param nNewSize The new size to set the table to while re-hashing.
 	 *@returns True if the operation was successful, false otherwise.
 	 */
-	bool reHash( unsigned long int nNewSize );
+	void reHash( unsigned long int nNewSize );
 
 	/**
 	 * Helper function to allocate a new table.  Really just does the memory

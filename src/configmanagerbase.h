@@ -8,7 +8,7 @@ class ConfigManagerBase
 {
 public:
 	ConfigManagerBase();
-	~ConfigManagerBase();
+	virtual ~ConfigManagerBase();
 	
 public:
 	void addSearchPath( const std::string &sPath );

@@ -188,6 +188,8 @@ Serializer &operator<<( Serializer &ar, std::string &s )
 {
 	ar << (uint32_t)s.length();
 	ar.write( s.c_str(), s.length() );
+
+	return ar;
 }
 
 Serializer &operator>>( Serializer &ar, std::string &s )
@@ -199,5 +201,7 @@ Serializer &operator>>( Serializer &ar, std::string &s )
 	ar.read( tmp, l );
 	s = tmp;
 	delete tmp;
+
+	return ar;
 }
 

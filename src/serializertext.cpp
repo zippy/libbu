@@ -64,7 +64,7 @@ Serializer &SerializerText::operator<<(int16_t p)
 }
 Serializer &SerializerText::operator<<(int32_t p)
 {
-	fprintf(fhFile, "%ld\n", p);
+	fprintf(fhFile, "%d\n", p);
 	return *this;
 }
 Serializer &SerializerText::operator<<(int64_t p)
@@ -84,7 +84,7 @@ Serializer &SerializerText::operator<<(uint16_t p)
 }
 Serializer &SerializerText::operator<<(uint32_t p)
 {
-	fprintf(fhFile, "%lu\n", p);
+	fprintf(fhFile, "%u\n", p);
 	return *this;
 }
 Serializer &SerializerText::operator<<(uint64_t p)
@@ -110,7 +110,7 @@ Serializer &SerializerText::operator<<(long double p)
 
 Serializer &SerializerText::operator>>(bool &p)
 {
-	fscanf(fhFile, "%hhd\n", &p);
+	fscanf(fhFile, "%hhd\n", ((signed char *)&p));
 	return *this;
 }
 Serializer &SerializerText::operator>>(int8_t &p)
@@ -125,7 +125,7 @@ Serializer &SerializerText::operator>>(int16_t &p)
 }
 Serializer &SerializerText::operator>>(int32_t &p)
 {
-	fscanf(fhFile, "%ld\n", &p);
+	fscanf(fhFile, "%d\n", &p);
 	return *this;
 }
 Serializer &SerializerText::operator>>(int64_t &p)
@@ -145,7 +145,7 @@ Serializer &SerializerText::operator>>(uint16_t &p)
 }
 Serializer &SerializerText::operator>>(uint32_t &p)
 {
-	fscanf(fhFile, "%lu\n", &p);
+	fscanf(fhFile, "%u\n", &p);
 	return *this;
 }
 Serializer &SerializerText::operator>>(uint64_t &p)
@@ -160,7 +160,7 @@ Serializer &SerializerText::operator>>(float &p)
 }
 Serializer &SerializerText::operator>>(double &p)
 {
-	fscanf(fhFile, "%f\n", &p);
+	fscanf(fhFile, "%lf\n", &p);
 	return *this;
 }
 Serializer &SerializerText::operator>>(long double &p)

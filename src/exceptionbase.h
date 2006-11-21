@@ -61,8 +61,8 @@ public:
 	void setWhat( const char *lpFormat, va_list &vargs );
 
 private:
-	char *sWhat;	/**< The text string telling people what went wrong. */
 	int nErrorCode;	/**< The code for the error that occured. */
+	char *sWhat;	/**< The text string telling people what went wrong. */
 };
 
 #define subExceptionDecl( name )											\

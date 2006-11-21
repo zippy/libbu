@@ -43,6 +43,7 @@ bool ProtocolTelnet::onNewConnection()
 	pCon->appendOutput( (char)ECHO );
 
 //	255(IAC),251(WILL),3
+	return true;
 }
 
 bool ProtocolTelnet::onNewData()

@@ -161,7 +161,7 @@ public:
 	 *@returns True if the property was found and deleted, false if it wasn't
 	 * found.
 	 */
-	bool deleteProperty( int nIndex );
+	void deleteProperty( int nIndex );
 
 	/**
 	 * Delete a child node, possibly replacing it with some text.  This actually
@@ -171,7 +171,7 @@ public:
 	 *@returns True of the node was found, and deleted, false if it wasn't
 	 * found.
 	 */
-	bool deleteNode( int nIndex, const char *sReplacementText = NULL );
+	void deleteNode( int nIndex, const char *sReplacementText = NULL );
 
 	/**
 	 * Delete a given node, but move all of it's children and content up to
@@ -180,7 +180,7 @@ public:
 	 *@param nIndex The node to delete.
 	 *@returns True if the node was found and deleted, false if it wasn't.
 	 */
-	bool deleteNodeKeepChildren( int nIndex );
+	void deleteNodeKeepChildren( int nIndex );
 
 	/**
 	 * Detatch a given child node from this node.  This effectively works just
@@ -201,7 +201,7 @@ public:
 	 *@param pNewNode The new node to replace the old node with.
 	 *@returns True if the node was found and replaced, false if it wasn't.
 	 */
-	bool replaceNode( int nIndex, XmlNode *pNewNode );
+	void replaceNode( int nIndex, XmlNode *pNewNode );
 
 	/**
 	 * Replace a given node with the children and content of a given node.
@@ -210,7 +210,7 @@ public:
 	 * replace the node specified by nIndex.
 	 *@returns True if the node was found and replaced, false if it wasn't.
 	 */
-	bool replaceNodeWithChildren( int nIndex, XmlNode *pNewNode );
+	void replaceNodeWithChildren( int nIndex, XmlNode *pNewNode );
 
 	/**
 	 * Get a copy of this node and all children.  getCopy is recursive, so
