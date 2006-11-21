@@ -58,10 +58,10 @@ private:
 
 	Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc> &hsh;
 	key *pKey;
-	_value *pValue;
-	bool bFilled;
-	uint32_t hash;
 	uint32_t nPos;
+	_value *pValue;
+	uint32_t hash;
+	bool bFilled;
 
 public:
 	operator _value()
@@ -121,6 +121,7 @@ public:
 		nFilled( 0 ),
 		nDeleted( 0 ),
 		bFilled( NULL ),
+		bDeleted( NULL ),
 		aKeys( NULL ),
 		aValues( NULL ),
 		aHashCodes( NULL )
@@ -249,9 +250,8 @@ public:
 
 	bool has( key k )
 	{
-		uint32_t hash = __calcHashCode( k );
 		bool bFill;
-		uint32_t nPos = probe( hash, k, bFill );
+		probe( __calcHashCode( k ), k, bFill );
 
 		return bFill;
 	}
@@ -262,8 +262,8 @@ public:
 	private:
 		iterator( Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh ) :
 			hsh( hsh ),
-			bFinished( false ),
-			nPos( 0 )
+			nPos( 0 ),
+			bFinished( false )
 		{
 			nPos = hsh.getFirstPos( bFinished );
 		}
@@ -276,7 +276,6 @@ public:
 		}
 
 		Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh;
-
 		uint32_t nPos;
 		bool bFinished;
 
@@ -374,6 +373,7 @@ private:
 		}
 
 		bFinished = true;
+		return 0;
 	}
 
 	uint32_t getNextPos( uint32_t nPos, bool &bFinished )
@@ -386,6 +386,7 @@ private:
 		}
 
 		bFinished = true;
+		return 0;
 	}
 
 	uint32_t probe( uint32_t hash, key k, bool &bFill, bool rehash=true )
@@ -496,10 +497,10 @@ private:
 	uint32_t nDeleted;
 	uint32_t *bFilled;
 	uint32_t *bDeleted;
-	uint32_t *aHashCodes;
 	uint32_t nKeysSize;
-	value *aValues;
 	key *aKeys;
+	value *aValues;
+	uint32_t *aHashCodes;
 	valuealloc va;
 	keyalloc ka;
 	challoc ca;
