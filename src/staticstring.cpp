@@ -243,10 +243,28 @@ bool StaticString::operator!=( StaticString &str )
 unsigned long int StaticString::getHashCode()
 {
 	unsigned long int nPos = nLen;
-	for( const char *s = (const char *)lpStr; *s; s++ )
+	unsigned long int j = 0;
+	for( const char *s = (const char *)lpStr; j< nLen; s++, j++ )
 	{
 		nPos = *s + (nPos << 6) + (nPos << 16) - nPos;
 	}
 	return nPos;
+}
+
+bool StaticString::compareForHash( Hashable &other )
+{
+	if( ((StaticString &)other).nLen != nLen )
+		return false;
+
+	const char *a = ((StaticString &)other).lpStr;
+	const char *b = lpStr;
+	if( a == b )
+		return true;
+
+	for( unsigned long j = 0; j < nLen; j++, a++, b++ )
+		if( *a != *b )
+			return false;
+
+	return true;
 }
 
