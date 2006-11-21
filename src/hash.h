@@ -26,7 +26,7 @@ struct __calcNextTSize_fast
 template<typename key, typename value, typename sizecalc = __calcNextTSize_fast, typename keyalloc = std::allocator<key>, typename valuealloc = std::allocator<value>, typename challoc = std::allocator<uint32_t> >
 class Hash;
 
-template< typename key, typename _value, typename sizecalc, typename keyalloc, typename valuealloc, typename challoc >
+template< typename key, typename _value, typename sizecalc = __calcNextTSize_fast, typename keyalloc = std::allocator<key>, typename valuealloc = std::allocator<_value>, typename challoc = std::allocator<uint32_t> >
 struct HashProxy
 {
 	friend class Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc>;
@@ -137,19 +137,6 @@ public:
 		ca.deallocate( bFilled, nKeysSize );
 		ca.deallocate( bDeleted, nKeysSize );
 		ca.deallocate( aHashCodes, nCapacity );
-	}
-
-	void clearBits()
-	{
-		for( uint32_t j = 0; j < nKeysSize; j++ )
-		{
-			bFilled[j] = bDeleted[j] = 0;
-		}
-	}
-
-	int hasKey( key keyval )
-	{
-		printf("%s\n", keyval );
 	}
 
 	uint32_t getCapacity()
@@ -307,6 +294,14 @@ public:
 	}
 
 private:
+	void clearBits()
+	{
+		for( uint32_t j = 0; j < nKeysSize; j++ )
+		{
+			bFilled[j] = bDeleted[j] = 0;
+		}
+	}
+
 	void fill( uint32_t loc, key &k, value &v, uint32_t hash )
 	{
 		bFilled[loc/32] |= (1<<(loc%32));
