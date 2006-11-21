@@ -1,5 +1,7 @@
 #include "hash.h"
 
+subExceptionDef( HashException )
+
 template<> uint32_t __calcHashCode<const int>( const int k )
 {
 	return k;

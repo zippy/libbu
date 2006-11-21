@@ -78,6 +78,7 @@ int main()
 		printf("%d: %s\n", (*j).second, (*j).first.c_str() );
 	}
 
+	printf("Testing\n-------------------\n\n");
 	for( int j = 0; j < 33; j++ )
 	{
 		if( sTest.has(names[j]) )
@@ -94,6 +95,17 @@ int main()
 		{
 			printf("Missing element %d, '%s'\n", j, names[j] );
 		}
+	}
+
+	printf("Clearing\n-------------------\n\n");
+
+	sTest.clear();
+	
+	for( Hash<std::string, int>::iterator i = sTest.begin();
+		 i != sTest.end(); i++ )
+	{
+		Hash<std::string, int>::iterator j = i;
+		printf("%d: %s\n", (*j).second, (*j).first.c_str() );
 	}
 }
 

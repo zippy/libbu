@@ -5,9 +5,17 @@
 #include <string.h>
 #include <memory>
 #include <iostream>
+#include "exceptionbase.h"
 #include "hashable.h"
 
 #define bitsToBytes( n ) (n/32+(n%32>0 ? 1 : 0))
+
+subExceptionDecl( HashException )
+
+enum eHashException
+{
+	excodeNotFilled
+};
 
 template<typename T>
 uint32_t __calcHashCode( T k );
@@ -59,14 +67,20 @@ public:
 	operator _value()
 	{
 		if( bFilled == false )
-			throw "Nope, no data there";
+			throw HashException(
+					excodeNotFilled,
+					"No data assosiated with that key."
+					);
 		return *pValue;
 	}
 
 	_value value()
 	{
 		if( bFilled == false )
-			throw "Nope, no data there";
+			throw HashException(
+					excodeNotFilled,
+					"No data assosiated with that key."
+					);
 		return *pValue;
 	}
 
@@ -199,6 +213,21 @@ public:
 		}
 	}
 
+	void clear()
+	{
+		for( uint32_t j = 0; j < nCapacity; j++ )
+		{
+			if( isFilled( j ) )
+				if( !isDeleted( j ) )
+				{
+					va.destroy( &aValues[j] );
+					ka.destroy( &aKeys[j] );
+				}
+		}
+		
+		clearBits();
+	}
+
 	value get( key k )
 	{
 		uint32_t hash = __calcHashCode( k );
@@ -211,7 +240,10 @@ public:
 		}
 		else
 		{
-			throw "Hey, no such thing...";
+			throw HashException(
+					excodeNotFilled,
+					"No data assosiated with that key."
+					);
 		}
 	}
 
