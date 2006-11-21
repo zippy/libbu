@@ -26,35 +26,43 @@ struct __calcNextTSize_fast
 template<typename key, typename value, typename sizecalc = __calcNextTSize_fast, typename keyalloc = std::allocator<key>, typename valuealloc = std::allocator<value>, typename challoc = std::allocator<uint32_t> >
 class Hash;
 
-template< typename key, typename value, typename sizecalc, typename keyalloc, typename valuealloc, typename challoc >
+template< typename key, typename _value, typename sizecalc, typename keyalloc, typename valuealloc, typename challoc >
 struct HashProxy
 {
-	friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
+	friend class Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc>;
 private:
-	HashProxy( Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &h, key *k, value *v, uint32_t hash ) :
+	HashProxy( Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc> &h, key *k, uint32_t nPos, uint32_t hash ) :
 		hsh( h ),
 		pKey( k ),
-		pValue( v ),
+		nPos( nPos ),
 		hash( hash ),
 		bFilled( false )
 	{
 	}
 
-	HashProxy( Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &h, value *pValue ) :
+	HashProxy( Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc> &h, _value *pValue ) :
 		hsh( h ),
 		pValue( pValue ),
 		bFilled( true )
 	{
 	}
 
-	Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh;
+	Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc> &hsh;
 	key *pKey;
-	value *pValue;
+	_value *pValue;
 	bool bFilled;
 	uint32_t hash;
+	uint32_t nPos;
 
 public:
-	operator value()
+	operator _value()
+	{
+		if( bFilled == false )
+			throw "Nope, no data there";
+		return *pValue;
+	}
+
+	_value value()
 	{
 		if( bFilled == false )
 			throw "Nope, no data there";
@@ -66,15 +74,16 @@ public:
 		return bFilled;
 	}
 
-	value operator=( value nval )
+	_value operator=( _value nval )
 	{
 		if( bFilled )
 		{
-			hsh.va.destroy( KEEP GOING HERE
-			hsh.insert( tKey, nval );
+			hsh.va.destroy( pValue );
+			hsh.va.construct( pValue, nval );
 		}
 		else
 		{
+			hsh.fill( nPos, *pKey, nval, hash ); 
 		}
 
 		return nval;
@@ -84,7 +93,7 @@ public:
 template<typename key, typename value, typename sizecalc, typename keyalloc, typename valuealloc, typename challoc >
 class Hash
 {
-	friend HashProxy;
+	friend struct HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc>;
 public:
 	Hash() :
 		nCapacity( 11 ),
@@ -379,9 +388,9 @@ private:
 	void fill( uint32_t loc, key &k, value &v, uint32_t hash )
 	{
 		bFilled[loc/32] |= (1<<(loc%32));
-		va.construct( &aValues[nPos], v );
-		ka.construct( &aKeys[nPos], k );
-		aHashCodes[nPos] = hash;
+		va.construct( &aValues[loc], v );
+		ka.construct( &aKeys[loc], k );
+		aHashCodes[loc] = hash;
 		nFilled++;
 	}
 
