@@ -45,7 +45,7 @@ template<> bool __cmpHashKeys<const char *>( const char *a, const char *b )
 		return true;
 
 	for(; *a == *b; a++, b++ )
-		if( *a == '\0' && *b == '\0' )
+		if( *a == '\0' )
 			return true;
 
 	return false;
