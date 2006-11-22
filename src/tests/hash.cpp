@@ -58,24 +58,28 @@ int main()
 		NULL
 	};
 
-	Hash<std::string, int> sTest;
+	Hash<const char *, int> sTest;
 
 	printf("Inserting\n-------------------\n\n");
 	for( int j = 0; j < 33; j++ )
 	{
 		sTest[names[j]] = j;
 	}
+	
+	printf("Test1: %d, Test2: %d\n", sTest.has("Lemon of Troy"), sTest.has(std::string("Lemon of Troy").c_str() ) );
+
+	sTest.has(std::string("Lemon of Troy").c_str() );
 
 	printf("Getting\n-------------------\n\n");
 
 	sTest.erase("Homer the Great");
 	sTest["Bart's Comet"].erase();
 
-	for( Hash<std::string, int>::iterator i = sTest.begin();
+	for( Hash<const char *, int>::iterator i = sTest.begin();
 		 i != sTest.end(); i++ )
 	{
-		Hash<std::string, int>::iterator j = i;
-		printf("%d: %s\n", (*j).second, (*j).first.c_str() );
+		Hash<const char *, int>::iterator j = i;
+		printf("%d: %s\n", (*j).second, (*j).first );
 	}
 
 	printf("Testing\n-------------------\n\n");
@@ -101,11 +105,12 @@ int main()
 
 	sTest.clear();
 	
-	for( Hash<std::string, int>::iterator i = sTest.begin();
+	for( Hash<const char *, int>::iterator i = sTest.begin();
 		 i != sTest.end(); i++ )
 	{
-		Hash<std::string, int>::iterator j = i;
-		printf("%d: %s\n", (*j).second, (*j).first.c_str() );
+		Hash<const char *, int>::iterator j = i;
+		printf("%d: %s\n", (*j).second, (*j).first );
 	}
+
 }
 
