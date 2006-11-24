@@ -64,6 +64,16 @@ public:
 		return pData == src.pData;
 	}
 
+	operator bool()
+	{
+		return pRefCnt != NULL;
+	}
+
+	bool isSet()
+	{
+		return pRefCnt != NULL;
+	}
+
 private:
 	void decCount()
 	{

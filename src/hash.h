@@ -461,6 +461,8 @@ private:
 		aKeys = ka.allocate( nCapacity );
 		aValues = va.allocate( nCapacity );
 
+		nFilled = 0;
+
 		// Re-insert all of the old data (except deleted items)
 		for( uint32_t j = 0; j < nOldCapacity; j++ )
 		{
