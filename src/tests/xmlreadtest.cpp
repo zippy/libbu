@@ -20,8 +20,8 @@ int main( int argc, char *argv[] )
 	else if( argv[1][0] == 's' )
 	{
 		XmlStringReader r( argv[2], true );
-//		XmlWriter w( argv[3], "\t", r.detatchRoot() );
-//		w.write();
+		XmlFileWriter w(stdout, "\t", r.detatchRoot() );
+		w.write();
 	}
 
 	return 0;

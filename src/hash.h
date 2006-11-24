@@ -164,6 +164,11 @@ public:
 		return nFilled;
 	}
 
+	uint32_t size()
+	{
+		return nFilled;
+	}
+
 	uint32_t getDeleted()
 	{
 		return nDeleted;
