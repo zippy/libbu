@@ -30,11 +30,11 @@ public:
 		pRefCnt( NULL ),
 		pData( pSrc )
 	{
-		pRefCnt = new uint32_t;
+		pRefCnt = new int32_t;
 		(*pRefCnt) = 1;
 	}
 
-	uint32_t count()
+	int32_t count()
 	{
 		return *pRefCnt;
 	}
@@ -55,6 +55,8 @@ public:
 		pRefCnt = src.pRefCnt;
 		pData = src.pData;
 		(*pRefCnt) += 1;
+
+		return *this;
 	}
 
 	bool operator==( const SPtr<T> &src )
@@ -78,7 +80,7 @@ private:
 		}
 	}
 
-	uint32_t *pRefCnt;
+	int32_t *pRefCnt;
 	T *pData;
 };
 
