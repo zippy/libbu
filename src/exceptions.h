@@ -8,6 +8,11 @@ subExceptionDecl( XmlException )
 subExceptionDecl( FileException )
 subExceptionDecl( ConnectionException )
 
+enum eFileException
+{
+	excodeEOF
+};
+	
 enum eConnectionException
 {
 	excodeReadError,

@@ -26,31 +26,31 @@ public:
 	virtual void write(const void *, int32_t)=0;
 	virtual void read(void *, int32_t)=0;
 	
-	virtual Serializer &operator<<(bool)=0;
-	virtual Serializer &operator<<(int8_t)=0;
-	virtual Serializer &operator<<(int16_t)=0;
-	virtual Serializer &operator<<(int32_t)=0;
-	virtual Serializer &operator<<(int64_t)=0;
-	virtual Serializer &operator<<(uint8_t)=0;
-	virtual Serializer &operator<<(uint16_t)=0;
-	virtual Serializer &operator<<(uint32_t)=0;
-	virtual Serializer &operator<<(uint64_t)=0;
-	virtual Serializer &operator<<(float)=0;
-	virtual Serializer &operator<<(double)=0;
-	virtual Serializer &operator<<(long double)=0;
+	virtual Serializer &operator<<(bool);
+	virtual Serializer &operator<<(int8_t);
+	virtual Serializer &operator<<(int16_t);
+	virtual Serializer &operator<<(int32_t);
+	virtual Serializer &operator<<(int64_t);
+	virtual Serializer &operator<<(uint8_t);
+	virtual Serializer &operator<<(uint16_t);
+	virtual Serializer &operator<<(uint32_t);
+	virtual Serializer &operator<<(uint64_t);
+	virtual Serializer &operator<<(float);
+	virtual Serializer &operator<<(double);
+	virtual Serializer &operator<<(long double);
 
-	virtual Serializer &operator>>(bool &)=0;
-	virtual Serializer &operator>>(int8_t &)=0;
-	virtual Serializer &operator>>(int16_t &)=0;
-	virtual Serializer &operator>>(int32_t &)=0;
-	virtual Serializer &operator>>(int64_t &)=0;
-	virtual Serializer &operator>>(uint8_t &)=0;
-	virtual Serializer &operator>>(uint16_t &)=0;
-	virtual Serializer &operator>>(uint32_t &)=0;
-	virtual Serializer &operator>>(uint64_t &)=0;
-	virtual Serializer &operator>>(float &)=0;
-	virtual Serializer &operator>>(double &)=0;
-	virtual Serializer &operator>>(long double &)=0;
+	virtual Serializer &operator>>(bool &);
+	virtual Serializer &operator>>(int8_t &);
+	virtual Serializer &operator>>(int16_t &);
+	virtual Serializer &operator>>(int32_t &);
+	virtual Serializer &operator>>(int64_t &);
+	virtual Serializer &operator>>(uint8_t &);
+	virtual Serializer &operator>>(uint16_t &);
+	virtual Serializer &operator>>(uint32_t &);
+	virtual Serializer &operator>>(uint64_t &);
+	virtual Serializer &operator>>(float &);
+	virtual Serializer &operator>>(double &);
+	virtual Serializer &operator>>(long double &);
 	
 	/*
 	virtual Serializer &operator&(bool &);
