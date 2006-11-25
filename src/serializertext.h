@@ -1,5 +1,5 @@
-#ifndef SERIALIZER_BINARY_H
-#define SERIALIZER_BINARY_H
+#ifndef SERIALIZER_TEXT_H
+#define SERIALIZER_TEXT_H
 
 #include "serializer.h"
 #include <stdio.h>
