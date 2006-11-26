@@ -43,12 +43,15 @@ void SerializerBinary::close()
 
 void SerializerBinary::write(const void * pData, int32_t nSize)
 {
-	fwrite(pData, nSize, 1, fhFile);
+	uint32_t nWrite = fwrite(pData, nSize, 1, fhFile);
+	printf("fwrite( 0x%08X, %d, 1, fhFile ) = %u;\n", pData, nSize, nWrite );
 }
 
 void SerializerBinary::read(void * pData, int32_t nSize)
 {
-	if( fread(pData, nSize, 1, fhFile) < 1 )
+	uint32_t nRead = fread(pData, nSize, 1, fhFile);
+	printf("fread( 0x%08X, %d, 1, fhFile ) = %u;\n", pData, nSize, nRead );
+	if( nRead < 1 )
 	{
 		throw FileException( excodeEOF, "End of file read");
 	}

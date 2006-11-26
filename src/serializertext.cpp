@@ -7,7 +7,7 @@ SerializerText::SerializerText(FILE *fhFile, bool bLoading):
 {	
 }
 
-SerializerText::SerializerText(char *sFileName, bool bLoading):
+SerializerText::SerializerText(const char *sFileName, bool bLoading):
 	Serializer(bLoading),
 	bCloseFile(true)
 {
