@@ -92,7 +92,10 @@ public:
 	void erase()
 	{
 		if( bFilled )
+		{
 			hsh._erase( nPos );
+			hsh.onDelete();
+		}
 	}
 
 	_value operator=( _value nval )
@@ -101,10 +104,12 @@ public:
 		{
 			hsh.va.destroy( pValue );
 			hsh.va.construct( pValue, nval );
+			hsh.onUpdate();
 		}
 		else
 		{
 			hsh.fill( nPos, *pKey, nval, hash ); 
+			hsh.onInsert();
 		}
 
 		return nval;
@@ -174,7 +179,7 @@ public:
 		return nDeleted;
 	}
 
-	HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc> operator[]( key k )
+	virtual HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc> operator[]( key k )
 	{
 		uint32_t hash = __calcHashCode( k );
 		bool bFill;
@@ -190,7 +195,7 @@ public:
 		}
 	}
 
-	void insert( key k, value v )
+	virtual void insert( key k, value v )
 	{
 		uint32_t hash = __calcHashCode( k );
 		bool bFill;
@@ -200,14 +205,16 @@ public:
 		{
 			va.destroy( &aValues[nPos] );
 			va.construct( &aValues[nPos], v );
+			onUpdate();
 		}
 		else
 		{
 			fill( nPos, k, v, hash );
+			onInsert();
 		}
 	}
 
-	void erase( key k )
+	virtual void erase( key k )
 	{
 		uint32_t hash = __calcHashCode( k );
 		bool bFill;
@@ -216,10 +223,11 @@ public:
 		if( bFill )
 		{
 			_erase( nPos );
+			onDelete();
 		}
 	}
 
-	void clear()
+	virtual void clear()
 	{
 		for( uint32_t j = 0; j < nCapacity; j++ )
 		{
@@ -228,13 +236,14 @@ public:
 				{
 					va.destroy( &aValues[j] );
 					ka.destroy( &aKeys[j] );
+					onDelete();
 				}
 		}
 		
 		clearBits();
 	}
 
-	value get( key k )
+	virtual value get( key k )
 	{
 		uint32_t hash = __calcHashCode( k );
 		bool bFill;
@@ -253,7 +262,7 @@ public:
 		}
 	}
 
-	bool has( key k )
+	virtual bool has( key k )
 	{
 		bool bFill;
 		probe( __calcHashCode( k ), k, bFill );
@@ -338,8 +347,13 @@ public:
 		return iterator( *this, true );
 	}
 
-private:
-	void clearBits()
+protected:
+	virtual void onInsert() {}
+	virtual void onUpdate() {}
+	virtual void onDelete() {}
+	virtual void onReHash() {}
+
+	virtual void clearBits()
 	{
 		for( uint32_t j = 0; j < nKeysSize; j++ )
 		{
@@ -347,7 +361,7 @@ private:
 		}
 	}
 
-	void fill( uint32_t loc, key &k, value &v, uint32_t hash )
+	virtual void fill( uint32_t loc, key &k, value &v, uint32_t hash )
 	{
 		bFilled[loc/32] |= (1<<(loc%32));
 		va.construct( &aValues[loc], v );
@@ -356,19 +370,19 @@ private:
 		nFilled++;
 	}
 
-	void _erase( uint32_t loc )
+	virtual void _erase( uint32_t loc )
 	{
 		bDeleted[loc/32] |= (1<<(loc%32));
 		va.destroy( &aValues[loc] );
 		ka.destroy( &aKeys[loc] );
 	}
 
-	std::pair<key,value> getAtPos( uint32_t nPos )
+	virtual std::pair<key,value> getAtPos( uint32_t nPos )
 	{
 		return std::pair<key,value>(aKeys[nPos],aValues[nPos]);
 	}
 
-	uint32_t getFirstPos( bool &bFinished )
+	virtual uint32_t getFirstPos( bool &bFinished )
 	{
 		for( uint32_t j = 0; j < nCapacity; j++ )
 		{
@@ -381,7 +395,7 @@ private:
 		return 0;
 	}
 
-	uint32_t getNextPos( uint32_t nPos, bool &bFinished )
+	virtual uint32_t getNextPos( uint32_t nPos, bool &bFinished )
 	{
 		for( uint32_t j = nPos+1; j < nCapacity; j++ )
 		{
@@ -488,17 +502,17 @@ private:
 		ca.deallocate( aOldHashCodes, nOldCapacity );
 	}
 
-	bool isFilled( uint32_t loc )
+	virtual bool isFilled( uint32_t loc )
 	{
 		return (bFilled[loc/32]&(1<<(loc%32)))!=0;
 	}
 
-	bool isDeleted( uint32_t loc )
+	virtual bool isDeleted( uint32_t loc )
 	{
 		return (bDeleted[loc/32]&(1<<(loc%32)))!=0;
 	}
 
-private:
+protected:
 	uint32_t nCapacity;
 	uint32_t nFilled;
 	uint32_t nDeleted;
