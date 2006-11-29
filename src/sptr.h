@@ -19,7 +19,7 @@ public:
 		decCount();
 	}
 
-	SPtr( SPtr<T> &src ) :
+	SPtr( const SPtr<T> &src ) :
 		pRefCnt( src.pRefCnt ),
 		pData( src.pData )
 	{
