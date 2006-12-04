@@ -358,6 +358,12 @@ bool Connection::writeOutput()
 	return true;
 }
 
+bool Connection::writeAllOutput()
+{
+	while( hasOutput() ) writeOutput();
+	return true;
+}
+
 bool Connection::hasOutput()
 {
 	if( xOutputBuf.getLength() == 0 )

@@ -295,10 +295,15 @@ public:
 	 */
 	void waitForInput( int nBytesIn, int nSec, int nUSec );
 
-	/** Writes all data that is pending to the socket.
+	/** Writes some data that is pending to the socket.
 	  *@returns True if all data was written succesfully, false otherwise.
 	  */
 	bool writeOutput();
+
+	/**
+	 * Writes all data that is pending on the socekt.
+	 */
+	bool writeAllOutput();
 
 	/** Determines if the connection has output waiting to go out.
 	  *@returns true if there is pending output, otherwise false.
