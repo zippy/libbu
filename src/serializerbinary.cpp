@@ -48,6 +48,9 @@ void SerializerBinary::write(const void * pData, int32_t nSize)
 
 void SerializerBinary::read(void * pData, int32_t nSize)
 {
+	if( nSize == 0 )
+		return;
+
 	uint32_t nRead = fread(pData, nSize, 1, fhFile);
 	if( nRead < 1 )
 	{
