@@ -43,6 +43,9 @@ void SerializerBinary::close()
 
 void SerializerBinary::write(const void * pData, int32_t nSize)
 {
+	if( nSize == 0 )
+		return;
+
 	fwrite(pData, nSize, 1, fhFile);
 }
 
