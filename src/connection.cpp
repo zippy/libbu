@@ -161,6 +161,7 @@ bool Connection::open( const char *sAddr, int nPort )
      
 	/* Create the socket. */
 	nSocket = socket( PF_INET, SOCK_STREAM, 0 );
+	
 	if( nSocket < 0 )
 	{
 		bActive = false;
@@ -240,7 +241,7 @@ int Connection::readInput()
 
 bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack )
 {
-	fd_set rfds;
+	fd_set rfds, efds;
 	struct timeval tv, start, end;
 	struct timezone tz;
 	int retval;
@@ -249,6 +250,8 @@ bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack
 
 	FD_ZERO(&rfds);
 	FD_SET(nSocket, &rfds);
+	FD_ZERO(&efds);
+	FD_SET(nSocket, &efds);
 
 	tv.tv_sec = nSec;
 	tv.tv_usec = nUSec;
@@ -266,10 +269,11 @@ bool Connection::readInput( int nSec, int nUSec, int *pnSecBack, int *pnUSecBack
 	{
 		//printf("retval=%d, nSocket=%d,%d, sec=%d, usec=%d\n", retval, nSocket, FD_ISSET( nSocket, &rfds ), tv.tv_sec, tv.tv_usec );
 		// None of them have data, but the connection is still active.
-		if( readInput() == 0 )
+		if( FD_ISSET( nSocket, &rfds ) )
 		{
-			this->close();
-			throw ConnectionException( excodeConnectionClosed, "Connection closed");
+			if( readInput() == 0 )
+			{
+				throw ConnectionException( excodeConnectionClosed, "Connection closed");	}
 		}
 	}
 

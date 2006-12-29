@@ -1,5 +1,5 @@
 #include "httpget.h"
-#include "exceptionbase.h"
+#include "exceptions.h"
 #include "connection.h"
 #include <stdio.h>
 
@@ -24,10 +24,10 @@ HttpGet::~HttpGet()
 void HttpGet::setURL( const std::string &url )
 {
 	int len = url.size();
-	printf("Full URL: %s\n", url.c_str() );
+	//printf("Full URL: %s\n", url.c_str() );
 	int pos = url.find("://");
 	sProto.assign( url, 0, pos );
-	printf("Protocol: %s\n", sProto.c_str() );
+	//printf("Protocol: %s\n", sProto.c_str() );
 	
 	int pos2 = url.find("/", pos+3 );
 	if( pos2 >= 0 )
@@ -45,14 +45,14 @@ void HttpGet::setURL( const std::string &url )
 		nPort = strtol( sHost.c_str()+pos3+1, NULL, 10 );
 		sHost.erase( pos3 );
 	}
-	printf("Hostname: %s\n", sHost.c_str() );
-	printf("Port: %d\n", nPort );
+	//printf("Hostname: %s\n", sHost.c_str() );
+	//printf("Port: %d\n", nPort );
 
 	pos3 = url.find("?", pos2+1 );
 	if( pos3 >= 0 )
 	{
 		sPath.assign( url, pos2, pos3-pos2 );
-		printf("Path: %s\n", sPath.c_str() );
+		//printf("Path: %s\n", sPath.c_str() );
 		for(;;)
 		{
 			int end = pos3+1;
@@ -70,17 +70,17 @@ void HttpGet::setURL( const std::string &url )
 			{
 			}
 			lParams.push_back( StringPair( sKey, sValue ) );
-			printf("Param: %s = %s\n", sKey.c_str(), sValue.c_str() );
+			//printf("Param: %s = %s\n", sKey.c_str(), sValue.c_str() );
 			if( end+1 >= len ) break;
 		}
 	}
 	else
 	{
 		sPath.assign( url, pos2, std::string::npos );
-		printf("Path: %s\n", sPath.c_str() );
+		//printf("Path: %s\n", sPath.c_str() );
 	}
 
-	printf("\n");
+	//printf("\n");
 }
 
 void HttpGet::addParam( const std::string &key, const std::string &value )
@@ -153,18 +153,72 @@ SBuffer *HttpGet::get()
 		"Host: " + sHost + "\r\n"
 		"Content-type: application/x-www-form-urlencoded\r\n\r\n";
 
-	printf("Connection content:\n\n%s\n\n", sData.c_str() );
+	//printf("Connection content:\n\n%s\n\n", sData.c_str() );
 
 	Connection con;
 	con.open( sHost.c_str(), nPort );
-	printf("Connected, sending request.\n");
+	//printf("Connected, sending request.\n");
+	{
+		int nSocket = con.getSocket();
+		fd_set rfds, wfds, efds;
+		int retval;
+		
+		FD_ZERO(&rfds);
+		FD_SET(nSocket, &rfds);
+		FD_ZERO(&wfds);
+		FD_SET(nSocket, &wfds);
+		FD_ZERO(&efds);
+		FD_SET(nSocket, &efds);
+
+		retval = select( nSocket+1, &rfds, &wfds, &efds, NULL );
+		printf("About to write: sock=%d, r=%d, w=%d, e=%d, ret=%d\n",
+			nSocket,
+			FD_ISSET( nSocket, &rfds ),
+			FD_ISSET( nSocket, &wfds ),
+			FD_ISSET( nSocket, &efds ),
+			retval
+			);
+		
+	}
 	con.appendOutput( sData.c_str(), sData.size() );
 	con.writeOutput();
-	while( con.readInput() )
-		printf("Read %db\n", con.getInputAmnt() );
+	int nSec = 5;
+	int nUSec = 0;
+	int nLastAmnt = con.getInputAmnt();
+	try
+	{
+		double dTotTime = 0.0;
+	while( con.readInput( nSec, nUSec, &nSec, &nUSec ) )
+	{
+		if( nLastAmnt == con.getInputAmnt() )
+		{
+			if( nSec <= 0 && nUSec <= 0 )
+				throw ExceptionBase("Connection Timeout.\n");
+			if( nSec == 5 && nUSec == 0 )
+				break;
+		}
+		else
+		{
+			dTotTime += (5.0-(nSec+nUSec/1000000.0));
+			printf("\rRead %db at %.2fkb/sec",
+				con.getInputAmnt(),
+				((double)(con.getInputAmnt())/1024.0) / dTotTime
+				);
+			fflush( stdout );
+			nSec = 5;
+			nUSec = 0;
+			nLastAmnt = con.getInputAmnt();
+		}
+	}
+	}
+	catch( ConnectionException &e )
+	{
+		printf("ConnectionException:  %s\n", e.what() );
+	}
 
 	int total = con.getInputAmnt();
 	const char *dat = con.getInput();
+	//printf("\n===> Final size %d\n", total );
 	for( int i = 0; i < total; i++ )
 	{
 		if( !memcmp( dat+i, "\r\n\r\n", 4 ) )
