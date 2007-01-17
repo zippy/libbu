@@ -534,6 +534,12 @@ template<> bool __cmpHashKeys<const int>( const int a, const int b );
 template<> uint32_t __calcHashCode<int>( int k );
 template<> bool __cmpHashKeys<int>( int a, int b );
 
+template<> uint32_t __calcHashCode<const unsigned int>( const unsigned int k );
+template<> bool __cmpHashKeys<const unsigned int>( const unsigned int a, const unsigned int b );
+
+template<> uint32_t __calcHashCode<unsigned int>( unsigned int k );
+template<> bool __cmpHashKeys<unsigned int>( unsigned int a, unsigned int b );
+
 template<> uint32_t __calcHashCode<const char *>( const char *k );
 template<> bool __cmpHashKeys<const char *>( const char *a, const char *b );
 

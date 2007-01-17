@@ -22,6 +22,26 @@ template<> bool __cmpHashKeys<int>( int a, int b )
 	return a == b;
 }
 
+template<> uint32_t __calcHashCode<const unsigned int>( const unsigned int k )
+{
+	return k;
+}
+
+template<> bool __cmpHashKeys<const unsigned int>( const unsigned int a, const unsigned int b )
+{
+	return a == b;
+}
+
+template<> uint32_t __calcHashCode<unsigned int>( unsigned int k )
+{
+	return k;
+}
+
+template<> bool __cmpHashKeys<unsigned int>( unsigned int a, unsigned int b )
+{
+	return a == b;
+}
+
 template<>
 uint32_t __calcHashCode<const char *>( const char * k )
 {
