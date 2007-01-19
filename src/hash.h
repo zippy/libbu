@@ -64,7 +64,7 @@ private:
 	bool bFilled;
 
 public:
-	operator _value()
+	operator _value &()
 	{
 		if( bFilled == false )
 			throw HashException(
@@ -74,7 +74,7 @@ public:
 		return *pValue;
 	}
 
-	_value value()
+	_value &value()
 	{
 		if( bFilled == false )
 			throw HashException(
@@ -243,7 +243,7 @@ public:
 		clearBits();
 	}
 
-	virtual value get( key k )
+	virtual value &get( key k )
 	{
 		uint32_t hash = __calcHashCode( k );
 		bool bFill;
