@@ -321,7 +321,7 @@ Serializer &operator>>( Serializer &ar, std::string &s )
 	tmp[l] = '\0';
 	ar.read( tmp, l );
 	s = tmp;
-	delete tmp;
+	delete[] tmp;
 
 	return ar;
 }
