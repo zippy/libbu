@@ -236,7 +236,8 @@ int Connection::readInput()
 				fd_set rfds;
 				FD_ZERO(&rfds);
 				FD_SET(nSocket, &rfds);
-				int retval = select( nSocket+1, &rfds, NULL, NULL, NULL );
+				struct timeval tv = { 0, 0 };
+				int retval = select( nSocket+1, &rfds, NULL, NULL, &tv );
 				if( retval == -1 )
 					throw ConnectionException(
 						excodeBadReadError,
