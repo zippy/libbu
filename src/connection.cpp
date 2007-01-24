@@ -228,6 +228,24 @@ int Connection::readInput()
 			{
 				break;
 			}
+
+			/* New test, if data is divisible by 2048 bytes on some libs the
+			 * read could block, this keeps it from happening.
+			 */
+			{
+				fd_set rfds;
+				FD_ZERO(&rfds);
+				FD_SET(nSocket, &rfds);
+				int retval = select( nSocket+1, &rfds, NULL, NULL, NULL );
+				if( retval == -1 )
+					throw ConnectionException(
+						excodeBadReadError,
+						"Bad Read error"
+						);
+				if( !FD_ISSET( nSocket, &rfds ) )
+					break;
+			}
+
 		}
 	}
 
