@@ -141,6 +141,34 @@ public:
 		aValues = va.allocate( nCapacity );
 	}
 
+	Hash( const Hash &src ) :
+		nCapacity( src.nCapacity ),
+		nFilled( 0 ),
+		nDeleted( 0 ),
+		bFilled( NULL ),
+		bDeleted( NULL ),
+		aKeys( NULL ),
+		aValues( NULL ),
+		aHashCodes( NULL )
+	{
+		nKeysSize = bitsToBytes( nCapacity );
+		bFilled = ca.allocate( nKeysSize );
+		bDeleted = ca.allocate( nKeysSize );
+		clearBits();
+
+		aHashCodes = ca.allocate( nCapacity );
+		aKeys = ka.allocate( nCapacity );
+		aValues = va.allocate( nCapacity );
+
+		for( uint32_t j = 0; j < nCapacity; j++ )
+		{
+			if( src.isFilled( j ) )
+			{
+				insert( src.aKeys[j], src.aValues[j] );
+			}
+		}
+	}
+
 	virtual ~Hash()
 	{
 		for( uint32_t j = 0; j < nCapacity; j++ )
@@ -502,7 +530,7 @@ protected:
 		ca.deallocate( aOldHashCodes, nOldCapacity );
 	}
 
-	virtual bool isFilled( uint32_t loc )
+	virtual bool isFilled( uint32_t loc ) const
 	{
 		return (bFilled[loc/32]&(1<<(loc%32)))!=0;
 	}
