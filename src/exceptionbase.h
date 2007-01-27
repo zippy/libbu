@@ -60,6 +60,12 @@ public:
 	 */
 	void setWhat( const char *lpFormat, va_list &vargs );
 
+	/**
+	 *
+	 * @param lpText
+	 */
+	void setWhat( const char *lpText );
+
 private:
 	int nErrorCode;	/**< The code for the error that occured. */
 	char *sWhat;	/**< The text string telling people what went wrong. */

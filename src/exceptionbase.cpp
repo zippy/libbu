@@ -48,6 +48,16 @@ void ExceptionBase::setWhat( const char *lpFormat, va_list &vargs )
 	vsnprintf( sWhat, nSize+1, lpFormat, vargs );
 }
 
+void ExceptionBase::setWhat( const char *lpText )
+{
+	if( sWhat ) delete[] sWhat;
+	int nSize;
+
+	nSize = strlen( lpText );
+	sWhat = new char[nSize+1];
+	strcpy( sWhat, lpText );
+}
+
 const char *ExceptionBase::what() const throw()
 {
 	return sWhat;
