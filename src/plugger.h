@@ -55,6 +55,22 @@ extern "C" {															\
 		(void (*)( void * ))(destroy ##classname) };					\
 }
 
+#define PluginInterface3( structname, pluginname, classname, baseclass, name, ver, rev ) \
+extern "C" {															\
+	baseclass *create ##classname()										\
+	{																	\
+		return new classname();											\
+	}																	\
+	void destroy ##classname( baseclass *pCls )							\
+	{																	\
+		delete pCls;													\
+	}																	\
+	PluginInfo structname = {											\
+		#pluginname, name, ver, rev,									\
+		(void *(*)())(create ##classname),								\
+		(void (*)( void * ))(destroy ##classname) };					\
+}
+
 template<class T>
 class Plugger
 {
