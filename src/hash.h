@@ -160,13 +160,53 @@ public:
 		aKeys = ka.allocate( nCapacity );
 		aValues = va.allocate( nCapacity );
 
-		for( uint32_t j = 0; j < nCapacity; j++ )
+		for( uint32_t j = 0; j < src.nCapacity; j++ )
 		{
 			if( src.isFilled( j ) )
 			{
 				insert( src.aKeys[j], src.aValues[j] );
 			}
 		}
+	}
+
+	Hash &operator=( const Hash &src )
+	{
+		for( uint32_t j = 0; j < nCapacity; j++ )
+		{
+			if( isFilled( j ) )
+				if( !isDeleted( j ) )
+				{
+					va.destroy( &aValues[j] );
+					ka.destroy( &aKeys[j] );
+				}
+		}
+		va.deallocate( aValues, nCapacity );
+		ka.deallocate( aKeys, nCapacity );
+		ca.deallocate( bFilled, nKeysSize );
+		ca.deallocate( bDeleted, nKeysSize );
+		ca.deallocate( aHashCodes, nCapacity );
+
+		nFilled = 0;
+		nDeleted = 0;
+		nCapacity = src.nCapacity;
+		nKeysSize = bitsToBytes( nCapacity );
+		bFilled = ca.allocate( nKeysSize );
+		bDeleted = ca.allocate( nKeysSize );
+		clearBits();
+
+		aHashCodes = ca.allocate( nCapacity );
+		aKeys = ka.allocate( nCapacity );
+		aValues = va.allocate( nCapacity );
+
+		for( uint32_t j = 0; j < src.nCapacity; j++ )
+		{
+			if( src.isFilled( j ) )
+			{
+				insert( src.aKeys[j], src.aValues[j] );
+			}
+		}
+
+		return *this;
 	}
 
 	virtual ~Hash()
