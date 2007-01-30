@@ -115,7 +115,17 @@ public:
 
 	void registerExternalPlugin( const char *sFName, const char *sPluginName )
 	{
-		PluginReg *pReg = new PluginReg;
+		PluginReg *pReg = (PluginReg *)hPlugin[sPluginName];
+		if( pReg != NULL )
+		{
+			hPlugin.del( sPluginName );
+			dlclose( pReg->dlHandle );
+			delete pReg;
+			pReg = NULL;
+		}
+
+		pReg = new PluginReg;
+
 		pReg->bBuiltin = false;
 		pReg->dlHandle = dlopen( sFName, RTLD_NOW );
 		if( pReg->dlHandle == NULL )
@@ -163,6 +173,20 @@ public:
 		pReg->pInfo->destroyPlugin( pPlug );
 
 		hObj.del( pPlug );
+	}
+
+	void unloadAll()
+	{
+		std::list<PluginReg *>::iterator i;
+		for( i = lPlugin.begin(); i != lPlugin.end(); i++ )
+		{
+			if( (*i)->bBuiltin == false )
+			{
+				dlclose( (*i)->dlHandle );
+			}
+			delete (*i);
+		}
+		hPlugin.clear();
 	}
 
 private:
