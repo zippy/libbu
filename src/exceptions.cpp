@@ -4,3 +4,5 @@
 subExceptionDef( XmlException )
 subExceptionDef( FileException )
 subExceptionDef( ConnectionException )
+subExceptionDef( PluginException )
+

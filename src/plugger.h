@@ -6,6 +6,7 @@
 #include "hashfunctionstring.h"
 #include "hashfunctionint.h"
 #include "dlfcn.h"
+#include "exceptions.h"
 
 typedef struct PluginInfo
 {
@@ -130,14 +131,12 @@ public:
 		pReg->dlHandle = dlopen( sFName, RTLD_NOW );
 		if( pReg->dlHandle == NULL )
 		{
-			printf("***ERROR:  %s\n\n", dlerror() );
-			exit( 105 );
+			throw PluginException( 1, "Error on %s: %s", sFName, dlerror() );
 		}
 		pReg->pInfo = (PluginInfo *)dlsym( pReg->dlHandle, sPluginName );
 		if( pReg->pInfo == NULL )
 		{
-			printf("***ERROR:  %s\n\n", dlerror() );
-			exit( 106 );
+			throw PluginException( 2, "Error on %s: %s", sFName, dlerror() );
 		}
 		hPlugin.insert( pReg->pInfo->sID, pReg );
 		lPlugin.insert( lPlugin.end(), pReg );

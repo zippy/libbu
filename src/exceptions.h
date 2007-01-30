@@ -7,6 +7,7 @@
 subExceptionDecl( XmlException )
 subExceptionDecl( FileException )
 subExceptionDecl( ConnectionException )
+subExceptionDecl( PluginException )
 
 enum eFileException
 {
