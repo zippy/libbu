@@ -60,3 +60,8 @@ void SBuffer::setPosEnd( long pos )
 	nPos = fbData.getLength() - pos;
 }
 
+bool SBuffer::isEOS()
+{
+	return nPos == fbData.getLength();
+}
+

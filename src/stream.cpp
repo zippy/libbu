@@ -7,3 +7,4 @@ Stream::Stream()
 Stream::~Stream()
 {
 }
+

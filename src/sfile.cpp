@@ -67,3 +67,8 @@ void SFile::setPosEnd( long pos )
 	fseek( fh, pos, SEEK_END );
 }
 
+bool SFile::isEOS()
+{
+	return feof( fh );
+}
+

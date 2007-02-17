@@ -19,6 +19,7 @@ public:
 	virtual void seek( long offset );
 	virtual void setPos( long pos );
 	virtual void setPosEnd( long pos );
+	virtual bool isEOS();
 
 private:
 	FILE *fh;

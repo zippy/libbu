@@ -18,6 +18,7 @@ public:
 	virtual void seek( long offset ) = 0;
 	virtual void setPos( long pos ) = 0;
 	virtual void setPosEnd( long pos ) = 0;
+	virtual bool isEOS() = 0;
 
 private:
 
