@@ -6,7 +6,7 @@ int main( int argc, char *argv[] )
 
 	Formula f;
 	double dOut = f.run( argv[1] );
-	printf("Final:  %f\n", dOut );
+	printf("%s = %f\n", argv[1], dOut );
 	
 	return 0;
 }

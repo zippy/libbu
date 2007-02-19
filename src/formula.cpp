@@ -4,99 +4,177 @@ subExceptionDef( ParseException );
 
 Formula::Formula()
 {
+	hVars["pi"] = M_PI;
+	hVars["e"] = M_E;
+
+	hFunc["sin"] = FuncSin();
 }
 
 Formula::~Formula()
 {
 }
 
-double Formula::run( const char *sFormula )
+double Formula::run( char *sFormula )
 {
-	sBuf.write( sFormula, strlen( sFormula ) );
-	sBuf.setPos( 0 );
-
-	nState = 0;
 	for(;;)
 	{
-		tLook = nextToken();
-		if( tLook.nSym == symEOS )
+		uint8_t tNum = nextToken( &sFormula );
+		if( tNum == symEOS )
 			break;
-		state();
+		else if( tNum == symSubtract )
+		{
+			tNum = nextToken( &sFormula );
+			if( tNum != symNumber )
+				throw ParseException("Unary minus must be followed by a number, "
+					"variable, function, or parenthesis.");
+			sValue.top() = -sValue.top();
+		}
+		else if( tNum == symOpenParen )
+		{
+			sOper.push( tNum );
+			continue;
+		}
+
+oppart:	uint8_t tOpr = nextToken( &sFormula );
+		if( tOpr == symEOS )
+		{
+			//printf("EOS ");
+			reduce();
+			return sValue.top();
+			break;
+		}
+		if( !sOper.empty() && getPrec( sOper.top() ) > getPrec( tOpr ) )
+		{
+			reduce();
+		}
+		if( tOpr != symCloseParen )
+		{
+			sOper.push( tOpr );
+		}
+		else
+		{
+			reduce( true );
+			goto oppart;
+		}
 	}
-	printf("\n");
-	return 0.0;
+	return sValue.top();
 }
 
-void Formula::state()
+void Formula::reduce( bool bCloseParen )
 {
-	switch( nState )
+	while( !sOper.empty() )
 	{
-		case 0: // initial expr
-			switch( tLook.nSym )
-			{
-				case symNumber:
-					push();
-					nState = 1;
-					break;
-			}
-			break;
+		uint8_t nOpr = sOper.top();
+		if( nOpr == symOpenParen )
+		{
+			//printf("Found ( stopping reduction.\n");
+			if( bCloseParen == true )
+				sOper.pop();
+			return;
+		}
+		sOper.pop();
 
-		case 1: // binary operator
-			switch( tLook.nSym )
-			{
-				case symAdd:
-				case symSubtract:
-					push();
-					nState = 2;
-					break;
+		double dTop = sValue.top();
+		sValue.pop();
 
-				case symMultiply:
-				case symDivide:
-					push();
-					nState = 3;
-					break;
-			}
-			break;
+		switch( nOpr )
+		{
+			case symAdd:
+				//printf("%f + %f = %f\n", sValue.top(), dTop, sValue.top()+dTop );
+				sValue.top() += dTop;
+				break;
 
-		case 2: // add/subtract
-			break;
+			case symSubtract:
+				//printf("%f - %f = %f\n", sValue.top(), dTop, sValue.top()-dTop );
+				sValue.top() -= dTop;
+				break;
+
+			case symMultiply:
+				//printf("%f * %f = %f\n", sValue.top(), dTop, sValue.top()*dTop );
+				sValue.top() *= dTop;
+				break;
+
+			case symDivide:
+				//printf("%f / %f = %f\n", sValue.top(), dTop, sValue.top()/dTop );
+				sValue.top() /= dTop;
+				break;
+
+			case symExponent:
+				//printf("%f ^ %f = %f\n", sValue.top(), dTop, pow(sValue.top(),dTop) );
+				sValue.top() = pow( sValue.top(), dTop );
+				break;
+
+			case symModulus:
+				//printf("%f %% %f = %f\n", sValue.top(), dTop, fmod(sValue.top(),dTop) );
+				sValue.top() = fmod( sValue.top(), dTop );
+				break;
+		}
+	}
+
+	if( bCloseParen == true )
+	{
+		throw ParseException("Close-paren found without matching open-paren.");
 	}
 }
 
-void Formula::push()
+uint8_t Formula::getPrec( uint8_t nOper )
 {
-	printToken( tLook );
-	sToken.push( tLook );
+	switch( nOper )
+	{
+		case symNumber:
+		case symVariable:
+		case symOpenParen:
+		case symCloseParen:
+			return 0;
+
+		case symAdd:
+		case symSubtract:
+			return 1;
+
+		case symMultiply:
+		case symDivide:
+		case symModulus:
+			return 2;
+
+		case symExponent:
+			return 3;
+
+		default:
+			return 0;
+	}
 }
 
-Formula::Token Formula::nextToken()
+uint8_t Formula::nextToken( char **sBuf )
 {
-	char cbuf;
 	for(;;)
 	{
-		if( sBuf.isEOS() )
-			return Token( symEOS );
-
-		sBuf.read( &cbuf, 1 );
+		char cbuf = **sBuf;
+		++(*sBuf);
 		switch( cbuf )
 		{
 			case '+':
-				return Token( symAdd );
+				return symAdd;
 
 			case '-':
-				return Token( symSubtract );
+				return symSubtract;
 
 			case '*':
-				return Token( symMultiply );
+				return symMultiply;
 
 			case '/':
-				return Token( symDivide );
+				return symDivide;
+
+			case '^':
+				return symExponent;
+
+			case '%':
+				return symModulus;
 
 			case '(':
-				return Token( symOpenParen );
+				return symOpenParen;
 
 			case ')':
-				return Token( symCloseParen );
+				return symCloseParen;
 
 			case ' ':
 			case '\t':
@@ -104,16 +182,19 @@ Formula::Token Formula::nextToken()
 			case '\r':
 				break;
 
+			case '\0':
+				return symEOS;
+
 			default:
 				if( cbuf == '.' || (cbuf >= '0' && cbuf <= '9') )
 				{
-					char num[50];
-					int nPos = 0;
+					char num[50]={cbuf};
+					int nPos = 1;
 					bool bDot = false;
 
 					for(;;)
 					{
-						num[nPos++] = cbuf;
+						cbuf = **sBuf;
 						if( cbuf == '.' )
 						{
 							if( bDot == false )
@@ -124,34 +205,58 @@ Formula::Token Formula::nextToken()
 									". in them."
 									);
 						}
-						sBuf.read( &cbuf, 1 );
-						if( (cbuf != '.' && (cbuf < '0' || cbuf > '9')) || 
-							sBuf.isEOS() )
+						if( cbuf == '.' || (cbuf >= '0' && cbuf <= '9') )
 						{
-							if( !sBuf.isEOS() )	sBuf.seek( -1 );
-							num[nPos] = '\0';
-							return Token( symNumber, strtod( num, NULL ) );
+							num[nPos++] = cbuf;
 						}
+						else
+						{
+							num[nPos] = '\0';
+							sValue.push( strtod( num, NULL ) );
+							return symNumber;
+						}
+						++(*sBuf);
+					}
+				}
+				else if( (cbuf >= 'a' && cbuf <= 'z') || 
+						 (cbuf >= 'A' && cbuf <= 'Z') ||
+						 (cbuf == '_') )
+				{
+					char tok[50]={cbuf};
+					int nPos = 1;
+
+					for(;;)
+					{
+						cbuf = **sBuf;
+						if( (cbuf >= 'a' && cbuf <= 'z') || 
+							(cbuf >= 'A' && cbuf <= 'Z') ||
+							(cbuf >= '0' && cbuf <= '9') ||
+							cbuf == '_' || cbuf == '.' || cbuf == ':' )
+						{
+							tok[nPos++] = cbuf;
+						}
+						else
+						{
+							tok[nPos] = '\0';
+							//printf("Checking variable \"%s\"\n", tok );
+							try
+							{
+								sValue.push( hVars[tok] );
+								return symNumber;
+							}
+							catch( HashException &e )
+							{
+								throw ParseException(
+									"No variable named \"%s\" exists.",
+									tok
+									);
+							}
+						}
+						++(*sBuf);
 					}
 				}
 				break;
 		}
-	}
-}
-
-void Formula::printToken( Token &tok )
-{
-	switch( tok.nSym )
-	{
-		case symEOS:		printf("[EOS] ");				break;
-		case symAdd:		printf("+ ");					break;
-		case symSubtract:	printf("- ");					break;
-		case symMultiply:	printf("* ");					break;
-		case symDivide:		printf("/ ");					break;
-		case symOpenParen:	printf("( ");					break;
-		case symCloseParen:	printf(") ");					break;
-		case symNumber:		printf("%f ", tok.val.num );	break;
-		default:			printf("??? ");					break;
 	}
 }
 
