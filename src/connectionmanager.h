@@ -37,13 +37,38 @@ public:
 
 	/**
 	 * Starts a server socket and binds to it, listening for new connections.
+	 * Unlike the version of this that takes two parameters, this listens on
+	 * all local addresses, or the virtual 0.0.0.0 address if available, which
+	 * is mapped to all active local addresses.
 	 *@param nPort The port to listen on.
-	 *@param nInitPool The size of the initial connection pool.  This will
-	 * grow automatically if necesarry.
 	 *@returns True if the socket was bound to the port and serving was
 	 * started.  False if there was a problem connecting to the port.
 	 */
 	bool startServer( int nPort );
+
+	/**
+	 * Starts a server socket and binds to it, listening only on the address
+	 * specified.  If you want to listen to all local addresses you can enter
+	 * "0.0.0.0" for the address, but the version of this with one parameter
+	 * is more universal.
+	 *@param sAddr The local ip address to bind to
+	 *@param nPort The port to listen on.
+	 *@returns True if the socket was bound to the port and serving was
+	 * started.  False if there was a problem connecting to the port.
+	 */
+	bool startServer( const char *sAddr, int nPort );
+
+	/**
+	 * I recomend probably not using this function on your own too much, it
+	 * does the real work of setting up a socket, but requires a properly
+	 * prepared sackaddr_in structure.  This isn't too hard, but it's easier
+	 * to use the other startServer functions.  They call this function after
+	 * some prepwork.
+	 *@param name A properly formed sockaddr_in structure that will not be
+	 * modified, but describes how to listen and to what to listen.
+	 *@returns True on success.
+	 */
+	bool startServer( struct sockaddr_in &name );
 
 	/**
 	 * This is identicle to the simpler startServer function except that it

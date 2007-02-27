@@ -46,14 +46,6 @@ bool ConnectionManager::startServer( int nPort )
 	/* Create the socket and set it up to accept connections. */
 	struct sockaddr_in name;
 
-	/* Create the socket. */
-	int nMasterSocket = socket (PF_INET, SOCK_STREAM, 0);
-	if (nMasterSocket < 0)
-	{
-		xLog.LineLog( MultiLog::LError, "Couldn't create a listen socket.");
-		return false;
-	}
-
 	/* Give the socket a name. */
 	name.sin_family = AF_INET;
 	name.sin_port = htons( nPort );
@@ -61,6 +53,33 @@ bool ConnectionManager::startServer( int nPort )
 	// I think this specifies who we will accept connections from,
 	// a good thing to make configurable later on
 	name.sin_addr.s_addr = htonl( INADDR_ANY );
+
+	return startServer( name );
+}
+
+bool ConnectionManager::startServer( const char *sAddr, int nPort )
+{
+	/* Create the socket and set it up to accept connections. */
+	struct sockaddr_in name;
+
+	/* Give the socket a name. */
+	name.sin_family = AF_INET;
+	name.sin_port = htons( nPort );
+
+	inet_aton( sAddr, &name.sin_addr );
+
+	return startServer( name );
+}
+
+bool ConnectionManager::startServer( struct sockaddr_in &name )
+{
+	/* Create the socket. */
+	int nMasterSocket = socket (PF_INET, SOCK_STREAM, 0);
+	if (nMasterSocket < 0)
+	{
+		xLog.LineLog( MultiLog::LError, "Couldn't create a listen socket.");
+		return false;
+	}
 
 	int opt = 1;
 	setsockopt(
@@ -86,7 +105,7 @@ bool ConnectionManager::startServer( int nPort )
 	/* Initialize the set of active sockets. */
 	FD_SET (nMasterSocket, &fdActive);
 
-	sMasterSocket[nMasterSocket] = nPort;
+	sMasterSocket[nMasterSocket] = name.sin_port;
 
 	return true;
 }
