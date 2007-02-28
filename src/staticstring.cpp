@@ -46,6 +46,13 @@ StaticString::StaticString( StaticString &xSrcStr )
 	setString( xSrcStr, -1 );
 }
 
+StaticString::StaticString( const StaticString &xSrcStr )
+{
+	nLen = xSrcStr.getLength();
+	lpStr = new char[nLen];
+	memcpy( lpStr, xSrcStr.getString(), nLen );
+}
+
 StaticString::~StaticString()
 {
 	if( lpStr != NULL ) delete[] lpStr;
@@ -56,7 +63,12 @@ char *StaticString::getString()
 	return lpStr;
 }
 
-int StaticString::getLength()
+const char *StaticString::getString() const
+{
+	return lpStr;
+}
+
+int StaticString::getLength() const
 {
 	return nLen;
 }

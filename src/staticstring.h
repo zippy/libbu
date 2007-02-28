@@ -20,11 +20,13 @@ public:
 	StaticString( const char *lpNewStr );
 	StaticString( StaticString &xSrcStr, int nNewLen );
 	StaticString( StaticString &xSrcStr );
+	StaticString( const StaticString &xSrcStr );
 	StaticString( int nLength );
 	virtual ~StaticString();
 
 	char *getString();
-	int getLength();
+	const char *getString() const;
+	int getLength() const;
 	void setLength( int nNewLength );
 
 	void setString( const char *lpNewStr, int nNewLen=-1 );
