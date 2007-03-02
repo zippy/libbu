@@ -81,7 +81,7 @@ private:
 		if( pRefCnt )
 		{
 			(*pRefCnt) -= 1;
-			printf("Decrementing ref-count to %d\n", *pRefCnt );
+			//printf("Decrementing ref-count to %d\n", *pRefCnt );
 			if( (*pRefCnt) == 0 )
 			{
 				delete pRefCnt;
