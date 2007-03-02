@@ -58,7 +58,7 @@ bool Http::parseRequest()
 							else
 							{
 								setResponseStatus( statusHTTPVersionNotSupported );
-								printf("Verson not supported.\n");
+								//printf("Verson not supported.\n");
 								return true;
 							}
 							
@@ -93,7 +93,7 @@ bool Http::parseRequest()
 						nLen = pCon->scanInputFor(':');
 						if( nLen == -1 )
 						{
-							printf("No colon?  what are you trying to pull?\n");
+							//printf("No colon?  what are you trying to pull?\n");
 						}
 						else
 						{
@@ -111,10 +111,10 @@ bool Http::parseRequest()
 								pValue->c_str()
 								);
 
-							printf("::%s = \"%s\"\n",
-								pName->c_str(),
-								pValue->c_str()
-								);
+							//printf("::%s = \"%s\"\n",
+							//	pName->c_str(),
+							//	pValue->c_str()
+							//	);
 						}
 					}
 				}

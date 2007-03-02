@@ -25,10 +25,12 @@ bool __cmpHashKeys( T a, T b );
 
 struct __calcNextTSize_fast
 {
-  uint32_t operator()( uint32_t nCapacity, uint32_t nFill, uint32_t nDeleted ) const
-  {
-    return nCapacity*2+1;
-  }
+	uint32_t operator()( uint32_t nCapacity, uint32_t nFill, uint32_t nDeleted ) const
+	{
+		if( nDeleted >= nCapacity/2 )
+			return nCapacity;
+		return nCapacity*2+1;
+	}
 };
 
 template<typename key, typename value, typename sizecalc = __calcNextTSize_fast, typename keyalloc = std::allocator<key>, typename valuealloc = std::allocator<value>, typename challoc = std::allocator<uint32_t> >
@@ -295,6 +297,18 @@ public:
 		}
 	}
 
+	struct iterator;
+	virtual void erase( struct iterator &i )
+	{
+		if( this != &i.hsh )
+			throw HashException("This iterator didn't come from this Hash.");
+		if( isFilled( i.nPos ) && !isDeleted( i.nPos ) )
+		{
+			_erase( i.nPos );
+			onDelete();
+		}
+	}
+
 	virtual void clear()
 	{
 		for( uint32_t j = 0; j < nCapacity; j++ )
@@ -399,9 +413,28 @@ public:
 			return !(*this == oth );
 		}
 
+		iterator operator=( const iterator &oth )
+		{
+			if( &hsh != &oth.hsh )
+				throw HashException(
+					"Cannot mix iterators from different hash objects.");
+			nPos = oth.nPos;
+			bFinished = oth.bFinished;
+		}
+
 		std::pair<key,value> operator *()
 		{
 			return hsh.getAtPos( nPos );
+		}
+		
+		key &getKey()
+		{
+			return hsh.getKeyAtPos( nPos );
+		}
+
+		value &getValue()
+		{
+			return hsh.getValueAtPos( nPos );
 		}
 	};
 
@@ -436,6 +469,8 @@ protected:
 		ka.construct( &aKeys[loc], k );
 		aHashCodes[loc] = hash;
 		nFilled++;
+		//printf("Filled: %d, Deleted: %d, Capacity: %d\n",
+		//	nFilled, nDeleted, nCapacity );
 	}
 
 	virtual void _erase( uint32_t loc )
@@ -443,11 +478,24 @@ protected:
 		bDeleted[loc/32] |= (1<<(loc%32));
 		va.destroy( &aValues[loc] );
 		ka.destroy( &aKeys[loc] );
+		nDeleted++;
+		//printf("Filled: %d, Deleted: %d, Capacity: %d\n",
+		//	nFilled, nDeleted, nCapacity );
 	}
 
 	virtual std::pair<key,value> getAtPos( uint32_t nPos )
 	{
 		return std::pair<key,value>(aKeys[nPos],aValues[nPos]);
+	}
+	
+	virtual key &getKeyAtPos( uint32_t nPos )
+	{
+		return aKeys[nPos];
+	}
+	
+	virtual value &getValueAtPos( uint32_t nPos )
+	{
+		return aValues[nPos];
 	}
 
 	virtual uint32_t getFirstPos( bool &bFinished )
@@ -521,6 +569,10 @@ protected:
 
 	void reHash( uint32_t nNewSize )
 	{
+		//printf("---REHASH---");
+		//printf("Filled: %d, Deleted: %d, Capacity: %d\n",
+		//	nFilled, nDeleted, nCapacity );
+		
 		// Save all the old data
 		uint32_t nOldCapacity = nCapacity;
 		uint32_t *bOldFilled = bFilled;
@@ -543,12 +595,13 @@ protected:
 		aKeys = ka.allocate( nCapacity );
 		aValues = va.allocate( nCapacity );
 
-		nFilled = 0;
+		nDeleted = nFilled = 0;
 
 		// Re-insert all of the old data (except deleted items)
 		for( uint32_t j = 0; j < nOldCapacity; j++ )
 		{
-			if( (bOldFilled[j/32]&(1<<(j%32)))!=0 )
+			if( (bOldFilled[j/32]&(1<<(j%32)))!=0 &&
+				(bOldDeleted[j/32]&(1<<(j%32)))==0 )
 			{
 				insert( aOldKeys[j], aOldValues[j] );
 			}

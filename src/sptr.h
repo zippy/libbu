@@ -23,7 +23,8 @@ public:
 		pRefCnt( src.pRefCnt ),
 		pData( src.pData )
 	{
-		(*pRefCnt) += 1;
+		if( pRefCnt )
+			(*pRefCnt) += 1;
 	}
 
 	SPtr( T *pSrc ) :
@@ -80,6 +81,7 @@ private:
 		if( pRefCnt )
 		{
 			(*pRefCnt) -= 1;
+			printf("Decrementing ref-count to %d\n", *pRefCnt );
 			if( (*pRefCnt) == 0 )
 			{
 				delete pRefCnt;
