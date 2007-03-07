@@ -241,6 +241,8 @@ public:
 		statusHTTPVersionNotSupported = 505
 	};
 
+	const char *getHeader( const char *lpStr );
+
 private:
 	Connection *pCon;
 	unsigned char nParseState;

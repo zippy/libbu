@@ -77,9 +77,10 @@ bool Http::parseRequest()
 			case parseHeader:
 				{
 					int nLen = pCon->scanInputFor( CR );
+					//printf("nLen = %d:  :::%s:::\n", nLen, pCon->getInput() );
 					if( nLen == -1 )
 					{
-						return false;
+						pCon->readInput( 1, 0);
 					}
 					else if( nLen == 0 )
 					{
@@ -367,5 +368,10 @@ bool Http::checkRequestVer()
 	if( cReqVersion == HTTP11 )
 		return true;
 	return false;
+}
+
+const char *Http::getHeader( const char *lpStr )
+{
+	return (const char *)hReqHeader[lpStr];
 }
 
