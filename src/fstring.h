@@ -2,6 +2,7 @@
 #define F_STRING_H
 
 #include <stdint.h>
+#include <memory>
 
 /**
  *
