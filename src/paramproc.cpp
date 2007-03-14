@@ -446,8 +446,8 @@ int ParamProc::help( int argc, char *argv[] )
 	int len=0;
 	for( i = lArg.begin(); i != lArg.end(); i++ )
 	{
-		if( len < (*i)->sWord.getLength() )
-			len = (*i)->sWord.getLength();
+		if( len < (*i)->sWord.getLength() + (*i)->sExtra.getLength() )
+			len = (*i)->sWord.getLength() + (*i)->sExtra.getLength();
 	}
 	char fmt[10];
 	sprintf( fmt, "%%-%ds   ", len );
@@ -481,7 +481,10 @@ int ParamProc::help( int argc, char *argv[] )
 		if( (*i)->sWord.getString() )
 		{
 			printf("--");
-			printf( fmt, (*i)->sWord.getString() );
+			std::string sTmp = (*i)->sWord.getString();
+			if( (*i)->sExtra.getString() )
+				sTmp += (*i)->sExtra.getString();
+			printf( fmt, sTmp.c_str() );
 		}
 		else
 		{
