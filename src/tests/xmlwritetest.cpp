@@ -7,9 +7,9 @@ void fillItIn( XmlWriter &w )
 	w.addNode("thinglist");
 	
 	w.addNode("thing");
-	w.addProperty("type", "Weapon");
+	w.addProperty("type", " ±ÓÓ∏∑¥<M-F6><M-F6>≥∏Æ∞ÍÚÏØ");
 	
-	w.addNode("id", "Klophin Staff", true );
+	w.addNode("id", "Klophin≤≥±π∏∑µ¥‰ÍÌÎ„ Staff", true );
 	w.addNode("name", "Klophin Staff", true );
 	w.addNode("durability", "0.01", true );
 	w.addNode("size", "0.1", true );
