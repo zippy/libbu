@@ -67,7 +67,7 @@ std::string XmlWriter::escape( std::string sIn )
 		{
 			sOut += "&#";
 			char buf[4];
-			sprintf( buf, "%d", *i );
+			sprintf( buf, "%u", (unsigned int)*i );
 			sOut += buf;
 			sOut += ';';
 		}
