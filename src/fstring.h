@@ -396,8 +396,7 @@ private:
 	{
 		clear();
 
-		if( !rSrc.isFlat() )
-			return;
+		rSrc.flatten();
 
 		if( !rSrc.isShared() )
 		{
