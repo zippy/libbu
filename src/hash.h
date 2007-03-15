@@ -18,10 +18,10 @@ enum eHashException
 };
 
 template<typename T>
-uint32_t __calcHashCode( T k );
+uint32_t __calcHashCode( const T &k );
 
 template<typename T>
-bool __cmpHashKeys( T a, T b );
+bool __cmpHashKeys( const T &a, const T &b );
 
 struct __calcNextTSize_fast
 {
@@ -649,31 +649,22 @@ protected:
 	sizecalc szCalc;
 };
 
-template<> uint32_t __calcHashCode<const int>( const int k );
-template<> bool __cmpHashKeys<const int>( const int a, const int b );
+template<> uint32_t __calcHashCode<int>( const int &k );
+template<> bool __cmpHashKeys<int>( const int &a, const int &b );
 
-template<> uint32_t __calcHashCode<int>( int k );
-template<> bool __cmpHashKeys<int>( int a, int b );
+template<> uint32_t __calcHashCode<unsigned int>( const unsigned int &k );
+template<> bool __cmpHashKeys<unsigned int>( const unsigned int &a, const unsigned int &b );
 
-template<> uint32_t __calcHashCode<const unsigned int>( const unsigned int k );
-template<> bool __cmpHashKeys<const unsigned int>( const unsigned int a, const unsigned int b );
+template<> uint32_t __calcHashCode<const char *>( const char * const &k );
+template<> bool __cmpHashKeys<const char *>( const char * const &a, const char * const &b );
 
-template<> uint32_t __calcHashCode<unsigned int>( unsigned int k );
-template<> bool __cmpHashKeys<unsigned int>( unsigned int a, unsigned int b );
+template<> uint32_t __calcHashCode<char *>( char * const &k );
+template<> bool __cmpHashKeys<char *>( char * const &a, char * const &b );
 
-template<> uint32_t __calcHashCode<const char *>( const char *k );
-template<> bool __cmpHashKeys<const char *>( const char *a, const char *b );
+template<> uint32_t __calcHashCode<std::string>( const std::string &k );
+template<> bool __cmpHashKeys<std::string>( const std::string &a, const std::string &b );
 
-template<> uint32_t __calcHashCode<char *>( char *k );
-template<> bool __cmpHashKeys<char *>( char *a, char *b );
-
-template<> uint32_t __calcHashCode<const std::string>( const std::string k );
-template<> bool __cmpHashKeys<const std::string>( const std::string a, const std::string b );
-
-template<> uint32_t __calcHashCode<std::string>( std::string k );
-template<> bool __cmpHashKeys<std::string>( std::string a, std::string b );
-
-template<> uint32_t __calcHashCode<Hashable &>( Hashable &k );
-template<> bool __cmpHashKeys<Hashable &>( Hashable &a, Hashable &b );
+template<> uint32_t __calcHashCode<Hashable>( const Hashable &k );
+template<> bool __cmpHashKeys<Hashable>( const Hashable &a, const Hashable &b );
 
 #endif

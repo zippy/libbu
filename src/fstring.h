@@ -13,7 +13,15 @@ struct FStringChunk
 };
 
 /**
- *
+ * Flexible String class.  This class was designed with string passing and
+ * generation in mind.  Like the standard string class you can specify what
+ * datatype to use for each character.  Unlike the standard string class,
+ * collection of appended and prepended terms is done lazily, making long
+ * operations that involve many appends very inexpensive.  In addition internal
+ * ref-counting means that if you pass strings around between functions there's
+ * almost no overhead in time or memory since a reference is created and no
+ * data is actually copied.  This also means that you never need to put any
+ * FBasicString into a ref-counting container class.
  */
 template< typename chr=char, typename chralloc=std::allocator<chr>, typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
 class FBasicString
@@ -49,6 +57,7 @@ public:
 		append( pData, nLength );
 	}
 
+	/*
 	FBasicString( MyType &rSrc ) :
 		nLength( 0 ),
 		pnRefs( NULL ),
@@ -56,9 +65,9 @@ public:
 		pLast( NULL )
 	{
 		joinShare( rSrc );
-	}
+	}*/
 
-	FBasicString( const FBasicString<chr, chralloc, chunkalloc> &rSrc ) :
+	FBasicString( const MyType &rSrc ) :
 		nLength( 0 ),
 		pnRefs( NULL ),
 		pFirst( NULL ),
@@ -68,7 +77,8 @@ public:
 		// In the case that the source were flat, we could get a reference, it
 		// would make some things faster, but not matter in many other cases.
 
-		copyFrom( rSrc );
+		joinShare( rSrc );
+		//copyFrom( rSrc );
 	}
 
 	virtual ~FBasicString()
@@ -118,31 +128,19 @@ public:
 
 	void clear()
 	{
-		if( pFirst == NULL )
-			return;
-
-		if( isShared() )
-		{
-			decRefs();
-		}
-		else
-		{
-			Chunk *i = pFirst;
-			for(;;)
-			{
-				Chunk *n = i->pNext;
-				aChr.deallocate( i->pData, i->nLength+1 );
-				aChunk.deallocate( i, 1 );
-				if( n == NULL )
-					break;
-				i = n;
-			}
-			pFirst = pLast = NULL;
-			nLength = 0;
-		}
+		realClear();
 	}
 
 	chr *c_str()
+	{
+		if( pFirst == NULL )
+			return NULL;
+
+		flatten();
+		return pFirst->pData;
+	}
+	
+	const chr *c_str() const
 	{
 		if( pFirst == NULL )
 			return NULL;
@@ -168,26 +166,20 @@ public:
 
 	MyType &operator =( const MyType &rSrc )
 	{
-		if( rSrc.isFlat() )
-		{
+		//if( rSrc.isFlat() )
+		//{
 			joinShare( rSrc );
-		}
-		else
-		{
-			copyFrom( rSrc );
-		}
+		//}
+		//else
+		//{
+		//	copyFrom( rSrc );
+		//}
+		//
 
 		return (*this);
 	}
 	
-	MyType &operator =( MyType &rSrc )
-	{
-		joinShare( rSrc );
-
-		return (*this);
-	}
-
-	bool operator ==( const chr *pData )
+	bool operator ==( const chr *pData ) const
 	{
 		if( pFirst == NULL ) {
 			if( pData == NULL )
@@ -206,8 +198,33 @@ public:
 
 		return true;
 	}
+	
+	bool operator ==( const MyType &pData ) const
+	{
+		if( pFirst == pData.pFirst )
+			return true;
+		if( pFirst == NULL ) 
+			return false;
 
-	bool operator !=(const chr *pData )
+		flatten();
+		pData.flatten();
+		const chr *a = pData.pFirst->pData;
+		chr *b = pFirst->pData;
+		for( ; *a!=(chr)0; a++, b++ )
+		{
+			if( *a != *b )
+				return false;
+		}
+
+		return true;
+	}
+
+	bool operator !=(const chr *pData ) const
+	{
+		return !(*this == pData);
+	}
+	
+	bool operator !=(const MyType &pData ) const
 	{
 		return !(*this == pData);
 	}
@@ -218,9 +235,16 @@ public:
 
 		return pFirst->pData[nIndex];
 	}
+	
+	const chr &operator[]( long nIndex ) const
+	{
+		flatten();
+
+		return pFirst->pData[nIndex];
+	}
 
 private:
-	void flatten()
+	void flatten() const
 	{
 		if( isFlat() )
 			return;
@@ -241,9 +265,36 @@ private:
 			if( i == NULL )
 				break;
 		}
-		clear();
+		realClear();
 
-		appendChunk( pNew );
+		pLast = pFirst = pNew;
+		nLength = pNew->nLength;
+	}
+	
+	void realClear() const
+	{
+		if( pFirst == NULL )
+			return;
+
+		if( isShared() )
+		{
+			decRefs();
+		}
+		else
+		{
+			Chunk *i = pFirst;
+			for(;;)
+			{
+				Chunk *n = i->pNext;
+				aChr.deallocate( i->pData, i->nLength+1 );
+				aChunk.deallocate( i, 1 );
+				if( n == NULL )
+					break;
+				i = n;
+			}
+			pFirst = pLast = NULL;
+			nLength = 0;
+		}
 	}
 	
 	void copyFrom( const FBasicString<chr, chralloc, chunkalloc> &rSrc )
@@ -279,14 +330,14 @@ private:
 		return (pnRefs != NULL);
 	}
 
-	Chunk *newChunk()
+	Chunk *newChunk() const
 	{
 		Chunk *pNew = aChunk.allocate( 1 );
 		pNew->pNext = NULL;
 		return pNew;
 	}
 	
-	Chunk *newChunk( long nLen )
+	Chunk *newChunk( long nLen ) const
 	{
 		Chunk *pNew = aChunk.allocate( 1 );
 		pNew->pNext = NULL;
@@ -365,7 +416,7 @@ private:
 	 * that was being shared so that this copy can be changed.  This should be
 	 * added before any call that will change this object;
 	 */
-	void unShare()
+	void unShare() const
 	{
 		if( isShared() == false )
 			return;
@@ -382,8 +433,8 @@ private:
 				break;
 		}
 		decRefs();
-		appendChunk( pNew );
-		decRefs();
+		pLast = pFirst = pNew;
+		nLength = pNew->nLength;
 	}
 
 	/**
@@ -391,7 +442,7 @@ private:
 	 * count hits zero because of this, it destroys the share.  This is not
 	 * safe to call on it's own, it's much better to call unShare.
 	 */
-	void decRefs()
+	void decRefs() const
 	{
 		if( isShared() )
 		{
@@ -414,14 +465,14 @@ private:
 	 * itself.  This should only be called when the refcount for the share has
 	 * or is about to reach zero.
 	 */
-	void destroyShare()
+	void destroyShare() const
 	{
 		delete pnRefs;
 		pnRefs = NULL;
-		clear();
+		realClear();
 	}
 
-	void cpy( chr *dest, const chr *src, long count )
+	void cpy( chr *dest, const chr *src, long count ) const
 	{
 		for( int j = 0; j < count; j++ )
 		{
@@ -441,15 +492,20 @@ private:
 	}
 
 private:
-	long nLength;
+	mutable long nLength;
 	mutable uint32_t *pnRefs;
-	Chunk *pFirst;
-	Chunk *pLast;
+	mutable Chunk *pFirst;
+	mutable Chunk *pLast;
 
-	chralloc aChr;
-	chunkalloc aChunk;
+	mutable chralloc aChr;
+	mutable chunkalloc aChunk;
 };
 
 typedef FBasicString<char> FString;
+
+#include "hash.h"
+template<> uint32_t __calcHashCode<FString>( const FString &k );
+template<> bool __cmpHashKeys<FString>( const FString &a, const FString &b );
+
 
 #endif
