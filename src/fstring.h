@@ -3,8 +3,10 @@
 
 #include <stdint.h>
 #include <memory>
+#include "serializable.h"
+#include "serializer.h"
 
-template< typename chr=char >
+template< typename chr >
 struct FStringChunk
 {
 	long nLength;
@@ -23,9 +25,12 @@ struct FStringChunk
  * data is actually copied.  This also means that you never need to put any
  * FBasicString into a ref-counting container class.
  */
-template< typename chr=char, typename chralloc=std::allocator<chr>, typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
-class FBasicString
+template< typename chr, typename chralloc=std::allocator<chr>, typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
+class FBasicString : public Serializable
 {
+#ifndef VALTEST
+#define cpy( dest, src, size ) memcpy( dest, src, size*sizeof(chr) )
+#endif
 private:
 	typedef struct FStringChunk<chr> Chunk;
 	typedef struct FBasicString<chr, chralloc, chunkalloc> MyType;
@@ -56,16 +61,6 @@ public:
 	{
 		append( pData, nLength );
 	}
-
-	/*
-	FBasicString( MyType &rSrc ) :
-		nLength( 0 ),
-		pnRefs( NULL ),
-		pFirst( NULL ),
-		pLast( NULL )
-	{
-		joinShare( rSrc );
-	}*/
 
 	FBasicString( const MyType &rSrc ) :
 		nLength( 0 ),
@@ -129,6 +124,23 @@ public:
 	void clear()
 	{
 		realClear();
+	}
+
+	void resize( long nNewSize )
+	{
+		if( nLength == nNewSize )
+			return;
+
+		flatten();
+
+		Chunk *pNew = newChunk( nNewSize );
+		long nNewLen = (nNewSize<nLength)?(nNewSize):(nLength);
+		cpy( pNew->pData, pFirst->pData, nNewLen );
+		pNew->pData[nNewLen] = (chr)0;
+		aChr.deallocate( pFirst->pData, pFirst->nLength+1 );
+		aChunk.deallocate( pFirst, 1 );
+		pFirst = pLast = pNew;
+		nLength = nNewSize;
 	}
 
 	chr *c_str()
@@ -241,6 +253,27 @@ public:
 		flatten();
 
 		return pFirst->pData[nIndex];
+	}
+
+	void serialize( class Serializer &ar )
+	{
+		if( ar.isLoading() )
+		{
+			clear();
+			long nLen;
+			ar >> nLen;
+		
+			Chunk *pNew = newChunk( nLen );
+			ar.read( pNew->pData, nLen*sizeof(chr) );
+			appendChunk( pNew );
+		}
+		else
+		{
+			flatten();
+			
+			ar << nLength;
+			ar.write( pFirst->pData, nLength*sizeof(chr) );
+		}
 	}
 
 private:
@@ -471,6 +504,7 @@ private:
 		realClear();
 	}
 
+#ifdef VALTEST
 	void cpy( chr *dest, const chr *src, long count ) const
 	{
 		for( int j = 0; j < count; j++ )
@@ -480,6 +514,7 @@ private:
 			src++;
 		}
 	}
+#endif
 
 	void initCount() const
 	{

@@ -41,6 +41,7 @@ int main( int argc, char *argv )
 	pem;
 
 	thing( str2 );
+	thing("test.");
 	
 	printf("%d == %d\n", __calcHashCode( str ), __calcHashCode( str.c_str() ) );
 }

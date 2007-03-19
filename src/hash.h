@@ -7,6 +7,8 @@
 #include <iostream>
 #include "exceptionbase.h"
 #include "hashable.h"
+#include "serializable.h"
+#include "serializer.h"
 
 #define bitsToBytes( n ) (n/32+(n%32>0 ? 1 : 0))
 
@@ -241,7 +243,7 @@ public:
 
 	uint32_t size()
 	{
-		return nFilled;
+		return nFilled-nDeleted;
 	}
 
 	uint32_t getDeleted()
@@ -666,5 +668,48 @@ template<> bool __cmpHashKeys<std::string>( const std::string &a, const std::str
 
 template<> uint32_t __calcHashCode<Hashable>( const Hashable &k );
 template<> bool __cmpHashKeys<Hashable>( const Hashable &a, const Hashable &b );
+
+template<typename key, typename value>
+Serializer &operator<<( Serializer &ar, Hash<key,value> &h )
+{
+	ar << h.size();
+	for( typename Hash<key,value>::iterator i = h.begin(); i != h.end(); i++ )
+	{
+		std::pair<key,value> p = *i;
+		ar << p.first << p.second;
+	}
+
+	return ar;
+}
+
+template<typename key, typename value>
+Serializer &operator>>( Serializer &ar, Hash<key,value> &h )
+{
+	h.clear();
+	uint32_t nSize;
+	ar >> nSize;
+
+	for( uint32_t j = 0; j < nSize; j++ )
+	{
+		key k; value v;
+		ar >> k >> v;
+		h.insert( k, v );
+	}
+
+	return ar;
+}
+
+template<typename key, typename value>
+Serializer &operator&&( Serializer &ar, Hash<key,value> &h )
+{
+	if( ar.isLoading() )
+	{
+		return ar >> h;
+	}
+	else
+	{
+		return ar << h;
+	}
+}
 
 #endif
