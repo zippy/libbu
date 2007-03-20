@@ -143,6 +143,29 @@ public:
 		nLength = nNewSize;
 	}
 
+	long getSize()
+	{
+		return nLength;
+	}
+	
+	chr *getStr()
+	{
+		if( pFirst == NULL )
+			return NULL;
+
+		flatten();
+		return pFirst->pData;
+	}
+	
+	const chr *getStr() const
+	{
+		if( pFirst == NULL )
+			return NULL;
+
+		flatten();
+		return pFirst->pData;
+	}
+
 	chr *c_str()
 	{
 		if( pFirst == NULL )

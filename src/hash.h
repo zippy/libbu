@@ -5,6 +5,7 @@
 #include <string.h>
 #include <memory>
 #include <iostream>
+#include <list>
 #include "exceptionbase.h"
 #include "hashable.h"
 #include "serializable.h"
@@ -448,6 +449,24 @@ public:
 	iterator end()
 	{
 		return iterator( *this, true );
+	}
+
+	std::list<key> getKeys()
+	{
+		std::list<key> lKeys;
+
+		for( uint32_t j = 0; j < nCapacity; j++ )
+		{
+			if( isFilled( j ) )
+			{
+				if( !isDeleted( j ) )
+				{
+					lKeys.push_back( aKeys[j] );
+				}
+			}
+		}
+
+		return lKeys;
 	}
 
 protected:
