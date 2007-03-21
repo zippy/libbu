@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "serializer.h"
+#include "connection.h"
 
 /**
  *
@@ -11,7 +12,7 @@
 class SerializerConnection : public Serializer
 {
 public:
-	SerializerConnection( Connection *pCon, int nTimeSec, int nTimeUSec );
+	SerializerConnection( Connection *pCon, bool bIO, int nTimeSec, int nTimeUSec );
 	virtual ~SerializerConnection();
 
 private:

@@ -1,7 +1,8 @@
 #include "serializerconnection.h"
 
 SerializerConnection::SerializerConnection(
-		Connection *pCon, int nTimeSec, int nTimeUSec ) :
+		Connection *pCon, bool bIO, int nTimeSec, int nTimeUSec ) :
+	Serializer( bIO ),
 	pCon( pCon ),
 	nTimeSec( nTimeSec ),
 	nTimeUSec( nTimeUSec )
