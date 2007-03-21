@@ -350,7 +350,7 @@ public:
 	virtual bool has( key k )
 	{
 		bool bFill;
-		probe( __calcHashCode( k ), k, bFill );
+		probe( __calcHashCode( k ), k, bFill, false );
 
 		return bFill;
 	}
