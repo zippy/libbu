@@ -191,6 +191,14 @@ public:
 		return (*this);
 	}
 
+	MyType &operator +=( const chr pData )
+	{
+		chr tmp[2] = { pData, (chr)0 };
+		append( tmp );
+
+		return (*this);
+	}
+
 	MyType &operator =( const chr *pData )
 	{
 		clear();
@@ -276,6 +284,14 @@ public:
 		flatten();
 
 		return pFirst->pData[nIndex];
+	}
+
+	bool isWS( long nIndex ) const
+	{
+		flatten();
+
+		return pFirst->pData[nIndex]==' ' || pFirst->pData[nIndex]=='\t'
+			|| pFirst->pData[nIndex]=='\r' || pFirst->pData[nIndex]=='\n';
 	}
 
 	void serialize( class Serializer &ar )
