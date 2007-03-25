@@ -76,6 +76,33 @@ public:
 		//copyFrom( rSrc );
 	}
 
+	FBasicString( const MyType &rSrc, long nLength ) :
+		nLength( 0 ),
+		pnRefs( NULL ),
+		pFirst( NULL ),
+		pLast( NULL )
+	{
+		append( rSrc.pFirst->pData, nLength );
+	}
+	
+	FBasicString( const MyType &rSrc, long nStart, long nLength ) :
+		nLength( 0 ),
+		pnRefs( NULL ),
+		pFirst( NULL ),
+		pLast( NULL )
+	{
+		append( rSrc.pFirst->pData+nStart, nLength );
+	}
+
+	FBasicString( long nSize ) :
+		nLength( nSize ),
+		pnRefs( NULL ),
+		pFirst( NULL ),
+		pLast( NULL )
+	{
+		pFirst = pLast = newChunk( nSize );
+	}
+
 	virtual ~FBasicString()
 	{
 		clear();
@@ -190,6 +217,14 @@ public:
 
 		return (*this);
 	}
+	
+	MyType &operator +=( const MyType &rSrc )
+	{
+		rSrc.flatten();
+		append( rSrc.pFirst->pData, rSrc.nLength );
+
+		return (*this);
+	}
 
 	MyType &operator +=( const chr pData )
 	{
@@ -292,6 +327,38 @@ public:
 
 		return pFirst->pData[nIndex]==' ' || pFirst->pData[nIndex]=='\t'
 			|| pFirst->pData[nIndex]=='\r' || pFirst->pData[nIndex]=='\n';
+	}
+
+	bool isAlpha( long nIndex ) const
+	{
+		flatten();
+
+		return (pFirst->pData[nIndex] >= 'a' && pFirst->pData[nIndex] <= 'z')
+			|| (pFirst->pData[nIndex] >= 'A' && pFirst->pData[nIndex] <= 'Z');
+	}
+
+	void toLower()
+	{
+		flatten();
+		unShare();
+
+		for( long j = 0; j < nLength; j++ )
+		{
+			if( pFirst->pData[j] >= 'A' && pFirst->pData[j] <= 'Z' )
+				pFirst->pData[j] -= 'A'-'a';
+		}
+	}
+
+	void toUpper()
+	{
+		flatten();
+		unShare();
+
+		for( long j = 0; j < nLength; j++ )
+		{
+			if( pFirst->pData[j] >= 'a' && pFirst->pData[j] <= 'z' )
+				pFirst->pData[j] += 'A'-'a';
+		}
 	}
 
 	void serialize( class Serializer &ar )

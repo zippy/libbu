@@ -119,6 +119,16 @@ public:
 
 		return nval;
 	}
+
+	_value *operator->()
+	{
+		if( bFilled == false )
+			throw HashException(
+					excodeNotFilled,
+					"No data assosiated with that key."
+					);
+		return pValue;
+	}
 };
 
 template<typename key, typename value, typename sizecalc, typename keyalloc, typename valuealloc, typename challoc >
