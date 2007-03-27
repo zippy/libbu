@@ -13,6 +13,9 @@
 #include <errno.h>
 #include "exceptions.h"
 
+// Read buffer size...maybe fix wierd issues...
+#define RBS		(1024*10)
+
 Connection::Connection()
 {
 	nSocket = -1;
@@ -201,15 +204,15 @@ bool Connection::open( const char *sAddr, int nPort )
 
 int Connection::readInput()
 {
-	char buffer[2048];
+	char buffer[RBS];
 	int nbytes;
 	int nTotalRead=0;
 
 	for(;;)
 	{
-		//memset( buffer, 0, 2048 );
+		//memset( buffer, 0, RBS );
 
-		nbytes = read( nSocket, buffer, 2048 );
+		nbytes = read( nSocket, buffer, RBS );
 		if( nbytes < 0 && errno != 0 && errno != EAGAIN )
 		{
 			printf("errno: %d, %s\n", errno, strerror( errno ) );
@@ -224,12 +227,12 @@ int Connection::readInput()
 			nTotalRead += nbytes;
 			appendInput( buffer, nbytes );
 			/* Data read. */
-			if( nbytes < 2048 )
+			if( nbytes < RBS )
 			{
 				break;
 			}
 
-			/* New test, if data is divisible by 2048 bytes on some libs the
+			/* New test, if data is divisible by RBS bytes on some libs the
 			 * read could block, this keeps it from happening.
 			 */
 			{
@@ -358,7 +361,7 @@ bool Connection::clearInput()
 
 bool Connection::writeOutput()
 {
-	//int nBytes = TEMP_FAILURE_RETRY( write( nSocket, xOutputBuf.getData(), min( 2048, xOutputBuf.getLength() ) ) );
+	//int nBytes = TEMP_FAILURE_RETRY( write( nSocket, xOutputBuf.getData(), min( RBS, xOutputBuf.getLength() ) ) );
 	int nBytes = TEMP_FAILURE_RETRY( write( nSocket, xOutputBuf.getData(), xOutputBuf.getLength() ) );
 	if( nBytes < 0 )
 	{

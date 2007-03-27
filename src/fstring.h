@@ -170,7 +170,7 @@ public:
 		nLength = nNewSize;
 	}
 
-	long getSize()
+	long getSize() const
 	{
 		return nLength;
 	}
