@@ -51,6 +51,8 @@ public:
 	 */
 	bool open( const char *sAddr, int nPort );
 
+	void ensureCapacity( int nSize );
+
 	/** Append the given data to the output.  The data is presumed to be null
 	  * terminated.  To put binary data into the stream, use the other
 	  * appendOutput function.  This should be the only method used to

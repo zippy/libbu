@@ -29,6 +29,11 @@ Connection::~Connection()
 	if( pProtocol != NULL ) delete pProtocol;
 }
 
+void Connection::ensureCapacity( int nSize )
+{
+	xOutputBuf.ensureCapacity( nSize );
+}
+
 bool Connection::appendOutput( const char *lpOutput, int nSize )
 {
 	return xOutputBuf.appendData( lpOutput, nSize );

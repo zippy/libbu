@@ -144,6 +144,8 @@ public:
 	  */
 	int findChar( char cTarget );
 
+	void ensureCapacity( int nAmount );
+
 private:
 	/** The raw storage location of the FlexBuf. */
 	char *lpBuf;

@@ -204,3 +204,26 @@ int FlexBuf::findChar( char cTarget )
 	return -1;
 }
 
+void FlexBuf::ensureCapacity( int nAmount )
+{
+	if( nLastChar + nAmount + 1 > nSize )
+	{
+		if( nFill + nAmount + 1 < nSize )
+		{
+			memcpy( lpBuf, lpBuf+nFirstChar, nFill );
+			nLastChar -= nFirstChar;
+			nFirstChar = 0;
+		}
+		else
+		{
+			nSize += nAmount+1;
+			char *lpNewBuf = new char[nSize];
+			memcpy( lpNewBuf, lpBuf+nFirstChar, nFill );
+			delete[] lpBuf;
+			lpBuf = lpNewBuf;
+			nLastChar -= nFirstChar;
+			nFirstChar = 0;
+		}
+	}
+}
+
