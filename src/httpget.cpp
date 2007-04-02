@@ -156,8 +156,8 @@ SBuffer *HttpGet::get()
 	//printf("Connection content:\n\n%s\n\n", sData.c_str() );
 
 	Connection con;
+	//printf("Opening connection...\n");
 	con.open( sHost.c_str(), nPort );
-	//printf("Connected, sending request.\n");
 	{
 		int nSocket = con.getSocket();
 		fd_set rfds, wfds, efds;
@@ -170,50 +170,74 @@ SBuffer *HttpGet::get()
 		FD_ZERO(&efds);
 		FD_SET(nSocket, &efds);
 
-		retval = select( nSocket+1, &rfds, &wfds, &efds, NULL );
-		printf("About to write: sock=%d, r=%d, w=%d, e=%d, ret=%d\n",
+		struct timeval tv;
+		tv.tv_sec = 4;
+		tv.tv_usec = 0;
+		
+		//printf("Selecting on socket, can we read, write, etc?\n");
+		retval = select( nSocket+1, &rfds, &wfds, &efds, &tv );
+		/*printf("About to write: sock=%d, r=%d, w=%d, e=%d, ret=%d\n",
 			nSocket,
 			FD_ISSET( nSocket, &rfds ),
 			FD_ISSET( nSocket, &wfds ),
 			FD_ISSET( nSocket, &efds ),
 			retval
-			);
+			);*/
+
+		if( retval == 0 )
+		{
+			//printf("Timeout on connection.\n");
+			con.close();
+			throw ExceptionBase("Connection Timeout on open.\n");
+		}
 		
 	}
 	con.appendOutput( sData.c_str(), sData.size() );
+	//printf("Writing to socket...\n");
 	con.writeOutput();
+	//printf("Data written...\n");
 	int nSec = 5;
 	int nUSec = 0;
 	int nLastAmnt = con.getInputAmnt();
 	try
 	{
 		double dTotTime = 0.0;
-	while( con.readInput( nSec, nUSec, &nSec, &nUSec ) )
-	{
-		if( nLastAmnt == con.getInputAmnt() )
+		//printf("About to read input...\n");
+		while( con.readInput( nSec, nUSec, &nSec, &nUSec ) )
 		{
-			if( nSec <= 0 && nUSec <= 0 )
-				throw ExceptionBase("Connection Timeout.\n");
-			if( nSec == 5 && nUSec == 0 )
-				break;
+			if( nLastAmnt == con.getInputAmnt() )
+			{
+				if( nSec <= 0 && nUSec <= 0 )
+				{
+					//printf("out of time, closing up.\n");
+					con.close();
+					throw ExceptionBase("Connection Timeout.\n");
+				}
+				if( nSec == 5 && nUSec == 0 )
+				{
+					//printf("No new data, breaking.\n");
+					break;
+				}
+			}
+			else
+			{
+				dTotTime += (5.0-(nSec+nUSec/1000000.0));
+				printf("\rRead %db at %.2fkb/sec",
+					con.getInputAmnt(),
+					((double)(con.getInputAmnt())/1024.0) / dTotTime
+					);
+				fflush( stdout );
+				nSec = 5;
+				nUSec = 0;
+				nLastAmnt = con.getInputAmnt();
+			}
 		}
-		else
-		{
-			dTotTime += (5.0-(nSec+nUSec/1000000.0));
-			printf("\rRead %db at %.2fkb/sec",
-				con.getInputAmnt(),
-				((double)(con.getInputAmnt())/1024.0) / dTotTime
-				);
-			fflush( stdout );
-			nSec = 5;
-			nUSec = 0;
-			nLastAmnt = con.getInputAmnt();
-		}
-	}
 	}
 	catch( ConnectionException &e )
 	{
-		printf("ConnectionException:  %s\n", e.what() );
+		//con.close();
+		if( strcmp( e.what(), "Connection closed" ) )
+			printf("\nConnectionException:  %s\n", e.what() );
 	}
 
 	int total = con.getInputAmnt();
@@ -231,6 +255,8 @@ SBuffer *HttpGet::get()
 		}
 	}
 	con.close();
+
+	//printf("\n\n%s\n\n", dat );
 
 	throw ExceptionBase("Something went wrong, incomplete response?  fix this.\n");
 }

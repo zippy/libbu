@@ -11,6 +11,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <fcntl.h>
 #include "exceptions.h"
 
 // Read buffer size...maybe fix wierd issues...
@@ -137,10 +138,12 @@ bool Connection::isActive()
 
 void Connection::close()
 {
+	//printf("Close called, socket is:  %s\n", bActive?"Active":"Inactive" );
 	if( bActive )
 	{
 		fsync( nSocket );
 		::close( nSocket );
+		//printf("Socket closed.\n");
 	}
 	bActive = false;
 	//nSocket = -1;
@@ -175,8 +178,18 @@ bool Connection::open( const char *sAddr, int nPort )
 		bActive = false;
 		return false;
 	}
+
+	// These lines set the socket to non-blocking, a good thing?
+	int flags;
+	flags = fcntl(nSocket, F_GETFL, 0);
+	flags |= O_NONBLOCK;
+	if (fcntl(nSocket, F_SETFL, flags) < 0)
+	{
+		return false;
+	}
      
 	/* Connect to the server. */
+	//printf("Resolving hostname (%s)...\n", sAddr );
 	{
 		struct hostent *hostinfo;
      
@@ -190,16 +203,20 @@ bool Connection::open( const char *sAddr, int nPort )
 		xServerName.sin_addr = *(struct in_addr *) hostinfo->h_addr;
 	}
 
+	//printf("Making actual connection...");
+	fflush( stdout );
 	int ret = connect(
 		nSocket,
 		(struct sockaddr *)&xServerName,
 		sizeof(xServerName)
 		);
+	//printf("Connected.\n");
 
+	/*
 	if( ret < 0 )
 	{
 		return false;
-	}
+	}*/
 
 	bActive = true;
 	bDisconnectMe = false;
@@ -220,7 +237,7 @@ int Connection::readInput()
 		nbytes = read( nSocket, buffer, RBS );
 		if( nbytes < 0 && errno != 0 && errno != EAGAIN )
 		{
-			printf("errno: %d, %s\n", errno, strerror( errno ) );
+			//printf("errno: %d, %s\n", errno, strerror( errno ) );
 			/* Read error. */
 			//perror("readInput");
 			throw ConnectionException( excodeReadError, "Read error: %s", strerror( errno ) );
