@@ -49,7 +49,7 @@ public:
 	 *@todo Make this function add log entries to a standard MultiLog if
 	 * something goes wrong.
 	 */
-	bool open( const char *sAddr, int nPort );
+	bool open( const char *sAddr, int nPort, int nSec=30 );
 
 	void ensureCapacity( int nSize );
 

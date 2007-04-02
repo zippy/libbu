@@ -165,7 +165,7 @@ bool Connection::open( int nNewSocket )
 	return true;
 }
 
-bool Connection::open( const char *sAddr, int nPort )
+bool Connection::open( const char *sAddr, int nPort, int nSec )
 {
 	struct sockaddr_in xServerName;
 	bActive = false;
@@ -204,22 +204,48 @@ bool Connection::open( const char *sAddr, int nPort )
 	}
 
 	//printf("Making actual connection...");
-	fflush( stdout );
-	int ret = connect(
+	//fflush( stdout );
+	connect(
 		nSocket,
 		(struct sockaddr *)&xServerName,
 		sizeof(xServerName)
 		);
 	//printf("Connected.\n");
+	
+	bActive = true;
+	bDisconnectMe = false;
+
+	if( nSec > 0 )
+	{
+		fd_set rfds, wfds, efds;
+		int retval;
+		
+		FD_ZERO(&rfds);
+		FD_SET(nSocket, &rfds);
+		FD_ZERO(&wfds);
+		FD_SET(nSocket, &wfds);
+		FD_ZERO(&efds);
+		FD_SET(nSocket, &efds);
+
+		struct timeval tv;
+		tv.tv_sec = nSec;
+		tv.tv_usec = 0;
+		
+		retval = select( nSocket+1, &rfds, &wfds, &efds, &tv );
+
+		if( retval == 0 )
+		{
+			close();
+			throw ExceptionBase("Connection timeout.\n");
+		}
+		
+	}
 
 	/*
 	if( ret < 0 )
 	{
 		return false;
 	}*/
-
-	bActive = true;
-	bDisconnectMe = false;
 
 	return true;
 }
