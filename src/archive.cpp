@@ -1,11 +1,34 @@
 #include "archive.h"
 
-Bu::Archive::Archive(bool bLoading):
-	bLoading(bLoading)
+Bu::Archive::Archive( Stream &rStream, bool bLoading ) :
+	bLoading( bLoading ),
+	rStream( rStream )
 {
 }
+
 Bu::Archive::~Archive()
 {
+}
+
+void Bu::Archive::write( const void *pData, int32_t nSize )
+{
+	if( nSize == 0 || pData == NULL )
+		return;
+	
+	rStream.write( (const char *)pData, nSize );
+}
+
+void Bu::Archive::read( void *pData, int32_t nSize )
+{
+	if( nSize == 0 || pData == NULL )
+		return;
+
+	rStream.read( (char *)pData, nSize );
+}
+
+void Bu::Archive::close()
+{
+	rStream.close();
 }
 
 bool Bu::Archive::isLoading()

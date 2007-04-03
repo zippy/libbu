@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <string>
 #include "archable.h"
+#include "stream.h"
 
 namespace Bu
 {
@@ -20,12 +21,12 @@ namespace Bu
 			save	=	false
 		};
 		
-		Archive( bool bLoading );
+		Archive( Stream &rStream, bool bLoading );
 		virtual ~Archive();
-		virtual void close()=0;
+		virtual void close();
 
-		virtual void write(const void *, int32_t)=0;
-		virtual void read(void *, int32_t)=0;
+		virtual void write(const void *, int32_t);
+		virtual void read(void *, int32_t);
 		
 		virtual Archive &operator<<(bool);
 		virtual Archive &operator<<(int8_t);
@@ -67,6 +68,9 @@ namespace Bu
 		virtual Archive &operator&&(float &);
 		virtual Archive &operator&&(double &);
 		virtual Archive &operator&&(long double &);
+
+	private:
+		Stream &rStream;
 	};
 
 	Archive &operator<<(Archive &, class Bu::Archable &);
