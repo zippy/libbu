@@ -65,12 +65,12 @@ public:
 		return pData == src.pData;
 	}
 
-	operator bool()
+	operator bool() const
 	{
 		return pRefCnt != NULL;
 	}
 
-	bool isSet()
+	bool isSet() const
 	{
 		return pRefCnt != NULL;
 	}
