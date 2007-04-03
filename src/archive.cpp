@@ -1,152 +1,150 @@
-#include "serializer.h"
-#include "serializable.h"
-#include <list>
+#include "archive.h"
 
-Serializer::Serializer(bool bLoading):
+Bu::Archive::Archive(bool bLoading):
 	bLoading(bLoading)
 {
 }
-Serializer::~Serializer()
+Bu::Archive::~Archive()
 {
 }
 
-bool Serializer::isLoading()
+bool Bu::Archive::isLoading()
 {
 	return bLoading;
 }
-Serializer &Serializer::operator<<(bool p)
+Bu::Archive &Bu::Archive::operator<<(bool p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator<<(int8_t p)
+Bu::Archive &Bu::Archive::operator<<(int8_t p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator<<(int16_t p)
+Bu::Archive &Bu::Archive::operator<<(int16_t p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator<<(int32_t p)
+Bu::Archive &Bu::Archive::operator<<(int32_t p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator<<(int64_t p)
+Bu::Archive &Bu::Archive::operator<<(int64_t p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator<<(uint8_t p)
+Bu::Archive &Bu::Archive::operator<<(uint8_t p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator<<(uint16_t p)
+Bu::Archive &Bu::Archive::operator<<(uint16_t p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator<<(uint32_t p)
+Bu::Archive &Bu::Archive::operator<<(uint32_t p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator<<(uint64_t p)
+Bu::Archive &Bu::Archive::operator<<(uint64_t p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator<<(long p)
+Bu::Archive &Bu::Archive::operator<<(long p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator<<(float p)
+Bu::Archive &Bu::Archive::operator<<(float p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator<<(double p)
+Bu::Archive &Bu::Archive::operator<<(double p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator<<(long double p)
+Bu::Archive &Bu::Archive::operator<<(long double p)
 {
 	write( &p, sizeof(p) );
 	return *this;
 }
 
-Serializer &Serializer::operator>>(bool &p)
+Bu::Archive &Bu::Archive::operator>>(bool &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator>>(int8_t &p)
+Bu::Archive &Bu::Archive::operator>>(int8_t &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator>>(int16_t &p)
+Bu::Archive &Bu::Archive::operator>>(int16_t &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator>>(int32_t &p)
+Bu::Archive &Bu::Archive::operator>>(int32_t &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator>>(int64_t &p)
+Bu::Archive &Bu::Archive::operator>>(int64_t &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator>>(uint8_t &p)
+Bu::Archive &Bu::Archive::operator>>(uint8_t &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator>>(uint16_t &p)
+Bu::Archive &Bu::Archive::operator>>(uint16_t &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator>>(uint32_t &p)
+Bu::Archive &Bu::Archive::operator>>(uint32_t &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator>>(uint64_t &p)
+Bu::Archive &Bu::Archive::operator>>(uint64_t &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator>>(long &p)
+Bu::Archive &Bu::Archive::operator>>(long &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator>>(float &p)
+Bu::Archive &Bu::Archive::operator>>(float &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator>>(double &p)
+Bu::Archive &Bu::Archive::operator>>(double &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
-Serializer &Serializer::operator>>(long double &p)
+Bu::Archive &Bu::Archive::operator>>(long double &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
 }
 
-Serializer &Serializer::operator&&(bool &p)
+Bu::Archive &Bu::Archive::operator&&(bool &p)
 {
 	if (bLoading)
 	{
@@ -158,7 +156,7 @@ Serializer &Serializer::operator&&(bool &p)
 	}
 }
 
-Serializer &Serializer::operator&&(int8_t &p)
+Bu::Archive &Bu::Archive::operator&&(int8_t &p)
 {
 	if (bLoading)
 	{
@@ -170,7 +168,7 @@ Serializer &Serializer::operator&&(int8_t &p)
 	}
 }
 
-Serializer &Serializer::operator&&(int16_t &p)
+Bu::Archive &Bu::Archive::operator&&(int16_t &p)
 {
 	if (bLoading)
 	{
@@ -182,7 +180,7 @@ Serializer &Serializer::operator&&(int16_t &p)
 	}
 }
 
-Serializer &Serializer::operator&&(int32_t &p)
+Bu::Archive &Bu::Archive::operator&&(int32_t &p)
 {
 	if (bLoading)
 	{
@@ -194,7 +192,7 @@ Serializer &Serializer::operator&&(int32_t &p)
 	}
 }
 
-Serializer &Serializer::operator&&(int64_t &p)
+Bu::Archive &Bu::Archive::operator&&(int64_t &p)
 {
 	if (bLoading)
 	{
@@ -206,7 +204,7 @@ Serializer &Serializer::operator&&(int64_t &p)
 	}
 }
 
-Serializer &Serializer::operator&&(uint8_t &p)
+Bu::Archive &Bu::Archive::operator&&(uint8_t &p)
 {
 	if (bLoading)
 	{
@@ -218,7 +216,7 @@ Serializer &Serializer::operator&&(uint8_t &p)
 	}
 }
 
-Serializer &Serializer::operator&&(uint16_t &p)
+Bu::Archive &Bu::Archive::operator&&(uint16_t &p)
 {
 	if (bLoading)
 	{
@@ -230,7 +228,7 @@ Serializer &Serializer::operator&&(uint16_t &p)
 	}
 }
 
-Serializer &Serializer::operator&&(uint32_t &p)
+Bu::Archive &Bu::Archive::operator&&(uint32_t &p)
 {
 	if (bLoading)
 	{
@@ -242,7 +240,7 @@ Serializer &Serializer::operator&&(uint32_t &p)
 	}
 }
 
-Serializer &Serializer::operator&&(uint64_t &p)
+Bu::Archive &Bu::Archive::operator&&(uint64_t &p)
 {
 	if (bLoading)
 	{
@@ -254,7 +252,7 @@ Serializer &Serializer::operator&&(uint64_t &p)
 	}
 }
 
-Serializer &Serializer::operator&&(float &p)
+Bu::Archive &Bu::Archive::operator&&(float &p)
 {
 	if (bLoading)
 	{
@@ -266,7 +264,7 @@ Serializer &Serializer::operator&&(float &p)
 	}
 }
 
-Serializer &Serializer::operator&&(double &p)
+Bu::Archive &Bu::Archive::operator&&(double &p)
 {
 	if (bLoading)
 	{
@@ -278,7 +276,7 @@ Serializer &Serializer::operator&&(double &p)
 	}
 }
 
-Serializer &Serializer::operator&&(long double &p)
+Bu::Archive &Bu::Archive::operator&&(long double &p)
 {
 	if (bLoading)
 	{
@@ -291,19 +289,20 @@ Serializer &Serializer::operator&&(long double &p)
 }
 
 
-Serializer &operator<<(Serializer &s, Serializable &p)
+Bu::Archive &Bu::operator<<(Bu::Archive &s, Bu::Archable &p)
 {
-	p.serialize( s );
+	p.archive( s );
 	return s;
 }
 
-Serializer &operator>>(Serializer &s, Serializable &p)
+Bu::Archive &Bu::operator>>(Bu::Archive &s, Bu::Archable &p)
 {
-	p.serialize( s );
+	p.archive( s );
 	return s;
 }
 
-Serializer &operator&&(Serializer &s, Serializable &p)
+/*
+Bu::Archive &Bu::operator&&(Bu::Archive &s, Bu::Archable &p)
 {
 	if (s.isLoading())
 	{
@@ -313,9 +312,9 @@ Serializer &operator&&(Serializer &s, Serializable &p)
 	{
 		return s << p;
 	}
-}
+}*/
 
-Serializer &operator<<( Serializer &ar, std::string &s )
+Bu::Archive &Bu::operator<<( Bu::Archive &ar, std::string &s )
 {
 	ar << (uint32_t)s.length();
 	ar.write( s.c_str(), s.length() );
@@ -323,7 +322,7 @@ Serializer &operator<<( Serializer &ar, std::string &s )
 	return ar;
 }
 
-Serializer &operator>>( Serializer &ar, std::string &s )
+Bu::Archive &Bu::operator>>( Bu::Archive &ar, std::string &s )
 {
 	uint32_t l;
 	ar >> l;
