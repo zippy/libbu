@@ -9,17 +9,33 @@ public:
 		printf("Created.\n");
 	}
 
-	~Annoy()
+	virtual ~Annoy()
 	{
 		printf("Destroyed.\n");
 	}
 
-	void go()
+	virtual void go()
 	{
 		printf("%d: I'm annoying.\n", ++nCnt);
 	}
 
 	int nCnt;
+};
+
+class Annoy2: public Annoy
+{
+public:
+	Annoy2(){};
+	virtual ~Annoy2(){};
+	virtual void go()
+	{
+		printf("{{I'm Annoy2!!}} ");
+		Annoy::go();
+	}
+	virtual void go2()
+	{
+		printf("This is me, on my own...\n");
+	}
 };
 
 void beAnnoying( SPtr<Annoy> bob )
@@ -30,7 +46,7 @@ void beAnnoying( SPtr<Annoy> bob )
 
 int main()
 {
-	SPtr<Annoy> pt( new Annoy );
+	SPtr<Annoy> pt( new Annoy2 );
 	printf("Count: %d\n", pt.count() );
 	pt->go();
 
@@ -47,6 +63,13 @@ int main()
 			pt3->go();
 
 			beAnnoying( pt3 );
+
+			{
+				SPtr<Annoy2> pt4( dynamic_cast<SPtr<Annoy2> >(pt3) );
+				printf("Count: %d\n", pt4.count() );
+
+				pt4.go2();
+			}
 		}
 		printf("Count: %d\n", pt.count() );
 	}
