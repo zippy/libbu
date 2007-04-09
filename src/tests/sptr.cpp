@@ -65,11 +65,12 @@ int main()
 			beAnnoying( pt3 );
 
 			{
-				SPtr<Annoy2> pt4( dynamic_cast<SPtr<Annoy2> >(pt3) );
+				SPtr<Annoy2> pt4( SPtrCast<Annoy2>( pt3 ) );
 				printf("Count: %d\n", pt4.count() );
 
-				pt4.go2();
+				pt4->go2();
 			}
+			printf("Count: %d\n", pt.count() );
 		}
 		printf("Count: %d\n", pt.count() );
 	}

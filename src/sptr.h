@@ -4,9 +4,14 @@
 #include <stdint.h>
 #include <stdio.h>
 
+template<typename T> class SPtr;
+template< typename Tb, typename Ta > SPtr<Tb> SPtrCast( SPtr<Ta> src );
+
 template<typename T>
 class SPtr
 {
+	template<typename Tb, typename Ta>
+	friend SPtr<Tb> SPtrCast( SPtr<Ta> pt );
 public:
 	SPtr() :
 		pRefCnt( NULL ),
@@ -95,5 +100,15 @@ private:
 	int32_t *pRefCnt;
 	T *pData;
 };
+
+template< typename Tb, typename Ta > SPtr<Tb> SPtrCast( SPtr<Ta> src )
+{
+	SPtr<Tb> ret;
+	ret.pRefCnt = src.pRefCnt;
+	ret.pData = dynamic_cast<Tb *>(src.pData);
+	if( ret.pRefCnt )
+		(*(ret.pRefCnt)) += 1;
+	return ret;
+}
 
 #endif
