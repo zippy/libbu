@@ -324,19 +324,6 @@ Bu::Archive &Bu::operator>>(Bu::Archive &s, Bu::Archival &p)
 	return s;
 }
 
-/*
-Bu::Archive &Bu::operator&&(Bu::Archive &s, Bu::Archival &p)
-{
-	if (s.isLoading())
-	{
-		return s >> p;
-	}
-	else
-	{
-		return s << p;
-	}
-}*/
-
 Bu::Archive &Bu::operator<<( Bu::Archive &ar, std::string &s )
 {
 	ar << (uint32_t)s.length();

@@ -5,6 +5,7 @@
 #include <string>
 #include "archival.h"
 #include "stream.h"
+#include <list>
 
 namespace Bu
 {
@@ -91,6 +92,34 @@ namespace Bu
 		{
 			return ar << dat;
 		}
+	}
+
+	template<typename T> Archive &operator<<( Archive &ar, std::list<T> &l )
+	{
+		typename std::list<T>::size_type num = l.size();
+		ar << num;
+		for( typename std::list<T>::const_iterator i = l.begin(); i != l.end();
+			 i++ )
+		{
+			ar << *i;
+		}
+
+		return ar;
+	}
+
+	template<typename T> Archive &operator>>( Archive &ar, std::list<T> &l )
+	{
+		typename std::list<T>::size_type num;
+		ar >> num;
+
+		l.resize( num );
+		for( typename std::list<T>::const_iterator i = l.begin();
+			 i != l.end(); i++ )
+		{
+			ar >> *i;
+		}
+
+		return ar;
 	}
 }
 

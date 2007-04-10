@@ -87,7 +87,7 @@ public:
 		unitTest( sf.isEOS() == false );
 		try
 		{
-			int r = sf.read( buf, 5 );
+			sf.read( buf, 5 );
 			unitFailed("No exception thrown");
 		}
 		catch( Bu::FileException &e )
