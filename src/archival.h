@@ -1,5 +1,5 @@
-#ifndef ARCHABLE_H
-#define ARCHABLE_H
+#ifndef ARCHIVAL_H
+#define ARCHIVAL_H
 
 namespace Bu
 {
@@ -7,19 +7,22 @@ namespace Bu
 	 * The base class for any class you want to archive.  Simply include this as
 	 * a base class, implement the purely virtual archive function and you've
 	 * got an easily archiveable class.
+	 *
+	 * Archival: "of or pertaining to archives or valuable records; contained
+	 * in or comprising such archives or records."
 	 */
-	class Archable
+	class Archival
 	{
 	public:
 		/**
 		 * Does nothing, here for completeness.
 		 */
-		Archable();
+		Archival();
 
 		/**
 		 * Here to ensure the deconstructor is virtual.
 		 */
-		virtual ~Archable();
+		virtual ~Archival();
 
 		/**
 		 * This is the main workhorse of the archive system, just override and

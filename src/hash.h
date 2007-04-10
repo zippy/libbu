@@ -8,7 +8,7 @@
 #include <list>
 #include <utility>
 #include "exceptionbase.h"
-#include "archable.h"
+#include "archival.h"
 #include "archive.h"
 
 #define bitsToBytes( n ) (n/32+(n%32>0 ? 1 : 0))

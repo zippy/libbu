@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <string>
-#include "archable.h"
+#include "archival.h"
 #include "stream.h"
 
 namespace Bu
@@ -73,9 +73,9 @@ namespace Bu
 		Stream &rStream;
 	};
 
-	Archive &operator<<(Archive &, class Bu::Archable &);
-	Archive &operator>>(Archive &, class Bu::Archable &);
-	//Archive &operator&&(Archive &s, class Bu::Archable &p);
+	Archive &operator<<(Archive &, class Bu::Archival &);
+	Archive &operator>>(Archive &, class Bu::Archival &);
+	//Archive &operator&&(Archive &s, class Bu::Archival &p);
 
 	Archive &operator<<(Archive &, std::string &);
 	Archive &operator>>(Archive &, std::string &);

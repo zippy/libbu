@@ -312,20 +312,20 @@ Bu::Archive &Bu::Archive::operator&&(long double &p)
 }
 
 
-Bu::Archive &Bu::operator<<(Bu::Archive &s, Bu::Archable &p)
+Bu::Archive &Bu::operator<<(Bu::Archive &s, Bu::Archival &p)
 {
 	p.archive( s );
 	return s;
 }
 
-Bu::Archive &Bu::operator>>(Bu::Archive &s, Bu::Archable &p)
+Bu::Archive &Bu::operator>>(Bu::Archive &s, Bu::Archival &p)
 {
 	p.archive( s );
 	return s;
 }
 
 /*
-Bu::Archive &Bu::operator&&(Bu::Archive &s, Bu::Archable &p)
+Bu::Archive &Bu::operator&&(Bu::Archive &s, Bu::Archival &p)
 {
 	if (s.isLoading())
 	{

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <memory>
-#include "archable.h"
+#include "archival.h"
 #include "archive.h"
 #include "hash.h"
 
@@ -29,7 +29,7 @@ namespace Bu
 	 * FBasicString into a ref-counting container class.
 	 */
 	template< typename chr, typename chralloc=std::allocator<chr>, typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
-	class FBasicString : public Archable
+	class FBasicString : public Archival
 	{
 #ifndef VALTEST
 #define cpy( dest, src, size ) memcpy( dest, src, size*sizeof(chr) )
