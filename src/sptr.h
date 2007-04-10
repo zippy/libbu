@@ -45,14 +45,24 @@ public:
 		return *pRefCnt;
 	}
 
-	T *operator->() const
+	const T *operator->() const
 	{
 		return pData;
 	}
 
-	T *operator*() const
+	const T &operator*() const
+	{
+		return *pData;
+	}
+	
+	T *operator->()
 	{
 		return pData;
+	}
+
+	T &operator*()
+	{
+		return *pData;
 	}
 
 	SPtr<T> operator=( const SPtr<T> &src )
