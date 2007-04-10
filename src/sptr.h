@@ -36,8 +36,11 @@ public:
 		pRefCnt( NULL ),
 		pData( pSrc )
 	{
-		pRefCnt = new int32_t;
-		(*pRefCnt) = 1;
+		if( pData )
+		{
+			pRefCnt = new int32_t;
+			(*pRefCnt) = 1;
+		}
 	}
 
 	int32_t count() const
@@ -70,7 +73,8 @@ public:
 		decCount();
 		pRefCnt = src.pRefCnt;
 		pData = src.pData;
-		(*pRefCnt) += 1;
+		if( pRefCnt )
+			(*pRefCnt) += 1;
 
 		return *this;
 	}
@@ -80,7 +84,8 @@ public:
 		decCount();
 		pRefCnt = src.pRefCnt;
 		pData = src.pData;
-		(*pRefCnt) += 1;
+		if( pRefCnt )
+			(*pRefCnt) += 1;
 
 		return *this;
 	}
@@ -88,6 +93,11 @@ public:
 	bool operator==( const SPtr<T> &src ) const
 	{
 		return pData == src.pData;
+	}
+
+	bool operator==( const T *src ) const
+	{
+		return pData == src;
 	}
 
 	operator bool() const
