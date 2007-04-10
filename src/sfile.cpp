@@ -1,9 +1,14 @@
 #include "sfile.h"
 #include "exceptions.h"
+#include <errno.h>
 
 Bu::SFile::SFile( const char *sName, const char *sFlags )
 {
 	fh = fopen( sName, sFlags );
+	if( fh == NULL )
+	{
+		throw Bu::FileException( errno, strerror(errno) );
+	}
 }
 
 Bu::SFile::~SFile()
@@ -20,15 +25,20 @@ void Bu::SFile::close()
 	}
 }
 
-size_t Bu::SFile::read( char *pBuf, size_t nBytes )
+size_t Bu::SFile::read( void *pBuf, size_t nBytes )
 {
 	if( !fh )
 		throw FileException("File not open.");
 
-	return fread( pBuf, 1, nBytes, fh );
+	int nAmnt = fread( pBuf, 1, nBytes, fh );
+
+	if( nAmnt == 0 )
+		throw FileException("End of file.");
+
+	return nAmnt;
 }
 
-size_t Bu::SFile::write( const char *pBuf, size_t nBytes )
+size_t Bu::SFile::write( const void *pBuf, size_t nBytes )
 {
 	if( !fh )
 		throw FileException("File not open.");

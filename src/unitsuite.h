@@ -56,5 +56,6 @@ namespace Bu
 {																\
 	throw Bu::UnitSuite::Failed( #tst, __FILE__, __LINE__ );	\
 }
+#define unitFailed( msg ) throw Bu::UnitSuite::Failed(msg, __FILE__, __LINE__);
 
 #endif

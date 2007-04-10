@@ -14,8 +14,8 @@ namespace Bu
 		virtual ~SFile();
 
 		virtual void close();
-		virtual size_t read( char *pBuf, size_t nBytes );
-		virtual size_t write( const char *pBuf, size_t nBytes );
+		virtual size_t read( void *pBuf, size_t nBytes );
+		virtual size_t write( const void *pBuf, size_t nBytes );
 
 		virtual long tell();
 		virtual void seek( long offset );

@@ -13,8 +13,8 @@ namespace Bu
 		virtual ~Stream();
 
 		virtual void close() = 0;
-		virtual size_t read( char *pBuf, size_t nBytes ) = 0;
-		virtual size_t write( const char *pBuf, size_t nBytes ) = 0;
+		virtual size_t read( void *pBuf, size_t nBytes ) = 0;
+		virtual size_t write( const void *pBuf, size_t nBytes ) = 0;
 
 		virtual long tell() = 0;
 		virtual void seek( long offset ) = 0;
