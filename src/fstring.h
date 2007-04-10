@@ -364,6 +364,30 @@ namespace Bu
 			}
 		}
 
+		long find( const char *sText )
+		{
+			long nTLen = strlen( sText );
+			flatten();
+			for( long j = 0; j < pFirst->nLength-nTLen; j++ )
+			{
+				if( !strncmp( sText, pFirst->pData+j, nTLen ) )
+					return j;
+			}
+			return -1;
+		}
+
+		long rfind( const char *sText )
+		{
+			long nTLen = strlen( sText );
+			flatten();
+			for( long j = pFirst->nLength-nTLen-1; j >= 0; j-- )
+			{
+				if( !strncmp( sText, pFirst->pData+j, nTLen ) )
+					return j;
+			}
+			return -1;
+		}
+
 		void archive( class Archive &ar )
 		{
 			if( ar.isLoading() )

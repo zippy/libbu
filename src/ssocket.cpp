@@ -1,9 +1,9 @@
 #include "ssocket.h"
 
-SSocket::SSocket()
+Bu::SSocket::SSocket()
 {
 }
 
-SSocket::~SSocket()
+Bu::SSocket::~SSocket()
 {
 }
