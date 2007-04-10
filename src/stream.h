@@ -6,6 +6,16 @@
 
 namespace Bu
 {
+	/**
+	 * The basis for a completely general data transport mechanism.  Anything
+	 * that inherits from this should provide at least the basic read and/or
+	 * write functions, and very probably the close function.  Any functions
+	 * that aren't supported should throw an exception if called.
+	 *
+	 * The constructor of a child class should pretty much universally be used
+	 * to open the stream.  I can't think of anything that should require an
+	 * exception.
+	 */
 	class Stream
 	{
 	public:

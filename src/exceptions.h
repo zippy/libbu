@@ -10,6 +10,7 @@ namespace Bu
 	subExceptionDecl( FileException )
 	subExceptionDecl( ConnectionException )
 	subExceptionDecl( PluginException )
+	subExceptionDecl( UnsupportedException )
 
 	enum eFileException
 	{
@@ -19,6 +20,7 @@ namespace Bu
 	enum eConnectionException
 	{
 		excodeReadError,
+		excodeWriteError,
 		excodeBadReadError,
 		excodeConnectionClosed,
 		excodeSocketTimeout

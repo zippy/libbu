@@ -7,4 +7,5 @@ namespace Bu
 	subExceptionDef( FileException )
 	subExceptionDef( ConnectionException )
 	subExceptionDef( PluginException )
+	subExceptionDef( UnsupportedException )
 }
