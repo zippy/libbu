@@ -1,11 +1,11 @@
 #include "archive.h"
-#include "sfile.h"
+#include "file.h"
 
 using namespace Bu;
 
 int main()
 {
-	SFile f("test.dat", "wb");
+	File f("test.dat", "wb");
 	Archive ar( f, Archive::save );
 
 	std::string s("Hello there");

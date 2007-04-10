@@ -1,8 +1,8 @@
-#include "sfile.h"
+#include "file.h"
 #include "exceptions.h"
 #include <errno.h>
 
-Bu::SFile::SFile( const char *sName, const char *sFlags )
+Bu::File::File( const char *sName, const char *sFlags )
 {
 	fh = fopen( sName, sFlags );
 	if( fh == NULL )
@@ -11,12 +11,12 @@ Bu::SFile::SFile( const char *sName, const char *sFlags )
 	}
 }
 
-Bu::SFile::~SFile()
+Bu::File::~File()
 {
 	close();
 }
 
-void Bu::SFile::close()
+void Bu::File::close()
 {
 	if( fh )
 	{
@@ -25,7 +25,7 @@ void Bu::SFile::close()
 	}
 }
 
-size_t Bu::SFile::read( void *pBuf, size_t nBytes )
+size_t Bu::File::read( void *pBuf, size_t nBytes )
 {
 	if( !fh )
 		throw FileException("File not open.");
@@ -38,7 +38,7 @@ size_t Bu::SFile::read( void *pBuf, size_t nBytes )
 	return nAmnt;
 }
 
-size_t Bu::SFile::write( const void *pBuf, size_t nBytes )
+size_t Bu::File::write( const void *pBuf, size_t nBytes )
 {
 	if( !fh )
 		throw FileException("File not open.");
@@ -46,7 +46,7 @@ size_t Bu::SFile::write( const void *pBuf, size_t nBytes )
 	return fwrite( pBuf, 1, nBytes, fh );
 }
 
-long Bu::SFile::tell()
+long Bu::File::tell()
 {
 	if( !fh )
 		throw FileException("File not open.");
@@ -54,7 +54,7 @@ long Bu::SFile::tell()
 	return ftell( fh );
 }
 
-void Bu::SFile::seek( long offset )
+void Bu::File::seek( long offset )
 {
 	if( !fh )
 		throw FileException("File not open.");
@@ -62,7 +62,7 @@ void Bu::SFile::seek( long offset )
 	fseek( fh, offset, SEEK_CUR );
 }
 
-void Bu::SFile::setPos( long pos )
+void Bu::File::setPos( long pos )
 {
 	if( !fh )
 		throw FileException("File not open.");
@@ -70,7 +70,7 @@ void Bu::SFile::setPos( long pos )
 	fseek( fh, pos, SEEK_SET );
 }
 
-void Bu::SFile::setPosEnd( long pos )
+void Bu::File::setPosEnd( long pos )
 {
 	if( !fh )
 		throw FileException("File not open.");
@@ -78,22 +78,22 @@ void Bu::SFile::setPosEnd( long pos )
 	fseek( fh, pos, SEEK_END );
 }
 
-bool Bu::SFile::isEOS()
+bool Bu::File::isEOS()
 {
 	return feof( fh );
 }
 
-bool Bu::SFile::canRead()
+bool Bu::File::canRead()
 {
 	return true;
 }
 
-bool Bu::SFile::canWrite()
+bool Bu::File::canWrite()
 {
 	return true;
 }
 
-bool Bu::SFile::canSeek()
+bool Bu::File::canSeek()
 {
 	return true;
 }

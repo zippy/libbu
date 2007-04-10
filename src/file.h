@@ -1,5 +1,5 @@
-#ifndef SFILE_H
-#define SFILE_H
+#ifndef FILE_H
+#define FILE_H
 
 #include <stdint.h>
 
@@ -7,11 +7,11 @@
 
 namespace Bu
 {
-	class SFile : public Bu::Stream
+	class File : public Bu::Stream
 	{
 	public:
-		SFile( const char *sName, const char *sFlags );
-		virtual ~SFile();
+		File( const char *sName, const char *sFlags );
+		virtual ~File();
 
 		virtual void close();
 		virtual size_t read( void *pBuf, size_t nBytes );

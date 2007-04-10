@@ -1,5 +1,5 @@
-#ifndef S_SOCKET_H
-#define S_SOCKET_H
+#ifndef SOCKET_H
+#define SOCKET_H
 
 #include <stdint.h>
 
@@ -10,11 +10,11 @@ namespace Bu
 	/**
 	 *
 	 */
-	class SSocket : public Stream
+	class Socket : public Stream
 	{
 	public:
-		SSocket();
-		virtual ~SSocket();
+		Socket();
+		virtual ~Socket();
 
 	private:
 

@@ -1,5 +1,5 @@
 #include "unitsuite.h"
-#include "sfile.h"
+#include "file.h"
 #include "exceptions.h"
 
 #include <sys/types.h>
@@ -11,7 +11,7 @@ class Unit : public Bu::UnitSuite
 public:
 	Unit()
 	{
-		setName("SFile");
+		setName("File");
 		addTest( Unit::writeFull );
 		addTest( Unit::readBlocks );
 		addTest( Unit::readError1 );
@@ -25,7 +25,7 @@ public:
 	//
 	void writeFull()
 	{
-		Bu::SFile sf("testfile1", "wb");
+		Bu::File sf("testfile1", "wb");
 		for( int c = 0; c < 256; c++ )
 		{
 			unsigned char ch = (unsigned char)c;
@@ -43,7 +43,7 @@ public:
 
 	void readBlocks()
 	{
-		Bu::SFile sf("testfile1", "rb");
+		Bu::File sf("testfile1", "rb");
 		unsigned char buf[50];
 		size_t total = 0;
 		for(;;)
@@ -68,7 +68,7 @@ public:
 	{
 		try
 		{
-			Bu::SFile sf("doesn'texist", "rb");
+			Bu::File sf("doesn'texist", "rb");
 			unitFailed("No exception thrown");
 		}
 		catch( Bu::FileException &e )
@@ -79,7 +79,7 @@ public:
 
 	void readError2()
 	{
-		Bu::SFile sf("testfile1", "rb");
+		Bu::File sf("testfile1", "rb");
 		char buf[256];
 		int r = sf.read( buf, 256 );
 		unitTest( r == 256 );
