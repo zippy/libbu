@@ -40,7 +40,7 @@ public:
 		(*pRefCnt) = 1;
 	}
 
-	int32_t count()
+	int32_t count() const
 	{
 		return *pRefCnt;
 	}
@@ -65,7 +65,17 @@ public:
 		return *this;
 	}
 
-	bool operator==( const SPtr<T> &src )
+	const SPtr<T> operator=( const SPtr<T> &src ) const
+	{
+		decCount();
+		pRefCnt = src.pRefCnt;
+		pData = src.pData;
+		(*pRefCnt) += 1;
+
+		return *this;
+	}
+
+	bool operator==( const SPtr<T> &src ) const
 	{
 		return pData == src.pData;
 	}
@@ -81,7 +91,7 @@ public:
 	}
 
 private:
-	void decCount()
+	void decCount() const
 	{
 		if( pRefCnt )
 		{
@@ -97,8 +107,8 @@ private:
 		}
 	}
 
-	int32_t *pRefCnt;
-	T *pData;
+	mutable int32_t *pRefCnt;
+	mutable T *pData;
 };
 
 template< typename Tb, typename Ta > SPtr<Tb> SPtrCast( SPtr<Ta> src )
