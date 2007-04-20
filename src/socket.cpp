@@ -181,11 +181,12 @@ void Bu::Socket::read()
 
 size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 {
-	read();
-
-
-
-	return sReadBuf.getSize();
+	int nRead = TEMP_FAILURE_RETRY( ::read( nSocket, pBuf, nBytes ) );
+	if( nRead < 0 )
+	{
+		throw ConnectionException( excodeReadError, strerror(errno) );
+	}
+	return nRead;
 }
 
 size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
