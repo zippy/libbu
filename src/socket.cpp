@@ -118,6 +118,7 @@ void Bu::Socket::close()
 	//}
 }
 
+/*
 void Bu::Socket::read()
 {
 	char buffer[RBS];
@@ -132,7 +133,6 @@ void Bu::Socket::read()
 		if( nbytes < 0 && errno != 0 && errno != EAGAIN )
 		{
 			//printf("errno: %d, %s\n", errno, strerror( errno ) );
-			/* Read error. */
 			//perror("readInput");
 			throw ConnectionException(
 				excodeReadError,
@@ -146,15 +146,13 @@ void Bu::Socket::read()
 				break;
 			nTotalRead += nbytes;
 			sReadBuf.append( buffer, nbytes );
-			/* Data read. */
 			if( nbytes < RBS )
 			{
 				break;
 			}
 
-			/* New test, if data is divisible by RBS bytes on some libs the
-			 * read could block, this keeps it from happening.
-			 */
+			// New test, if data is divisible by RBS bytes on some libs the
+			// read could block, this keeps it from happening.
 			{
 				fd_set rfds;
 				FD_ZERO(&rfds);
@@ -171,13 +169,7 @@ void Bu::Socket::read()
 			}
 		}
 	}
-
-	/*
-	if( pProtocol != NULL && nTotalRead > 0 )
-	{
-		pProtocol->onNewData();
-	}*/
-}
+}*/
 
 size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 {

@@ -19,7 +19,7 @@ namespace Bu
 		virtual ~Socket();
 		
 		virtual void close();
-		virtual void read();
+		//virtual void read();
 		virtual size_t read( void *pBuf, size_t nBytes );
 		virtual size_t write( const void *pBuf, size_t nBytes );
 
@@ -32,6 +32,8 @@ namespace Bu
 		virtual bool canRead();
 		virtual bool canWrite();
 		virtual bool canSeek();
+
+		
 
 	private:
 		int nSocket;
