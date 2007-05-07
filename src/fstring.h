@@ -245,6 +245,18 @@ namespace Bu
 			return (*this);
 		}
 
+		void set( const chr *pData )
+		{
+			clear();
+			append( pData );
+		}
+
+		void set( const chr *pData, long nSize )
+		{
+			clear();
+			append( pData, nSize );
+		}
+
 		MyType &operator =( const MyType &rSrc )
 		{
 			//if( rSrc.isFlat() )
