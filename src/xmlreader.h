@@ -1,121 +1,141 @@
-#ifndef XML_READER_H
-#define XML_READER_H
+#ifndef XMLREADER
+#define XMLREADER
 
-#include <stdint.h>
-#include "bu/stream.h"
-#include "bu/fstring.h"
-#include "bu/xmlnode.h"
+#include <stdio.h>
+#include "xmldocument.h"
+#include "flexbuf.h"
+#include "hashtable.h"
+#include "staticstring.h"
 
-namespace Bu
+/**
+ * Takes care of reading in xml formatted data from a file.  This could/should
+ * be made more arbitrary in the future so that we can read the data from any
+ * source.  This is actually made quite simple already since all data read in
+ * is handled by one single helper function and then palced into a FlexBuf for
+ * easy access by the other functions.  The FlexBuf also allows for block
+ * reading from disk, which improves speed by a noticable amount.
+ * <br>
+ * There are also some extra features implemented that allow you to break the
+ * standard XML reader specs and eliminate leading and trailing whitespace in
+ * all read content.  This is useful in situations where you allow additional
+ * whitespace in the files to make them easily human readable.  The resturned
+ * content will be NULL in sitautions where all content between nodes was
+ * stripped.
+ *@author Mike Buland
+ */
+class XmlReader : public XmlDocument
 {
+public:
 	/**
-	 * An Xml 1.1 reader.  I've decided to write this, this time, based on the
-	 * official W3C reccomendation, now included with the source code.  I've
-	 * named the productions in the parser states the same as in that document,
-	 * which may make them easier to find, etc, although possibly slightly less
-	 * optimized than writing my own reduced grammer.
-	 *
-	 * Below I will list differences between my parser and the official standard
-	 * as I come up with them.
-	 *  - Encoding and Standalone headings are ignored for the moment. (4.3.3,
-	 *    2.9)
-	 *  - The standalone heading attribute can have any standard whitespace
-	 *    before it (the specs say only spaces, no newlines). (2.9)
-	 *  - Since standalone is ignored, it is currently allowed to have any
-	 *    value (should be restricted to "yes" or "no"). (2.9)
-	 *  - Currently only UTF-8 / ascii are parsed.
-	 *  - [optional] The content of comments is thrown away. (2.5)
-	 *  - The content of processing instruction blocks is parsed properly, but
-	 *    thrown away. (2.6)
+	 * Create a standard XmlReader.  The optional parameter bStrip allows you to
+	 * create a reader that will strip out all leading and trailing whitespace
+	 * in content, a-la html.
+	 *@param bStrip Strip out leading and trailing whitespace?
 	 */
-	class XmlReader
-	{
-	public:
-		XmlReader( Bu::Stream &sIn );
-		virtual ~XmlReader();
+	XmlReader( bool bStrip=false );
 
-		XmlNode *read();
+	/**
+	 * Destroy this XmlReader.
+	 */
+	virtual ~XmlReader();
 
-	private:
-		Bu::Stream &sIn;
-		Bu::FString sBuf;
+	/**
+	 * Build a document based on some kind of input.  This is called
+	 * automatically by the constructor.
+	 */
+	bool buildDoc();
 
-	private: // Helpers
-		const char *lookahead( int nAmnt );
-		void burn( int nAmnt );
-		void checkString( const char *str, int nLen );
+private:
+	/**
+	 * This is called by the low level automoton in order to get the next
+	 * character.  This function should return a character at the current
+	 * position plus nIndex, but does not increment the current character.
+	 *@param nIndex The index of the character from the current stream position.
+	 *@returns A single character at the requested position, or 0 for end of
+	 * stream.
+	 */
+	virtual char getChar( int nIndex = 0 ) = 0;
 
-	private: // States
-		/**
-		 * The headers, etc.
-		 */
-		void prolog();
+	/**
+	 * Called to increment the current stream position by a single character.
+	 */
+	virtual void usedChar( int nAmnt = 1) = 0;
 
-		/**
-		 * The xml decleration (version, encoding, etc).
-		 */
-		void XMLDecl();
+	/**
+	 * Automoton function: is whitespace.
+	 *@param chr A character
+	 *@returns True if chr is whitespace, false otherwise.
+	 */
+	bool isws( char chr );
 
-		/**
-		 * Misc things, Includes Comments and PIData (Processing Instructions).
-		 */
-		void Misc();
+	/**
+	 * Automoton function: ws.  Skips sections of whitespace.
+	 *@returns True if everything was ok, False for end of stream.
+	 */
+	bool ws();
 
-		/**
-		 * Comments
-		 */
-		void Comment();
+	/**
+	 * Automoton function: node.  Processes an XmlNode
+	 *@returns True if everything was ok, False for end of stream.
+	 */
+	bool node();
 
-		/**
-		 * Processing Instructions
-		 */
-		void PI();
+	/**
+	 * Automoton function: startNode.  Processes the begining of a node.
+	 *@returns True if everything was ok, False for end of stream.
+	 */
+	bool startNode();
 
-		/**
-		 * Whitespace eater.
-		 */
-		void S();
+	/**
+	 * Automoton function: name.  Processes the name of a node.
+	 *@returns True if everything was ok, False for end of stream.
+	 */
+	bool name();
 
-		/**
-		 * Optional whitespace eater.
-		 */
-		void Sq();
+	/**
+	 * Automoton function: textDecl.  Processes the xml text decleration, if
+	 * there is one.
+	 */
+	void textDecl();
 
-		/**
-		 * XML Version spec
-		 */
-		void VersionInfo();
+	/**
+	 * Automoton function: entity.  Processes an entity from the header.
+	 */
+	void entity();
 
-		/**
-		 * Your basic equals sign with surrounding whitespace.
-		 */
-		void Eq();
+	/**
+	 * Adds an entity to the list, if it doesn't already exist.
+	 *@param name The name of the entity
+	 *@param value The value of the entity
+	 */
+	void addEntity( const char *name, const char *value );
 
-		/**
-		 * Read in an attribute value.
-		 */
-		FString AttValue();
+	StaticString *getEscape();
 
-		/**
-		 * Read in the name of something.
-		 */
-		FString Name();
+	/**
+	 * Automoton function: paramlist.  Processes a list of node params.
+	 *@returns True if everything was ok, False for end of stream.
+	 */
+	bool paramlist();
 
-		/**
-		 * Encoding decleration in the header
-		 */
-		void EncodingDecl();
+	/**
+	 * Automoton function: param.  Processes a single parameter.
+	 *@returns True if everything was ok, False for end of stream.
+	 */
+	bool param();
 
-		/**
-		 * Standalone decleration in the header
-		 */
-		void SDDecl();
+	/**
+	 * Automoton function: content.  Processes node content.
+	 *@returns True if everything was ok, False for end of stream.
+	 */
+	bool content();
+	
+	FlexBuf fbContent;		/**< buffer for the current node's content. */
+	FlexBuf fbParamName;	/**< buffer for the current param's name. */
+	FlexBuf fbParamValue;	/**< buffer for the current param's value. */
+	bool bStrip;	/**< Are we stripping whitespace? */
 
-		bool isS( unsigned char c )
-		{
-			return ( c == 0x20 || c == 0x9 || c == 0xD || c == 0xA );
-		}
-	};
-}
+	HashTable htEntity;		/**< Entity type definitions. */
+};
 
 #endif
