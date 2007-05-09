@@ -9,7 +9,24 @@
 namespace Bu
 {
 	/**
+	 * An Xml 1.1 reader.  I've decided to write this, this time, based on the
+	 * official W3C reccomendation, now included with the source code.  I've
+	 * named the productions in the parser states the same as in that document,
+	 * which may make them easier to find, etc, although possibly slightly less
+	 * optimized than writing my own reduced grammer.
 	 *
+	 * Below I will list differences between my parser and the official standard
+	 * as I come up with them.
+	 *  - Encoding and Standalone headings are ignored for the moment. (4.3.3,
+	 *    2.9)
+	 *  - The standalone heading attribute can have any standard whitespace
+	 *    before it (the specs say only spaces, no newlines). (2.9)
+	 *  - Since standalone is ignored, it is currently allowed to have any
+	 *    value (should be restricted to "yes" or "no"). (2.9)
+	 *  - Currently only UTF-8 / ascii are parsed.
+	 *  - [optional] The content of comments is thrown away. (2.5)
+	 *  - The content of processing instruction blocks is parsed properly, but
+	 *    thrown away. (2.6)
 	 */
 	class XmlReader
 	{
@@ -40,9 +57,19 @@ namespace Bu
 		void XMLDecl();
 
 		/**
-		 * Misc things...?
+		 * Misc things, Includes Comments and PIData (Processing Instructions).
 		 */
 		void Misc();
+
+		/**
+		 * Comments
+		 */
+		void Comment();
+
+		/**
+		 * Processing Instructions
+		 */
+		void PI();
 
 		/**
 		 * Whitespace eater.
@@ -64,6 +91,30 @@ namespace Bu
 		 */
 		void Eq();
 
+		/**
+		 * Read in an attribute value.
+		 */
+		FString AttValue();
+
+		/**
+		 * Read in the name of something.
+		 */
+		FString Name();
+
+		/**
+		 * Encoding decleration in the header
+		 */
+		void EncodingDecl();
+
+		/**
+		 * Standalone decleration in the header
+		 */
+		void SDDecl();
+
+		bool isS( unsigned char c )
+		{
+			return ( c == 0x20 || c == 0x9 || c == 0xD || c == 0xA );
+		}
 	};
 }
 

@@ -29,10 +29,10 @@ void Bu::XmlReader::burn( int nAmnt )
 		lookahead( nAmnt );
 	}
 
-	sBuf.remove( nAmnt );
+	//sBuf.remove( nAmnt );
 }
 
-void Bu::XmlNode::checkString( const char *str, int nLen )
+void Bu::XmlReader::checkString( const char *str, int nLen )
 {
 	if( !strncmp( str, lookahead( nLen ), nLen ) )
 	{
@@ -57,14 +57,66 @@ void Bu::XmlReader::prolog()
 void Bu::XmlReader::XMLDecl()
 {
 	checkString("<?xml", 5 );
+	S();
 	VersionInfo();
 	EncodingDecl();
 	SDDecl();
-	S();
+	Sq();
+	checkString("?>", 2 );
 }
 
 void Bu::XmlReader::Misc()
 {
+	for(;;)
+	{
+		S();
+		if( !strncmp("<!--", lookahead( 4 ), 4 ) )
+		{
+			Comment();
+		}
+		else if( !strncmp("<?", lookahead( 2 ), 2 ) )
+		{
+			PI();
+		}
+		else
+		{
+			return;
+		}
+	}
+}
+
+void Bu::XmlReader::Comment()
+{
+	checkString("<!--", 4 );
+	for(;;)
+	{
+		unsigned char c = *lookahead(1);
+		if( c == '-' )
+		{
+			if( lookahead(2)[1] == '-' )
+			{
+				checkString("-->", 3 );
+				return;
+			}
+		}
+		burn( 1 );
+	}
+}
+
+void Bu::XmlReader::PI()
+{
+	checkString("<?", 2 );
+	FString sName = Name();
+	printf("PI: %s\n---\n", sName.getStr() );
+	S();
+	for(int j = 0;; j++ )
+	{
+		if( !strncmp( "?>", lookahead(j+2)+j, 2 ) )
+		{
+			burn( j+2 );
+			return;
+		}
+	}
 }
 
 void Bu::XmlReader::S()
@@ -75,12 +127,12 @@ void Bu::XmlReader::S()
 		if( c == 0x20 || c == 0x9 || c == 0xD || c == 0xA )
 			continue;
 		if( j == 0 )
-			printf("Error, expected whitespace!\n");
+			throw ExceptionBase("Expected whitespace.");
 		return;
 	}
 }
 
-void Bu::XmlReader::S()
+void Bu::XmlReader::Sq()
 {
 	for(;;)
 	{
@@ -93,9 +145,19 @@ void Bu::XmlReader::S()
 
 void Bu::XmlReader::VersionInfo()
 {
-	S();
-	checkString("version", 7 );
-	
+	try
+	{
+		S();
+		checkString("version", 7 );
+	}
+	catch( ExceptionBase &e )
+	{
+		return;
+	}
+	Eq();
+	Bu::FString ver = AttValue();
+	if( ver != "1.1" )
+		throw ExceptionBase("Currently we only support xml version 1.1\n");
 }
 
 void Bu::XmlReader::Eq()
@@ -105,4 +167,101 @@ void Bu::XmlReader::Eq()
 	Sq();
 }
 
+void Bu::XmlReader::EncodingDecl()
+{
+	S();
+	try
+	{
+		checkString("encoding", 8 );
+	}
+	catch( ExceptionBase &e )
+	{
+		return;
+	}
+
+	Eq();
+	AttValue();
+}
+
+void Bu::XmlReader::SDDecl()
+{
+	S();
+	try
+	{
+		checkString("standalone", 10 );
+	}
+	catch( ExceptionBase &e )
+	{
+		return;
+	}
+
+	Eq();
+	AttValue();
+}
+
+Bu::FString Bu::XmlReader::AttValue()
+{
+	char q = *lookahead(1);
+	if( q == '\"' )
+	{
+		for( int j = 2;; j++ )
+		{
+			if( lookahead(j)[j-1] == '\"' )
+			{
+				Bu::FString ret( lookahead(j)+1, j-2 );
+				burn( j );
+				return ret;
+			}
+		}
+	}
+	else if( q == '\'' )
+	{
+		for( int j = 2;; j++ )
+		{
+			if( lookahead(j)[j-1] == '\'' )
+			{
+				Bu::FString ret( lookahead(j)+1, j-2 );
+				burn( j );
+				return ret;
+			}
+		}
+	}
+
+	throw ExceptionBase("Excpected either \' or \".\n");
+}
+
+Bu::FString Bu::XmlReader::Name()
+{
+	unsigned char c = *lookahead( 1 );
+	if( c != ':' && c != '_' &&
+		(c < 'A' || c > 'Z') &&
+		(c < 'a' || c > 'z') &&
+		(c < 0xC0 || c > 0xD6 ) &&
+		(c < 0xD8 || c > 0xF6 ) &&
+		(c < 0xF8))
+	{
+		throw ExceptionBase("Invalid entity name starting character.");
+	}
+
+	for( int j = 1;; j++ )
+	{
+		unsigned char c = lookahead(j+1)[j];
+		if( isS( c ) )
+		{
+			FString ret( lookahead(j+1), j+1 );
+			burn( j+1 );
+			return ret;
+		}
+		if( c != ':' && c != '_' && c != '-' && c != '.' && c != 0xB7 &&
+			(c < 'A' || c > 'Z') &&
+			(c < 'a' || c > 'z') &&
+			(c < '0' || c > '9') && 
+			(c < 0xC0 || c > 0xD6 ) &&
+			(c < 0xD8 || c > 0xF6 ) &&
+			(c < 0xF8))
+		{
+			throw ExceptionBase("Invalid character in name.");
+		}
+	}
+}
 

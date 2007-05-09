@@ -1,0 +1,26 @@
+{player:
+	password = "aoeuaoeuao"
+	userclass = "implementor"
+	species = "human"
+	sex = "male"
+	active
+	startroom = "Salourn::Xagafinelle's Room"
+	{stats: str=14 dex=12 spd=12 enr=7 rea=12 wil=10 int=13 cha=14}
+	{hp: cur = 100 max = 100}
+	{en: cur = 100 max = 100}
+	attackrate = 30
+	gold = 0
+	{inventory:
+		{: count=1 id="Salourn::Dark Blade"}
+		{: count=1 id="Salourn::Dark Suit"}
+		{: count=3 id="Salourn::Small Fig"}
+	}
+	{aliases:
+		{: key="." value="say"}
+		{: key="," value="yell"}
+		{: key="li" value="lightning"}
+	}
+	description = """They appear to be rather average looking, not particularly
+		tall or short, with facial features that are difficult to remember even
+		seconds after witnessing them."""
+}
