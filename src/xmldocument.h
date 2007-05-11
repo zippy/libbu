@@ -39,13 +39,7 @@ public:
 	 * the node and setting the content and name.  If this is set to true the
 	 * node is appended, but the context node doesn't change.
 	 */
-	void addNode( const char *sName=NULL, const char *sContent=NULL, bool bClose=false );
-
-	/**
-	 * Set the name of the current node context.
-	 *@param sName The new name of the node.
-	 */
-	void setName( const char *sName );
+	void addNode( const Bu::FString &sName );
 
 	/**
 	 * Close the current node context.  This will move the current context to

@@ -1,32 +1,49 @@
-#include "xmlreader.h"
-#include "exceptions.h"
+#include "bu/xmlreader.h"
+#include "bu/exceptions.h"
 #include <string.h>
-#include "hashfunctionstring.h"
 
-XmlReader::XmlReader( bool bStrip ) :
-	bStrip( bStrip ),
-	htEntity( new HashFunctionString(), 11 )
+XmlReader::XmlReader( Bu::Stream &sIn, bool bStrip ) :
+	sIn( sIn ),
+	bStrip( bStrip )
 {
+	buildDoc();
 }
 
 XmlReader::~XmlReader()
 {
-	void *i = htEntity.getFirstItemPos();
-	while( (i = htEntity.getNextItemPos( i ) ) )
+}
+
+char XmlReader::getChar( int nIndex )
+{
+	if( sBuf.getSize() <= nIndex )
 	{
-		free( (char *)(htEntity.getItemID( i )) );
-		delete (StaticString *)htEntity.getItemData( i );
+		int nInc = nIndex-sBuf.getSize()+1;
+		char *buf = new char[nInc];
+		sIn.read( buf, nInc );
+		sBuf.append( buf, nInc );
+		delete[] buf;
+	}
+
+	return sBuf[nIndex];
+}
+
+void XmlReader::usedChar( int nAmnt )
+{
+	if( nAmnt >= sBuf.getSize() )
+	{
+		sBuf.clear();
+	}
+	else
+	{
+		char *s = sBuf.getStr();
+		memcpy( s, s+nAmnt, sBuf.getSize()-nAmnt );
+		sBuf.resize( sBuf.getSize()-nAmnt );
 	}
 }
 
-void XmlReader::addEntity( const char *name, const char *value )
+void XmlReader::addEntity( const Bu::FString &name, const Bu::FString &value )
 {
-	if( htEntity[name] ) return;
-
-	char *sName = strdup( name );
-	StaticString *sValue = new StaticString( value );
-
-	htEntity.insert( sName, sValue );
+	htEntity[name] = value;
 }
 
 #define gcall( x ) if( x == false ) return false;
@@ -99,7 +116,7 @@ void XmlReader::entity()
 		{
 			usedChar( 2 );
 			ws();
-			std::string buf;
+			Bu::FString buf;
 			for(;;)
 			{
 				char chr = getChar();
@@ -111,7 +128,7 @@ void XmlReader::entity()
 			if( strcmp( buf.c_str(), "ENTITY") == 0 )
 			{
 				ws();
-				std::string name;
+				Bu::FString name;
 				for(;;)
 				{
 					char chr = getChar();
@@ -124,21 +141,19 @@ void XmlReader::entity()
 				usedChar();
 				if( quot != '\'' && quot != '\"' )
 				{
-					throw XmlException(
+					throw Bu::XmlException(
 						"Only quoted entity values are supported."
 						);
 				}
-				std::string value;
+				Bu::FString value;
 				for(;;)
 				{
 					char chr = getChar();
 					usedChar();
 					if( chr == '&' )
 					{
-						StaticString *tmp = getEscape();
-						if( tmp == NULL ) throw XmlException("Entity thing");
-						value += tmp->getString();
-						delete tmp;
+						Bu::FString tmp = getEscape();
+						value += tmp;
 					}
 					else if( chr == quot )
 					{
@@ -158,7 +173,7 @@ void XmlReader::entity()
 				}
 				else
 				{
-					throw XmlException(
+					throw Bu::XmlException(
 						"Malformed ENTITY:  unexpected '%c' found.",
 						getChar()
 						);
@@ -166,7 +181,7 @@ void XmlReader::entity()
 			}
 			else
 			{
-				throw XmlException(
+				throw Bu::XmlException(
 					"Unsupported header symbol: %s",
 					buf.c_str()
 					);
@@ -203,12 +218,12 @@ bool XmlReader::node()
 		}
 		else
 		{
-			throw XmlException("Close node in singleNode malformed!");
+			throw Bu::XmlException("Close node in singleNode malformed!");
 		}
 	}
 	else
 	{
-		throw XmlException("Close node expected, but not found.");
+		throw Bu::XmlException("Close node expected, but not found.");
 		return false;
 	}
 
@@ -224,7 +239,7 @@ bool XmlReader::startNode()
 		if( getChar() == '/' )
 		{
 			// Heh, it's actually a close node, go figure
-			FlexBuf fbName;
+			Bu::FString sName;
 			usedChar();
 			gcall( ws() );
 
@@ -235,19 +250,19 @@ bool XmlReader::startNode()
 				{
 					// Here we actually compare the name we got to the name
 					// we already set, they have to match exactly.
-					if( !strcasecmp( getCurrent()->getName(), fbName.getData() ) )
+					if( getCurrent()->getName() == sName )
 					{
 						closeNode();
 						break;
 					}
 					else
 					{
-						throw XmlException("Got a mismatched node close tag.");
+						throw Bu::XmlException("Got a mismatched node close tag.");
 					}
 				}
 				else
 				{
-					fbName.appendData( chr );
+					sName += chr;
 					usedChar();
 				}
 			}
@@ -260,13 +275,13 @@ bool XmlReader::startNode()
 			}
 			else
 			{
-				throw XmlException("Got extra junk data instead of node close tag.");
+				throw Bu::XmlException("Got extra junk data instead of node close tag.");
 			}
 		}
 		else
 		{
 			// We're good, format is consistant
-			addNode();
+			//addNode();
 
 			// Skip extra whitespace
 			gcall( ws() );
@@ -278,7 +293,7 @@ bool XmlReader::startNode()
 	}
 	else
 	{
-		throw XmlException("Expected to find node opening char, '<'.");
+		throw Bu::XmlException("Expected to find node opening char, '<'.");
 	}
 
 	return true;
@@ -286,19 +301,19 @@ bool XmlReader::startNode()
 
 bool XmlReader::name()
 {
-	FlexBuf fbName;
+	Bu::FString sName;
 	
 	while( true )
 	{
 		char chr = getChar();
 		if( isws( chr ) || chr == '>' || chr == '/' )
 		{
-			setName( fbName.getData() );
+			addNode( sName );
 			return true;
 		}
 		else
 		{
-			fbName.appendData( chr );
+			sName += chr;
 			usedChar();
 		}
 	}
@@ -325,7 +340,7 @@ bool XmlReader::paramlist()
 	return true;
 }
 
-StaticString *XmlReader::getEscape()
+Bu::FString XmlReader::getEscape()
 {
 	if( getChar( 1 ) == '#' )
 	{
@@ -349,12 +364,12 @@ StaticString *XmlReader::getEscape()
 		buf[0] = (char)strtol( buf, (char **)NULL, base );
 		buf[1] = '\0';
 
-		return new StaticString( buf );
+		return buf;
 	}
 	else
 	{
 		// ...otherwise replace with the appropriate string...
-		std::string buf;
+		Bu::FString buf;
 		usedChar();
 		for(;;)
 		{
@@ -364,18 +379,14 @@ StaticString *XmlReader::getEscape()
 			buf += cbuf;
 		}
 
-		StaticString *tmp = (StaticString *)htEntity[buf.c_str()];
-		if( tmp == NULL ) return NULL;
-
-		StaticString *ret = new StaticString( *tmp );
-		return ret;
+		return htEntity[buf];
 	}
 }
 
 bool XmlReader::param()
 {
-	FlexBuf fbName;
-	FlexBuf fbValue;
+	Bu::FString sName;
+	Bu::FString sValue;
 
 	while( true )
 	{
@@ -386,7 +397,7 @@ bool XmlReader::param()
 		}
 		else
 		{
-			fbName.appendData( chr );
+			sName.append( chr );
 			usedChar();
 		}
 	}
@@ -411,21 +422,18 @@ bool XmlReader::param()
 				if( chr == '"' )
 				{
 					usedChar();
-					addProperty( fbName.getData(), fbValue.getData() );
+					addProperty( sName.getStr(), sValue.getStr() );
 					return true;
 				}
 				else
 				{
 					if( chr == '&' )
 					{
-						StaticString *tmp = getEscape();
-						if( tmp == NULL ) return false;
-						fbValue.appendData( tmp->getString() );
-						delete tmp;
+						sValue += getEscape();
 					}
 					else
 					{
-						fbValue.appendData( chr );
+						sValue += chr;
 						usedChar();
 					}
 				}
@@ -439,21 +447,18 @@ bool XmlReader::param()
 				chr = getChar();
 				if( isws( chr ) || chr == '/' || chr == '>' )
 				{
-					addProperty( fbName.getData(), fbValue.getData() );
+					addProperty( sName.getStr(), sValue.getStr() );
 					return true;
 				}
 				else
 				{
 					if( chr == '&' )
 					{
-						StaticString *tmp = getEscape();
-						if( tmp == NULL ) return false;
-						fbValue.appendData( tmp->getString() );
-						delete tmp;
+						sValue += getEscape();
 					}
 					else
 					{
-						fbValue.appendData( chr );
+						sValue += chr;
 						usedChar();
 					}
 				}
@@ -462,7 +467,7 @@ bool XmlReader::param()
 	}
 	else
 	{
-		throw XmlException("Expected an equals to seperate the params.");
+		throw Bu::XmlException("Expected an equals to seperate the params.");
 		return false;
 	}
 
@@ -471,7 +476,7 @@ bool XmlReader::param()
 
 bool XmlReader::content()
 {
-	FlexBuf fbContent;
+	Bu::FString sContent;
 
 	if( bStrip ) gcall( ws() );
 
@@ -482,37 +487,37 @@ bool XmlReader::content()
 		{
 			if( getChar(1) == '/' )
 			{
-				if( fbContent.getLength() > 0 )
+				if( sContent.getSize() > 0 )
 				{
 					if( bStrip )
 					{
 						int j;
-						for( j = fbContent.getLength()-1; isws(fbContent.getData()[j]); j-- );
-						((char *)fbContent.getData())[j+1] = '\0';
+						for( j = sContent.getSize()-1; isws(sContent[j]); j-- );
+						sContent[j+1] = '\0';
 					}
-					setContent( fbContent.getData() );
+					setContent( sContent.getStr() );
 				}
 				usedChar( 2 );
 				gcall( ws() );
-				FlexBuf fbName;
+				Bu::FString sName;
 				while( true )
 				{
 					chr = getChar();
 					if( isws( chr ) || chr == '>' )
 					{
-						if( !strcasecmp( getCurrent()->getName(), fbName.getData() ) )
+						if( !strcasecmp( getCurrent()->getName().getStr(), sName.getStr() ) )
 						{
 							closeNode();
 							break;
 						}
 						else
 						{
-							throw XmlException("Mismatched close tag found: <%s> to <%s>.", getCurrent()->getName(), fbName.getData() );
+							throw Bu::XmlException("Mismatched close tag found: <%s> to <%s>.", getCurrent()->getName().getStr(), sName.getStr() );
 						}
 					}
 					else
 					{
-						fbName.appendData( chr );
+						sName += chr;
 						usedChar();
 					}
 				}
@@ -524,7 +529,7 @@ bool XmlReader::content()
 				}
 				else
 				{
-					throw XmlException("Malformed close tag.");
+					throw Bu::XmlException("Malformed close tag.");
 				}
 			}
 			else if( getChar(1) == '!' )
@@ -534,7 +539,7 @@ bool XmlReader::content()
 					getChar(3) != '-' )
 				{
 					// Not a valid XML comment
-					throw XmlException("Malformed comment start tag found.");
+					throw Bu::XmlException("Malformed comment start tag found.");
 				}
 
 				usedChar( 4 );
@@ -549,7 +554,7 @@ bool XmlReader::content()
 							// The next one has to be a '>' now
 							if( getChar( 2 ) != '>' )
 							{
-								throw XmlException("Malformed comment close tag found.  You cannot have a '--' that isn't followed by a '>' in a comment.");
+								throw Bu::XmlException("Malformed comment close tag found.  You cannot have a '--' that isn't followed by a '>' in a comment.");
 							}
 							usedChar( 3 );
 							break;
@@ -569,16 +574,16 @@ bool XmlReader::content()
 			}
 			else
 			{
-				if( fbContent.getLength() > 0 )
+				if( sContent.getSize() > 0 )
 				{
 					if( bStrip )
 					{
 						int j;
-						for( j = fbContent.getLength()-1; isws(fbContent.getData()[j]); j-- );
-						((char *)fbContent.getData())[j+1] = '\0';
+						for( j = sContent.getSize()-1; isws(sContent[j]); j-- );
+						sContent[j+1] = '\0';
 					}
-					setContent( fbContent.getData() );
-					fbContent.clearData();
+					setContent( sContent.getStr() );
+					sContent.clear();
 				}
 				gcall( node() );
 			}
@@ -587,14 +592,11 @@ bool XmlReader::content()
 		}
 		else if( chr == '&' )
 		{
-			StaticString *tmp = getEscape();
-			if( tmp == NULL ) return false;
-			fbContent.appendData( tmp->getString() );
-			delete tmp;
+			sContent += getEscape();
 		}
 		else
 		{
-			fbContent.appendData( chr );
+			sContent += chr;
 			usedChar();
 		}
 	}

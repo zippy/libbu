@@ -1,53 +1,15 @@
 #include "xmlnode.h"
-#include "hashfunctionstring.h"
 
-XmlNode::XmlNode( const char *sName, XmlNode *pParent, const char *sContent ) :
-	hProperties( new HashFunctionString(), 53, false ),
-	hChildren( new HashFunctionString(), 53, true )
+XmlNode::XmlNode( const Bu::FString &sName, XmlNode *pParent ) :
+	sName( sName ),
+	pParent( pParent )
 {
-	this->pParent = pParent;
-	if( sName != NULL )
-	{
-		setName( sName );
-	}
-	if( sContent != NULL )
-	{
-		this->sPreContent = new std::string( sContent );
-	}
-	else
-	{
-		this->sPreContent = NULL;
-	}
-	nCurContent = 0;
 }
 
 XmlNode::~XmlNode()
 {
-	for( int j = 0; j < lChildren.getSize(); j++ )
-	{
-		delete (XmlNode *)lChildren[j];
-	}
-	for( int j = 0; j < lPropNames.getSize(); j++ )
-	{
-		delete (std::string *)lPropNames[j];
-	}
-	for( int j = 0; j < lPropValues.getSize(); j++ )
-	{
-		delete (std::string *)lPropValues[j];
-	}
-	for( int j = 0; j < lPostContent.getSize(); j++ )
-	{
-		if( lPostContent[j] != NULL )
-		{
-			delete (std::string *)lPostContent[j];
-		}
-	}
-	if( sPreContent )
-	{
-		delete sPreContent;
-	}
 }
-
+/*
 void XmlNode::setName( const char *sName )
 {
 	if( pParent )
@@ -120,18 +82,18 @@ const char *XmlNode::getContent( int nIndex )
 	}
 
 	return NULL;
-}
+}*/
 
-XmlNode *XmlNode::addChild( const char *sName, const char *sContent )
+XmlNode *XmlNode::addChild( const Bu::FString &sName )
 {
-	return addChild( new XmlNode( sName, this, sContent ) );
+	return addChild( new XmlNode( sName, this ) );
 }
 
 XmlNode *XmlNode::addChild( XmlNode *pNode )
 {
-	lChildren.append( pNode );
-	lPostContent.append( NULL );
-	nCurContent++;
+	Child c = { typeNode };
+	c.pNode = pNode;
+	lChildren.append( c );
 	pNode->pParent = this;
 
 	return pNode;
@@ -142,21 +104,16 @@ XmlNode *XmlNode::getParent()
 	return pParent;
 }
 
-void XmlNode::addProperty( const char *sName, const char *sValue )
+void XmlNode::addProperty( const Bu::FString &sName, const Bu::FString &sValue )
 {
-	std::string *pName = new std::string( sName );
-	std::string *pValue = new std::string( sValue );
-	
-	hProperties.insert( pName->c_str(), pValue->c_str() );
-	lPropNames.append( pName );
-	lPropValues.append( pValue );
+	hProperties.insert( sName, sValue );
 }
 
 int XmlNode::getNumProperties()
 {
-	return lPropNames.getSize();
+	return hProperties.size();
 }
-
+/*
 const char *XmlNode::getPropertyName( int nIndex )
 {
 	std::string *tmp = ((std::string *)lPropNames[nIndex]);
@@ -172,15 +129,12 @@ const char *XmlNode::getProperty( int nIndex )
 		return NULL;
 	return tmp->c_str();
 }
-
-const char *XmlNode::getProperty( const char *sName )
+*/
+Bu::FString XmlNode::getProperty( const Bu::FString &sName )
 {
-	const char *tmp = (const char *)hProperties[sName];
-	if( tmp == NULL )
-		return NULL;
-	return tmp;
+	return hProperties[sName];
 }
-
+/*
 void XmlNode::deleteProperty( int nIndex )
 {
 	hProperties.del( ((std::string *)lPropNames[nIndex])->c_str() );
@@ -194,29 +148,33 @@ void XmlNode::deleteProperty( int nIndex )
 
 bool XmlNode::hasChildren()
 {
-	return lChildren.getSize()>0;
-}
+	return hChildren.getSize()>0;
+}*/
 
 int XmlNode::getNumChildren()
 {
 	return lChildren.getSize();
 }
-
+/*
 XmlNode *XmlNode::getChild( int nIndex )
 {
 	return (XmlNode *)lChildren[nIndex];
 }
-
-XmlNode *XmlNode::getChild( const char *sName, int nSkip )
+*/
+XmlNode *XmlNode::getChild( const Bu::FString &sName, int nSkip )
 {
-	return (XmlNode *)hChildren.get( sName, nSkip );
+	if( !hChildren.has( sName ) )
+		return NULL;
+
+	Bu::List<XmlNode *>::iterator i = hChildren[sName]->begin();
+	return *i;
 }
 
-const char *XmlNode::getName()
+Bu::FString XmlNode::getName()
 {
-	return sName.c_str();
+	return sName;
 }
-
+/*
 void XmlNode::deleteNode( int nIndex, const char *sReplacementText )
 {
 	XmlNode *xRet = detatchNode( nIndex, sReplacementText );
@@ -442,4 +400,4 @@ void XmlNode::deleteNodeKeepChildren( int nIndex )
 void XmlNode::replaceNodeWithChildren( int nIndex, XmlNode *pNewNode )
 {
 }
-
+*/

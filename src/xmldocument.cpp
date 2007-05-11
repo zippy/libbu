@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "xmlwriter.h"
+#include "xmldocument.h"
 
 XmlDocument::XmlDocument( XmlNode *pRoot )
 {
@@ -17,28 +17,23 @@ XmlDocument::~XmlDocument()
 	}
 }
 
-void XmlDocument::addNode( const char *sName, const char *sContent, bool bClose )
+void XmlDocument::addNode( const Bu::FString &sName )
 {
 	if( pRoot == NULL )
 	{
 		// This is the first node, so ignore position and just insert it.
-		pCurrent = pRoot = new XmlNode( sName, NULL, sContent );
+		pCurrent = pRoot = new XmlNode( sName );
 	}
 	else
 	{
-		pCurrent = pCurrent->addChild( sName, sContent );
-	}
-
-	if( bClose )
-	{
-		closeNode();
+		pCurrent = pCurrent->addChild( sName );
 	}
 }
-
+/*
 void XmlDocument::setName( const char *sName )
 {
 	pCurrent->setName( sName );
-}
+}*/
 
 bool XmlDocument::isCompleted()
 {
@@ -143,7 +138,8 @@ void XmlDocument::setContent( const char *sContent )
 {
 	if( pCurrent )
 	{
-		pCurrent->setContent( sContent );
+		printf("XmlDocument::setContent:  not yet implemented.\n");
+		//pCurrent->setContent( sContent );
 	}
 }
 

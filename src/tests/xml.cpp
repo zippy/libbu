@@ -6,9 +6,9 @@
 int main()
 {
 	Bu::File f("test.xml", "r");
-	Bu::XmlReader xr( f );
-
-	xr.read();
+	XmlReader xr( f );
+	
+	//xr.read();
 
 	return 0;
 }

@@ -2,10 +2,10 @@
 #define XMLREADER
 
 #include <stdio.h>
-#include "xmldocument.h"
-#include "flexbuf.h"
-#include "hashtable.h"
-#include "staticstring.h"
+#include "bu/xmldocument.h"
+#include "bu/hash.h"
+#include "bu/fstring.h"
+#include "bu/stream.h"
 
 /**
  * Takes care of reading in xml formatted data from a file.  This could/should
@@ -32,7 +32,7 @@ public:
 	 * in content, a-la html.
 	 *@param bStrip Strip out leading and trailing whitespace?
 	 */
-	XmlReader( bool bStrip=false );
+	XmlReader( Bu::Stream &sIn, bool bStrip=false );
 
 	/**
 	 * Destroy this XmlReader.
@@ -54,12 +54,12 @@ private:
 	 *@returns A single character at the requested position, or 0 for end of
 	 * stream.
 	 */
-	virtual char getChar( int nIndex = 0 ) = 0;
+	virtual char getChar( int nIndex = 0 );
 
 	/**
 	 * Called to increment the current stream position by a single character.
 	 */
-	virtual void usedChar( int nAmnt = 1) = 0;
+	virtual void usedChar( int nAmnt = 1 );
 
 	/**
 	 * Automoton function: is whitespace.
@@ -108,9 +108,9 @@ private:
 	 *@param name The name of the entity
 	 *@param value The value of the entity
 	 */
-	void addEntity( const char *name, const char *value );
+	void addEntity( const Bu::FString &name, const Bu::FString &value );
 
-	StaticString *getEscape();
+	Bu::FString getEscape();
 
 	/**
 	 * Automoton function: paramlist.  Processes a list of node params.
@@ -130,12 +130,15 @@ private:
 	 */
 	bool content();
 	
-	FlexBuf fbContent;		/**< buffer for the current node's content. */
-	FlexBuf fbParamName;	/**< buffer for the current param's name. */
-	FlexBuf fbParamValue;	/**< buffer for the current param's value. */
-	bool bStrip;	/**< Are we stripping whitespace? */
+	Bu::FString sContent;		/**< buffer for the current node's content. */
+	Bu::FString sParamName;		/**< buffer for the current param's name. */
+	Bu::FString sParamValue;	/**< buffer for the current param's value. */
+	Bu::Stream &sIn;
+	bool bStrip;			/**< Are we stripping whitespace? */
 
-	HashTable htEntity;		/**< Entity type definitions. */
+	Bu::Hash<Bu::FString,Bu::FString> htEntity;		/**< Entity type definitions. */
+
+	Bu::FString sBuf;
 };
 
 #endif

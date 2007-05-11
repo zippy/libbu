@@ -31,7 +31,7 @@ public:
 	 * this to a tab or some spaces it will never effect the content of your
 	 * file.
 	 */
-	XmlWriter( const char *sIndent=NULL, XmlNode *pRoot=NULL );
+	XmlWriter( const Bu::FString &sIndent="", XmlNode *pRoot=NULL );
 
 	/**
 	 * Destroy the writer.
@@ -49,16 +49,16 @@ public:
 	void write();
 
 private:
-	std::string sIndent;	/**< The indent string */
+	Bu::FString sIndent;	/**< The indent string */
 
-	std::string escape( std::string sIn );
+	Bu::FString escape( const Bu::FString &sIn );
 	
 	/**
 	 * Write the file.
 	 *@param pNode The root node
 	 *@param sIndent The indent text.
 	 */
-	void write( XmlNode *pNode, const char *sIndent=NULL );
+	void write( XmlNode *pNode, const Bu::FString &sIndent );
 
 	/**
 	 * Write a node in the file, including children.
@@ -66,7 +66,7 @@ private:
 	 *@param nIndent The indent level (the number of times to include sIndent)
 	 *@param sIndent The indent text.
 	 */
-	void writeNode( XmlNode *pNode, int nIndent, const char *sIndent );
+	void writeNode( XmlNode *pNode, int nIndent, const Bu::FString &sIndent );
 
 	/**
 	 * Write the properties of a node.
@@ -74,14 +74,14 @@ private:
 	 *@param nIndent The indent level of the containing node
 	 *@param sIndent The indent text.
 	 */
-	void writeNodeProps( XmlNode *pNode, int nIndent, const char *sIndent );
+	void writeNodeProps( XmlNode *pNode, int nIndent, const Bu::FString &sIndent );
 
 	/**
 	 * Called to write the actual indent.
 	 *@param nIndent The indent level.
 	 *@param sIndent The indent text.
 	 */
-	void writeIndent( int nIndent, const char *sIndent );
+	void writeIndent( int nIndent, const Bu::FString &sIndent );
 
 	/**
 	 * This is the function that must be overridden in order to use this class.
@@ -90,7 +90,7 @@ private:
 	 * will break the XML formatting.
 	 *@param sString The string data to write to the output.
 	 */
-	virtual void writeString( const char *sString ) = 0;
+	virtual void writeString( const Bu::FString &sString ) = 0;
 };
 
 #endif

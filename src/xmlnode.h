@@ -2,8 +2,9 @@
 #define XMLNODE
 
 #include <iostream>
-#include "linkedlist.h"
-#include "hashtable.h"
+#include "bu/list.h"
+#include "bu/hash.h"
+#include "bu/fstring.h"
 
 /**
  * Maintains all data pertient to an XML node, including sub-nodes and content.
@@ -25,9 +26,8 @@ public:
 	 *@param sContent The initial content string.
 	 */
 	XmlNode(
-		const char *sName=NULL,
-		XmlNode *pParent = NULL,
-		const char *sContent=NULL
+		const Bu::FString &sName,
+		XmlNode *pParent=NULL
 		);
 	
 	/**
@@ -39,7 +39,7 @@ public:
 	 * Change the name of the node.
 	 *@param sName The new name of the node.
 	 */
-	void setName( const char *sName );
+	//void setName( const char *sName );
 
 	/**
 	 * Construct a new node and add it as a child to this node, also return a
@@ -48,7 +48,7 @@ public:
 	 *@param sContent The initial content of the new node.
 	 *@returns A pointer to the newly created child node.
 	 */
-	XmlNode *addChild( const char *sName, const char *sContent=NULL );
+	XmlNode *addChild( const Bu::FString &sName );
 
 	/**
 	 * Add an already created XmlNode as a child to this node.  The new child
@@ -65,7 +65,7 @@ public:
 	 * in use will overwrite that property.
 	 *@param sValue The textual value of the property.
 	 */
-	void addProperty( const char *sName, const char *sValue );
+	void addProperty( const Bu::FString &sName, const Bu::FString &sValue );
 
 	/**
 	 * Get a pointer to the parent node, if any.
@@ -86,14 +86,6 @@ public:
 	int getNumChildren();
 
 	/**
-	 * Get a child node at a specific index.
-	 *@param nIndex The zero-based index of the child to retreive.
-	 *@returns A pointer to the child, or NULL if you requested an invalid
-	 * index.
-	 */
-	XmlNode *getChild( int nIndex );
-
-	/**
 	 * Get a child with the specified name, and possibly skip value.  For an
 	 * explination of skip values see the HashTable.
 	 *@param sName The name of the child to find.
@@ -101,14 +93,14 @@ public:
 	 *@returns A pointer to the child, or NULL if no child with that name was
 	 * found.
 	 */
-	XmlNode *getChild( const char *sName, int nSkip=0 );
+	XmlNode *getChild( const Bu::FString &sName, int nSkip=0 );
 
 	/**
 	 * Get a pointer to the name of this node.  Do not change this, use setName
 	 * instead.
 	 *@returns A pointer to the name of this node.
 	 */
-	const char *getName();
+	Bu::FString getName();
 
 	/**
 	 * Set the content of this node, optionally at a specific index.  Using the
@@ -116,14 +108,7 @@ public:
 	 *@param sContent The content string to use.
 	 *@param nIndex The index of the content.
 	 */
-	void setContent( const char *sContent, int nIndex=-1 );
-
-	/**
-	 * Get the content string at a given index, or zero for initial content.
-	 *@param nIndex The index of the content.
-	 *@returns A pointer to the content at that location.
-	 */
-	const char *getContent( int nIndex = 0 );
+	//void setContent( const char *sContent, int nIndex=-1 );
 
 	/**
 	 * Get the number of properties in this node.
@@ -132,36 +117,12 @@ public:
 	int getNumProperties();
 
 	/**
-	 * Get a property's name by index.
-	 *@param nIndex The index of the property to examine.
-	 *@returns A pointer to the name of the property specified, or NULL if none
-	 * found.
-	 */
-	const char *getPropertyName( int nIndex );
-
-	/**
-	 * Get a proprty's value by index.
-	 *@param nIndex The index of the property to examine.
-	 *@returns A pointer to the value of the property specified, or NULL if none
-	 * found.
-	 */
-	const char *getProperty( int nIndex );
-
-	/**
 	 * Get a propery's value by name.
 	 *@param sName The name of the property to examine.
 	 *@returns A pointer to the value of the property specified, or NULL if none
 	 * found.
 	 */
-	const char *getProperty( const char *sName );
-
-	/**
-	 * Delete a property by index.
-	 *@param nIndex The index of the property to delete.
-	 *@returns True if the property was found and deleted, false if it wasn't
-	 * found.
-	 */
-	void deleteProperty( int nIndex );
+	Bu::FString getProperty( const Bu::FString &sName );
 
 	/**
 	 * Delete a child node, possibly replacing it with some text.  This actually
@@ -171,7 +132,7 @@ public:
 	 *@returns True of the node was found, and deleted, false if it wasn't
 	 * found.
 	 */
-	void deleteNode( int nIndex, const char *sReplacementText = NULL );
+	//void deleteNode( int nIndex, const char *sReplacementText = NULL );
 
 	/**
 	 * Delete a given node, but move all of it's children and content up to
@@ -180,7 +141,7 @@ public:
 	 *@param nIndex The node to delete.
 	 *@returns True if the node was found and deleted, false if it wasn't.
 	 */
-	void deleteNodeKeepChildren( int nIndex );
+	//void deleteNodeKeepChildren( int nIndex );
 
 	/**
 	 * Detatch a given child node from this node.  This effectively works just
@@ -192,7 +153,7 @@ public:
 	 *@returns A pointer to the newly detatched node, which then passes
 	 * ownership to the caller.
 	 */
-	XmlNode *detatchNode( int nIndex, const char *sReplacementText = NULL );
+	//XmlNode *detatchNode( int nIndex, const char *sReplacementText = NULL );
 
 	/**
 	 * Replace a given node with a different node that is not currently owned by
@@ -201,7 +162,7 @@ public:
 	 *@param pNewNode The new node to replace the old node with.
 	 *@returns True if the node was found and replaced, false if it wasn't.
 	 */
-	void replaceNode( int nIndex, XmlNode *pNewNode );
+	//void replaceNode( int nIndex, XmlNode *pNewNode );
 
 	/**
 	 * Replace a given node with the children and content of a given node.
@@ -210,24 +171,34 @@ public:
 	 * replace the node specified by nIndex.
 	 *@returns True if the node was found and replaced, false if it wasn't.
 	 */
-	void replaceNodeWithChildren( int nIndex, XmlNode *pNewNode );
+	//void replaceNodeWithChildren( int nIndex, XmlNode *pNewNode );
 
 	/**
 	 * Get a copy of this node and all children.  getCopy is recursive, so
 	 * beware copying large trees of xml.
 	 *@returns A newly created copy of this node and all of it's children.
 	 */
-	XmlNode *getCopy();
+	//XmlNode *getCopy();
+	
+	enum ChildType
+	{
+		typeNode,
+		typeContent
+	};
 
 private:
-	std::string sName;	/**< The name of the node. */
-	std::string *sPreContent;	/**< The content that goes before any node. */
-	LinkedList lChildren;	/**< The children. */
-	LinkedList lPostContent;	/**< The content that comes after children. */
-	HashTable hProperties;	/**< Property hashtable. */
-	HashTable hChildren;	/**< Children hashtable. */
-	LinkedList lPropNames;	/**< List of property names. */
-	LinkedList lPropValues;	/**< List of property values. */
+	typedef struct
+	{
+		uint8_t nType;
+		union {
+			XmlNode *pNode;
+			Bu::FString *pContent;
+		};
+	} Child;
+	Bu::FString sName;	/**< The name of the node. */
+	Bu::List<Child> lChildren;	/**< The children. */
+	Bu::Hash<Bu::FString, Bu::FString> hProperties;	/**< Property hashtable. */
+	Bu::Hash<Bu::FString, Bu::List<XmlNode *> > hChildren;	/**< Children hashtable. */
 	XmlNode *pParent;	/**< A pointer to the parent of this node. */
 	int nCurContent;	/**< The current content we're on, for using the -1 on
 						 	 setContent. */

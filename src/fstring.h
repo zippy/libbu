@@ -28,7 +28,7 @@ namespace Bu
 	 * data is actually copied.  This also means that you never need to put any
 	 * FBasicString into a ref-counting container class.
 	 */
-	template< typename chr, typename chralloc=std::allocator<chr>, typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
+	template< typename chr, int nMinSize=256, typename chralloc=std::allocator<chr>, typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
 	class FBasicString : public Archival
 	{
 #ifndef VALTEST
@@ -36,7 +36,7 @@ namespace Bu
 #endif
 	private:
 		typedef struct FStringChunk<chr> Chunk;
-		typedef struct FBasicString<chr, chralloc, chunkalloc> MyType;
+		typedef struct FBasicString<chr, nMinSize, chralloc, chunkalloc> MyType;
 
 	public:
 		FBasicString() :
@@ -129,6 +129,11 @@ namespace Bu
 			cpy( pNew->pData, pData, nLen );
 
 			appendChunk( pNew );
+		}
+
+		void append( const chr cData )
+		{
+			append( &cData, 1 );
 		}
 
 		void prepend( const chr *pData )
@@ -231,8 +236,7 @@ namespace Bu
 
 		MyType &operator +=( const chr pData )
 		{
-			chr tmp[2] = { pData, (chr)0 };
-			append( tmp );
+			append( &pData, 1 );
 
 			return (*this);
 		}
@@ -475,7 +479,7 @@ namespace Bu
 			}
 		}
 		
-		void copyFrom( const FBasicString<chr, chralloc, chunkalloc> &rSrc )
+		void copyFrom( const FBasicString<chr, nMinSize, chralloc, chunkalloc> &rSrc )
 		{
 			if( rSrc.pFirst == NULL )
 				return;
