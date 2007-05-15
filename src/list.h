@@ -13,6 +13,15 @@ namespace Bu
 		ListLink *pNext;
 		ListLink *pPrev;
 	};
+
+	/**
+	 * Linked list template container.  This class is similar to the stl list
+	 * class except for a few minor changes.  First, it doesn't mimic a stack or
+	 * queue, use the Stack or Queue clasess for that.  Second, when const, all
+	 * members are only accessable const.  Third, erasing a location does not
+	 * invalidate the iterator, it simply points to the next valid location, or
+	 * end() if there are no more.
+	 */
 	template<typename value, typename valuealloc=std::allocator<value>, typename linkalloc=std::allocator<struct ListLink<value> > >
 	class List
 	{
@@ -23,15 +32,59 @@ namespace Bu
 	public:
 		List() :
 			pFirst( NULL ),
-			pLast( NULL )
+			pLast( NULL ),
+			nSize( 0 )
 		{
 		}
 
-		void append( value v )
+		List( const MyType &src ) :
+			pFirst( NULL ),
+			pLast( NULL ),
+			nSize( 0 )
+		{
+			for( Link *pCur = src.pFirst; pCur; pCur = pCur->pNext )
+			{
+				append( *pCur->pValue );
+			}
+		}
+
+		~List()
+		{
+			clear();
+		}
+
+		MyType &operator=( const MyType &src )
+		{
+			clear();
+			for( Link *pCur = src.pFirst; pCur; pCur = pCur->pNext )
+			{
+				append( *pCur->pValue );
+			}
+		}
+
+		void clear()
+		{
+			Link *pCur = pFirst;
+			for(;;)
+			{
+				if( pCur == NULL ) break;
+				va.destroy( pCur->pValue );
+				va.deallocate( pCur->pValue, sizeof( value ) );
+				Link *pTmp = pCur->pNext;
+				la.destroy( pCur );
+				la.deallocate( pCur, sizeof( Link ) );
+				pCur = pTmp;
+			}
+			pFirst = pLast = NULL;
+			nSize = 0;
+		}
+
+		void append( const value &v )
 		{
 			Link *pNew = la.allocate( sizeof( Link ) );
 			pNew->pValue = va.allocate( sizeof( value ) );
 			va.construct( pNew->pValue, v );
+			nSize++;
 			if( pFirst == NULL )
 			{
 				// Empty list
@@ -47,11 +100,12 @@ namespace Bu
 			}
 		}
 
-		void prepend( value v )
+		void prepend( const value &v )
 		{
 			Link *pNew = la.allocate( sizeof( Link ) );
 			pNew->pValue = va.allocate( sizeof( value ) );
 			va.construct( pNew->pValue, v );
+			nSize++;
 			if( pFirst == NULL )
 			{
 				// Empty list
@@ -83,22 +137,22 @@ namespace Bu
 			}
 
 		public:
-			bool operator==( const iterator &oth )
+			bool operator==( const iterator &oth ) const
 			{
 				return ( pLink == oth.pLink );
 			}
 
-			bool operator==( const Link *pOth )
+			bool operator==( const Link *pOth ) const
 			{
 				return ( pLink == pOth );
 			}
 
-			bool operator!=( const iterator &oth )
+			bool operator!=( const iterator &oth ) const
 			{
 				return ( pLink != oth.pLink );
 			}
 
-			bool operator!=( const Link *pOth )
+			bool operator!=( const Link *pOth ) const
 			{
 				return ( pLink != pOth );
 			}
@@ -110,40 +164,128 @@ namespace Bu
 
 			value *operator->()
 			{
-				return pLink->pValue();
+				return pLink->pValue;
 			}
 
-			iterator operator++()
+			iterator &operator++()
 			{
 				if( pLink != NULL )
 					pLink = pLink->pNext;
 				return *this;
 			}
 
-			iterator operator--()
+			iterator &operator--()
 			{
 				if( pLink != NULL )
 					pLink = pLink->pPrev;
 				return *this;
 			}
 			
-			iterator operator++( int )
+			iterator &operator++( int )
 			{
 				if( pLink != NULL )
 					pLink = pLink->pNext;
 				return *this;
 			}
 
-			iterator operator--( int )
+			iterator &operator--( int )
 			{
 				if( pLink != NULL )
 					pLink = pLink->pPrev;
 				return *this;
 			}
 
-			iterator operator=( const iterator &oth )
+			iterator &operator=( const iterator &oth )
 			{
 				pLink = oth.pLink;
+				return *this;
+			}
+		};
+		
+		typedef struct const_iterator
+		{
+			friend class List<value, valuealloc, linkalloc>;
+		private:
+			Link *pLink;
+			const_iterator() :
+				pLink( NULL )
+			{
+			}
+
+			const_iterator( Link *pLink ) :
+				pLink( pLink )
+			{
+			}
+
+		public:
+			bool operator==( const const_iterator &oth ) const
+			{
+				return ( pLink == oth.pLink );
+			}
+
+			bool operator==( const Link *pOth ) const
+			{
+				return ( pLink == pOth );
+			}
+
+			bool operator!=( const const_iterator &oth ) const
+			{
+				return ( pLink != oth.pLink );
+			}
+
+			bool operator!=( const Link *pOth ) const
+			{
+				return ( pLink != pOth );
+			}
+
+			const value &operator*()
+			{
+				return *(pLink->pValue);
+			}
+
+			const value *operator->()
+			{
+				return pLink->pValue;
+			}
+
+			const_iterator &operator++()
+			{
+				if( pLink != NULL )
+					pLink = pLink->pNext;
+				return *this;
+			}
+
+			const_iterator &operator--()
+			{
+				if( pLink != NULL )
+					pLink = pLink->pPrev;
+				return *this;
+			}
+			
+			const_iterator &operator++( int )
+			{
+				if( pLink != NULL )
+					pLink = pLink->pNext;
+				return *this;
+			}
+
+			const_iterator &operator--( int )
+			{
+				if( pLink != NULL )
+					pLink = pLink->pPrev;
+				return *this;
+			}
+
+			const_iterator &operator=( const iterator &oth )
+			{
+				pLink = oth.pLink;
+				return *this;
+			}
+
+			const_iterator &operator=( const const_iterator &oth )
+			{
+				pLink = oth.pLink;
+				return *this;
 			}
 		};
 
@@ -152,17 +294,50 @@ namespace Bu
 			return iterator( pFirst );
 		}
 
-		const Link *end()
+		const const_iterator begin() const
+		{
+			return const_iterator( pFirst );
+		}
+
+		const Link *end() const
 		{
 			return NULL;
 		}
 
-		int getSize()
+		void erase( iterator &i )
 		{
-			int j = 0;
-			for( Link *pCur = pFirst; pCur; pCur = pCur->pNext )
-				j++;
-			return j;
+			Link *pCur = i.pLink;
+			Link *pPrev = pCur->pPrev;
+			if( pPrev == NULL )
+			{
+				va.destroy( pCur->pValue );
+				va.deallocate( pCur->pValue, sizeof( value ) );
+				pFirst = pCur->pNext;
+				la.destroy( pCur );
+				la.deallocate( pCur, sizeof( Link ) );
+				if( pFirst == NULL )
+					pLast = NULL;
+				nSize--;
+				i.pLink = pFirst;
+			}
+			else
+			{
+				va.destroy( pCur->pValue );
+				va.deallocate( pCur->pValue, sizeof( value ) );
+				Link *pTmp = pCur->pNext;
+				la.destroy( pCur );
+				la.deallocate( pCur, sizeof( Link ) );
+				pPrev->pNext = pTmp;
+				if( pTmp != NULL )
+					pTmp->pPrev = pPrev;
+				nSize--;
+				i.pLink = pTmp;
+			}
+		}
+
+		int getSize() const
+		{
+			return nSize;
 		}
 		
 	private:
@@ -170,6 +345,7 @@ namespace Bu
 		Link *pLast;
 		linkalloc la;
 		valuealloc va;
+		int nSize;
 	};
 }
 

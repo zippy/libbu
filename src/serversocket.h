@@ -2,13 +2,19 @@
 #define SERVER_SOCKET_H
 
 #include <stdint.h>
-#include "fstring.h"
-#include "socket.h"
+#include "bu/fstring.h"
 
 namespace Bu
 {
 	/**
+	 * A single tcp/ip server socket.  When created the server socket will bind
+	 * to the specified interface and port, and immediately begin listening for
+	 * connections.  When connections come in they are pooled by the networking
+	 * drivers in the kernel until they are accepted, this means that failure
+	 * to keep space in the connection pool will result in connection refusals.
 	 *
+	 * Although the accept function returns an integral file descriptor, it is
+	 * designed to be used with the Socket class.
 	 */
 	class ServerSocket
 	{
