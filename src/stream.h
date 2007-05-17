@@ -36,6 +36,9 @@ namespace Bu
 		virtual bool canWrite() = 0;
 		virtual bool canSeek() = 0;
 
+		virtual bool isBlocking() = 0;
+		virtual void setBlocking( bool bBlocking=true ) = 0;
+
 	private:
 
 	};

@@ -217,6 +217,11 @@ namespace Bu
 			{
 			}
 
+			const_iterator( const iterator &i ) :
+				pLink( i.pLink )
+			{
+			}
+
 		public:
 			bool operator==( const const_iterator &oth ) const
 			{

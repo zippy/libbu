@@ -98,3 +98,13 @@ bool Bu::File::canSeek()
 	return true;
 }
 
+bool Bu::File::isBlocking()
+{
+	return true;
+}
+
+void Bu::File::setBlocking( bool bBlocking )
+{
+	return;
+}
+

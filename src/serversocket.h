@@ -23,7 +23,8 @@ namespace Bu
 		ServerSocket( const FString &sAddr, int nPort, int nPoolSize=40 );
 		virtual ~ServerSocket();
 
-		int accept( int nTimeoutSec, int nTimeoutUSec );
+		int accept( int nTimeoutSec=0, int nTimeoutUSec=0 );
+		int getSocket();
 
 	private:
 		void startServer( struct sockaddr_in &name, int nPoolSize );

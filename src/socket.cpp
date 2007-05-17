@@ -231,3 +231,12 @@ bool Bu::Socket::canSeek()
 	return false;
 }
 
+bool Bu::Socket::isBlocking()
+{
+	return false;
+}
+
+void Bu::Socket::setBlocking( bool bBlocking )
+{
+}
+

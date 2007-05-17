@@ -27,6 +27,9 @@ namespace Bu
 		virtual bool canWrite();
 		virtual bool canSeek();
 
+		virtual bool isBlocking();
+		virtual void setBlocking( bool bBlocking=true );
+
 	private:
 		FILE *fh;
 

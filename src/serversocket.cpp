@@ -85,6 +85,11 @@ void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
 	FD_SET( nServer, &fdActive );
 }
 
+int Bu::ServerSocket::getSocket()
+{
+	return nServer;
+}
+
 int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 {
 	fd_set fdRead = fdActive;
