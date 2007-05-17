@@ -7,6 +7,8 @@
 #include "archive.h"
 #include "hash.h"
 
+#define min( a, b )  ((a<b)?(a):(b))
+
 namespace Bu
 {
 	template< typename chr >
@@ -131,7 +133,7 @@ namespace Bu
 			appendChunk( pNew );
 		}
 
-		void append( const chr cData )
+		void append( const chr &cData )
 		{
 			append( &cData, 1 );
 		}
