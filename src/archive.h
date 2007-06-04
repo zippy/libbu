@@ -3,9 +3,11 @@
 
 #include <stdint.h>
 #include <string>
-#include "archival.h"
-#include "stream.h"
+#include "bu/archival.h"
+#include "bu/stream.h"
 #include <list>
+#include "bu/hash.h"
+#include "bu/list.h"
 
 namespace Bu
 {
@@ -117,8 +119,15 @@ namespace Bu
 		virtual Archive &operator&&(double &);
 		virtual Archive &operator&&(long double &);
 
+		uint32_t getID( const void *ptr );
+		void assocPtrID( void **ptr, uint32_t id );
+		void readID( const void *ptr, uint32_t id );
+
 	private:
 		Stream &rStream;
+		uint32_t nNextID;
+		Hash<uint32_t,uint32_t> hPtrID;
+		Hash<uint32_t,List<void **> > hPtrDest;
 	};
 
 	Archive &operator<<(Archive &, class Bu::Archival &);
@@ -168,6 +177,37 @@ namespace Bu
 
 		return ar;
 	}
+
+	template<typename key, typename value>
+	Archive &operator<<( Archive &ar, Hash<key,value> &h )
+	{
+		ar << h.size();
+		for( typename Hash<key,value>::iterator i = h.begin(); i != h.end(); i++ )
+		{
+			std::pair<key,value> p = *i;
+			ar << p.first << p.second;
+		}
+
+		return ar;
+	}
+
+	template<typename key, typename value>
+	Archive &operator>>( Archive &ar, Hash<key,value> &h )
+	{
+		h.clear();
+		uint32_t nSize;
+		ar >> nSize;
+
+		for( uint32_t j = 0; j < nSize; j++ )
+		{
+			key k; value v;
+			ar >> k >> v;
+			h.insert( k, v );
+		}
+
+		return ar;
+	}
+
 }
 
 #endif

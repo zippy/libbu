@@ -2,7 +2,8 @@
 
 Bu::Archive::Archive( Stream &rStream, bool bLoading ) :
 	bLoading( bLoading ),
-	rStream( rStream )
+	rStream( rStream ),
+	nNextID( 1 )
 {
 }
 
@@ -343,5 +344,43 @@ Bu::Archive &Bu::operator>>( Bu::Archive &ar, std::string &s )
 	delete[] tmp;
 
 	return ar;
+}
+
+uint32_t Bu::Archive::getID( const void *ptr )
+{
+	if( hPtrID.has( (int)ptr ) )
+		return hPtrID.get( (int)ptr );
+	hPtrID.insert( (int)ptr, nNextID );
+	return nNextID++;
+}
+
+void Bu::Archive::assocPtrID( void **ptr, uint32_t id )
+{
+	if( hPtrID.has( id ) )
+	{
+		*ptr = (void *)hPtrID.get( id );
+		return;
+	}
+
+	if( !hPtrDest.has( id ) )
+		hPtrDest.insert( id, List<void **>() );
+			
+	hPtrDest[id].value().append( ptr );
+}
+
+void Bu::Archive::readID( const void *ptr, uint32_t id )
+{
+	hPtrID.insert( id, (int)ptr );
+
+	if( hPtrDest.has( id ) )
+	{
+		Bu::List<void **> &l = hPtrDest.get( id );
+		for( Bu::List<void **>::iterator i = l.begin(); i != l.end(); i++ )
+		{
+			*(*i) = (void *)ptr;
+		}
+
+		hPtrDest.erase( id );
+	}
 }
 

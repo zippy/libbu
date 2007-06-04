@@ -8,8 +8,8 @@
 #include <list>
 #include <utility>
 #include "exceptionbase.h"
-#include "archival.h"
-#include "archive.h"
+///#include "archival.h"
+///#include "archive.h"
 
 #define bitsToBytes( n ) (n/32+(n%32>0 ? 1 : 0))
 
@@ -697,6 +697,7 @@ namespace Bu
 	template<> uint32_t __calcHashCode<std::string>( const std::string &k );
 	template<> bool __cmpHashKeys<std::string>( const std::string &a, const std::string &b );
 
+	/*
 	template<typename key, typename value>
 	Archive &operator<<( Archive &ar, Hash<key,value> &h )
 	{
@@ -725,7 +726,7 @@ namespace Bu
 		}
 
 		return ar;
-	}
+	}*/
 
 	/*
 	template<typename key, typename value>
