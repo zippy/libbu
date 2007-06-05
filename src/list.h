@@ -69,10 +69,10 @@ namespace Bu
 			{
 				if( pCur == NULL ) break;
 				va.destroy( pCur->pValue );
-				va.deallocate( pCur->pValue, sizeof( value ) );
+				va.deallocate( pCur->pValue, 1 );
 				Link *pTmp = pCur->pNext;
 				la.destroy( pCur );
-				la.deallocate( pCur, sizeof( Link ) );
+				la.deallocate( pCur, 1 );
 				pCur = pTmp;
 			}
 			pFirst = pLast = NULL;
@@ -81,8 +81,8 @@ namespace Bu
 
 		void append( const value &v )
 		{
-			Link *pNew = la.allocate( sizeof( Link ) );
-			pNew->pValue = va.allocate( sizeof( value ) );
+			Link *pNew = la.allocate( 1 );
+			pNew->pValue = va.allocate( 1 );
 			va.construct( pNew->pValue, v );
 			nSize++;
 			if( pFirst == NULL )
@@ -102,8 +102,8 @@ namespace Bu
 
 		void prepend( const value &v )
 		{
-			Link *pNew = la.allocate( sizeof( Link ) );
-			pNew->pValue = va.allocate( sizeof( value ) );
+			Link *pNew = la.allocate( 1 );
+			pNew->pValue = va.allocate( 1 );
 			va.construct( pNew->pValue, v );
 			nSize++;
 			if( pFirst == NULL )
@@ -316,10 +316,10 @@ namespace Bu
 			if( pPrev == NULL )
 			{
 				va.destroy( pCur->pValue );
-				va.deallocate( pCur->pValue, sizeof( value ) );
+				va.deallocate( pCur->pValue, 1 );
 				pFirst = pCur->pNext;
 				la.destroy( pCur );
-				la.deallocate( pCur, sizeof( Link ) );
+				la.deallocate( pCur, 1 );
 				if( pFirst == NULL )
 					pLast = NULL;
 				nSize--;
@@ -328,10 +328,10 @@ namespace Bu
 			else
 			{
 				va.destroy( pCur->pValue );
-				va.deallocate( pCur->pValue, sizeof( value ) );
+				va.deallocate( pCur->pValue, 1 );
 				Link *pTmp = pCur->pNext;
 				la.destroy( pCur );
-				la.deallocate( pCur, sizeof( Link ) );
+				la.deallocate( pCur, 1 );
 				pPrev->pNext = pTmp;
 				if( pTmp != NULL )
 					pTmp->pPrev = pPrev;
