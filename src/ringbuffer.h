@@ -16,15 +16,11 @@ namespace Bu
 			nEnd( -2 )
 		{
 			aData = va.allocate( nCapacity );
-			for( int j = 0; j < nCapacity; j++ )
-			{
-				va.construct( &aData[j], value() );
-			}
 		}
 
 		virtual ~RingBuffer()
 		{
-			for( int j = 0; j < nCapacity; j++ )
+			for( int j = nStart; j < nEnd; j=(j+1%nCapacity) )
 			{
 				va.destroy( &aData[j] );
 			}
@@ -52,7 +48,7 @@ namespace Bu
 			{
 				nStart = 0;
 				nEnd = 1;
-				aData[0] = v;
+				va.construct( &aData[0], v );
 			}
 			else if( nStart == nEnd )
 			{
@@ -60,7 +56,7 @@ namespace Bu
 			}
 			else
 			{
-				aData[nEnd] = v;
+				va.construct( &aData[nEnd], v );
 				nEnd = (nEnd+1)%nCapacity;
 			}
 		}
@@ -74,6 +70,7 @@ namespace Bu
 			else
 			{
 				value &v = aData[nStart];
+				va.destroy( &aData[nStart] );
 				nStart = (nStart+1)%nCapacity;
 				if( nStart == nEnd )
 				{
