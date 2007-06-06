@@ -17,6 +17,8 @@ namespace Bu
 		virtual ~TafReader();
 
 	private:
+		void next();
+		char c;
 		Stream &sIn;
 
 	};

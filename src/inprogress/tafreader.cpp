@@ -9,3 +9,8 @@ Bu::TafReader::~TafReader()
 {
 }
 
+void Bu::TafReader::next()
+{
+	sIn.read( &c, 1 );
+}
+
