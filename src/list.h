@@ -344,6 +344,26 @@ namespace Bu
 		{
 			return nSize;
 		}
+
+		value &first()
+		{
+			return *pFirst->pValue;
+		}
+		
+		const value &first() const
+		{
+			return *pFirst->pValue;
+		}
+		
+		value &last()
+		{
+			return *pLast->pValue;
+		}
+		
+		const value &last() const
+		{
+			return *pLast->pValue;
+		}
 		
 	private:
 		Link *pFirst;

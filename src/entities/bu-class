@@ -1,0 +1,46 @@
+<?xml version="1.1" ?>
+<entity desc="Basic cpp class, with optional parent class. (.cpp+.h)">
+	<param name="name" required="yes" desc="Name of the class"/>
+	<param name="parent" required="no" desc="Name of the parent class"/>
+	<file
+		name="header"
+		filename="{=name:%tolower}.h"
+>#ifndef {=name:%uccsplit:%toupper}_H
+#define {=name:%uccsplit:%toupper}_H
+
+#include &lt;stdint.h&gt;
+
+{?parent:"#include \"{=parent:%tolower}.h\"
+
+"}namespace Bu
+{
+	/**
+	 *
+	 */
+	class {=name}{?parent:" : public {=parent}"}
+	{
+	public:
+		{=name}();
+		virtual ~{=name}();
+
+	private:
+
+	};
+}
+
+#endif
+</file>
+	<file
+		name="source"
+		filename="{=name:%tolower}.cpp"
+>#include "bu/{=name:%tolower}.h"
+
+Bu::{=name}::{=name}()
+{
+}
+
+Bu::{=name}::~{=name}()
+{
+}
+</file>
+</entity>

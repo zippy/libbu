@@ -2,19 +2,22 @@
 #define BU_TAF_READER_H
 
 #include <stdint.h>
-#include "bu/tafdocument.h"
+#include "bu/tafnode.h"
 #include "bu/stream.h"
+#include "bu/fstring.h"
 
 namespace Bu
 {
 	/**
 	 *
 	 */
-	class TafReader : public Bu::TafDocument
+	class TafReader
 	{
 	public:
 		TafReader( Bu::Stream &sIn );
 		virtual ~TafReader();
+
+		Bu::TafNode *readNode();
 
 	private:
 		void node();
@@ -23,10 +26,9 @@ namespace Bu
 		void ws();
 		bool isws();
 		void next();
-		FString readStr();
+		Bu::FString readStr();
 		char c;
-		Stream &sIn;
-
+		Bu::Stream &sIn;
 	};
 }
 

@@ -2,6 +2,8 @@
 #include "bu/exceptions.h"
 #include "bu/fstring.h"
 
+using namespace Bu;
+
 Bu::TafReader::TafReader( Bu::Stream &sIn ) :
 	sIn( sIn )
 {
@@ -13,22 +15,18 @@ Bu::TafReader::~TafReader()
 {
 }
 
+Bu::TafNode *Bu::TafReader::readNode()
+{
+}
+
 void Bu::TafReader::node()
 {
 	ws();
 	if( c != '{' )
-		throw Bu::TafException("Expected '{'");
+		throw TafException("Expected '{'");
 	next();
 	ws();
-	Bu::FString sName;
-	for(;;)
-	{
-		if( c == ':' )
-			break;
-		else
-			sName += c;
-		next();
-	}
+	FString sName = readStr();
 	next();
 	printf("Node[%s]:\n", sName.getStr() );
 
@@ -56,15 +54,7 @@ void Bu::TafReader::nodeContent()
 
 void Bu::TafReader::nodeProperty()
 {
-	Bu::FString sName;
-	for(;;)
-	{
-		if( isws() || c == '=' )
-			break;
-		else
-			sName += c;
-		next();
-	}
+	FString sName = readStr();
 	ws();
 	if( c != '=' )
 	{
@@ -72,8 +62,14 @@ void Bu::TafReader::nodeProperty()
 		return;
 	}
 	next();
+	FString sValue = readStr();
+	printf("  %s = %s\n", sName.getStr(), sValue.getStr() );
+}
+
+Bu::FString Bu::TafReader::readStr()
+{
 	ws();
-	Bu::FString sValue;
+	FString s;
 	if( c == '"' )
 	{
 		next();
@@ -98,7 +94,7 @@ void Bu::TafReader::nodeProperty()
 			}
 			else if( c == '"' )
 				break;
-			sValue += c;
+			s += c;
 			next();
 		}
 		next();
@@ -107,17 +103,14 @@ void Bu::TafReader::nodeProperty()
 	{
 		for(;;)
 		{
-			if( isws() || c == '}' || c == '{' )
+			if( isws() || c == '}' || c == '{' || c == ':' || c == '=' )
 				break;
-			sValue += c;
+			s += c;
 			next();
 		}
 	}
-	printf("  %s = %s\n", sName.getStr(), sValue.getStr() );
-}
 
-FString Bu::TafReader::readStr()
-{
+	return s;
 }
 
 void Bu::TafReader::ws()
