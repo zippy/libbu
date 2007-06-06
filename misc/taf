@@ -20,7 +20,7 @@
 		{: key="," value="yell"}
 		{: key="li" value="lightning"}
 	}
-	description = """They appear to be rather average looking, not particularly
+	description = "They appear to be rather average looking, not particularly
 		tall or short, with facial features that are difficult to remember even
-		seconds after witnessing them."""
+		seconds after witnessing them."
 }

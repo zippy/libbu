@@ -7,6 +7,7 @@
 namespace Bu
 {
 	subExceptionDecl( XmlException )
+	subExceptionDecl( TafException )
 	subExceptionDecl( FileException )
 	subExceptionDecl( SocketException )
 	subExceptionDecl( ConnectionException )

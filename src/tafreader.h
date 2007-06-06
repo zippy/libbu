@@ -17,7 +17,13 @@ namespace Bu
 		virtual ~TafReader();
 
 	private:
+		void node();
+		void nodeContent();
+		void nodeProperty();
+		void ws();
+		bool isws();
 		void next();
+		FString readStr();
 		char c;
 		Stream &sIn;
 
