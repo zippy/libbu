@@ -13,6 +13,7 @@ Bu::TafReader::TafReader( Bu::Stream &sIn ) :
 
 Bu::TafReader::~TafReader()
 {
+
 }
 
 Bu::TafNode *Bu::TafReader::readNode()
