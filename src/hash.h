@@ -358,6 +358,25 @@ namespace Bu
 						);
 			}
 		}
+		
+		virtual const value &get( key k ) const
+		{
+			uint32_t hash = __calcHashCode( k );
+			bool bFill;
+			uint32_t nPos = probe( hash, k, bFill );
+
+			if( bFill )
+			{
+				return aValues[nPos];
+			}
+			else
+			{
+				throw HashException(
+						excodeNotFilled,
+						"No data assosiated with that key."
+						);
+			}
+		}
 
 		virtual bool has( key k )
 		{
@@ -599,6 +618,38 @@ namespace Bu
 			bFill = false;
 			return nCur;
 		}
+		
+		uint32_t probe( uint32_t hash, key k, bool &bFill, bool rehash=true ) const
+		{
+			uint32_t nCur = hash%nCapacity;
+
+			// First we scan to see if the key is already there, abort if we
+			// run out of probing room, or we find a non-filled entry
+			for( int8_t j = 0;
+				isFilled( nCur ) && j < 32;
+				nCur = (nCur + (1<<j))%nCapacity, j++
+				)
+			{
+				// Is this the same hash code we were looking for?
+				if( hash == aHashCodes[nCur] )
+				{
+					// Skip over deleted entries.  Deleted entries are also filled,
+					// so we only have to do this check here.
+					if( isDeleted( nCur ) )
+						continue;
+
+					// Is it really the same key? (for safety)
+					if( __cmpHashKeys( aKeys[nCur], k ) == true )
+					{
+						bFill = true;
+						return nCur;
+					}
+				}
+			}
+
+			bFill = false;
+			return nCur;
+		}
 
 		void reHash( uint32_t nNewSize )
 		{
@@ -661,7 +712,7 @@ namespace Bu
 			return (bFilled[loc/32]&(1<<(loc%32)))!=0;
 		}
 
-		virtual bool isDeleted( uint32_t loc )
+		virtual bool isDeleted( uint32_t loc ) const
 		{
 			return (bDeleted[loc/32]&(1<<(loc%32)))!=0;
 		}

@@ -8,12 +8,9 @@ int main()
 
 	Bu::TafNode *pNode = tr.getNode();
 
-	const Bu::TafNode::NodeList &l = pNode->getNode("stats");
-	for( Bu::TafNode::NodeList::const_iterator i = l.begin();
-		 i != l.end(); i++ )
-	{
-		printf("%s\n", (*i)->getName().getStr() );
-	}
+	const Bu::TafNode *pStats = pNode->getNode("stats");
+	printf("%s\n", pStats->getName().getStr() );
+	printf("  str = %s\n", pStats->getProperty("str").getStr() );
 
 	delete pNode;
 }
