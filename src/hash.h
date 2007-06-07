@@ -437,7 +437,7 @@ namespace Bu
 				bFinished = oth.bFinished;
 			}
 
-			std::pair<key,value> operator *()
+			value &operator *()
 			{
 				return hsh.getAtPos( nPos );
 			}
