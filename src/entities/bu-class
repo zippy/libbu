@@ -10,7 +10,7 @@
 
 #include &lt;stdint.h&gt;
 
-{?parent:"#include \"{=parent:%tolower}.h\"
+{?parent:"#include \"bu/{=parent:%tolower}.h\"
 
 "}namespace Bu
 {
@@ -34,6 +34,8 @@
 		name="source"
 		filename="{=name:%tolower}.cpp"
 >#include "bu/{=name:%tolower}.h"
+
+using namespace Bu;
 
 Bu::{=name}::{=name}()
 {

@@ -39,6 +39,9 @@ namespace Bu
 		virtual bool isBlocking() = 0;
 		virtual void setBlocking( bool bBlocking=true ) = 0;
 
+	public: // Filters
+
+
 	private:
 
 	};

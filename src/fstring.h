@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 #include <memory>
-#include "archival.h"
-#include "archive.h"
-#include "hash.h"
+#include "bu/archival.h"
+#include "bu/archive.h"
+#include "bu/hash.h"
 
 #define min( a, b )  ((a<b)?(a):(b))
 
