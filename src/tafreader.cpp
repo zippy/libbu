@@ -5,10 +5,9 @@
 using namespace Bu;
 
 Bu::TafReader::TafReader( Bu::Stream &sIn ) :
+	c( 0 ),
 	sIn( sIn )
 {
-	next();
-	node();
 }
 
 Bu::TafReader::~TafReader()
@@ -16,55 +15,58 @@ Bu::TafReader::~TafReader()
 
 }
 
-Bu::TafNode *Bu::TafReader::readNode()
+Bu::TafNode *Bu::TafReader::getNode()
 {
-}
-
-void Bu::TafReader::node()
-{
+	if( c == 0 ) next();
+	TafNode *pNode = new TafNode();
 	ws();
 	if( c != '{' )
 		throw TafException("Expected '{'");
 	next();
 	ws();
 	FString sName = readStr();
+	pNode->setName( sName );
 	next();
-	printf("Node[%s]:\n", sName.getStr() );
+	//printf("Node[%s]:\n", sName.getStr() );
 
-	nodeContent();
+	nodeContent( pNode );
 
 	if( c != '}' )
 		throw TafException("Expected '}'");
 
 	next();
+
+	return pNode;
 }
 
-void Bu::TafReader::nodeContent()
+void Bu::TafReader::nodeContent( Bu::TafNode *pNode )
 {
 	for(;;)
 	{
 		ws();
 		if( c == '{' )
-			node();
+			pNode->addChild( getNode() );
 		else if( c == '}' )
 			return;
 		else
-			nodeProperty();
+			nodeProperty( pNode );
 	}
 }
 
-void Bu::TafReader::nodeProperty()
+void Bu::TafReader::nodeProperty( Bu::TafNode *pNode )
 {
 	FString sName = readStr();
 	ws();
 	if( c != '=' )
 	{
-		printf("  %s (true)\n", sName.getStr() );
+		//printf("  %s (true)\n", sName.getStr() );
+		pNode->setProperty( sName, "" );
 		return;
 	}
 	next();
 	FString sValue = readStr();
-	printf("  %s = %s\n", sName.getStr(), sValue.getStr() );
+	pNode->setProperty( sName, sValue );
+	//printf("  %s = %s\n", sName.getStr(), sValue.getStr() );
 }
 
 Bu::FString Bu::TafReader::readStr()

@@ -17,12 +17,11 @@ namespace Bu
 		TafReader( Bu::Stream &sIn );
 		virtual ~TafReader();
 
-		Bu::TafNode *readNode();
+		Bu::TafNode *getNode();
 
 	private:
-		void node();
-		void nodeContent();
-		void nodeProperty();
+		void nodeContent( Bu::TafNode *pNode );
+		void nodeProperty( Bu::TafNode *pNode );
 		void ws();
 		bool isws();
 		void next();

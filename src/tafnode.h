@@ -23,8 +23,13 @@ namespace Bu
 		TafNode();
 		virtual ~TafNode();
 
+		void setName( const Bu::FString &sName );
+		const Bu::FString &getName();
+
 		void setProperty( Bu::FString sName, Bu::FString sValue );
 		const PropList &getProperty( const Bu::FString &sName );
+		const NodeList &getNode( const Bu::FString &sName );
+		void addChild( TafNode *pNode );
 
 	private:
 		Bu::FString sName;
