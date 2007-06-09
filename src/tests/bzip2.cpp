@@ -6,17 +6,17 @@ int main( int argc, char *argv[] )
 	char buf[1024];
 	size_t nRead;
 
-	Bu::File f( "test.bz2", "wb" );
+	Bu::File f( "test.bz2", "rb" );
 	Bu::BZip2 bz2( f );
 
-	Bu::File fin( argv[1], "rb");
+	Bu::File fin( argv[1], "wb");
 
 	for(;;)
 	{
-		nRead = fin.read( buf, 1024 );
+		nRead = bz2.read( buf, 1024 );
 		if( nRead > 0 )
-			bz2.write( buf, nRead );
-		if( fin.isEOS() )
+			fin.write( buf, nRead );
+		if( bz2.isEOS() )
 			break;
 	}
 }

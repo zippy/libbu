@@ -12,14 +12,11 @@ Bu::BZip2::BZip2( Bu::Stream &rNext, int nCompression ) :
 
 Bu::BZip2::~BZip2()
 {
-	printf("-> Bu::BZip2::~BZip2()\n");	
 	stop();
 }
 
 void Bu::BZip2::start()
 {
-	printf("-> Bu::BZip2::start()\n");	
-	printf("Hey, it's starting...\n");
 	bzState.state = NULL;
 	bzState.bzalloc = NULL;
 	bzState.bzfree = NULL;
@@ -31,11 +28,11 @@ void Bu::BZip2::start()
 
 void Bu::BZip2::stop()
 {
-	printf("-> Bu::BZip2::stop()\n");
 	if( bzState.state )
 	{
 		if( bReading )
 		{
+			BZ2_bzDecompressEnd( &bzState );
 		}
 		else
 		{
@@ -81,13 +78,39 @@ size_t Bu::BZip2::read( void *pData, size_t nBytes )
 	if( !bzState.state )
 	{
 		bReading = true;
+		BZ2_bzDecompressInit( &bzState, 0, 0 );
+		bzState.next_in = pBuf;
+		bzState.avail_in = 0;
 	}
 	if( bReading == false )
 		throw ExceptionBase("This bzip2 filter is in writing mode, you can't read.");
-	//bzState.next_in = pData;
-	//bzState.avail_in = nSizeIn;
+
+	int nRead = 0;
+	int nReadTotal = bzState.total_out_lo32;
+	for(;;)
+	{
+		bzState.next_out = (char *)pData;
+		bzState.avail_out = nBytes;
+		int ret = BZ2_bzDecompress( &bzState );
 	
-	//printf("%db at [%08X] (%db)\n", bzState.avail_in, (uint32_t)bzState.next_in, bzState.total_in_lo32 );
+		nReadTotal += nRead-bzState.avail_out;
+
+		if( ret == BZ_STREAM_END )
+		{
+			return nBytes-bzState.avail_out;
+		}
+
+		if( bzState.avail_out )
+		{
+			nRead = rNext.read( pBuf, nBufSize );
+			bzState.next_in = pBuf;
+			bzState.avail_in = nRead;
+		}
+		else
+		{
+			return nBytes-bzState.avail_out;
+		}
+	}
 	return 0;
 }
 
