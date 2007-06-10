@@ -1,6 +1,8 @@
 #include "file.h"
 #include "exceptions.h"
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 Bu::File::File( const char *sName, const char *sFlags )
 {
@@ -9,6 +11,20 @@ Bu::File::File( const char *sName, const char *sFlags )
 	{
 		throw Bu::FileException( errno, strerror(errno) );
 	}
+}
+
+Bu::File::File( const Bu::FString &sName, const char *sFlags )
+{
+	fh = fopen( sName.getStr(), sFlags );
+	if( fh == NULL )
+	{
+		throw Bu::FileException( errno, strerror(errno) );
+	}
+}
+
+Bu::File::File( int fd, const char *sFlags )
+{
+	fh = fdopen( fd, sFlags );
 }
 
 Bu::File::~File()
@@ -106,5 +122,20 @@ bool Bu::File::isBlocking()
 void Bu::File::setBlocking( bool bBlocking )
 {
 	return;
+}
+
+void Bu::File::truncate( long nSize )
+{
+	ftruncate( fileno( fh ), nSize );
+}
+
+void Bu::File::flush()
+{
+	fflush( fh );
+}
+
+void Bu::File::chmod( mode_t t )
+{
+	fchmod( fileno( fh ), t );
 }
 

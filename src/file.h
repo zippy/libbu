@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 
-#include "stream.h"
+#include "bu/stream.h"
+#include "bu/fstring.h"
 
 namespace Bu
 {
@@ -11,6 +12,8 @@ namespace Bu
 	{
 	public:
 		File( const char *sName, const char *sFlags );
+		File( const Bu::FString &sName, const char *sFlags );
+		File( int fd, const char *sFlags );
 		virtual ~File();
 
 		virtual void close();
@@ -23,12 +26,24 @@ namespace Bu
 		virtual void setPosEnd( long pos );
 		virtual bool isEOS();
 
+		virtual void flush();
+
 		virtual bool canRead();
 		virtual bool canWrite();
 		virtual bool canSeek();
 
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
+
+		inline static Bu::File tempFile( Bu::FString &sName, const char *sFlags )
+		{
+			int afh_d = mkstemp( sName.getStr() );
+
+			return Bu::File( afh_d, sFlags );
+		}
+
+		void truncate( long nSize );
+		void chmod( mode_t t );
 
 	private:
 		FILE *fh;

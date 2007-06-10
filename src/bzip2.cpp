@@ -26,16 +26,18 @@ void Bu::BZip2::start()
 	pBuf = new char[nBufSize];
 }
 
-void Bu::BZip2::stop()
+size_t Bu::BZip2::stop()
 {
 	if( bzState.state )
 	{
 		if( bReading )
 		{
 			BZ2_bzDecompressEnd( &bzState );
+			return 0;
 		}
 		else
 		{
+			size_t sTotal = 0;
 			for(;;)
 			{
 				bzState.next_in = NULL;
@@ -45,14 +47,16 @@ void Bu::BZip2::stop()
 				int res = BZ2_bzCompress( &bzState, BZ_FINISH );
 				if( bzState.avail_out < nBufSize )
 				{
-					rNext.write( pBuf, nBufSize-bzState.avail_out );
+					sTotal += rNext.write( pBuf, nBufSize-bzState.avail_out );
 				}
 				if( res == BZ_STREAM_END )
 					break;
 			}
 			BZ2_bzCompressEnd( &bzState );
+			return sTotal;
 		}
 	}
+	return 0;
 }
 
 void Bu::BZip2::bzError( int code )
@@ -63,13 +67,35 @@ void Bu::BZip2::bzError( int code )
 			return;
 
 		case BZ_CONFIG_ERROR:
-			throw ExceptionBase("The bzip2 library has been miscompiled.");
+			throw ExceptionBase("BZip2: Library configured improperly, reinstall.");
+
+		case BZ_SEQUENCE_ERROR:
+			throw ExceptionBase("BZip2: Functions were called in an invalid sequence.");
 
 		case BZ_PARAM_ERROR:
-			throw ExceptionBase("bzip2 parameter error.");
+			throw ExceptionBase("BZip2: Invalid parameter was passed into a function.");
 
 		case BZ_MEM_ERROR:
-			throw ExceptionBase("Not enough memory available for bzip2.");
+			throw ExceptionBase("BZip2: Couldn't allocate sufficient memory.");
+
+		case BZ_DATA_ERROR:
+			throw ExceptionBase("BZip2: Data was corrupted before decompression.");
+
+		case BZ_DATA_ERROR_MAGIC:
+			throw ExceptionBase("BZip2: Stream does not appear to be bzip2 data.");
+
+		case BZ_IO_ERROR:
+			throw ExceptionBase("BZip2: File couldn't be read from / written to.");
+
+		case BZ_UNEXPECTED_EOF:
+			throw ExceptionBase("BZip2: End of file encountered before end of stream.");
+
+		case BZ_OUTBUFF_FULL:
+			throw ExceptionBase("BZip2: Buffer not large enough to accomidate data.");
+
+		default:
+			throw ExceptionBase("BZip2: Unknown error encountered.");
+	
 	}
 }
 
@@ -124,6 +150,7 @@ size_t Bu::BZip2::write( const void *pData, size_t nBytes )
 	if( bReading == true )
 		throw ExceptionBase("This bzip2 filter is in reading mode, you can't write.");
 
+	size_t sTotalOut = 0;
 	bzState.next_in = (char *)pData;
 	bzState.avail_in = nBytes;
 	for(;;)
@@ -135,12 +162,12 @@ size_t Bu::BZip2::write( const void *pData, size_t nBytes )
 
 		if( bzState.avail_out < nBufSize )
 		{
-			rNext.write( pBuf, nBufSize-bzState.avail_out );
+			sTotalOut += rNext.write( pBuf, nBufSize-bzState.avail_out );
 		}
 		if( bzState.avail_in == 0 )
 			break;
 	}
 
-	return 0;
+	return sTotalOut;
 }
 

@@ -32,6 +32,8 @@ namespace Bu
 		virtual void setPosEnd( long pos ) = 0;
 		virtual bool isEOS() = 0;
 
+		virtual void flush() = 0;
+
 		virtual bool canRead() = 0;
 		virtual bool canWrite() = 0;
 		virtual bool canSeek() = 0;

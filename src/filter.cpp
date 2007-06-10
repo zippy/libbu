@@ -7,7 +7,7 @@ Bu::Filter::Filter( Bu::Stream &rNext ) :
 
 Bu::Filter::~Filter()
 {
-	printf("-> Bu::Filter::~Filter()\n");		
+	//printf("-> Bu::Filter::~Filter()\n");		
 }
 /*
 void Bu::Filter::start()
@@ -73,5 +73,10 @@ bool Bu::Filter::isBlocking()
 void Bu::Filter::setBlocking( bool bBlocking )
 {
 	rNext.setBlocking( bBlocking );
+}
+
+void Bu::Filter::flush()
+{
+	rNext.flush();
 }
 

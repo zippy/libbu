@@ -8,7 +8,7 @@ int main()
 
 	Bu::TafNode *pNode = tr.getNode();
 
-	const Bu::TafNode *pStats = pNode->getNode("stats");
+	const Bu::TafNode *pStats = pNode->getChild("stats");
 	printf("%s\n", pStats->getName().getStr() );
 	printf("  str = %s\n", pStats->getProperty("str").getStr() );
 

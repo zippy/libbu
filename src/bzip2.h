@@ -18,7 +18,7 @@ namespace Bu
 		virtual ~BZip2();
 
 		virtual void start();
-		virtual void stop();
+		virtual size_t stop();
 		virtual size_t read( void *pBuf, size_t nBytes );
 		virtual size_t write( const void *pBuf, size_t nBytes );
 

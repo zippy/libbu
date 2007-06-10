@@ -45,7 +45,7 @@ const Bu::TafNode::PropList &Bu::TafNode::getProperties( const Bu::FString &sNam
 	return hProp.get( sName );
 }
 
-const Bu::TafNode::NodeList &Bu::TafNode::getNodes( const Bu::FString &sName ) const
+const Bu::TafNode::NodeList &Bu::TafNode::getChildren( const Bu::FString &sName ) const
 {
 	return hChildren.get( sName );
 }
@@ -55,9 +55,9 @@ const Bu::FString &Bu::TafNode::getProperty( const Bu::FString &sName ) const
 	return getProperties( sName ).first();
 }
 
-const Bu::TafNode *Bu::TafNode::getNode( const Bu::FString &sName ) const
+const Bu::TafNode *Bu::TafNode::getChild( const Bu::FString &sName ) const
 {
-	return getNodes( sName ).first();
+	return getChildren( sName ).first();
 }
 
 void Bu::TafNode::setName( const Bu::FString &sName )

@@ -33,13 +33,15 @@ namespace Bu
 		virtual ~Filter();
 
 		virtual void start()=0;
-		virtual void stop()=0;
+		virtual size_t stop()=0;
 		virtual void close();
 		virtual long tell();
 		virtual void seek( long offset );
 		virtual void setPos( long pos );
 		virtual void setPosEnd( long pos );
 		virtual bool isEOS();
+
+		virtual void flush();
 
 		virtual bool canRead();
 		virtual bool canWrite();

@@ -240,3 +240,7 @@ void Bu::Socket::setBlocking( bool bBlocking )
 {
 }
 
+void Bu::Socket::flush()
+{
+}
+

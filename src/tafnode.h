@@ -28,9 +28,9 @@ namespace Bu
 
 		void setProperty( Bu::FString sName, Bu::FString sValue );
 		const Bu::FString &getProperty( const Bu::FString &sName ) const;
-		const TafNode *getNode( const Bu::FString &sName ) const;
 		const PropList &getProperties( const Bu::FString &sName ) const;
-		const NodeList &getNodes( const Bu::FString &sName ) const;
+		const TafNode *getChild( const Bu::FString &sName ) const;
+		const NodeList &getChildren( const Bu::FString &sName ) const;
 		void addChild( TafNode *pNode );
 
 	private:
