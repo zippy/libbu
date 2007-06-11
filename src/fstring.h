@@ -117,6 +117,8 @@ namespace Bu
 		{
 			long nLen;
 			for( nLen = 0; pData[nLen] != (chr)0; nLen++ );
+			if( nLen == 0 )
+				return;
 			
 			Chunk *pNew = newChunk( nLen );
 			cpy( pNew->pData, pData, nLen );
@@ -126,6 +128,9 @@ namespace Bu
 
 		void append( const chr *pData, long nLen )
 		{
+			if( nLen == 0 )
+				return;
+
 			Chunk *pNew = newChunk( nLen );
 			
 			cpy( pNew->pData, pData, nLen );
@@ -235,6 +240,8 @@ namespace Bu
 		
 		MyType &operator +=( const MyType &rSrc )
 		{
+			if( rSrc.nLength == 0 )
+				return (*this);
 			rSrc.flatten();
 			append( rSrc.pFirst->pData, rSrc.nLength );
 
@@ -611,6 +618,8 @@ namespace Bu
 		void unShare() const
 		{
 			if( isShared() == false )
+				return;
+			if( pFirst == NULL )
 				return;
 
 			Chunk *pNew = newChunk( nLength );
