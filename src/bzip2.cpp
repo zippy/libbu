@@ -64,13 +64,9 @@ void Bu::BZip2::bzError( int code )
 	switch( code )
 	{
 		case BZ_OK:
-			printf("<BZ_OK>\n"); return;
 		case BZ_RUN_OK:
-			printf("<BZ_RUN_OK>\n"); return;
 		case BZ_FLUSH_OK:
-			printf("<BZ_FLUSH_OK>\n"); return;
 		case BZ_FINISH_OK:
-			printf("<BZ_FINISH_OK>\n"); return;
 			return;
 
 		case BZ_CONFIG_ERROR:
@@ -120,19 +116,16 @@ size_t Bu::BZip2::read( void *pData, size_t nBytes )
 
 	int nRead = 0;
 	int nReadTotal = bzState.total_out_lo32;
+	bzState.next_out = (char *)pData;
+	bzState.avail_out = nBytes;
 	for(;;)
 	{
-		bzState.next_out = (char *)pData;
-		bzState.avail_out = nBytes;
-		printf(" (pre) in: %db, out: %db\n", bzState.avail_in, bzState.avail_out );
 		int ret = BZ2_bzDecompress( &bzState );
-		printf("(post) in: %db, out: %db\n", bzState.avail_in, bzState.avail_out );
 	
 		nReadTotal += nRead-bzState.avail_out;
 
 		if( ret == BZ_STREAM_END )
 		{
-			printf("<BZ_STREAM_END>\n");
 			if( bzState.avail_in > 0 )
 			{
 				if( rNext.canSeek() )
@@ -146,8 +139,6 @@ size_t Bu::BZip2::read( void *pData, size_t nBytes )
 
 		if( bzState.avail_out )
 		{
-			printf("Still more to fill, in: %db, out: %db\n", bzState.avail_in, bzState.avail_out );
-
 			if( bzState.avail_in == 0 )
 			{
 				nRead = rNext.read( pBuf, nBufSize );
