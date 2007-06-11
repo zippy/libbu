@@ -138,6 +138,11 @@ namespace Bu
 			append( &cData, 1 );
 		}
 
+		void prepend( const MyType & sData )
+		{
+			prepend( sData.getStr(), sData.getSize() );
+		}
+
 		void prepend( const chr *pData )
 		{
 			long nLen;
@@ -413,17 +418,21 @@ namespace Bu
 				clear();
 				long nLen;
 				ar >> nLen;
-			
-				Chunk *pNew = newChunk( nLen );
-				ar.read( pNew->pData, nLen*sizeof(chr) );
-				appendChunk( pNew );
+
+				if( nLen > 0 )
+				{
+					Chunk *pNew = newChunk( nLen );
+					ar.read( pNew->pData, nLen*sizeof(chr) );
+					appendChunk( pNew );
+				}
 			}
 			else
 			{
 				flatten();
 				
 				ar << nLength;
-				ar.write( pFirst->pData, nLength*sizeof(chr) );
+				if( nLength )
+					ar.write( pFirst->pData, nLength*sizeof(chr) );
 			}
 		}
 

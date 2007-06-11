@@ -458,7 +458,7 @@ namespace Bu
 
 			value &operator *()
 			{
-				return hsh.getAtPos( nPos );
+				return hsh.getValueAtPos( nPos );
 			}
 			
 			key &getKey()
