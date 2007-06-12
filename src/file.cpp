@@ -48,8 +48,8 @@ size_t Bu::File::read( void *pBuf, size_t nBytes )
 
 	int nAmnt = fread( pBuf, 1, nBytes, fh );
 
-	if( nAmnt == 0 )
-		throw FileException("End of file.");
+	//if( nAmnt == 0 )
+	//	throw FileException("End of file.");
 
 	return nAmnt;
 }

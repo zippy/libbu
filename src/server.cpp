@@ -53,7 +53,8 @@ void Bu::Server::scan()
 		{
 			if( hServers.has( j ) )
 			{
-				addClient( hServers.get( j )->accept() );
+				ServerSocket *pSrv = hServers.get( j );
+				addClient( pSrv->accept(), pSrv->getPort() );
 			}
 			else
 			{
@@ -63,11 +64,13 @@ void Bu::Server::scan()
 	}
 }
 
-void Bu::Server::addClient( int nSocket )
+void Bu::Server::addClient( int nSocket, int nPort )
 {
 	FD_SET( nSocket, &fdActive );
 
 	Client *c = new Client();
 	hClients.insert( nSocket, c );
+
+	onNewConnection( c, nPort );
 }
 

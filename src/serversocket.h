@@ -25,6 +25,7 @@ namespace Bu
 
 		int accept( int nTimeoutSec=0, int nTimeoutUSec=0 );
 		int getSocket();
+		int getPort();
 
 	private:
 		void startServer( struct sockaddr_in &name, int nPoolSize );

@@ -22,6 +22,10 @@ namespace Bu
 	 * to the timeout set by setTimeout before returning if there is no data
 	 * pending.  scan should probably be called in some sort of tight
 	 * loop, possibly in it's own thread, or in the main control loop.
+	 *
+	 * In order to use a Server you must subclass it and implement the pure
+	 * virtual functions.  These allow you to receive notification of events
+	 * happening within the server itself, and actually makes it useful.
 	 */
 	class Server
 	{
@@ -35,7 +39,10 @@ namespace Bu
 		void scan();
 		void setTimeout( int nTimeoutSec, int nTimeoutUSec=0 );
 
-		void addClient( int nSocket );
+		void addClient( int nSocket, int nPort );
+
+		virtual void onNewConnection( Client *pClient, int nPort )=0;
+		virtual void onClosedConnection( Client *pClient )=0;
 
 	private:
 		int nTimeoutSec;

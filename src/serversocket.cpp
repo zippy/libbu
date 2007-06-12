@@ -151,3 +151,8 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 	return -1;
 }
 
+int Bu::ServerSocket::getPort()
+{
+	return nPort;
+}
+
