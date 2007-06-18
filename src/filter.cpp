@@ -50,6 +50,11 @@ bool Bu::Filter::isEOS()
 	return rNext.isEOS();
 }
 
+bool Bu::Filter::isOpen()
+{
+	return rNext.isOpen();
+}
+
 bool Bu::Filter::canRead()
 {
 	return rNext.canRead();
@@ -60,9 +65,19 @@ bool Bu::Filter::canWrite()
 	return rNext.canWrite();
 }
 
-bool Bu::Filter::canSeek()
+bool Bu::Filter::isReadable()
 {
-	return rNext.canSeek();
+	return rNext.isReadable();
+}
+
+bool Bu::Filter::isWritable()
+{
+	return rNext.isWritable();
+}
+
+bool Bu::Filter::isSeekable()
+{
+	return rNext.isSeekable();
 }
 
 bool Bu::Filter::isBlocking()

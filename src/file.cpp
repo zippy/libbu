@@ -109,7 +109,17 @@ bool Bu::File::canWrite()
 	return true;
 }
 
-bool Bu::File::canSeek()
+bool Bu::File::isReadable()
+{
+	return true;
+}
+
+bool Bu::File::isWritable()
+{
+	return true;
+}
+
+bool Bu::File::isSeekable()
 {
 	return true;
 }
@@ -137,5 +147,10 @@ void Bu::File::flush()
 void Bu::File::chmod( mode_t t )
 {
 	fchmod( fileno( fh ), t );
+}
+
+bool Bu::File::isOpen()
+{
+	return (fh != NULL);
 }
 

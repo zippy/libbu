@@ -2,12 +2,16 @@
 #define SERVER_H
 
 #include <stdint.h>
-#include "bu/serversocket.h"
+
+#include "bu/fstring.h"
 #include "bu/list.h"
-#include "bu/client.h"
 
 namespace Bu
 {
+	class ServerSocket;
+	class Socket;
+	class Client;
+
 	/**
 	 * Core of a network server.  This class is distinct from a ServerSocket in
 	 * that a ServerSocket is one listening socket, nothing more.  Socket will

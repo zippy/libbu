@@ -128,7 +128,7 @@ size_t Bu::BZip2::read( void *pData, size_t nBytes )
 		{
 			if( bzState.avail_in > 0 )
 			{
-				if( rNext.canSeek() )
+				if( rNext.isSeekable() )
 				{
 					rNext.seek( -bzState.avail_in );
 				}
@@ -183,5 +183,10 @@ size_t Bu::BZip2::write( const void *pData, size_t nBytes )
 	}
 
 	return sTotalOut;
+}
+
+bool Bu::BZip2::isOpen()
+{
+	return (bzState.state != NULL);
 }
 

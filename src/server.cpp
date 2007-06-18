@@ -1,5 +1,8 @@
-#include "server.h"
+#include "bu/server.h"
 #include <errno.h>
+#include "bu/serversocket.h"
+#include "bu/client.h"
+#include "bu/socket.h"
 
 Bu::Server::Server() :
 	nTimeoutSec( 0 ),
@@ -58,7 +61,7 @@ void Bu::Server::scan()
 			}
 			else
 			{
-				
+				hClients.get( j )->processInput();
 			}
 		}
 	}
@@ -68,7 +71,9 @@ void Bu::Server::addClient( int nSocket, int nPort )
 {
 	FD_SET( nSocket, &fdActive );
 
-	Client *c = new Client();
+	Client *c = new Client(
+		new Bu::Socket( nSocket )
+		);
 	hClients.insert( nSocket, c );
 
 	onNewConnection( c, nPort );

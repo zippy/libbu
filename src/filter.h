@@ -40,12 +40,16 @@ namespace Bu
 		virtual void setPos( long pos );
 		virtual void setPosEnd( long pos );
 		virtual bool isEOS();
+		virtual bool isOpen();
 
 		virtual void flush();
 
 		virtual bool canRead();
 		virtual bool canWrite();
-		virtual bool canSeek();
+
+		virtual bool isReadable();
+		virtual bool isWritable();
+		virtual bool isSeekable();
 
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );

@@ -109,13 +109,6 @@ void Bu::Socket::close()
 		::close( nSocket );
 	}
 	bActive = false;
-	//xInputBuf.clearData();
-	//xOutputBuf.clearData();
-	//if( pProtocol != NULL )
-	//{
-	//	delete pProtocol;
-	//	pProtocol = NULL;
-	//}
 }
 
 /*
@@ -218,15 +211,49 @@ bool Bu::Socket::isEOS()
 
 bool Bu::Socket::canRead()
 {
+	fd_set rfds;
+	FD_ZERO(&rfds);
+	FD_SET(nSocket, &rfds);
+	struct timeval tv = { 0, 0 };
+	int retval = select( nSocket+1, &rfds, NULL, NULL, &tv );
+	if( retval == -1 )
+		throw ConnectionException(
+			excodeBadReadError,
+			"Bad Read error"
+			);
+	if( !FD_ISSET( nSocket, &rfds ) )
+		return false;
 	return true;
 }
 
 bool Bu::Socket::canWrite()
 {
+	fd_set wfds;
+	FD_ZERO(&wfds);
+	FD_SET(nSocket, &wfds);
+	struct timeval tv = { 0, 0 };
+	int retval = select( nSocket+1, NULL, &wfds, NULL, &tv );
+	if( retval == -1 )
+		throw ConnectionException(
+			excodeBadReadError,
+			"Bad Read error"
+			);
+	if( !FD_ISSET( nSocket, &wfds ) )
+		return false;
 	return true;
 }
 
-bool Bu::Socket::canSeek()
+bool Bu::Socket::isReadable()
+{
+	return true;
+}
+
+bool Bu::Socket::isWritable()
+{
+	return true;
+}
+
+bool Bu::Socket::isSeekable()
 {
 	return false;
 }
@@ -242,5 +269,10 @@ void Bu::Socket::setBlocking( bool bBlocking )
 
 void Bu::Socket::flush()
 {
+}
+
+bool Bu::Socket::isOpen()
+{
+	return bActive;
 }
 
