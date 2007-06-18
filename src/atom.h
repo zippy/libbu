@@ -84,6 +84,20 @@ namespace Bu
 			return *this;
 		}
 
+		t *operator ->()
+		{
+			if( !pData )
+				throw Bu::ExceptionBase("Not set");
+			return pData;
+		}
+
+		t &operator *()
+		{
+			if( !pData )
+				throw Bu::ExceptionBase("Not set");
+			return *pData;
+		}
+
 	private:
 		t *pData;
 		talloc ta;
