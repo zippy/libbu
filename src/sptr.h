@@ -45,31 +45,55 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Get the number of references to this pointer.
+		 *@returns (int32_t) The number of references to this pointer.
+		 */
 		int32_t count() const
 		{
 			return *pRefCnt;
 		}
 
+		/**
+		 * Pointer access operator.
+		 *@returns (const T *)
+		 */
 		const T *operator->() const
 		{
 			return pData;
 		}
 
+		/**
+		 * Dereference operator.
+		 *@returns (const T &) The value at the end of the pointer.
+		 */
 		const T &operator*() const
 		{
 			return *pData;
 		}
 		
+		/**
+		 * Pointer access operator.
+		 *@returns (T *)
+		 */
 		T *operator->()
 		{
 			return pData;
 		}
 
+		/**
+		 * Dereference operator.
+		 *@returns (T &) The value at the end of the pointer.
+		 */
 		T &operator*()
 		{
 			return *pData;
 		}
 
+		/**
+		 * Assignment operator.
+		 *@param src (const SPtr<T> &)
+		 */
 		SPtr<T> operator=( const SPtr<T> &src )
 		{
 			decCount();
@@ -81,6 +105,10 @@ namespace Bu
 			return *this;
 		}
 
+		/**
+		 * Assignment operator.
+		 *@param src (const SPtr<T> &)
+		 */
 		const SPtr<T> operator=( const SPtr<T> &src ) const
 		{
 			decCount();
@@ -92,21 +120,38 @@ namespace Bu
 			return *this;
 		}
 
+		/**
+		 * Equals comparison operator.
+		 *@param src (const SPtr<T> &) The SPtr to compare to.
+		 *@returns (bool) Are the equal?
+		 */
 		bool operator==( const SPtr<T> &src ) const
 		{
 			return pData == src.pData;
 		}
 
+		/**
+		 * Equals comparison operator.
+		 *@param src (const T *) The pointer to compare to.
+		 *@returns (bool) Are the equal?
+		 */
 		bool operator==( const T *src ) const
 		{
 			return pData == src;
 		}
 
+		/**
+		 * Boolean cast operator. Do we have a pointer?
+		 */
 		operator bool() const
 		{
 			return pRefCnt != NULL;
 		}
 
+		/**
+		 * Do we have a pointer?
+		 *@returns (bool) Do we have a pointer?
+		 */
 		bool isSet() const
 		{
 			return pRefCnt != NULL;

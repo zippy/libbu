@@ -115,6 +115,10 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Prepend a value to the list.
+		 *@param v (const value_type &) The value to prepend.
+		 */
 		void prepend( const value &v )
 		{
 			Link *pNew = la.allocate( 1 );
@@ -136,6 +140,9 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * An iterator to iterate through your list.
+		 */
 		typedef struct iterator
 		{
 			friend class List<value, valuealloc, linkalloc>;
@@ -152,36 +159,67 @@ namespace Bu
 			}
 
 		public:
+			/**
+			 * Equals comparison operator.
+			 *@param oth (const iterator &) The iterator to compare to.
+			 *@returns (bool) Are they equal?
+			 */
 			bool operator==( const iterator &oth ) const
 			{
 				return ( pLink == oth.pLink );
 			}
 
+			/**
+			 * Equals comparison operator.
+			 *@param pOth (const Link *) The link to compare to.
+			 *@returns (bool) Are they equal?
+			 */
 			bool operator==( const Link *pOth ) const
 			{
 				return ( pLink == pOth );
 			}
 
+			/**
+			 * Not equals comparison operator.
+			 *@param oth (const iterator &) The iterator to compare to.
+			 *@returns (bool) Are they not equal?
+			 */
 			bool operator!=( const iterator &oth ) const
 			{
 				return ( pLink != oth.pLink );
 			}
 
+			/**
+			 * Not equals comparison operator.
+			 *@param pOth (const Link *) The link to compare to.
+			 *@returns (bool) Are they not equal?
+			 */
 			bool operator!=( const Link *pOth ) const
 			{
 				return ( pLink != pOth );
 			}
 
+			/**
+			 * Dereference operator.
+			 *@returns (value_type &) The value.
+			 */
 			value &operator*()
 			{
 				return *(pLink->pValue);
 			}
 
+			/**
+			 * Pointer access operator.
+			 *@returns (value_type *) A pointer to the value.
+			 */
 			value *operator->()
 			{
 				return pLink->pValue;
 			}
 
+			/**
+			 * Increment operator.
+			 */
 			iterator &operator++()
 			{
 				if( pLink != NULL )
@@ -189,6 +227,9 @@ namespace Bu
 				return *this;
 			}
 
+			/**
+			 * Decrement operator.
+			 */
 			iterator &operator--()
 			{
 				if( pLink != NULL )
@@ -196,6 +237,9 @@ namespace Bu
 				return *this;
 			}
 			
+			/**
+			 * Increment operator.
+			 */
 			iterator &operator++( int )
 			{
 				if( pLink != NULL )
@@ -203,6 +247,9 @@ namespace Bu
 				return *this;
 			}
 
+			/**
+			 * Decrement operator.
+			 */
 			iterator &operator--( int )
 			{
 				if( pLink != NULL )
@@ -210,6 +257,11 @@ namespace Bu
 				return *this;
 			}
 
+			/**
+			 * Assignment operator.
+			 *@param oth (const iterator &) The other iterator to set this
+			 *		one to.
+			 */
 			iterator &operator=( const iterator &oth )
 			{
 				pLink = oth.pLink;
@@ -217,6 +269,9 @@ namespace Bu
 			}
 		};
 		
+		/**
+		 *@see iterator
+		 */
 		typedef struct const_iterator
 		{
 			friend class List<value, valuealloc, linkalloc>;
@@ -309,21 +364,38 @@ namespace Bu
 			}
 		};
 
+		/**
+		 * Get an iterator pointing to the first item in the list.
+		 *@returns (iterator)
+		 */
 		iterator begin()
 		{
 			return iterator( pFirst );
 		}
 
+		/**
+		 * Get a const iterator pointing to the first item in the list.
+		 *@returns (const const_iterator)
+		 */
 		const const_iterator begin() const
 		{
 			return const_iterator( pFirst );
 		}
 
+		/**
+		 * Get an iterator pointing to a place just past the last item in
+		 * 		the list.
+		 *@returns (const Link *)
+		 */
 		const Link *end() const
 		{
 			return NULL;
 		}
 
+		/**
+		 * Erase an item from the list.
+		 *@param i (iterator) The item to erase.
+		 */
 		void erase( iterator &i )
 		{
 			Link *pCur = i.pLink;
@@ -355,26 +427,46 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Get the current size of the list.
+		 *@returns (int) The current size of the list.
+		 */
 		int getSize() const
 		{
 			return nSize;
 		}
 
+		/**
+		 * Get the first item in the list.
+		 *@returns (value_type &) The first item in the list.
+		 */
 		value &first()
 		{
 			return *pFirst->pValue;
 		}
 		
+		/**
+		 * Get the first item in the list.
+		 *@returns (const value_type &) The first item in the list.
+		 */
 		const value &first() const
 		{
 			return *pFirst->pValue;
 		}
 		
+		/**
+		 * Get the last item in the list.
+		 *@returns (value_type &) The last item in the list.
+		 */
 		value &last()
 		{
 			return *pLast->pValue;
 		}
 		
+		/**
+		 * Get the last item in the list.
+		 *@returns (const value_type &) The last item in the list.
+		 */
 		const value &last() const
 		{
 			return *pLast->pValue;

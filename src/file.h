@@ -39,6 +39,14 @@ namespace Bu
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
 
+		/**
+		 * Create a temp file and return its handle
+		 *@param sName (Bu::FString) Give in the form: "/tmp/tmpfileXXXXXXXX"
+		 *		It will alter your (sName) setting the 'X's to random
+		 *		characters.
+		 *@param sFlags (const char *) Standard file flags 'rb'... etc..
+		 *@returns (Bu::File) A file object representing your temp file.
+		 */
 		inline static Bu::File tempFile( Bu::FString &sName, const char *sFlags )
 		{
 			int afh_d = mkstemp( sName.getStr() );
@@ -46,7 +54,17 @@ namespace Bu
 			return Bu::File( afh_d, sFlags );
 		}
 
+		/**
+		 * Set the size of the file to (nSize). You can either grow or shrink
+		 * 		the file.
+		 *@param nSize (long) The new size of the file.
+		 */
 		void truncate( long nSize );
+
+		/**
+		 * Change the file access permissions.
+		 *@param t (mode_t) The new file access permissions.
+		 */
 		void chmod( mode_t t );
 
 	private:
