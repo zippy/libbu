@@ -58,6 +58,15 @@ void Bu::Client::processInput()
 	}
 }
 
+void Bu::Client::processOutput()
+{
+	if( sWriteBuf.getSize() > 0 )
+	{
+		pSocket->write( sWriteBuf.getStr(), sWriteBuf.getSize() );
+		sWriteBuf.clear();
+	}
+}
+
 void Bu::Client::setProtocol( Protocol *pProto )
 {
 	this->pProto = pProto;
@@ -76,5 +85,21 @@ void Bu::Client::clearProtocol()
 Bu::FString &Bu::Client::getInput()
 {
 	return sReadBuf;
+}
+
+Bu::FString &Bu::Client::getOutput()
+{
+	return sWriteBuf;
+}
+
+bool Bu::Client::isOpen()
+{
+	if( !pSocket ) return false;
+	return pSocket->isOpen();
+}
+
+void Bu::Client::write( const char *pData, int nBytes )
+{
+	sWriteBuf.append( pData, nBytes );
 }
 

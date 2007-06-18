@@ -61,9 +61,24 @@ void Bu::Server::scan()
 			}
 			else
 			{
-				hClients.get( j )->processInput();
+				Client *pClient = hClients.get( j );
+				pClient->processInput();
+				if( !pClient->isOpen() )
+				{
+					onClosedConnection( pClient );
+					hClients.erase( j );
+					FD_CLR( j, &fdActive );
+				}
 			}
 		}
+	}
+
+	// Now we just try to write all the pending data on all the sockets.
+	// this could be done better eventually, if we care about the socket
+	// wanting to accept writes (using a select).
+	for( ClientHash::iterator i = hClients.begin(); i != hClients.end(); i++ )
+	{
+		(*i)->processOutput();
 	}
 }
 

@@ -27,7 +27,7 @@ namespace Bu
 			clear();
 		}
 
-		bool isSet() const
+		bool has() const
 		{
 			return (pData != NULL);
 		}
