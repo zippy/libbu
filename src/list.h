@@ -21,6 +21,10 @@ namespace Bu
 	 * members are only accessable const.  Third, erasing a location does not
 	 * invalidate the iterator, it simply points to the next valid location, or
 	 * end() if there are no more.
+	 *
+	 *@param value (typename) The type of data to store in your list
+	 *@param valuealloc (typename) Memory Allocator for your value type
+	 *@param linkalloc (typename) Memory Allocator for the list links.
 	 */
 	template<typename value, typename valuealloc=std::allocator<value>, typename linkalloc=std::allocator<struct ListLink<value> > >
 	class List
@@ -53,6 +57,10 @@ namespace Bu
 			clear();
 		}
 
+		/**
+		 * Assignment operator.
+		 *@param src (const MyType &) The list to assign to your list.
+		 */
 		MyType &operator=( const MyType &src )
 		{
 			clear();
@@ -62,6 +70,9 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Clear the data from the list.
+		 */
 		void clear()
 		{
 			Link *pCur = pFirst;
@@ -79,6 +90,10 @@ namespace Bu
 			nSize = 0;
 		}
 
+		/**
+		 * Append a value to the list.
+		 *@param v (const value_type &) The value to append.
+		 */
 		void append( const value &v )
 		{
 			Link *pNew = la.allocate( 1 );

@@ -71,6 +71,10 @@ namespace Bu
 		bool bFilled;
 
 	public:
+		/**
+		 * Cast operator for HashProxy.
+		 *@returns (value_type &) The value the HashProxy is pointing to.
+		 */
 		operator _value &()
 		{
 			if( bFilled == false )
@@ -81,6 +85,10 @@ namespace Bu
 			return *pValue;
 		}
 
+		/**
+		 * Direct function for retrieving a value out of the HashProxy.
+		 *@returns (value_type &) The value pointed to by this HashProxy.
+		 */
 		_value &value()
 		{
 			if( bFilled == false )
@@ -91,11 +99,17 @@ namespace Bu
 			return *pValue;
 		}
 
+		/**
+		 * Whether this HashProxy points to something real or not.
+		 */
 		bool isFilled()
 		{
 			return bFilled;
 		}
 
+		/**
+		 * Erase the data pointed to by this HashProxy.
+		 */
 		void erase()
 		{
 			if( bFilled )
@@ -105,6 +119,10 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Assign data to this point in the hash table.
+		 *@param nval (value_type) the data to assign.
+		 */
 		_value operator=( _value nval )
 		{
 			if( bFilled )
@@ -122,6 +140,11 @@ namespace Bu
 			return nval;
 		}
 
+		/**
+		 * Pointer extraction operator. Access to members of data pointed to
+		 * 		by HashProxy.
+		 *@returns (value_type *)
+		 */
 		_value *operator->()
 		{
 			if( bFilled == false )
@@ -133,6 +156,15 @@ namespace Bu
 		}
 	};
 
+	/**
+	 * Libbu Template Hash Table
+	 *@param key (typename) The datatype of the hashtable keys
+	 *@param value (typename) The datatype of the hashtable data
+	 *@param sizecalc (typename) Functor to compute new table size on rehash
+	 *@param keyalloc (typename) Memory allocator for hashtable keys
+	 *@param valuealloc (typename) Memory allocator for hashtable values
+	 *@param challoc (typename) Byte allocator for bitflags
+	 */
 	template<typename key, typename value, typename sizecalc, typename keyalloc, typename valuealloc, typename challoc >
 	class Hash
 	{
@@ -186,6 +218,10 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Hashtable assignment operator. Clears this hashtable and
+		 * copies RH into it.
+		 */
 		Hash &operator=( const Hash &src )
 		{
 			for( uint32_t j = 0; j < nCapacity; j++ )
@@ -244,26 +280,49 @@ namespace Bu
 			ca.deallocate( aHashCodes, nCapacity );
 		}
 
+		/**
+		 * Get the current hash table capacity. (Changes at re-hash)
+		 *@returns (uint32_t) The current capacity.
+		 */
 		uint32_t getCapacity()
 		{
 			return nCapacity;
 		}
 
+		/**
+		 * Get the number of hash locations spoken for. (Including 
+		 * not-yet-cleaned-up deleted items.)
+		 *@returns (uint32_t) The current fill state.
+		 */
 		uint32_t getFill()
 		{
 			return nFilled;
 		}
 
+		/**
+		 * Get the number of items stored in the hash table.
+		 *@returns (uint32_t) The number of items stored in the hash table.
+		 */
 		uint32_t size()
 		{
 			return nFilled-nDeleted;
 		}
 
+		/**
+		 * Get the number of items which have been deleted, but not yet
+		 * cleaned up.
+		 *@returns (uint32_t) The number of deleted items.
+		 */
 		uint32_t getDeleted()
 		{
 			return nDeleted;
 		}
 
+		/**
+		 * Hash table index operator
+		 *@param k (key_type) Key of data to be retrieved.
+		 *@returns (HashProxy) Proxy pointing to the data.
+		 */
 		virtual HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc> operator[]( key k )
 		{
 			uint32_t hash = __calcHashCode( k );
@@ -280,6 +339,11 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Insert a value (v) under key (k) into the hash table
+		 *@param k (key_type) Key to list the value under.
+		 *@param v (value_type) Value to store in the hash table.
+		 */
 		virtual void insert( key k, value v )
 		{
 			uint32_t hash = __calcHashCode( k );
@@ -299,6 +363,10 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Remove a value from the hash table.
+		 *@param k (key_type) The data under this key will be erased.
+		 */
 		virtual void erase( key k )
 		{
 			uint32_t hash = __calcHashCode( k );
@@ -313,6 +381,11 @@ namespace Bu
 		}
 
 		struct iterator;
+
+		/**
+		 * Remove a value from the hash pointed to from an iterator.
+		 *@param i (iterator &) The data to be erased.
+		 */
 		virtual void erase( struct iterator &i )
 		{
 			if( this != &i.hsh )
@@ -324,6 +397,9 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Remove all data from the hash table.
+		 */
 		virtual void clear()
 		{
 			for( uint32_t j = 0; j < nCapacity; j++ )
@@ -340,6 +416,11 @@ namespace Bu
 			clearBits();
 		}
 
+		/**
+		 * Get an item of data from the hash table.
+		 *@param k (key_type) Key pointing to the data to be retrieved.
+		 *@returns (value_type &) The data pointed to by (k).
+		 */
 		virtual value &get( key k )
 		{
 			uint32_t hash = __calcHashCode( k );
@@ -359,6 +440,12 @@ namespace Bu
 			}
 		}
 		
+		/**
+		 * Get a const item of data from the hash table.
+		 *@param k (key_type) Key pointing to the data to be retrieved.
+		 *@returns (const value_type &) A const version of the data pointed
+		 *		to by (k).
+		 */
 		virtual const value &get( key k ) const
 		{
 			uint32_t hash = __calcHashCode( k );
@@ -378,6 +465,11 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Does the hash table contain an item under key (k).
+		 *@param k (key_type) The key to check.
+		 *@returns (bool) Whether there was an item in the hash under key (k).
+		 */
 		virtual bool has( key k )
 		{
 			bool bFill;
@@ -386,6 +478,9 @@ namespace Bu
 			return bFill;
 		}
 
+		/**
+		 * Iteration structure for iterating through the hash.
+		 */
 		typedef struct iterator
 		{
 			friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
@@ -410,6 +505,9 @@ namespace Bu
 			bool bFinished;
 
 		public:
+			/**
+			 * Iterator incrementation operator. Move the iterator forward.
+			 */
 			iterator operator++( int )
 			{
 				if( bFinished == false )
@@ -418,6 +516,9 @@ namespace Bu
 				return *this;
 			}
 			
+			/**
+			 * Iterator incrementation operator. Move the iterator forward.
+			 */
 			iterator operator++()
 			{
 				if( bFinished == false )
@@ -426,6 +527,9 @@ namespace Bu
 				return *this;
 			}
 
+			/**
+			 * Iterator equality comparison operator. Iterators the same?
+			 */
 			bool operator==( const iterator &oth )
 			{
 				if( bFinished != oth.bFinished )
@@ -442,11 +546,17 @@ namespace Bu
 				}
 			}
 			
+			/**
+			 * Iterator not equality comparison operator. Not the same?
+			 */
 			bool operator!=( const iterator &oth )
 			{
 				return !(*this == oth );
 			}
 
+			/**
+			 * Iterator assignment operator.
+			 */
 			iterator operator=( const iterator &oth )
 			{
 				if( &hsh != &oth.hsh )
@@ -456,32 +566,59 @@ namespace Bu
 				bFinished = oth.bFinished;
 			}
 
+			/**
+			 * Iterator dereference operator... err.. get the value
+			 *@returns (value_type &) The value behind this iterator.
+			 */
 			value &operator *()
 			{
 				return hsh.getValueAtPos( nPos );
 			}
 			
+			/**
+			 * Get the key behind this iterator.
+			 *@returns (key_type &) The key behind this iterator.
+			 */
 			key &getKey()
 			{
 				return hsh.getKeyAtPos( nPos );
 			}
 
+			/**
+			 * Get the value behind this iterator.
+			 *@returs (value_type &) The value behind this iterator.
+			 */
 			value &getValue()
 			{
 				return hsh.getValueAtPos( nPos );
 			}
 		};
 
+		/**
+		 * Get an iterator pointing to the first item in the hash table.
+		 *@returns (iterator) An iterator pointing to the first item in the
+		 *		hash table.
+		 */
 		iterator begin()
 		{
 			return iterator( *this );
 		}
 		
+		/**
+		 * Get an iterator pointing to a point just past the last item in the
+		 * 		hash table.
+		 *@returns (iterator) An iterator pointing to a point just past the
+		 *		last item in the hash table.
+		 */
 		iterator end()
 		{
 			return iterator( *this, true );
 		}
 
+		/**
+		 * Get a list of all the keys in the hash table.
+		 *@returns (std::list<key_type>) The list of keys in the hash table.
+		 */
 		std::list<key> getKeys()
 		{
 			std::list<key> lKeys;

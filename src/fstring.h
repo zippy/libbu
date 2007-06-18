@@ -29,6 +29,11 @@ namespace Bu
 	 * almost no overhead in time or memory since a reference is created and no
 	 * data is actually copied.  This also means that you never need to put any
 	 * FBasicString into a ref-counting container class.
+	 *
+	 *@param chr (typename) Type of character (i.e. char)
+	 *@param nMinSize (int) Chunk size (default: 256)
+	 *@param chralloc (typename) Memory Allocator for chr
+	 *@param chunkalloc (typename) Memory Allocator for chr chunks
 	 */
 	template< typename chr, int nMinSize=256, typename chralloc=std::allocator<chr>, typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
 	class FBasicString : public Archival
@@ -113,6 +118,14 @@ namespace Bu
 			clear();
 		}
 
+		/**
+		 *@todo void append( const MyType & sData )
+		 */
+
+		/**
+		 * Append data to your string.
+		 *@param pData (const chr *) The data to append.
+		 */
 		void append( const chr *pData )
 		{
 			long nLen;
@@ -126,6 +139,11 @@ namespace Bu
 			appendChunk( pNew );
 		}
 
+		/**
+		 * Append data to your string.
+		 *@param pData (const chr *) The data to append.
+		 *@param nLen (long) The length of the data to append.
+		 */
 		void append( const chr *pData, long nLen )
 		{
 			if( nLen == 0 )
@@ -138,16 +156,28 @@ namespace Bu
 			appendChunk( pNew );
 		}
 
+		/**
+		 * Append a single chr to your string.
+		 *@param cData (const chr &) The character to append.
+		 */
 		void append( const chr &cData )
 		{
 			append( &cData, 1 );
 		}
 
+		/**
+		 * Prepend another FString to this one.
+		 *@param sData (MyType &) The FString to prepend.
+		 */
 		void prepend( const MyType & sData )
 		{
 			prepend( sData.getStr(), sData.getSize() );
 		}
 
+		/**
+		 * Prepend data to your string.
+		 *@param pData (const chr *) The data to prepend.
+		 */
 		void prepend( const chr *pData )
 		{
 			long nLen;
@@ -159,6 +189,11 @@ namespace Bu
 			prependChunk( pNew );
 		}
 
+		/**
+		 * Prepend data to your string.
+		 *@param pData (const chr *) The data to prepend.
+		 *@param nLen (long) The length of the data to prepend.
+		 */
 		void prepend( const chr *pData, long nLen )
 		{
 			Chunk *pNew = newChunk( nLen );
@@ -168,11 +203,22 @@ namespace Bu
 			prependChunk( pNew );
 		}
 
+		/**
+		 *@todo void prepend( const chr &cData )
+		 */
+
+		/**
+		 * Clear all data from the string.
+		 */
 		void clear()
 		{
 			realClear();
 		}
 
+		/**
+		 * Force the string to resize
+		 *@param nNewSize (long) The new size of the string.
+		 */
 		void resize( long nNewSize )
 		{
 			if( nLength == nNewSize )
@@ -190,11 +236,19 @@ namespace Bu
 			nLength = nNewSize;
 		}
 
+		/**
+		 * Get the current size of the string.
+		 *@returns (long) The current size of the string.
+		 */
 		long getSize() const
 		{
 			return nLength;
 		}
 		
+		/**
+		 * Get a pointer to the string array.
+		 *@returns (chr *) The string data.
+		 */
 		chr *getStr()
 		{
 			if( pFirst == NULL )
@@ -204,6 +258,10 @@ namespace Bu
 			return pFirst->pData;
 		}
 		
+		/**
+		 * Get a const pointer to the string array.
+		 *@returns (const chr *) The string data.
+		 */
 		const chr *getStr() const
 		{
 			if( pFirst == NULL )
@@ -213,6 +271,10 @@ namespace Bu
 			return pFirst->pData;
 		}
 
+		/**
+		 * (std::string compatability) Get a pointer to the string array.
+		 *@returns (chr *) The string data.
+		 */
 		chr *c_str()
 		{
 			if( pFirst == NULL )
@@ -222,6 +284,10 @@ namespace Bu
 			return pFirst->pData;
 		}
 		
+		/**
+		 * (std::string compatability) Get a const pointer to the string array.
+		 *@returns (const chr *) The string data.
+		 */
 		const chr *c_str() const
 		{
 			if( pFirst == NULL )
@@ -231,6 +297,10 @@ namespace Bu
 			return pFirst->pData;
 		}
 
+		/**
+		 * Plus equals operator for FString.
+		 *@param pData (const chr *) The data to append to your FString.
+		 */
 		MyType &operator +=( const chr *pData )
 		{
 			append( pData );
@@ -238,6 +308,10 @@ namespace Bu
 			return (*this);
 		}
 		
+		/**
+		 * Plus equals operator for FString.
+		 *@param pData (const MyType &) The FString to append to your FString.
+		 */
 		MyType &operator +=( const MyType &rSrc )
 		{
 			if( rSrc.nLength == 0 )
@@ -248,6 +322,10 @@ namespace Bu
 			return (*this);
 		}
 
+		/**
+		 * Plus equals operator for FString.
+		 *@param pData (const chr) The character to append to your FString.
+		 */
 		MyType &operator +=( const chr pData )
 		{
 			append( &pData, 1 );
@@ -255,6 +333,11 @@ namespace Bu
 			return (*this);
 		}
 
+		/**
+		 * Assignment operator.
+		 *@param pData (const chr *) The character array to append to your
+		 *		FString.
+		 */
 		MyType &operator =( const chr *pData )
 		{
 			clear();
@@ -263,18 +346,31 @@ namespace Bu
 			return (*this);
 		}
 
+		/**
+		 * Reset your FString to this character array.
+		 *@param pData (const chr *) The character array to set your FString to.
+		 */
 		void set( const chr *pData )
 		{
 			clear();
 			append( pData );
 		}
 
+		/**
+		 * Reset your FString to this character array.
+		 *@param pData (const chr *) The character array to set your FString to.
+		 *@param nSize (long) The length of the inputted character array.
+		 */
 		void set( const chr *pData, long nSize )
 		{
 			clear();
 			append( pData, nSize );
 		}
 
+		/**
+		 * Assignment operator.
+		 *@param rSrc (const MyType &) The FString to set your FString to.
+		 */
 		MyType &operator =( const MyType &rSrc )
 		{
 			//if( rSrc.isFlat() )
@@ -290,6 +386,11 @@ namespace Bu
 			return (*this);
 		}
 		
+		/**
+		 * Equals comparison operator.
+		 *@param pData (const chr *) The character array to compare your FString
+		 *		to.
+		 */
 		bool operator ==( const chr *pData ) const
 		{
 			if( pFirst == NULL ) {
@@ -310,6 +411,10 @@ namespace Bu
 			return true;
 		}
 		
+		/**
+		 * Equals comparison operator.
+		 *@param pData (const MyType &) The FString to compare your FString to.
+		 */
 		bool operator ==( const MyType &pData ) const
 		{
 			if( pFirst == pData.pFirst )
@@ -330,16 +435,30 @@ namespace Bu
 			return true;
 		}
 
+		/**
+		 * Not equals comparison operator.
+		 *@param pData (const chr *) The character array to compare your FString
+		 *		to.
+		 */
 		bool operator !=(const chr *pData ) const
 		{
 			return !(*this == pData);
 		}
 		
+		/**
+		 * Not equals comparison operator.
+		 *@param pData (const MyType &) The FString to compare your FString to.
+		 */
 		bool operator !=(const MyType &pData ) const
 		{
 			return !(*this == pData);
 		}
 
+		/**
+		 * Indexing operator
+		 *@param nIndex (long) The index of the character you want.
+		 *@returns (chr &) The character at position (nIndex).
+		 */
 		chr &operator[]( long nIndex )
 		{
 			flatten();
@@ -347,6 +466,11 @@ namespace Bu
 			return pFirst->pData[nIndex];
 		}
 		
+		/**
+		 * Const indexing operator
+		 *@param nIndex (long) The index of the character you want.
+		 *@returns (const chr &) The character at position (nIndex).
+		 */
 		const chr &operator[]( long nIndex ) const
 		{
 			flatten();
@@ -354,6 +478,11 @@ namespace Bu
 			return pFirst->pData[nIndex];
 		}
 
+		/**
+		 * Is the character at index (nIndex) white space?
+		 *@param nIndex (long) The index of the character you want to check.
+		 *@returns (bool) Is it white space?
+		 */
 		bool isWS( long nIndex ) const
 		{
 			flatten();
@@ -362,6 +491,11 @@ namespace Bu
 				|| pFirst->pData[nIndex]=='\r' || pFirst->pData[nIndex]=='\n';
 		}
 
+		/**
+		 * Is the character at index (nIndex) a letter?
+		 *@param nIndex (long) The index of the character you want to check.
+		 *@returns (bool) Is it a letter?
+		 */
 		bool isAlpha( long nIndex ) const
 		{
 			flatten();
@@ -370,6 +504,9 @@ namespace Bu
 				|| (pFirst->pData[nIndex] >= 'A' && pFirst->pData[nIndex] <= 'Z');
 		}
 
+		/**
+		 * Convert your alpha characters to lower case.
+		 */
 		void toLower()
 		{
 			flatten();
@@ -382,6 +519,9 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Convert your alpha characters to upper case.
+		 */
 		void toUpper()
 		{
 			flatten();
@@ -394,6 +534,11 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Find the index of the first occurrance of (sText)
+		 *@param sText (const char *) The string to search for.
+		 *@returns (long) The index of the first occurrance. -1 for not found.
+		 */
 		long find( const char *sText )
 		{
 			long nTLen = strlen( sText );
@@ -406,6 +551,11 @@ namespace Bu
 			return -1;
 		}
 
+		/**
+		 * Do a reverse search for (sText)
+		 *@param sText (const char *) The string to search for.
+		 *@returns (long) The index of the last occurrance. -1 for not found.
+		 */
 		long rfind( const char *sText )
 		{
 			long nTLen = strlen( sText );
@@ -418,6 +568,10 @@ namespace Bu
 			return -1;
 		}
 
+		/**
+		 * Function the archiver calls to archive your FString.
+		 *@param ar (Archive) The archive which is archiving your FString.
+		 */
 		void archive( class Archive &ar )
 		{
 			if( ar.isLoading() )
