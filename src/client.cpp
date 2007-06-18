@@ -47,6 +47,11 @@ void Bu::Client::processInput()
 		}
 	}
 
+	if( nTotal == 0 )
+	{
+		pSocket->close();
+	}
+
 	if( pProto && nTotal )
 	{
 		pProto->onNewData( this );
