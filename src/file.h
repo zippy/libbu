@@ -47,6 +47,7 @@ namespace Bu
 		 *@param sFlags (const char *) Standard file flags 'rb'... etc..
 		 *@returns (Bu::File) A file object representing your temp file.
 		 */
+#ifndef WIN32
 		inline static Bu::File tempFile( Bu::FString &sName, const char *sFlags )
 		{
 			int afh_d = mkstemp( sName.getStr() );
@@ -66,6 +67,7 @@ namespace Bu
 		 *@param t (mode_t) The new file access permissions.
 		 */
 		void chmod( mode_t t );
+#endif
 
 	private:
 		FILE *fh;

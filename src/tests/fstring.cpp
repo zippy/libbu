@@ -3,12 +3,22 @@
 #include <sys/time.h>
 #include <string>
 
+#ifndef WIN32
 inline double getTime()
 {
 	struct timeval tv;
 	gettimeofday( &tv, NULL );
 	return ((double)tv.tv_sec) + ((double)tv.tv_usec/1000000.0);
 }
+#else
+#include "windows.h"
+#include "winbase.h"
+inline double getTime()
+{
+       uint32_t t = (uint32_t) GetTickCount();
+       return (double) t / 1000.0;
+}
+#endif
 
 Bu::FString genThing()
 {

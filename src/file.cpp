@@ -134,19 +134,21 @@ void Bu::File::setBlocking( bool bBlocking )
 	return;
 }
 
+#ifndef WIN32
 void Bu::File::truncate( long nSize )
 {
 	ftruncate( fileno( fh ), nSize );
 }
 
-void Bu::File::flush()
-{
-	fflush( fh );
-}
-
 void Bu::File::chmod( mode_t t )
 {
 	fchmod( fileno( fh ), t );
+}
+#endif
+
+void Bu::File::flush()
+{
+	fflush( fh );
 }
 
 bool Bu::File::isOpen()
