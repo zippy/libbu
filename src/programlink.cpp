@@ -1,20 +1,22 @@
-#include "programlink.h"
-#include "programchain.h"
+#include "bu/programlink.h"
+#include "bu/programchain.h"
 
-ProgramLink::ProgramLink()
+using namespace Bu;
+
+Bu::ProgramLink::ProgramLink()
 {
 }
 
-ProgramLink::~ProgramLink()
+Bu::ProgramLink::~ProgramLink()
 {
 }
 
-LinkMessage *ProgramLink::sendIRM( LinkMessage *pMsgOut )
+LinkMessage *Bu::ProgramLink::sendIRM( LinkMessage *pMsgOut )
 {
 	return pChain->broadcastIRM( pMsgOut, this );
 }
 
-void ProgramLink::setChain( ProgramChain *pNewChain )
+void Bu::ProgramLink::setChain( ProgramChain *pNewChain )
 {
 	pChain = pNewChain;
 }

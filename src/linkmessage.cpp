@@ -1,12 +1,11 @@
-#include "linkmessage.h"
-#include <string.h>
+#include "bu/linkmessage.h"
 
-LinkMessage::LinkMessage( int nNewMsg )
+Bu::LinkMessage::LinkMessage( int nNewMsg )
 {
 	nMsg = nNewMsg;
 }
 
-LinkMessage::~LinkMessage()
+Bu::LinkMessage::~LinkMessage()
 {
 }
 
