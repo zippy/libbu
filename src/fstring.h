@@ -128,6 +128,7 @@ namespace Bu
 		 */
 		void append( const chr *pData )
 		{
+			if( !pData ) return;
 			long nLen;
 			for( nLen = 0; pData[nLen] != (chr)0; nLen++ );
 			if( nLen == 0 )
