@@ -148,7 +148,7 @@ namespace Bu
 				return NULL;
 
 			T *p = (T *)pReg->pInfo->createPlugin();
-			hObj.insert( p, pReg );
+			hObj.insert( (int )p, pReg );
 			//printf("pReg:  %08X, pPlug: %08X\n", pReg, p );
 		
 			return p;
