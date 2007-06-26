@@ -33,6 +33,8 @@ size_t Bu::BZip2::stop()
 		if( bReading )
 		{
 			BZ2_bzDecompressEnd( &bzState );
+			delete[] pBuf;
+			pBuf = NULL;
 			return 0;
 		}
 		else
@@ -53,6 +55,8 @@ size_t Bu::BZip2::stop()
 					break;
 			}
 			BZ2_bzCompressEnd( &bzState );
+			delete[] pBuf;
+			pBuf = NULL;
 			return sTotal;
 		}
 	}
