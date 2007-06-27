@@ -52,6 +52,9 @@ namespace Bu
 		const TafGroup *getChild( const Bu::FString &sName ) const;
 		const GroupList &getChildren( const Bu::FString &sName ) const;
 		TafNode *addChild( TafNode *pNode );
+		TafGroup *addChild( TafGroup *pNode );
+		TafProperty *addChild( TafProperty *pNode );
+		TafComment *addChild( TafComment *pNode );
 		const NodeList &getChildren() const;
 
 	private:

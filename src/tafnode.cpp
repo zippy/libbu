@@ -61,29 +61,44 @@ Bu::TafNode *Bu::TafGroup::addChild( Bu::TafNode *pNode )
 	switch( pNode->getType() )
 	{
 		case typeGroup:
-			{
-				TafGroup *pGroup = (TafGroup *)pNode;
-				if( !hChildren.has( pGroup->getName() ) )
-					hChildren.insert( pGroup->getName(), GroupList() );
-				hChildren.get( pGroup->getName() ).append( pGroup );
-			}
+			addChild( (Bu::TafGroup *)pNode );
 			break;
 
 		case typeProperty:
-			{
-				TafProperty *pProperty = (TafProperty *)pNode;
-				if( !hProp.has( pProperty->getName() ) )
-					hProp.insert( pProperty->getName(), PropList() );
-				hProp.get( pProperty->getName() ).append( pProperty->getValue() );
-			}
+			addChild( (Bu::TafProperty *)pNode );
 			break;
 
 		case typeComment:
+			addChild( (Bu::TafComment *)pNode );
 			break;
 	}
 
-	lChildren.append( pNode );
+	return pNode;
+}
 
+Bu::TafGroup *Bu::TafGroup::addChild( TafGroup *pNode )
+{
+	TafGroup *pGroup = (TafGroup *)pNode;
+	if( !hChildren.has( pGroup->getName() ) )
+		hChildren.insert( pGroup->getName(), GroupList() );
+	hChildren.get( pGroup->getName() ).append( pGroup );
+	lChildren.append( pNode );
+	return pNode;
+}
+
+Bu::TafProperty *Bu::TafGroup::addChild( TafProperty *pNode )
+{
+	TafProperty *pProperty = (TafProperty *)pNode;
+	if( !hProp.has( pProperty->getName() ) )
+		hProp.insert( pProperty->getName(), PropList() );
+	hProp.get( pProperty->getName() ).append( pProperty->getValue() );
+	lChildren.append( pNode );
+	return pNode;
+}
+
+Bu::TafComment *Bu::TafGroup::addChild( TafComment *pNode )
+{
+	lChildren.append( pNode );
 	return pNode;
 }
 
