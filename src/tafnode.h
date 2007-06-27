@@ -14,29 +14,77 @@ namespace Bu
 	class TafNode
 	{
 	public:
-		typedef Bu::List<Bu::FString> PropList;
-		typedef Bu::Hash<Bu::FString, PropList> PropHash;
-		typedef Bu::List<TafNode *> NodeList;
-		typedef Bu::Hash<Bu::FString, NodeList> NodeHash;
+		enum NodeType
+		{
+			typeGroup,
+			typeProperty,
+			typeComment
+		};
 
 	public:
-		TafNode();
+		TafNode( NodeType eType );
 		virtual ~TafNode();
 
-		void setName( const Bu::FString &sName );
+		const NodeType getType() const;
+
+	private:
+		NodeType eType;
+	};
+
+	class TafProperty;
+	class TafComment;
+	class TafGroup : public TafNode
+	{
+	public:
+		typedef Bu::List<Bu::FString> PropList;
+		typedef Bu::Hash<Bu::FString, PropList> PropHash;
+		typedef Bu::List<class Bu::TafGroup *> GroupList;
+		typedef Bu::Hash<Bu::FString, GroupList> GroupHash;
+		typedef Bu::List<class Bu::TafNode *> NodeList;
+
+		TafGroup( const Bu::FString &sName );
+		virtual ~TafGroup();
+
 		const Bu::FString &getName() const;
 
-		void setProperty( Bu::FString sName, Bu::FString sValue );
 		const Bu::FString &getProperty( const Bu::FString &sName ) const;
 		const PropList &getProperties( const Bu::FString &sName ) const;
-		const TafNode *getChild( const Bu::FString &sName ) const;
-		const NodeList &getChildren( const Bu::FString &sName ) const;
+		const TafGroup *getChild( const Bu::FString &sName ) const;
+		const GroupList &getChildren( const Bu::FString &sName ) const;
 		void addChild( TafNode *pNode );
+		const NodeList &getChildren() const;
 
 	private:
 		Bu::FString sName;
 		PropHash hProp;
-		NodeHash hChildren;
+		GroupHash hChildren;
+		NodeList lChildren;
+	};
+
+	class TafProperty : public TafNode
+	{
+	public:
+		TafProperty( const Bu::FString &sName, const Bu::FString &sValue );
+		virtual ~TafProperty();
+
+		const Bu::FString &getName() const;
+		const Bu::FString &getValue() const;
+
+	private:
+		Bu::FString sName;
+		Bu::FString sValue;
+	};
+
+	class TafComment : public TafNode
+	{
+	public:
+		TafComment( const Bu::FString &sText );
+		virtual ~TafComment();
+
+		const Bu::FString &getText() const;
+
+	private:
+		Bu::FString sText;
 	};
 }
 

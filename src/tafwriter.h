@@ -17,9 +17,11 @@ namespace Bu
 		TafWriter( Bu::Stream &sOut );
 		virtual ~TafWriter();
 
-		void writeNode( Bu::TafNode *pRoot );
+		void writeGroup( const Bu::TafGroup *pRoot );
 
 	private:
+		void writeProperty( const Bu::TafProperty *pProp );
+		void writeComment( const Bu::TafComment *pComment );
 		void writeString( const Bu::FString &str );
 		Bu::Stream &sOut;
 	};

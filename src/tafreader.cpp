@@ -8,6 +8,7 @@ Bu::TafReader::TafReader( Bu::Stream &sIn ) :
 	c( 0 ),
 	sIn( sIn )
 {
+	next(); next();
 }
 
 Bu::TafReader::~TafReader()
@@ -15,58 +16,72 @@ Bu::TafReader::~TafReader()
 
 }
 
-Bu::TafNode *Bu::TafReader::getNode()
+Bu::TafGroup *Bu::TafReader::readGroup()
 {
-	if( c == 0 ) next();
-	TafNode *pNode = new TafNode();
 	ws();
 	if( c != '{' )
 		throw TafException("Expected '{'");
 	next();
 	ws();
 	FString sName = readStr();
-	pNode->setName( sName );
+	TafGroup *pGroup = new TafGroup( sName );
 	next();
 	//printf("Node[%s]:\n", sName.getStr() );
 
-	nodeContent( pNode );
+	groupContent( pGroup );
 
 	if( c != '}' )
 		throw TafException("Expected '}'");
 
 	next();
 
-	return pNode;
+	return pGroup;
 }
 
-void Bu::TafReader::nodeContent( Bu::TafNode *pNode )
+void Bu::TafReader::groupContent( Bu::TafGroup *pGroup )
 {
 	for(;;)
 	{
 		ws();
 		if( c == '{' )
-			pNode->addChild( getNode() );
+			pGroup->addChild( readGroup() );
 		else if( c == '}' )
 			return;
+		else if( c == '/' && la == '*' )
+			pGroup->addChild( readComment() );
 		else
-			nodeProperty( pNode );
+			pGroup->addChild( readProperty() );
 	}
 }
 
-void Bu::TafReader::nodeProperty( Bu::TafNode *pNode )
+Bu::TafProperty *Bu::TafReader::readProperty()
 {
 	FString sName = readStr();
 	ws();
 	if( c != '=' )
 	{
 		//printf("  %s (true)\n", sName.getStr() );
-		pNode->setProperty( sName, "" );
-		return;
+		return new Bu::TafProperty( sName, "" );
 	}
 	next();
 	FString sValue = readStr();
-	pNode->setProperty( sName, sValue );
+	return new Bu::TafProperty( sName, sValue );
 	//printf("  %s = %s\n", sName.getStr(), sValue.getStr() );
+}
+
+Bu::TafComment *Bu::TafReader::readComment()
+{
+	next();
+	FString sCmnt;
+	for(;;)
+	{
+		next();
+		if( c == '*' && la == '/' )
+			break;
+		sCmnt += c;
+	}
+
+	return new TafComment( sCmnt );
 }
 
 Bu::FString Bu::TafReader::readStr()
@@ -134,6 +149,7 @@ bool Bu::TafReader::isws()
 
 void Bu::TafReader::next()
 {
-	sIn.read( &c, 1 );
+	c = la;
+	sIn.read( &la, 1 );
 }
 

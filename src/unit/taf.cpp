@@ -32,7 +32,7 @@ public:
 		Bu::File fIn(sFnTmp.c_str(), "rb");
 		Bu::TafReader tr(fIn);
 		
-		Bu::TafNode *tn = tr.getNode();
+		Bu::TafGroup *tn = tr.readGroup();
 		unitTest( !strcmp("Bob", tn->getProperty("name").c_str()) );
 		delete tn;
 

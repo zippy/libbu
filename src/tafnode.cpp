@@ -1,45 +1,20 @@
 #include "tafnode.h"
 
-Bu::TafNode::TafNode()
+Bu::TafNode::TafNode( NodeType eType ) :
+	eType( eType )
 {
 }
 
 Bu::TafNode::~TafNode()
 {
-	//printf("Entering Bu::TafNode::~TafNode() \"%s\"\n", sName.getStr() );
-	for( NodeHash::iterator i = hChildren.begin(); i != hChildren.end(); i++ )
-	{
-		NodeList &l = i.getValue();
-		for( NodeList::iterator k = l.begin(); k != l.end(); k++ )
-		{
-			//printf("deleting:  [%08X] %s\n", *k, "" );//(*k)->getName().getStr() );
-			delete (*k);
-		}
-	}
 }
 
-void Bu::TafNode::setProperty( Bu::FString sName, Bu::FString sValue )
+const Bu::TafNode::NodeType Bu::TafNode::getType() const
 {
-	if( !hProp.has( sName ) )
-	{
-		hProp.insert( sName, PropList() );
-	}
-
-	hProp.get( sName ).append( sValue );
+	return eType;
 }
 
-void Bu::TafNode::addChild( TafNode *pNode )
-{
-	if( !hChildren.has( pNode->getName() ) )
-	{
-		hChildren.insert( pNode->getName(), NodeList() );
-	}
-
-	//printf("Appending \"%s\"\n", pNode->getName().getStr() );
-	hChildren.get( pNode->getName() ).append( pNode );
-	//printf("[%08X]\n", hChildren.get( pNode->getName() ).last() );
-}
-
+/*
 const Bu::TafNode::PropList &Bu::TafNode::getProperties( const Bu::FString &sName ) const
 {
 	return hProp.get( sName );
@@ -59,14 +34,115 @@ const Bu::TafNode *Bu::TafNode::getChild( const Bu::FString &sName ) const
 {
 	return getChildren( sName ).first();
 }
+*/
 
-void Bu::TafNode::setName( const Bu::FString &sName )
+Bu::TafGroup::TafGroup( const Bu::FString &sName ) :
+	TafNode( typeGroup ),
+	sName( sName )
 {
-	this->sName = sName;
 }
 
-const Bu::FString &Bu::TafNode::getName() const
+Bu::TafGroup::~TafGroup()
+{
+	//printf("Entering Bu::TafNode::~TafNode() \"%s\"\n", sName.getStr() );
+	for( NodeList::iterator i = lChildren.begin(); i != lChildren.end(); i++ )
+	{
+		delete (*i);
+	}
+}
+
+const Bu::FString &Bu::TafGroup::getName() const
 {
 	return sName;
+}
+
+void Bu::TafGroup::addChild( Bu::TafNode *pNode )
+{
+	switch( pNode->getType() )
+	{
+		case typeGroup:
+			{
+				TafGroup *pGroup = (TafGroup *)pNode;
+				if( !hChildren.has( pGroup->getName() ) )
+					hChildren.insert( pGroup->getName(), GroupList() );
+				hChildren.get( pGroup->getName() ).append( pGroup );
+			}
+			break;
+
+		case typeProperty:
+			{
+				TafProperty *pProperty = (TafProperty *)pNode;
+				if( !hProp.has( pProperty->getName() ) )
+					hProp.insert( pProperty->getName(), PropList() );
+				hProp.get( pProperty->getName() ).append( pProperty->getValue() );
+			}
+			break;
+
+		case typeComment:
+			break;
+	}
+
+	lChildren.append( pNode );
+}
+
+const Bu::TafGroup::GroupList &Bu::TafGroup::getChildren( const Bu::FString &sName ) const
+{
+	return hChildren.get( sName );
+}
+
+const Bu::TafGroup::NodeList &Bu::TafGroup::getChildren() const
+{
+	return lChildren;
+}
+
+const Bu::TafGroup *Bu::TafGroup::getChild( const Bu::FString &sName ) const
+{
+	return hChildren.get( sName ).first();
+}
+
+const Bu::TafGroup::PropList &Bu::TafGroup::getProperties( const Bu::FString &sName ) const
+{
+	return hProp.get( sName );
+}
+
+const Bu::FString &Bu::TafGroup::getProperty( const Bu::FString &sName ) const
+{
+	return hProp.get( sName ).first();
+}
+
+Bu::TafProperty::TafProperty( const Bu::FString &sName, const Bu::FString &sValue ) :
+	TafNode( typeProperty ),
+	sName( sName ),
+	sValue( sValue )
+{
+}
+
+Bu::TafProperty::~TafProperty()
+{
+}
+
+const Bu::FString &Bu::TafProperty::getName() const
+{
+	return sName;
+}
+
+const Bu::FString &Bu::TafProperty::getValue() const
+{
+	return sValue;
+}
+
+Bu::TafComment::TafComment( const Bu::FString &sText ) :
+	TafNode( typeComment ),
+	sText( sText )
+{
+}
+
+Bu::TafComment::~TafComment()
+{
+}
+
+const Bu::FString &Bu::TafComment::getText() const
+{
+	return sText;
 }
 
