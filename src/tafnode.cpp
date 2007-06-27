@@ -56,7 +56,7 @@ const Bu::FString &Bu::TafGroup::getName() const
 	return sName;
 }
 
-void Bu::TafGroup::addChild( Bu::TafNode *pNode )
+Bu::TafNode *Bu::TafGroup::addChild( Bu::TafNode *pNode )
 {
 	switch( pNode->getType() )
 	{
@@ -83,6 +83,8 @@ void Bu::TafGroup::addChild( Bu::TafNode *pNode )
 	}
 
 	lChildren.append( pNode );
+
+	return pNode;
 }
 
 const Bu::TafGroup::GroupList &Bu::TafGroup::getChildren( const Bu::FString &sName ) const
