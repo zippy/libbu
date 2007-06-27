@@ -479,6 +479,16 @@ namespace Bu
 			return pFirst->pData[nIndex];
 		}
 
+		operator bool() const
+		{
+			return (pFirst != NULL);
+		}
+
+		bool isSet() const
+		{
+			return (pFirst != NULL);
+		}
+
 		/**
 		 * Is the character at index (nIndex) white space?
 		 *@param nIndex (long) The index of the character you want to check.
