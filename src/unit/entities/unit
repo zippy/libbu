@@ -1,0 +1,30 @@
+<?xml version="1.1" ?>
+<entity desc="Unit test framework">
+	<param name="name" required="yes" desc="Name of the class"/>
+	<file
+		name="source"
+		filename="{=name:%tolower}.cpp"
+>#include "bu/unitsuite.h"
+
+class Unit : public Bu::UnitSuite
+{
+public:
+	Unit()
+	{
+		setName("{=name}");
+		addTest( Unit::test01 );
+	}
+
+	virtual ~Unit()
+	{
+	}
+
+	void test01()
+	{
+		unitTest( 0 == 5 );
+	}
+};
+
+int main( int argc, char *argv[] ){ return Unit().run( argc, argv ); }
+</file>
+</entity>

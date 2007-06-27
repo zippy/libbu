@@ -1,6 +1,6 @@
 #include "bu/fstring.h"
 #include "bu/hash.h"
-#include "unitsuite.h"
+#include "bu/unitsuite.h"
 
 #include <stdio.h>
 
@@ -23,7 +23,7 @@ public:
 	{
 		StrIntHash h;
 		char buf[20];
-		for(int i=0;i<10000;i++)
+		for(int i=1;i<10000;i++)
 		{
 			sprintf(buf,"%d",i);
 			Bu::FString sTmp(buf);
