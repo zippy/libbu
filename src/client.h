@@ -29,6 +29,10 @@ namespace Bu
 		void write( int16_t nData );
 		void write( int32_t nData );
 		void write( int64_t nData );
+		void write( uint8_t nData );
+		void write( uint16_t nData );
+		void write( uint32_t nData );
+		void write( uint64_t nData );
 		void read( char *pData, int nBytes );
 		long getInputSize();
 

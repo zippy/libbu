@@ -124,6 +124,26 @@ void Bu::Client::write( int64_t nData )
 	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
 }
 
+void Bu::Client::write( uint8_t nData )
+{
+	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
+}
+
+void Bu::Client::write( uint16_t nData )
+{
+	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
+}
+
+void Bu::Client::write( uint32_t nData )
+{
+	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
+}
+
+void Bu::Client::write( uint64_t nData )
+{
+	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
+}
+
 void Bu::Client::read( char *pData, int nBytes )
 {
 	memcpy( pData, sReadBuf.getStr()+nRBOffset, nBytes );
