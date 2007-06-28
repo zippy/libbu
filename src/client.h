@@ -25,6 +25,7 @@ namespace Bu
 		Bu::FString &getInput();
 		Bu::FString &getOutput();
 		void write( const char *pData, int nBytes );
+		void read( const char *pData, int nBytes );
 
 		void setProtocol( Protocol *pProto );
 		Bu::Protocol *getProtocol();

@@ -587,6 +587,20 @@ namespace Bu
 		}
 
 		/**
+		 * Remove nAmnt bytes from the front of the string.  This function
+		 * operates in O(n) time and should be used sparingly.
+		 */
+		void trimFront( long nAmnt )
+		{
+			long nNewLen = nLength - nAmnt;
+			flatten();
+			Chunk *pNew = newChunk( nNewLen );
+			cpy( pNew->pData, pFirst->pData, nNewLen );
+			clear();
+			appendChunk( pNew );
+		}
+
+		/**
 		 * Function the archiver calls to archive your FString.
 		 *@param ar (Archive) The archive which is archiving your FString.
 		 */
@@ -881,5 +895,8 @@ namespace Bu
 	template<> uint32_t __calcHashCode<FString>( const FString &k );
 	template<> bool __cmpHashKeys<FString>( const FString &a, const FString &b );
 }
+
+#include <ostream>
+std::ostream& operator<< (std::ostream &os, Bu::FString &val );
 
 #endif
