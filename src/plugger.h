@@ -170,7 +170,7 @@ namespace Bu
 
 			pReg->pInfo->destroyPlugin( pPlug );
 
-			hObj.erase( pPlug );
+			hObj.erase( (int)pPlug );
 		}
 
 		void unloadAll()
