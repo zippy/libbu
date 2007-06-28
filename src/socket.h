@@ -42,6 +42,8 @@ namespace Bu
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
 
+		Bu::FString getAddress() const;
+
 	private:
 		int nSocket;
 		bool bActive;

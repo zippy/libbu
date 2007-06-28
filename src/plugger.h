@@ -37,7 +37,7 @@ namespace Bu
 		{																	\
 			delete pCls;													\
 		}																	\
-		PluginInfo classname = {						\
+		Bu::PluginInfo classname = {						\
 			#classname, name, ver, rev,										\
 			create ##classname, destroy ##classname };						\
 	}
@@ -52,7 +52,7 @@ namespace Bu
 		{																	\
 			delete pCls;													\
 		}																	\
-		PluginInfo pluginname = {											\
+		Bu::PluginInfo pluginname = {											\
 			#pluginname, name, ver, rev,									\
 			(void *(*)())(create ##classname),								\
 			(void (*)( void * ))(destroy ##classname) };					\
@@ -68,7 +68,7 @@ namespace Bu
 		{																	\
 			delete pCls;													\
 		}																	\
-		PluginInfo structname = {											\
+		Bu::PluginInfo structname = {											\
 			#pluginname, name, ver, rev,									\
 			(void *(*)())(create ##classname),								\
 			(void (*)( void * ))(destroy ##classname) };					\

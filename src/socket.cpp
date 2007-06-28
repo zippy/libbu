@@ -276,3 +276,15 @@ bool Bu::Socket::isOpen()
 	return bActive;
 }
 
+Bu::FString Bu::Socket::getAddress() const
+{
+	struct sockaddr_in addr;
+	socklen_t len = sizeof(addr);
+	addr.sin_family = AF_INET;
+	getsockname( nSocket, (sockaddr *)(&addr), &len );
+	char buf[150];
+	sprintf( buf, "%s", inet_ntoa( addr.sin_addr ) );
+
+	return buf;
+}
+
