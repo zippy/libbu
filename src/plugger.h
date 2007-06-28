@@ -163,7 +163,7 @@ namespace Bu
 
 		void destroy( T *pPlug )
 		{
-			PluginReg *pReg = (PluginReg *)hObj[pPlug];
+			PluginReg *pReg = (PluginReg *)hObj[(int)pPlug];
 			//printf("pReg:  %08X, pPlug: %08X\n", pReg, pPlug );
 			if( pReg == NULL )
 				return;
