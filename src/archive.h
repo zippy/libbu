@@ -1,5 +1,5 @@
-#ifndef ARCHIVE_H
-#define ARCHIVE_H
+#ifndef BU_ARCHIVE_H
+#define BU_ARCHIVE_H
 
 #include <stdint.h>
 #include <string>

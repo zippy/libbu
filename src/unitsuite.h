@@ -1,5 +1,5 @@
-#ifndef UNIT_SUITE_H
-#define UNIT_SUITE_H
+#ifndef BU_UNIT_SUITE_H
+#define BU_UNIT_SUITE_H
 
 #include <stdint.h>
 #include <list>

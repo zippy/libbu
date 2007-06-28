@@ -1,5 +1,5 @@
-#ifndef PROGRAMLINK_H
-#define PROGRAMLINK_H
+#ifndef BU_PROGRAMLINK_H
+#define BU_PROGRAMLINK_H
 
 #include "bu/linkmessage.h"
 #include "bu/programchain.h"

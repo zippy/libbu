@@ -1,5 +1,5 @@
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef BU_SERVER_H
+#define BU_SERVER_H
 
 #include <stdint.h>
 

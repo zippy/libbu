@@ -1,5 +1,5 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef BU_LIST_H
+#define BU_LIST_H
 
 #include <memory>
 #include "bu/exceptionbase.h"

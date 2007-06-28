@@ -1,5 +1,5 @@
-#ifndef PLUGGER_H
-#define PLUGGER_H
+#ifndef BU_PLUGGER_H
+#define BU_PLUGGER_H
 
 
 #include "bu/hash.h"

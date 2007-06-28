@@ -1,5 +1,5 @@
-#ifndef ARCHIVAL_H
-#define ARCHIVAL_H
+#ifndef BU_ARCHIVAL_H
+#define BU_ARCHIVAL_H
 
 namespace Bu
 {

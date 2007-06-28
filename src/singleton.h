@@ -1,5 +1,5 @@
-#ifndef SINGLETON_H
-#define SINGLETON_H
+#ifndef BU_SINGLETON_H
+#define BU_SINGLETON_H
 
 #include <stdio.h>
 

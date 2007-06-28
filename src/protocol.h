@@ -1,5 +1,5 @@
-#ifndef PROTOCOL_H
-#define PROTOCOL_H
+#ifndef BU_PROTOCOL_H
+#define BU_PROTOCOL_H
 
 #include <stdint.h>
 

@@ -1,5 +1,5 @@
-#ifndef MEM_BUF_H
-#define MEM_BUF_H
+#ifndef BU_MEM_BUF_H
+#define BU_MEM_BUF_H
 
 #include <stdint.h>
 

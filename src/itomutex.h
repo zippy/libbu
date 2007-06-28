@@ -1,5 +1,5 @@
-#ifndef ITO_MUTEX_H
-#define ITO_MUTEX_H
+#ifndef BU_ITO_MUTEX_H
+#define BU_ITO_MUTEX_H
 
 #include <pthread.h>
 

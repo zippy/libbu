@@ -1,5 +1,5 @@
-#ifndef F_STRING_H
-#define F_STRING_H
+#ifndef BU_F_STRING_H
+#define BU_F_STRING_H
 
 #include <stdint.h>
 #include <memory>

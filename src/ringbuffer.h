@@ -1,5 +1,5 @@
-#ifndef RING_BUFFER_H
-#define RING_BUFFER_H
+#ifndef BU_RING_BUFFER_H
+#define BU_RING_BUFFER_H
 
 #include <memory>
 #include "bu/exceptionbase.h"

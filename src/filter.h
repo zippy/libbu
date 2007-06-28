@@ -1,5 +1,5 @@
-#ifndef FILTER_H
-#define FILTER_H
+#ifndef BU_FILTER_H
+#define BU_FILTER_H
 
 #include <stdint.h>
 

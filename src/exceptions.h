@@ -1,5 +1,5 @@
-#ifndef EXCEPTIONS_H
-#define EXCEPTIONS_H
+#ifndef BU_EXCEPTIONS_H
+#define BU_EXCEPTIONS_H
 
 #include "exceptionbase.h"
 #include <stdarg.h>

@@ -1,5 +1,5 @@
-#ifndef ITO_CONDITION_H
-#define ITO_CONDITION_H
+#ifndef BU_ITO_CONDITION_H
+#define BU_ITO_CONDITION_H
 
 #include <pthread.h>
 

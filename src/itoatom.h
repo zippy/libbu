@@ -1,5 +1,5 @@
-#ifndef ITO_QUEUE_H
-#define ITO_QUEUE_H
+#ifndef BU_ITO_QUEUE_H
+#define BU_ITO_QUEUE_H
 
 #include <pthread.h>
 

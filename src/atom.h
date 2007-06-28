@@ -1,5 +1,5 @@
-#ifndef ATOM_H
-#define ATOM_H
+#ifndef BU_ATOM_H
+#define BU_ATOM_H
 
 #include <stdint.h>
 #include <memory>

@@ -1,5 +1,5 @@
-#ifndef B_ZIP2_H
-#define B_ZIP2_H
+#ifndef BU_BZIP2_H
+#define BU_BZIP2_H
 
 #include <stdint.h>
 #include <bzlib.h>

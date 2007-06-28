@@ -1,5 +1,5 @@
-#ifndef SPTR_H
-#define SPTR_H
+#ifndef BU_SPTR_H
+#define BU_SPTR_H
 
 #include <stdint.h>
 #include <stdio.h>

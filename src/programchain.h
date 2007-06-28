@@ -1,5 +1,5 @@
-#ifndef PROGRAMCHAIN_H
-#define PROGRAMCHAIN_H
+#ifndef BU_PROGRAMCHAIN_H
+#define BU_PROGRAMCHAIN_H
 
 #include "bu/list.h"
 #include "bu/linkmessage.h"

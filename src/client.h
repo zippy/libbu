@@ -1,5 +1,5 @@
-#ifndef CLIENT_H
-#define CLIENT_H
+#ifndef BU_CLIENT_H
+#define BU_CLIENT_H
 
 #include <stdint.h>
 

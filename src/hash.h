@@ -1,5 +1,5 @@
-#ifndef HASH_H
-#define HASH_H
+#ifndef BU_HASH_H
+#define BU_HASH_H
 
 #include <stddef.h>
 #include <string.h>

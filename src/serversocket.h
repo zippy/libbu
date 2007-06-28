@@ -1,5 +1,5 @@
-#ifndef SERVER_SOCKET_H
-#define SERVER_SOCKET_H
+#ifndef BU_SERVER_SOCKET_H
+#define BU_SERVER_SOCKET_H
 
 #include <stdint.h>
 #include "bu/fstring.h"

@@ -1,5 +1,5 @@
-#ifndef FILE_H
-#define FILE_H
+#ifndef BU_FILE_H
+#define BU_FILE_H
 
 #include <stdint.h>
 

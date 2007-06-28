@@ -1,8 +1,8 @@
 /**\file linkmessage.h
  */
 
-#ifndef LINKMESSAGE_H
-#define LINKMESSAGE_H
+#ifndef BU_LINKMESSAGE_H
+#define BU_LINKMESSAGE_H
 
 namespace Bu
 {

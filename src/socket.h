@@ -1,5 +1,5 @@
-#ifndef SOCKET_H
-#define SOCKET_H
+#ifndef BU_SOCKET_H
+#define BU_SOCKET_H
 
 #include <stdint.h>
 

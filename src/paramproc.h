@@ -1,5 +1,5 @@
-#ifndef PARAM_PROC_H
-#define PARAM_PROC_H
+#ifndef BU_PARAM_PROC_H
+#define BU_PARAM_PROC_H
 
 #include <stdint.h>
 #include <string>
