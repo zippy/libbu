@@ -19,7 +19,7 @@ class Thing
 int main()
 {
 	setLogLevel( 4 );
-	setLogFormat("%L: %y-%m-%d %h:%M:%s %f:%l:%F: %t");
+	setLogFormat("%L: %y-%02m-%02d %h:%02M:%02s %f:%l:%F: %t");
 	lineLog( 5, "Hey, error: %s", strerror( errno ) );
 
 	Thing gh;

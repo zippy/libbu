@@ -116,13 +116,15 @@ namespace Bu
 
 		void registerExternalPlugin( const char *sFName, const char *sPluginName )
 		{
-			PluginReg *pReg = (PluginReg *)hPlugin[sPluginName];
-			if( pReg != NULL )
-			{
+			PluginReg *pReg;
+			try {
+				pReg = (PluginReg *)hPlugin[sPluginName];
 				hPlugin.erase( sPluginName );
 				dlclose( pReg->dlHandle );
 				delete pReg;
 				pReg = NULL;
+			} catch( Bu::HashException &e )
+			{
 			}
 
 			pReg = new PluginReg;

@@ -71,22 +71,30 @@ void Bu::Logger::setFormat( const Bu::FString &str )
 		if( *s == '%' )
 		{
 			sLogFormat += '%';
-			s++;
-			for( int l = 0;; l++ )
+			Bu::FString sBuf;
+			for(;;)
 			{
-				if( fmts[l][0] == '\0' )
+				s++;
+				int l;
+				for( l = 0;; l++ )
 				{
-					sLogFormat += *s;
-					break;
+					if( fmts[l][0] == '\0' )
+					{
+						sBuf += *s;
+						break;
+					}
+					else if( *s == fmts[l][0] )
+					{
+						sLogFormat += fmts[l][2];
+						sLogFormat += fmts[l][3];
+						sLogFormat += '$';
+						sLogFormat += sBuf;
+						sLogFormat += fmts[l][1];
+						break;
+					}
 				}
-				else if( *s == fmts[l][0] )
-				{
-					sLogFormat += fmts[l][2];
-					sLogFormat += fmts[l][3];
-					sLogFormat += '$';
-					sLogFormat += fmts[l][1];
+				if( fmts[l][0] != '\0' )
 					break;
-				}
 			}
 		}
 		else
