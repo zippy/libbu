@@ -897,6 +897,6 @@ namespace Bu
 }
 
 #include <ostream>
-std::ostream& operator<< (std::ostream &os, Bu::FString &val );
+std::basic_ostream<char>& operator<< (std::basic_ostream<char> &os, const Bu::FString &val );
 
 #endif

@@ -99,9 +99,9 @@ bool Bu::Client::isOpen()
 	return pSocket->isOpen();
 }
 
-void Bu::Client::write( const char *pData, int nBytes )
+void Bu::Client::write( const void *pData, int nBytes )
 {
-	sWriteBuf.append( pData, nBytes );
+	sWriteBuf.append( (const char *)pData, nBytes );
 }
 
 void Bu::Client::write( int8_t nData )
@@ -144,9 +144,34 @@ void Bu::Client::write( uint64_t nData )
 	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
 }
 
-void Bu::Client::read( char *pData, int nBytes )
+void Bu::Client::read( void *pData, int nBytes )
 {
 	memcpy( pData, sReadBuf.getStr()+nRBOffset, nBytes );
+	nRBOffset += nBytes;
+	if( sReadBuf.getSize()-nRBOffset == 0 )
+	{
+		sReadBuf.clear();
+		nRBOffset = 0;
+	}
+	// This is an experimental threshold, maybe I'll make this configurable
+	// later on.
+	else if(
+		(sReadBuf.getSize() >= 1024 && nRBOffset >= sReadBuf.getSize()/2) ||
+		(nRBOffset >= sReadBuf.getSize()/4)
+		)
+	{
+		sReadBuf.trimFront( nRBOffset );
+		nRBOffset = 0;
+	}
+}
+
+void Bu::Client::peek( void *pData, int nBytes )
+{
+	memcpy( pData, sReadBuf.getStr()+nRBOffset, nBytes );
+}
+
+void Bu::Client::seek( int nBytes )
+{
 	nRBOffset += nBytes;
 	if( sReadBuf.getSize()-nRBOffset == 0 )
 	{
@@ -173,5 +198,9 @@ long Bu::Client::getInputSize()
 const Bu::Socket *Bu::Client::getSocket() const
 {
 	return pSocket;
+}
+
+void Bu::Client::disconnect()
+{
 }
 

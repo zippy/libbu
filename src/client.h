@@ -24,7 +24,7 @@ namespace Bu
 
 		Bu::FString &getInput();
 		Bu::FString &getOutput();
-		void write( const char *pData, int nBytes );
+		void write( const void *pData, int nBytes );
 		void write( int8_t nData );
 		void write( int16_t nData );
 		void write( int32_t nData );
@@ -33,7 +33,9 @@ namespace Bu
 		void write( uint16_t nData );
 		void write( uint32_t nData );
 		void write( uint64_t nData );
-		void read( char *pData, int nBytes );
+		void read( void *pData, int nBytes );
+		void peek( void *pData, int nBytes );
+		void seek( int nBytes );
 		long getInputSize();
 
 		void setProtocol( Protocol *pProto );
@@ -43,6 +45,11 @@ namespace Bu
 		bool isOpen();
 
 		const Bu::Socket *getSocket() const;
+
+		/**
+		 *@todo Make this not suck.
+		 */
+		void disconnect();
 
 	private:
 		Bu::Socket *pSocket;

@@ -12,7 +12,7 @@ template<> bool Bu::__cmpHashKeys<Bu::FString>(
 	return a == b;
 }
 
-std::ostream& operator<< (std::ostream &os, Bu::FString &val )
+std::basic_ostream<char>& operator<< (std::basic_ostream<char> &os, const Bu::FString &val )
 {
 	os.write( val.getStr(), val.getSize() );
 	return os;

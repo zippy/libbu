@@ -7,6 +7,12 @@ Bu::MemBuf::MemBuf() :
 {
 }
 
+Bu::MemBuf::MemBuf( const Bu::FString &str ) :
+	sBuf( str ),
+	nPos( 0 )
+{
+}
+
 Bu::MemBuf::~MemBuf()
 {
 }
@@ -105,5 +111,10 @@ bool Bu::MemBuf::isBlocking()
 
 void Bu::MemBuf::setBlocking( bool bBlocking )
 {
+}
+
+Bu::FString &Bu::MemBuf::getString()
+{
+	return sBuf;
 }
 

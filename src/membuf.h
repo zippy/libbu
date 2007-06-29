@@ -15,6 +15,7 @@ namespace Bu
 	{
 	public:
 		MemBuf();
+		MemBuf( const Bu::FString &str );
 		virtual ~MemBuf();
 
 		virtual void close();
@@ -40,6 +41,8 @@ namespace Bu
 		virtual bool isSeekable();
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
+
+		Bu::FString &getString();
 
 	private:
 		Bu::FString sBuf;
