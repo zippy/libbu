@@ -478,13 +478,14 @@ namespace Bu
 
 			return pFirst->pData[nIndex];
 		}
-
+/*
 		operator const chr *() const
 		{
 			if( !pFirst ) return NULL;
 			flatten();
 			return pFirst->pData;
 		}
+		*/
 
 		operator bool() const
 		{
