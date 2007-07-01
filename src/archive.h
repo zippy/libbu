@@ -184,8 +184,8 @@ namespace Bu
 		ar << h.size();
 		for( typename Hash<key,value>::iterator i = h.begin(); i != h.end(); i++ )
 		{
-			std::pair<key,value> p = *i;
-			ar << p.first << p.second;
+			//std::pair<key,value> p = *i;
+			ar << (i.getKey()) << (i.getValue());
 		}
 
 		return ar;
@@ -207,7 +207,6 @@ namespace Bu
 
 		return ar;
 	}
-
 }
 
 #endif
