@@ -7,7 +7,8 @@
 #include <iostream>
 #include <list>
 #include <utility>
-#include "exceptionbase.h"
+#include "bu/exceptionbase.h"
+#include "bu/list.h"
 ///#include "archival.h"
 ///#include "archive.h"
 
@@ -593,6 +594,122 @@ namespace Bu
 				return hsh.getValueAtPos( nPos );
 			}
 		};
+		
+		/**
+		 * Iteration structure for iterating through the hash (const).
+		 */
+		typedef struct const_iterator
+		{
+			friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
+		private:
+			const_iterator( const Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh ) :
+				hsh( hsh ),
+				nPos( 0 ),
+				bFinished( false )
+			{
+				nPos = hsh.getFirstPos( bFinished );
+			}
+			
+			const_iterator( const Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh, bool bDone ) :
+				hsh( hsh ),
+				nPos( 0 ),
+				bFinished( bDone )
+			{
+			}
+
+			const Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh;
+			uint32_t nPos;
+			bool bFinished;
+
+		public:
+			/**
+			 * Iterator incrementation operator. Move the iterator forward.
+			 */
+			const_iterator operator++( int )
+			{
+				if( bFinished == false )
+					nPos = hsh.getNextPos( nPos, bFinished );
+
+				return *this;
+			}
+			
+			/**
+			 * Iterator incrementation operator. Move the iterator forward.
+			 */
+			const_iterator operator++()
+			{
+				if( bFinished == false )
+					nPos = hsh.getNextPos( nPos, bFinished );
+
+				return *this;
+			}
+
+			/**
+			 * Iterator equality comparison operator. Iterators the same?
+			 */
+			bool operator==( const const_iterator &oth )
+			{
+				if( bFinished != oth.bFinished )
+					return false;
+				if( bFinished == true )
+				{
+					return true;
+				}
+				else
+				{
+					if( oth.nPos == nPos )
+						return true;
+					return false;
+				}
+			}
+			
+			/**
+			 * Iterator not equality comparison operator. Not the same?
+			 */
+			bool operator!=( const const_iterator &oth )
+			{
+				return !(*this == oth );
+			}
+
+			/**
+			 * Iterator assignment operator.
+			 */
+			const_iterator operator=( const const_iterator &oth )
+			{
+				if( &hsh != &oth.hsh )
+					throw HashException(
+						"Cannot mix iterators from different hash objects.");
+				nPos = oth.nPos;
+				bFinished = oth.bFinished;
+			}
+
+			/**
+			 * Iterator dereference operator... err.. get the value
+			 *@returns (value_type &) The value behind this iterator.
+			 */
+			const value &operator *() const
+			{
+				return hsh.getValueAtPos( nPos );
+			}
+			
+			/**
+			 * Get the key behind this iterator.
+			 *@returns (key_type &) The key behind this iterator.
+			 */
+			const key &getKey() const
+			{
+				return hsh.getKeyAtPos( nPos );
+			}
+
+			/**
+			 * Get the value behind this iterator.
+			 *@returs (value_type &) The value behind this iterator.
+			 */
+			const value &getValue() const
+			{
+				return hsh.getValueAtPos( nPos );
+			}
+		};
 
 		/**
 		 * Get an iterator pointing to the first item in the hash table.
@@ -602,6 +719,11 @@ namespace Bu
 		iterator begin()
 		{
 			return iterator( *this );
+		}
+		
+		const_iterator begin() const
+		{
+			return const_iterator( *this );
 		}
 		
 		/**
@@ -614,14 +736,19 @@ namespace Bu
 		{
 			return iterator( *this, true );
 		}
+		
+		const_iterator end() const
+		{
+			return const_iterator( *this, true );
+		}
 
 		/**
 		 * Get a list of all the keys in the hash table.
 		 *@returns (std::list<key_type>) The list of keys in the hash table.
 		 */
-		std::list<key> getKeys()
+		Bu::List<key> getKeys() const
 		{
-			std::list<key> lKeys;
+			Bu::List<key> lKeys;
 
 			for( uint32_t j = 0; j < nCapacity; j++ )
 			{
@@ -629,7 +756,7 @@ namespace Bu
 				{
 					if( !isDeleted( j ) )
 					{
-						lKeys.push_back( aKeys[j] );
+						lKeys.append( aKeys[j] );
 					}
 				}
 			}
@@ -682,12 +809,22 @@ namespace Bu
 			return aKeys[nPos];
 		}
 		
+		virtual const key &getKeyAtPos( uint32_t nPos ) const
+		{
+			return aKeys[nPos];
+		}
+		
 		virtual value &getValueAtPos( uint32_t nPos )
 		{
 			return aValues[nPos];
 		}
+		
+		virtual const value &getValueAtPos( uint32_t nPos ) const
+		{
+			return aValues[nPos];
+		}
 
-		virtual uint32_t getFirstPos( bool &bFinished )
+		virtual uint32_t getFirstPos( bool &bFinished ) const
 		{
 			for( uint32_t j = 0; j < nCapacity; j++ )
 			{
@@ -700,7 +837,7 @@ namespace Bu
 			return 0;
 		}
 
-		virtual uint32_t getNextPos( uint32_t nPos, bool &bFinished )
+		virtual uint32_t getNextPos( uint32_t nPos, bool &bFinished ) const
 		{
 			for( uint32_t j = nPos+1; j < nCapacity; j++ )
 			{
