@@ -174,6 +174,10 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 	return nRead;
 }
 
+//size_t Bu::Socket::read( void *pBuf, size_t nBytes, uint32_t nTimeout )
+//{
+//}
+
 size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
 {
 	int nWrote = TEMP_FAILURE_RETRY( ::write( nSocket, pBuf, nBytes ) );

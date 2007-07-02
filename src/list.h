@@ -471,6 +471,11 @@ namespace Bu
 		{
 			return *pLast->pValue;
 		}
+
+		const bool isEmpty() const
+		{
+			return (nSize == 0);
+		}
 		
 	private:
 		Link *pFirst;
