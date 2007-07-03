@@ -2,6 +2,7 @@
 #define BU_F_STRING_H
 
 #include <stdint.h>
+#include <string>
 #include <memory>
 #include "bu/archival.h"
 #include "bu/archive.h"
@@ -343,6 +344,14 @@ namespace Bu
 		{
 			clear();
 			append( pData );
+
+			return (*this);
+		}
+
+		MyType &operator =( const std::basic_string<chr> &rData )
+		{
+			clear();
+			append( rData.c_str(), rData.size() );
 
 			return (*this);
 		}
