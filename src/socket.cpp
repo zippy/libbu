@@ -174,9 +174,26 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 	return nRead;
 }
 
-//size_t Bu::Socket::read( void *pBuf, size_t nBytes, uint32_t nTimeout )
-//{
-//}
+size_t Bu::Socket::read( void *pBuf, size_t nBytes,
+		uint32_t nSec, uint32_t nUSec )
+{
+	fd_set rfds;
+	FD_ZERO(&rfds);
+	FD_SET(nSocket, &rfds);
+	struct timeval tv = { nSec, nUSec };
+	int retval = select( nSocket+1, &rfds, NULL, NULL, &tv );
+	if( retval == -1 )
+		throw ConnectionException(
+			excodeBadReadError,
+			"Bad Read error"
+			);
+	if( !FD_ISSET( nSocket, &rfds ) )
+		throw ConnectionException(
+			excodeSocketTimeout,
+			"Socket timout on read"
+			);
+	return read( pBuf, nBytes );
+}
 
 size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
 {

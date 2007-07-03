@@ -158,9 +158,7 @@ namespace Bu
 
 		bool hasPlugin( const char *lpName )
 		{
-			if( hPlugin[lpName] == NULL )
-				return false;
-			return true;
+			return hPlugin.has( lpName );
 		}
 
 		void destroy( T *pPlug )
