@@ -1,7 +1,7 @@
 #ifndef BU_EXCEPTIONS_H
 #define BU_EXCEPTIONS_H
 
-#include "exceptionbase.h"
+#include "bu/exceptionbase.h"
 #include <stdarg.h>
 
 namespace Bu
