@@ -81,7 +81,7 @@ namespace Bu
 }
 
 #define subExceptionDecl( name )											\
-class name : public ExceptionBase											\
+class name : public Bu::ExceptionBase										\
 {																			\
 	public:																	\
 		name( const char *sFormat, ... ) throw ();							\
