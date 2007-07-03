@@ -1,8 +1,13 @@
 #include "exceptions.h"
 #include <stdarg.h>
 
-subExceptionDef( XmlException )
-subExceptionDef( FileException )
-subExceptionDef( ConnectionException )
-subExceptionDef( PluginException )
-
+namespace Bu
+{
+	subExceptionDef( XmlException )
+	subExceptionDef( TafException )
+	subExceptionDef( FileException )
+	subExceptionDef( SocketException )
+	subExceptionDef( ConnectionException )
+	subExceptionDef( PluginException )
+	subExceptionDef( UnsupportedException )
+}

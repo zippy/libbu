@@ -1,17 +1,18 @@
 #include <stdlib.h>
-#include "programchain.h"
+#include "bu/programchain.h"
+#include "bu/programlink.h"
 
-ProgramChain::ProgramChain() :
-	xLog( MultiLog::getInstance() )
-{
-	xLog.LineLog( MultiLog::LStatus, "Program Chain Initialized." );
-}
+using namespace Bu;
 
-ProgramChain::~ProgramChain()
+Bu::ProgramChain::ProgramChain()
 {
 }
 
-bool ProgramChain::addLink( ProgramLink *pLink )
+Bu::ProgramChain::~ProgramChain()
+{
+}
+
+bool Bu::ProgramChain::addLink( ProgramLink *pLink )
 {
 	if( pLink->init() == false )
 	{
@@ -26,26 +27,25 @@ bool ProgramChain::addLink( ProgramLink *pLink )
 	return true;
 }
 
-ProgramLink *ProgramChain::getLink( const char *lpName )
+ProgramLink *Bu::ProgramChain::getLink( const char *lpName )
 {
 	char a;
 	a = lpName[0];
 	return NULL;
 }
 
-ProgramLink *ProgramChain::getBaseLink()
+ProgramLink *Bu::ProgramChain::getBaseLink()
 {
 	return NULL;
 }
 
-bool ProgramChain::execChainOnce()
+bool Bu::ProgramChain::execChainOnce()
 {
-	int nLen = lLink.getSize();
-	for( int j = 0; j < nLen; j++ )
+	for( Bu::List<Bu::ProgramLink *>::iterator i = lLink.begin();
+		 i != lLink.end(); i++ )
 	{
-		if( ((ProgramLink *)lLink[j])->timeSlice() == false )
+		if( (*i)->timeSlice() == false )
 		{
-			xLog.LineLog( MultiLog::LInfo, "Shutting down due to signal from link #%d", j );
 			emergencyShutdown();
 			return false;
 		}
@@ -54,7 +54,7 @@ bool ProgramChain::execChainOnce()
 	return true;
 }
 
-bool ProgramChain::enterChainLoop()
+bool Bu::ProgramChain::enterChainLoop()
 {
 	for(;;)
 	{
@@ -67,23 +67,23 @@ bool ProgramChain::enterChainLoop()
 	return true;
 }
 
-void ProgramChain::emergencyShutdown()
+void Bu::ProgramChain::emergencyShutdown()
 {
-	int nLen = lLink.getSize();
-	for( int j = 0; j < nLen; j++ )
+	for( Bu::List<Bu::ProgramLink *>::iterator i = lLink.begin();
+		 i != lLink.end(); i++ )
 	{
-		((ProgramLink *)lLink[j])->deInit();
-		delete (ProgramLink *)lLink[j];
+		(*i)->deInit();
+		delete *i;
 	}
-	lLink.empty();
+	lLink.clear();
 }
 
-LinkMessage *ProgramChain::broadcastIRM( LinkMessage *pMsgOut, ProgramLink *pSender )
+LinkMessage *Bu::ProgramChain::broadcastIRM( LinkMessage *pMsgOut, ProgramLink *pSender )
 {
-	int nLen = lLink.getSize();
-	for( int j = 0; j < nLen; j++ )
+	for( Bu::List<Bu::ProgramLink *>::iterator i = lLink.begin();
+		 i != lLink.end(); i++ )
 	{
-		LinkMessage *pMsg = ((ProgramLink *)lLink[j])->processIRM( pMsgOut );
+		LinkMessage *pMsg = (*i)->processIRM( pMsgOut );
 		if( pMsg != NULL )
 		{
 			delete pMsgOut;
@@ -94,3 +94,4 @@ LinkMessage *ProgramChain::broadcastIRM( LinkMessage *pMsgOut, ProgramLink *pSen
 	delete pMsgOut;
 	return NULL;
 }
+

@@ -1,0 +1,14 @@
+/**
+ *@mainpage libbu++ utility library
+ * 
+ *@section secIntro Introduction
+ *
+ * Libbu++ is a C++ library of general utility classes and functions.  They
+ * cover a wide range of topics from streams and sockets to data structures to
+ * data serialization and xml handling to threading.
+ *
+ */
+
+/**
+ *@namespace Bu The core libbu++ namespace, to ensure things don't get muddied.
+ */

@@ -1,29 +1,29 @@
 #include "hash.h"
 
-subExceptionDef( HashException )
+namespace Bu { subExceptionDef( HashException ) }
 
-template<> uint32_t __calcHashCode<int>( const int &k )
+template<> uint32_t Bu::__calcHashCode<int>( const int &k )
 {
 	return k;
 }
 
-template<> bool __cmpHashKeys<int>( const int &a, const int &b )
+template<> bool Bu::__cmpHashKeys<int>( const int &a, const int &b )
 {
 	return a == b;
 }
 
-template<> uint32_t __calcHashCode<unsigned int>( const unsigned int &k )
+template<> uint32_t Bu::__calcHashCode<unsigned int>( const unsigned int &k )
 {
 	return k;
 }
 
-template<> bool __cmpHashKeys<unsigned int>( const unsigned int &a, const unsigned int &b )
+template<> bool Bu::__cmpHashKeys<unsigned int>( const unsigned int &a, const unsigned int &b )
 {
 	return a == b;
 }
 
 template<>
-uint32_t __calcHashCode<const char *>( const char * const &k )
+uint32_t Bu::__calcHashCode<const char *>( const char * const &k )
 {
 	if (k == NULL)
 	{
@@ -39,7 +39,7 @@ uint32_t __calcHashCode<const char *>( const char * const &k )
 	return nPos;
 }
 
-template<> bool __cmpHashKeys<const char *>( const char * const &a, const char * const &b )
+template<> bool Bu::__cmpHashKeys<const char *>( const char * const &a, const char * const &b )
 {
 	if( a == b )
 		return true;
@@ -52,7 +52,7 @@ template<> bool __cmpHashKeys<const char *>( const char * const &a, const char *
 }
 
 template<>
-uint32_t __calcHashCode<char *>( char * const &k )
+uint32_t Bu::__calcHashCode<char *>( char * const &k )
 {
 	if (k == NULL)
 	{
@@ -68,7 +68,7 @@ uint32_t __calcHashCode<char *>( char * const &k )
 	return nPos;
 }
 
-template<> bool __cmpHashKeys<char *>( char * const &a, char * const &b )
+template<> bool Bu::__cmpHashKeys<char *>( char * const &a, char * const &b )
 {
 	if( a == b )
 		return true;
@@ -80,7 +80,7 @@ template<> bool __cmpHashKeys<char *>( char * const &a, char * const &b )
 	return false;
 }
 
-template<> uint32_t __calcHashCode<std::string>( const std::string &k )
+template<> uint32_t Bu::__calcHashCode<std::string>( const std::string &k )
 {
 	std::string::size_type j, sz = k.size();
 	const char *s = k.c_str();
@@ -94,20 +94,8 @@ template<> uint32_t __calcHashCode<std::string>( const std::string &k )
 	return nPos;
 }
 
-template<> bool __cmpHashKeys<std::string>( const std::string &a, const std::string &b )
+template<> bool Bu::__cmpHashKeys<std::string>( const std::string &a, const std::string &b )
 {
 	return a == b;
-}
-
-template<> uint32_t __calcHashCode<Hashable>( const Hashable &k )
-{
-	return 0;
-	//return k.getHashCode();
-}
-
-template<> bool __cmpHashKeys<Hashable>( const Hashable &a, const Hashable &b )
-{
-	return false;
-	//return a.compareForHash( b );
 }
 

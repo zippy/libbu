@@ -1,10 +1,10 @@
 #include "stream.h"
 
-Stream::Stream()
+Bu::Stream::Stream()
 {
 }
 
-Stream::~Stream()
+Bu::Stream::~Stream()
 {
 }
 

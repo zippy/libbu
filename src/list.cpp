@@ -1,10 +1,2 @@
-#include "list.h"
-
-List::List(  )
-{
-}
-
-List::~List(  )
-{
-}
+#include "bu/list.h"
 

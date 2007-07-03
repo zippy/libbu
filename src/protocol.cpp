@@ -1,20 +1,12 @@
-#include "protocol.h"
+#include "bu/protocol.h"
 
-Protocol::Protocol()
-{
-	pConnection = NULL;
-}
+using namespace Bu;
 
-Protocol::~Protocol()
+Bu::Protocol::Protocol()
 {
 }
 
-void Protocol::setConnection( Connection *pNewConnection )
+Bu::Protocol::~Protocol()
 {
-	pConnection = pNewConnection;
 }
 
-Connection *Protocol::getConnection()
-{
-	return pConnection;
-}

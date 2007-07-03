@@ -2,10 +2,10 @@
 #include <stdio.h>
 
 #define ptrtype( iitype, iiname ) \
-	ParamProc::ParamPtr::ParamPtr( iitype *iiname ) :	\
+	Bu::ParamProc::ParamPtr::ParamPtr( iitype *iiname ) :	\
 		type( vt ##iiname ) { val.iiname = iiname; }
 
-ParamProc::ParamPtr::ParamPtr()
+Bu::ParamProc::ParamPtr::ParamPtr()
 {
 	val.str = NULL;
 	type = vtunset;
@@ -25,7 +25,7 @@ ptrtype( double,      float64 );
 ptrtype( long double, float96 );
 ptrtype( bool,        bln     );
 
-ParamProc::ParamPtr &ParamProc::ParamPtr::operator=( ParamProc::ParamPtr &ptr )
+Bu::ParamProc::ParamPtr &Bu::ParamProc::ParamPtr::operator=( ParamProc::ParamPtr &ptr )
 {
 	val = ptr.val;
 	type = ptr.type;
@@ -33,12 +33,12 @@ ParamProc::ParamPtr &ParamProc::ParamPtr::operator=( ParamProc::ParamPtr &ptr )
 	return *this;
 }
 
-bool ParamProc::ParamPtr::isSet()
+bool Bu::ParamProc::ParamPtr::isSet()
 {
 	return type != vtunset;
 }
 
-ParamProc::ParamPtr &ParamProc::ParamPtr::operator=( const char *str )
+Bu::ParamProc::ParamPtr &Bu::ParamProc::ParamPtr::operator=( const char *str )
 {
 	if( !isSet() ) return *this;
 	switch( type )
@@ -107,11 +107,11 @@ ParamProc::ParamPtr &ParamProc::ParamPtr::operator=( const char *str )
 	return *this;
 }
 
-ParamProc::ParamProc()
+Bu::ParamProc::ParamProc()
 {
 }
 
-ParamProc::~ParamProc()
+Bu::ParamProc::~ParamProc()
 {
 	for( std::list<ArgSpec *>::iterator i = lArg.begin();
 		 i != lArg.end(); i++ )
@@ -127,14 +127,14 @@ ParamProc::~ParamProc()
 
 }
 /*
-void ParamProc::addParam( const char *lpWord, char cChar, Proc proc, ParamPtr val )
+void Bu::ParamProc::addParam( const char *lpWord, char cChar, Proc proc, ParamPtr val )
 {
 	printf("Calling callback...\n");
 	val = "Hello there, this is set in the ParamProc";
 	(this->*proc)();
 }*/
 
-void ParamProc::addParam( const char *lpWord, char cChar, Proc proc,
+void Bu::ParamProc::addParam( const char *lpWord, char cChar, Proc proc,
 	ParamPtr val, const char *lpDesc, const char *lpExtra,
 	const char *lpValue )
 {
@@ -161,63 +161,63 @@ void ParamProc::addParam( const char *lpWord, char cChar, Proc proc,
 	}
 }
 
-void ParamProc::addParam( const char *lpWord, char cChar, Proc proc,
+void Bu::ParamProc::addParam( const char *lpWord, char cChar, Proc proc,
 	const char *lpDesc, const char *lpExtra,
 	const char *lpValue )
 {
 	addParam( lpWord, cChar, proc, ParamPtr(), lpDesc, lpExtra, lpValue );
 }
 
-void ParamProc::addParam( const char *lpWord, char cChar, ParamPtr val,
+void Bu::ParamProc::addParam( const char *lpWord, char cChar, ParamPtr val,
 	const char *lpDesc, const char *lpExtra,
 	const char *lpValue )
 {
 	addParam( lpWord, cChar, NULL, val, lpDesc, lpExtra, lpValue );
 }
 
-void ParamProc::addParam( const char *lpWord, Proc proc, ParamPtr val,
+void Bu::ParamProc::addParam( const char *lpWord, Proc proc, ParamPtr val,
 	const char *lpDesc, const char *lpExtra,
 	const char *lpValue )
 {
 	addParam( lpWord, '\0', proc, val, lpDesc, lpExtra, lpValue );
 }
 
-void ParamProc::addParam( const char *lpWord, Proc proc,
+void Bu::ParamProc::addParam( const char *lpWord, Proc proc,
 	const char *lpDesc, const char *lpExtra,
 	const char *lpValue )
 {
 	addParam( lpWord, '\0', proc, ParamPtr(), lpDesc, lpExtra, lpValue );
 }
 
-void ParamProc::addParam( const char *lpWord, ParamPtr val,
+void Bu::ParamProc::addParam( const char *lpWord, ParamPtr val,
 	const char *lpDesc, const char *lpExtra,
 	const char *lpValue )
 {
 	addParam( lpWord, '\0', NULL, val, lpDesc, lpExtra, lpValue );
 }
 
-void ParamProc::addParam( char cChar, Proc proc, ParamPtr val,
+void Bu::ParamProc::addParam( char cChar, Proc proc, ParamPtr val,
 	const char *lpDesc, const char *lpExtra,
 	const char *lpValue )
 {
 	addParam( NULL, cChar, proc, val, lpDesc, lpExtra, lpValue );
 }
 
-void ParamProc::addParam( char cChar, Proc proc,
+void Bu::ParamProc::addParam( char cChar, Proc proc,
 	const char *lpDesc, const char *lpExtra,
 	const char *lpValue )
 {
 	addParam( NULL, cChar, proc, ParamPtr(), lpDesc, lpExtra, lpValue );
 }
 
-void ParamProc::addParam( char cChar, ParamPtr val,
+void Bu::ParamProc::addParam( char cChar, ParamPtr val,
 	const char *lpDesc, const char *lpExtra,
 	const char *lpValue )
 {
 	addParam( NULL, cChar, NULL, val, lpDesc, lpExtra, lpValue );
 }
 
-void ParamProc::process( int argc, char *argv[] )
+void Bu::ParamProc::process( int argc, char *argv[] )
 {
 	for( int arg = 1; arg < argc; arg++ )
 	{
@@ -229,23 +229,23 @@ void ParamProc::process( int argc, char *argv[] )
 				ArgSpec *s = checkWord( argv[arg]+2 );
 				if( s )
 				{
-					if( argv[arg][s->sWord.getLength()+2] == '=' )
+					if( argv[arg][s->sWord.getSize()+2] == '=' )
 					{
 						if( s->val.isSet() )
 						{
-							if( s->sValue.getString() == NULL )
+							if( s->sValue.getStr() == NULL )
 							{
-								s->val = argv[arg]+s->sWord.getLength()+3;
+								s->val = argv[arg]+s->sWord.getSize()+3;
 							}
 							else
 							{
-								s->val = s->sValue.getString();
+								s->val = s->sValue.getStr();
 							}
 						}
 						if( s->proc )
 						{
 							char **tmp = new char*[argc-arg];
-							tmp[0] = argv[arg]+s->sWord.getLength()+3;
+							tmp[0] = argv[arg]+s->sWord.getSize()+3;
 							for( int k = 1; k < argc-arg; k++ )
 								tmp[k] = argv[arg+k];
 							int ret = (this->*s->proc)( argc-arg, tmp );
@@ -261,7 +261,7 @@ void ParamProc::process( int argc, char *argv[] )
 						int add = 0;
 						if( s->val.isSet() )
 						{
-							if( s->sValue.getString() == NULL )
+							if( s->sValue.getStr() == NULL )
 							{
 								if( arg+1 >= argc )
 								{
@@ -272,7 +272,7 @@ void ParamProc::process( int argc, char *argv[] )
 							}
 							else
 							{
-								s->val = s->sValue.getString();
+								s->val = s->sValue.getStr();
 							}
 						}
 						if( s->proc )
@@ -307,14 +307,14 @@ void ParamProc::process( int argc, char *argv[] )
 							bool bUsed = false;
 							if( s->val.isSet() )
 							{
-								if( s->sValue.getString() == NULL )
+								if( s->sValue.getStr() == NULL )
 								{
 									s->val = argv[arg]+chr+1;
 									bUsed = true;
 								}
 								else
 								{
-									s->val = s->sValue.getString();
+									s->val = s->sValue.getStr();
 								}
 							}
 							if( s->proc )
@@ -342,14 +342,14 @@ void ParamProc::process( int argc, char *argv[] )
 							bool bUsed = false;
 							if( s->val.isSet() )
 							{
-								if( s->sValue.getString() == NULL )
+								if( s->sValue.getStr() == NULL )
 								{
 									s->val = argv[arg+1];
 									bUsed = true;
 								}
 								else
 								{
-									s->val = s->sValue.getString();
+									s->val = s->sValue.getStr();
 								}
 							}
 							if( s->proc )
@@ -384,22 +384,22 @@ void ParamProc::process( int argc, char *argv[] )
 	}
 }
 
-ParamProc::ArgSpec *ParamProc::checkWord( const char *arg )
+Bu::ParamProc::ArgSpec *Bu::ParamProc::checkWord( const char *arg )
 {
 	//printf("Checking \"%s\"...\n", arg );
 	std::list<ArgSpec *>::const_iterator i;
 	for( i = lArg.begin(); i != lArg.end(); i++ )
 	{
-		if( (*i)->sWord.getString() == NULL )
+		if( (*i)->sWord.getStr() == NULL )
 			continue;
 
-		if( !strcmp( (*i)->sWord, arg ) )
+		if( !strcmp( (*i)->sWord.getStr(), arg ) )
 			return *i;
 
 		if( (*i)->val.isSet() )
 		{
-			if( !strncmp( (*i)->sWord, arg, (*i)->sWord.getLength() ) &&
-				arg[(*i)->sWord.getLength()] == '=' )
+			if( !strncmp( (*i)->sWord.getStr(), arg, (*i)->sWord.getSize() ) &&
+				arg[(*i)->sWord.getSize()] == '=' )
 			{
 				return *i;
 			}
@@ -409,7 +409,7 @@ ParamProc::ArgSpec *ParamProc::checkWord( const char *arg )
 	return NULL;
 }
 
-ParamProc::ArgSpec *ParamProc::checkLetr( const char arg )
+Bu::ParamProc::ArgSpec *Bu::ParamProc::checkLetr( const char arg )
 {
 	//printf("Checking \'%c\'...\n", arg );
 	std::list<ArgSpec *>::const_iterator i;
@@ -427,27 +427,27 @@ ParamProc::ArgSpec *ParamProc::checkLetr( const char arg )
 	return NULL;
 }
 
-int ParamProc::cmdParam( int argc, char *argv[] )
+int Bu::ParamProc::cmdParam( int argc, char *argv[] )
 {
 	printf("Unhandled command parameter \"%s\" found!\n", argv[0] );
 	return 0;
 }
 
-int ParamProc::unknownParam( int argc, char *argv[] )
+int Bu::ParamProc::unknownParam( int argc, char *argv[] )
 {
 	printf("Unknown parameter \"%s\" found!\n", argv[0] );
 	return 0;
 }
 
-int ParamProc::help( int argc, char *argv[] )
+int Bu::ParamProc::help( int argc, char *argv[] )
 {
 	std::list<Banner *>::const_iterator b = lBan.begin();
 	std::list<ArgSpec *>::const_iterator i;
 	int len=0;
 	for( i = lArg.begin(); i != lArg.end(); i++ )
 	{
-		if( len < (*i)->sWord.getLength() + (*i)->sExtra.getLength() )
-			len = (*i)->sWord.getLength() + (*i)->sExtra.getLength();
+		if( len < (*i)->sWord.getSize() + (*i)->sExtra.getSize() )
+			len = (*i)->sWord.getSize() + (*i)->sExtra.getSize();
 	}
 	char fmt[10];
 	sprintf( fmt, "%%-%ds   ", len );
@@ -458,14 +458,14 @@ int ParamProc::help( int argc, char *argv[] )
 		{
 			if( (*b)->pBefore == (*i) )
 			{
-				printf( (*b)->sBanner.getString() );
+				printf( (*b)->sBanner.getStr() );
 				b++;
 			}
 		}
 		printf("  ");
 		if( (*i)->cChar )
 		{
-			if( (*i)->sWord.getString() )
+			if( (*i)->sWord.getStr() )
 			{
 				printf("-%c, ", (*i)->cChar );
 			}
@@ -478,12 +478,12 @@ int ParamProc::help( int argc, char *argv[] )
 		{
 			printf("    ");
 		}
-		if( (*i)->sWord.getString() )
+		if( (*i)->sWord.getStr() )
 		{
 			printf("--");
-			std::string sTmp = (*i)->sWord.getString();
-			if( (*i)->sExtra.getString() )
-				sTmp += (*i)->sExtra.getString();
+			std::string sTmp = (*i)->sWord.getStr();
+			if( (*i)->sExtra.getStr() )
+				sTmp += (*i)->sExtra.getStr();
 			printf( fmt, sTmp.c_str() );
 		}
 		else
@@ -491,20 +491,20 @@ int ParamProc::help( int argc, char *argv[] )
 			printf("  ");
 			printf(fmt, "" );
 		}
-		printf("%s\n", (*i)->sDesc.getString() );
+		printf("%s\n", (*i)->sDesc.getStr() );
 	}
 	if( b != lBan.end() )
 	{
 		if( (*b)->pBefore == NULL )
 		{
-			printf( (*b)->sBanner.getString() );
+			printf( (*b)->sBanner.getStr() );
 		}
 	}
 
 	exit( 0 );
 }
 
-void ParamProc::addHelpBanner( const char *sHelpBanner )
+void Bu::ParamProc::addHelpBanner( const char *sHelpBanner )
 {
 	Banner *pBan = new Banner;
 	pBan->sBanner = sHelpBanner;
