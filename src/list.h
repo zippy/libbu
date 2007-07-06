@@ -396,7 +396,7 @@ namespace Bu
 		 * Erase an item from the list.
 		 *@param i (iterator) The item to erase.
 		 */
-		void erase( iterator &i )
+		void erase( iterator i )
 		{
 			Link *pCur = i.pLink;
 			Link *pPrev = pCur->pPrev;
