@@ -159,6 +159,11 @@ namespace Bu
 			}
 
 		public:
+			iterator( const iterator &i ) :
+				pLink( i.pLink )
+			{
+			}
+
 			/**
 			 * Equals comparison operator.
 			 *@param oth (const iterator &) The iterator to compare to.
@@ -287,12 +292,12 @@ namespace Bu
 			{
 			}
 
+		public:
 			const_iterator( const iterator &i ) :
 				pLink( i.pLink )
 			{
 			}
 
-		public:
 			bool operator==( const const_iterator &oth ) const
 			{
 				return ( pLink == oth.pLink );
@@ -393,7 +398,22 @@ namespace Bu
 		}
 
 		/**
-		 * Erase an item from the list.
+		 * Erase an item from the list.  After erasing the iterator will point
+		 * to an invalid location and should be ignored.  To erase an item from
+		 * a list in a loop you should create a backup iterator.
+		 *@code
+		 for( List<>::iterator i = l.begin(); i != l.end(); i++ )
+		 {
+		 	if( ...(needs delete)... )
+			{
+				List<>::iterator prev = i;
+				prev--;
+				l.erase( i );
+				i = prev;
+				continue;
+			}
+		 }
+		 @endcode
 		 *@param i (iterator) The item to erase.
 		 */
 		void erase( iterator i )
@@ -410,7 +430,6 @@ namespace Bu
 				if( pFirst == NULL )
 					pLast = NULL;
 				nSize--;
-				i.pLink = pFirst;
 			}
 			else
 			{
@@ -423,7 +442,6 @@ namespace Bu
 				if( pTmp != NULL )
 					pTmp->pPrev = pPrev;
 				nSize--;
-				i.pLink = pTmp;
 			}
 		}
 
