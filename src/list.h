@@ -68,6 +68,7 @@ namespace Bu
 			{
 				append( *pCur->pValue );
 			}
+			return *this;
 		}
 
 		/**
