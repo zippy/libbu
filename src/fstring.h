@@ -75,8 +75,11 @@ namespace Bu
 			pFirst( NULL ),
 			pLast( NULL )
 		{
-			rSrc.flatten();
-			append( rSrc.pFirst->pData, rSrc.nLength );
+			if( rSrc.nLength > 0 )
+			{
+				rSrc.flatten();
+				append( rSrc.pFirst->pData, rSrc.nLength );
+			}
 		}
 
 		FBasicString( const MyType &rSrc, long nLength ) :
