@@ -129,3 +129,47 @@ void Bu::Logger::setLevel( int n )
 	}
 }
 
+void Bu::Logger::hexDump( int nLevel, const char *sFile, const char *sFunction,
+		int nLine, const void *pDataV, long nDataLen,
+		const char *lpName )
+{
+	log( nLevel, sFile, sFunction, nLine, "Displaying %ld bytes of %s.\n", nDataLen, lpName );
+	const unsigned char *pData = (const unsigned char *)pDataV;
+	int j = 0;
+	Bu::FString sBorder;
+	for( int l = 0; l < 8*3+2*8+2; l++ ) sBorder += ((l!=8*3)?("-"):("+"));
+	sBorder += '\n';
+	log( nLevel, sFile, sFunction, nLine, sBorder.getStr() );
+	Bu::FString sLine;
+	for(;;)
+	{
+		int kmax = 8;
+		if( nDataLen-j < 8 ) kmax = nDataLen-j;
+		for(int k = 0; k < 8; k++ )
+		{
+			if( k < kmax )
+			{
+				char buf[4];
+				sprintf( buf, "%02X ", (int)((unsigned char)pData[j+k]) );
+				sLine += buf;
+			}
+			else
+			{
+				sLine += "-- ";
+			}
+		}
+		sLine += "| ";
+		for(int k = 0; k < kmax; k++ )
+		{
+			char buf[3];
+			sprintf( buf, "%c ", (pData[j+k]>32 && pData[j+k]<=128)?(pData[j+k]):('.') );
+			sLine += buf;
+		}
+		sLine += '\n';
+		log( nLevel, sFile, sFunction, nLine, sLine.getStr() );
+		sLine = "";
+		j += kmax;
+		if( j >= nDataLen ) break;
+	}
+	log( nLevel, sFile, sFunction, nLine, sBorder.getStr() );
+}

@@ -75,6 +75,8 @@ namespace Bu
 		void setMask( int n );
 		void setLevel( int n );
 
+		void hexDump( int nLevel, const char *sFile, const char *sFunction, int nLine, const void *pData, long nDataLen, const char *lpName );
+
 	private:
 		Bu::FString sLogFormat;
 		int nLevelMask;
@@ -88,6 +90,9 @@ namespace Bu
  */
 #define lineLog( nLevel, sFrmt, ...) \
 	Bu::Logger::getInstance().log( nLevel, __FILE__, __PRETTY_FUNCTION__, __LINE__, sFrmt, ##__VA_ARGS__ ) 
+
+#define logHexDump( nLevel, pData, iSize, sName ) \
+	Bu::Logger::getInstance().hexDump( nLevel, __FILE__, __PRETTY_FUNCTION__, __LINE__, pData, iSize, sName ) 
 
 /**
  * Set the Bu::Logger logging mask directly.  See Bu::Logger::setMask for

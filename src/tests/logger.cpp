@@ -22,6 +22,8 @@ int main()
 	setLogFormat("%L: %y-%02m-%02d %h:%02M:%02s %f:%l:%F: %t");
 	lineLog( 5, "Hey, error: %s", strerror( errno ) );
 
+	logHexDump( 5, "This is a test of the hex-dump facility", 16, "Random stuff");
+
 	Thing gh;
 	gh.go( 6);
 }
