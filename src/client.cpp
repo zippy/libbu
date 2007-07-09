@@ -71,6 +71,7 @@ void Bu::Client::processOutput()
 void Bu::Client::setProtocol( Protocol *pProto )
 {
 	this->pProto = pProto;
+	this->pProto->onNewConnection( this );
 }
 
 Bu::Protocol *Bu::Client::getProtocol()
