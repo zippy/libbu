@@ -49,7 +49,6 @@ namespace Bu
 	public:
 		FBasicString() :
 			nLength( 0 ),
-			pnRefs( NULL ),
 			pFirst( NULL ),
 			pLast( NULL )
 		{
@@ -57,7 +56,6 @@ namespace Bu
 
 		FBasicString( const chr *pData ) :
 			nLength( 0 ),
-			pnRefs( NULL ),
 			pFirst( NULL ),
 			pLast( NULL )
 		{
@@ -66,7 +64,6 @@ namespace Bu
 
 		FBasicString( const chr *pData, long nLength ) :
 			nLength( 0 ),
-			pnRefs( NULL ),
 			pFirst( NULL ),
 			pLast( NULL )
 		{
@@ -75,21 +72,15 @@ namespace Bu
 
 		FBasicString( const MyType &rSrc ) :
 			nLength( 0 ),
-			pnRefs( NULL ),
 			pFirst( NULL ),
 			pLast( NULL )
 		{
-			// Here we have no choice but to copy, since the other guy is a const.
-			// In the case that the source were flat, we could get a reference, it
-			// would make some things faster, but not matter in many other cases.
-
-			joinShare( rSrc );
-			//copyFrom( rSrc );
+			rSrc.flatten();
+			append( rSrc.pFirst->pData, rSrc.nLength );
 		}
 
 		FBasicString( const MyType &rSrc, long nLength ) :
 			nLength( 0 ),
-			pnRefs( NULL ),
 			pFirst( NULL ),
 			pLast( NULL )
 		{
@@ -98,7 +89,6 @@ namespace Bu
 		
 		FBasicString( const MyType &rSrc, long nStart, long nLength ) :
 			nLength( 0 ),
-			pnRefs( NULL ),
 			pFirst( NULL ),
 			pLast( NULL )
 		{
@@ -107,7 +97,6 @@ namespace Bu
 
 		FBasicString( long nSize ) :
 			nLength( nSize ),
-			pnRefs( NULL ),
 			pFirst( NULL ),
 			pLast( NULL )
 		{
@@ -383,15 +372,7 @@ namespace Bu
 		 */
 		MyType &operator =( const MyType &rSrc )
 		{
-			//if( rSrc.isFlat() )
-			//{
-				joinShare( rSrc );
-			//}
-			//else
-			//{
-			//	copyFrom( rSrc );
-			//}
-			//
+			copyFrom( rSrc );
 
 			return (*this);
 		}
@@ -538,7 +519,6 @@ namespace Bu
 		void toLower()
 		{
 			flatten();
-			unShare();
 
 			for( long j = 0; j < nLength; j++ )
 			{
@@ -553,7 +533,6 @@ namespace Bu
 		void toUpper()
 		{
 			flatten();
-			unShare();
 
 			for( long j = 0; j < nLength; j++ )
 			{
@@ -648,8 +627,6 @@ namespace Bu
 			if( pFirst == NULL )
 				return;
 
-			unShare();
-
 			Chunk *pNew = newChunk( nLength );
 			chr *pos = pNew->pData;
 			Chunk *i = pFirst;
@@ -672,25 +649,18 @@ namespace Bu
 			if( pFirst == NULL )
 				return;
 
-			if( isShared() )
+			Chunk *i = pFirst;
+			for(;;)
 			{
-				decRefs();
+				Chunk *n = i->pNext;
+				aChr.deallocate( i->pData, i->nLength+1 );
+				aChunk.deallocate( i, 1 );
+				if( n == NULL )
+					break;
+				i = n;
 			}
-			else
-			{
-				Chunk *i = pFirst;
-				for(;;)
-				{
-					Chunk *n = i->pNext;
-					aChr.deallocate( i->pData, i->nLength+1 );
-					aChunk.deallocate( i, 1 );
-					if( n == NULL )
-						break;
-					i = n;
-				}
-				pFirst = pLast = NULL;
-				nLength = 0;
-			}
+			pFirst = pLast = NULL;
+			nLength = 0;
 		}
 		
 		void copyFrom( const FBasicString<chr, nMinSize, chralloc, chunkalloc> &rSrc )
@@ -698,8 +668,6 @@ namespace Bu
 			if( rSrc.pFirst == NULL )
 				return;
 			
-			decRefs();
-
 			Chunk *pNew = newChunk( rSrc.nLength );
 			chr *pos = pNew->pData;
 			Chunk *i = rSrc.pFirst;
@@ -721,11 +689,6 @@ namespace Bu
 			return (pFirst == pLast);
 		}
 
-		bool isShared() const
-		{
-			return (pnRefs != NULL);
-		}
-
 		Chunk *newChunk() const
 		{
 			Chunk *pNew = aChunk.allocate( 1 );
@@ -745,8 +708,6 @@ namespace Bu
 
 		void appendChunk( Chunk *pNewChunk )
 		{
-			unShare();
-
 			if( pFirst == NULL )
 				pLast = pFirst = pNewChunk;
 			else
@@ -760,8 +721,6 @@ namespace Bu
 		
 		void prependChunk( Chunk *pNewChunk )
 		{
-			unShare();
-
 			if( pFirst == NULL )
 				pLast = pFirst = pNewChunk;
 			else
@@ -771,102 +730,6 @@ namespace Bu
 			}
 
 			nLength += pNewChunk->nLength;
-		}
-
-		void joinShare( MyType &rSrc )
-		{
-			clear();
-
-			if( !rSrc.isFlat() )
-				rSrc.flatten();
-
-			rSrc.initCount();
-			pnRefs = rSrc.pnRefs;
-			(*pnRefs)++;
-			nLength = rSrc.nLength;
-			pFirst = rSrc.pFirst;
-			pLast = rSrc.pLast;
-		}
-		
-		void joinShare( const MyType &rSrc )
-		{
-			clear();
-
-			rSrc.flatten();
-
-			if( !rSrc.isShared() )
-			{
-				rSrc.pnRefs = new uint32_t;
-				(*rSrc.pnRefs) = 1;
-			}
-			pnRefs = rSrc.pnRefs;
-			(*pnRefs)++;
-			nLength = rSrc.nLength;
-			pFirst = rSrc.pFirst;
-			pLast = rSrc.pLast;
-		}
-
-		/**
-		 * This takes an object that was shared and makes a copy of the base data
-		 * that was being shared so that this copy can be changed.  This should be
-		 * added before any call that will change this object;
-		 */
-		void unShare() const
-		{
-			if( isShared() == false )
-				return;
-			if( pFirst == NULL )
-				return;
-
-			Chunk *pNew = newChunk( nLength );
-			chr *pos = pNew->pData;
-			Chunk *i = pFirst;
-			for(;;)
-			{
-				cpy( pos, i->pData, i->nLength );
-				pos += i->nLength;
-				i = i->pNext;
-				if( i == NULL )
-					break;
-			}
-			decRefs();
-			pLast = pFirst = pNew;
-			nLength = pNew->nLength;
-		}
-
-		/**
-		 * This decrements our ref count and pulls us out of the share.  If the ref
-		 * count hits zero because of this, it destroys the share.  This is not
-		 * safe to call on it's own, it's much better to call unShare.
-		 */
-		void decRefs() const
-		{
-			if( isShared() )
-			{
-				(*pnRefs)--;
-				if( (*pnRefs) == 0 )
-					destroyShare();
-				else
-				{
-					pnRefs = NULL;
-					pFirst = NULL;
-					pLast = NULL;
-					nLength = 0;
-				}
-			}
-		}
-
-		/**
-		 * While the unShare function removes an instance from a share, this
-		 * function destroys the data that was in the share, removing the share
-		 * itself.  This should only be called when the refcount for the share has
-		 * or is about to reach zero.
-		 */
-		void destroyShare() const
-		{
-			delete pnRefs;
-			pnRefs = NULL;
-			realClear();
 		}
 
 #ifdef VALTEST
@@ -881,18 +744,8 @@ namespace Bu
 		}
 #endif
 
-		void initCount() const
-		{
-			if( !isShared() )
-			{
-				pnRefs = new uint32_t;
-				(*pnRefs) = 1;
-			}
-		}
-
 	private:
 		mutable long nLength;
-		mutable uint32_t *pnRefs;
 		mutable Chunk *pFirst;
 		mutable Chunk *pLast;
 
