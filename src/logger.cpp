@@ -104,7 +104,7 @@ void Bu::Logger::setFormat( const Bu::FString &str )
 	}
 	sLogFormat += '\n';
 
-	write( fileno(stdout), sLogFormat.getStr(), sLogFormat.getSize() );
+	//write( fileno(stdout), sLogFormat.getStr(), sLogFormat.getSize() );
 }
 
 void Bu::Logger::setMask( int n )
