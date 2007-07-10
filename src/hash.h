@@ -856,7 +856,8 @@ namespace Bu
 
 			// First we scan to see if the key is already there, abort if we
 			// run out of probing room, or we find a non-filled entry
-			for( int8_t j = 0;
+			int8_t j;
+			for( j = 0;
 				isFilled( nCur ) && j < 32;
 				nCur = (nCur + (1<<j))%nCapacity, j++
 				)
@@ -880,7 +881,7 @@ namespace Bu
 
 			// This is our insurance, if the table is full, then go ahead and
 			// rehash, then try again.
-			if( isFilled( nCur ) && rehash == true )
+			if( (isFilled( nCur ) || j == 32) && rehash == true )
 			{
 				reHash( szCalc(getCapacity(), getFill(), getDeleted()) );
 
