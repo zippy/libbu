@@ -166,9 +166,9 @@ void Bu::Client::read( void *pData, int nBytes )
 	}
 }
 
-void Bu::Client::peek( void *pData, int nBytes )
+void Bu::Client::peek( void *pData, int nBytes, int nOffset )
 {
-	memcpy( pData, sReadBuf.getStr()+nRBOffset, nBytes );
+	memcpy( pData, sReadBuf.getStr()+nRBOffset+nOffset, nBytes );
 }
 
 void Bu::Client::seek( int nBytes )

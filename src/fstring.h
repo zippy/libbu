@@ -222,10 +222,13 @@ namespace Bu
 
 			Chunk *pNew = newChunk( nNewSize );
 			long nNewLen = (nNewSize<nLength)?(nNewSize):(nLength);
-			cpy( pNew->pData, pFirst->pData, nNewLen );
+			if( nLength > 0 )
+			{
+				cpy( pNew->pData, pFirst->pData, nNewLen );
+				aChr.deallocate( pFirst->pData, pFirst->nLength+1 );
+				aChunk.deallocate( pFirst, 1 );
+			}
 			pNew->pData[nNewLen] = (chr)0;
-			aChr.deallocate( pFirst->pData, pFirst->nLength+1 );
-			aChunk.deallocate( pFirst, 1 );
 			pFirst = pLast = pNew;
 			nLength = nNewSize;
 		}
@@ -396,7 +399,7 @@ namespace Bu
 			flatten();
 			const chr *a = pData;
 			chr *b = pFirst->pData;
-			for( ; *a!=(chr)0; a++, b++ )
+			for( ; *a!=(chr)0 || *b!=(chr)0; a++, b++ )
 			{
 				if( *a != *b )
 					return false;
@@ -420,7 +423,7 @@ namespace Bu
 			pData.flatten();
 			const chr *a = pData.pFirst->pData;
 			chr *b = pFirst->pData;
-			for( ; *a!=(chr)0; a++, b++ )
+			for( ; *a!=(chr)0 || *b!=(chr)0; a++, b++ )
 			{
 				if( *a != *b )
 					return false;
@@ -587,7 +590,7 @@ namespace Bu
 			long nNewLen = nLength - nAmnt;
 			flatten();
 			Chunk *pNew = newChunk( nNewLen );
-			cpy( pNew->pData, pFirst->pData, nNewLen );
+			cpy( pNew->pData, pFirst->pData+nAmnt, nNewLen );
 			clear();
 			appendChunk( pNew );
 		}

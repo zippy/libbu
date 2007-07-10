@@ -5,6 +5,7 @@
 
 Bu::Logger::Logger()
 {
+	setFormat("%t");
 }
 
 Bu::Logger::~Logger()
@@ -27,7 +28,7 @@ void Bu::Logger::log( int nLevel, const char *sFile, const char *sFunction, int 
 	char *line = NULL;
 	struct tm *pTime;
 	pTime = localtime( &t );
-	asprintf(
+	if ( asprintf(
 		&line,
 		sLogFormat.getStr(),
 		pTime->tm_year+1900,
@@ -41,7 +42,11 @@ void Bu::Logger::log( int nLevel, const char *sFile, const char *sFunction, int 
 		nLine,
 		text,
 		sFunction
-		);
+		) < 0 )
+	{
+		//printf("LOGGER: ERROR ALLOCATING STRING:  %s\n", strerror( errno ) );
+		return;
+	}
 	write( fileno(stdout), line, strlen(line) );
 	free( text );
 	free( line );
