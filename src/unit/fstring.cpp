@@ -7,17 +7,26 @@ public:
 	Unit()
 	{
 		setName("FString");
-		addTest( Unit::test1 );
+		addTest( Unit::compare1 );
+		addTest( Unit::compare2 );
 	}
 
 	virtual ~Unit()
 	{
 	}
 
-	void test1()
+	void compare1()
 	{
-		unitTest( 1 == 1 );
-		unitTest( 1 == 0 );
+		Bu::FString b("Bob");
+		unitTest( !(b == "Bobo") );
+		unitTest( b == "Bob" );
+	}
+	
+	void compare2()
+	{
+		Bu::FString b("Bobo");
+		unitTest( !(b == "Bob") );
+		unitTest( b == "Bobo" );
 	}
 };
 
