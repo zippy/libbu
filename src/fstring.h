@@ -418,12 +418,14 @@ namespace Bu
 				return true;
 			if( pFirst == NULL ) 
 				return false;
+			if( nLength != pData.nLength )
+				return false;
 
 			flatten();
 			pData.flatten();
 			const chr *a = pData.pFirst->pData;
 			chr *b = pFirst->pData;
-			for( ; *a!=(chr)0 || *b!=(chr)0; a++, b++ )
+			for( long j = 0; j < nLength; j++, a++, b++ )
 			{
 				if( *a != *b )
 					return false;

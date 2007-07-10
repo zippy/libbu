@@ -3,7 +3,16 @@
 
 template<> uint32_t Bu::__calcHashCode<Bu::FString>( const Bu::FString &k )
 {
-	return __calcHashCode( k.c_str() );
+	long j, sz = k.getSize();
+	const char *s = k.getStr();
+
+	long nPos = 0;
+	for( j = 0; j < sz; j++, s++ )
+	{
+		nPos = *s + (nPos << 6) + (nPos << 16) - nPos;
+	}
+
+	return nPos;
 }
 
 template<> bool Bu::__cmpHashKeys<Bu::FString>(
