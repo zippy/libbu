@@ -22,6 +22,18 @@ namespace Bu
 		{
 		}
 
+		Atom( const MyType &oth ) :
+			pData( NULL )
+		{
+			set( *oth.pData );
+		}
+
+		Atom( const t &oth ) :
+			pData( NULL )
+		{
+			set( oth );
+		}
+
 		virtual ~Atom()
 		{
 			clear();
@@ -80,6 +92,13 @@ namespace Bu
 		MyType &operator =( const t &oth )
 		{
 			set( oth );
+
+			return *this;
+		}
+		
+		MyType &operator =( const MyType &oth )
+		{
+			set( *oth.pData );
 
 			return *this;
 		}
