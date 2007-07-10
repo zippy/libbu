@@ -399,7 +399,7 @@ namespace Bu
 			flatten();
 			const chr *a = pData;
 			chr *b = pFirst->pData;
-			for( ; *a!=(chr)0 || *b!=(chr)0; a++, b++ )
+			for( long j = 0; *a!=(chr)0 && j < nLength; j++, a++, b++ )
 			{
 				if( *a != *b )
 					return false;
