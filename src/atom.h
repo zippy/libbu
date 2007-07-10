@@ -25,7 +25,8 @@ namespace Bu
 		Atom( const MyType &oth ) :
 			pData( NULL )
 		{
-			set( *oth.pData );
+			if( oth.pData )
+				set( *oth.pData );
 		}
 
 		Atom( const t &oth ) :
@@ -98,7 +99,8 @@ namespace Bu
 		
 		MyType &operator =( const MyType &oth )
 		{
-			set( *oth.pData );
+			if( oth.pData )
+				set( *oth.pData );
 
 			return *this;
 		}
