@@ -676,7 +676,10 @@ namespace Bu
 		void copyFrom( const FBasicString<chr, nMinSize, chralloc, chunkalloc> &rSrc )
 		{
 			if( rSrc.pFirst == NULL )
+			{
+				clear();
 				return;
+			}
 			
 			Chunk *pNew = newChunk( rSrc.nLength );
 			chr *pos = pNew->pData;
