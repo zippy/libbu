@@ -434,6 +434,7 @@ namespace Bu
 				va.destroy( pCur->pValue );
 				va.deallocate( pCur->pValue, 1 );
 				pFirst = pCur->pNext;
+				pFirst->pPrev = NULL;
 				la.destroy( pCur );
 				la.deallocate( pCur, 1 );
 				if( pFirst == NULL )
