@@ -1,7 +1,8 @@
 #include "tafwriter.h"
 
 Bu::TafWriter::TafWriter( Bu::Stream &sOut ) :
-	sOut( sOut )
+	sOut( sOut ),
+	iDepth( 0 )
 {
 }
 
@@ -9,11 +10,19 @@ Bu::TafWriter::~TafWriter()
 {
 }
 
+void Bu::TafWriter::ident()
+{
+	for( int j = 0; j < iDepth; j++ )
+		sOut.write("    ", 4 );
+}
+
 void Bu::TafWriter::writeGroup( const Bu::TafGroup *pRoot )
 {
+	ident();
 	sOut.write("{", 1 );
 	writeString( pRoot->getName() );
-	sOut.write(": ", 2 );
+	sOut.write(":\n", 2 );
+	iDepth++;
 	const Bu::TafGroup::NodeList &nl = pRoot->getChildren();
 	for( Bu::TafGroup::NodeList::const_iterator i = nl.begin(); i != nl.end(); i++ )
 	{
@@ -32,22 +41,26 @@ void Bu::TafWriter::writeGroup( const Bu::TafGroup *pRoot )
 				break;
 		}
 	}
-	sOut.write("}", 1 );
+	iDepth--;
+	ident();
+	sOut.write("}\n", 2 );
 }
 
 void Bu::TafWriter::writeProperty( const Bu::TafProperty *pProp )
 {
+	ident();
 	writeString( pProp->getName() );
 	if( pProp->getValue().getStr() != NULL )
 	{
 		sOut.write("=", 1 );
 		writeString( pProp->getValue() );
 	}
-	sOut.write(" ", 1 );
+	sOut.write("\n", 1 );
 }
 
 void Bu::TafWriter::writeComment( const Bu::TafComment *pComment )
 {
+	ident();
 	sOut.write("/*", 2 );
 	sOut.write( pComment->getText().getStr(), pComment->getText().getSize() );
 	sOut.write("*/ ", 3 );

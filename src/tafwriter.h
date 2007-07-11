@@ -23,7 +23,9 @@ namespace Bu
 		void writeProperty( const Bu::TafProperty *pProp );
 		void writeComment( const Bu::TafComment *pComment );
 		void writeString( const Bu::FString &str );
+		void ident();
 		Bu::Stream &sOut;
+		int iDepth;
 	};
 }
 
