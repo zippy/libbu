@@ -18,6 +18,21 @@ int main()
 		l.prepend( -j );
 	}
 
+	{
+		Bu::List<int>::iterator i = l.begin();
+		Bu::List<int>::iterator j = i;
+		int a, b;
+		a = *j;
+		printf("end:  %s\n", (j != l.end())?"no":"yes");
+		j--;
+		printf("end:  %s\n", (j != l.end())?"no":"yes");
+		j++;
+		printf("end:  %s\n", (j != l.end())?"no":"yes");
+		i = j;
+		b = *i;
+		printf("%d -> %d\n", a, b );
+	}
+
 	for( Bu::List<int>::iterator i = l.begin(); i != l.end(); i++ )
 	{
 		printf("%d ", *i );
@@ -25,9 +40,11 @@ int main()
 	printf("\n");
 	for( Bu::List<int>::iterator i = l.begin(); i != l.end(); i++ )
 	{
+		Bu::List<int>::iterator j = i; j--;
 		l.erase( i );
+		i = j;
 		if( i != l.end() )
-			printf("%d ", *i );
+			printf("!%d ", *i );
 	}
 
 	printf("\n\n");

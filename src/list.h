@@ -149,19 +149,24 @@ namespace Bu
 			friend class List<value, valuealloc, linkalloc>;
 		private:
 			Link *pLink;
-			iterator() :
-				pLink( NULL )
+			MyType &rList;
+			bool bOffFront;
+			iterator( MyType &rList ) :
+				pLink( NULL ),
+				rList( rList )
 			{
 			}
 
-			iterator( Link *pLink ) :
-				pLink( pLink )
+			iterator( Link *pLink, MyType &rList ) :
+				pLink( pLink ),
+				rList( rList )
 			{
 			}
 
 		public:
 			iterator( const iterator &i ) :
-				pLink( i.pLink )
+				pLink( i.pLink ),
+				rList( i.rList )
 			{
 			}
 
@@ -223,43 +228,43 @@ namespace Bu
 				return pLink->pValue;
 			}
 
-			/**
-			 * Increment operator.
-			 */
 			iterator &operator++()
 			{
-				if( pLink != NULL )
+				if( pLink == NULL )
+					pLink = (bOffFront)?(rList.pFirst):(NULL);
+				else
 					pLink = pLink->pNext;
+				bOffFront = false;
 				return *this;
 			}
 
-			/**
-			 * Decrement operator.
-			 */
 			iterator &operator--()
 			{
-				if( pLink != NULL )
+				if( pLink == NULL )
+					pLink = (bOffFront)?(NULL):(rList.pLast);
+				else
 					pLink = pLink->pPrev;
+				bOffFront = true;
 				return *this;
 			}
 			
-			/**
-			 * Increment operator.
-			 */
 			iterator &operator++( int )
 			{
-				if( pLink != NULL )
+				if( pLink == NULL )
+					pLink = (bOffFront)?(rList.pFirst):(NULL);
+				else
 					pLink = pLink->pNext;
+				bOffFront = false;
 				return *this;
 			}
 
-			/**
-			 * Decrement operator.
-			 */
 			iterator &operator--( int )
 			{
-				if( pLink != NULL )
+				if( pLink == NULL )
+					pLink = (bOffFront)?(NULL):(rList.pLast);
+				else
 					pLink = pLink->pPrev;
+				bOffFront = true;
 				return *this;
 			}
 
@@ -283,19 +288,24 @@ namespace Bu
 			friend class List<value, valuealloc, linkalloc>;
 		private:
 			Link *pLink;
-			const_iterator() :
-				pLink( NULL )
+			const MyType &rList;
+			bool bOffFront;
+			const_iterator( const MyType &rList ) :
+				pLink( NULL ),
+				rList( rList )
 			{
 			}
 
-			const_iterator( Link *pLink ) :
-				pLink( pLink )
+			const_iterator( Link *pLink, const MyType &rList ) :
+				pLink( pLink ),
+				rList( rList )
 			{
 			}
 
 		public:
 			const_iterator( const iterator &i ) :
-				pLink( i.pLink )
+				pLink( i.pLink ),
+				rList( i.rList )
 			{
 			}
 
@@ -331,29 +341,41 @@ namespace Bu
 
 			const_iterator &operator++()
 			{
-				if( pLink != NULL )
+				if( pLink == NULL )
+					pLink = (bOffFront)?(rList.pFirst):(NULL);
+				else
 					pLink = pLink->pNext;
+				bOffFront = false;
 				return *this;
 			}
 
 			const_iterator &operator--()
 			{
-				if( pLink != NULL )
+				if( pLink == NULL )
+					pLink = (bOffFront)?(NULL):(rList.pLast);
+				else
 					pLink = pLink->pPrev;
+				bOffFront = true;
 				return *this;
 			}
 			
 			const_iterator &operator++( int )
 			{
-				if( pLink != NULL )
+				if( pLink == NULL )
+					pLink = (bOffFront)?(rList.pFirst):(NULL);
+				else
 					pLink = pLink->pNext;
+				bOffFront = false;
 				return *this;
 			}
 
 			const_iterator &operator--( int )
 			{
-				if( pLink != NULL )
+				if( pLink == NULL )
+					pLink = (bOffFront)?(NULL):(rList.pLast);
+				else
 					pLink = pLink->pPrev;
+				bOffFront = true;
 				return *this;
 			}
 
@@ -376,16 +398,16 @@ namespace Bu
 		 */
 		iterator begin()
 		{
-			return iterator( pFirst );
+			return iterator( pFirst, *this );
 		}
 
 		/**
 		 * Get a const iterator pointing to the first item in the list.
 		 *@returns (const const_iterator)
 		 */
-		const const_iterator begin() const
+		const_iterator begin() const
 		{
-			return const_iterator( pFirst );
+			return const_iterator( pFirst, *this );
 		}
 
 		/**
@@ -399,27 +421,13 @@ namespace Bu
 		}
 
 		/**
-		 * Erase an item from the list.  After erasing the iterator will point
-		 * to an invalid location and should be ignored.  To erase an item from
-		 * a list in a loop you should create a backup iterator.
-		 *@code
-		 for( List<>::iterator i = l.begin(); i != l.end(); i++ )
-		 {
-		 	if( ...(needs delete)... )
-			{
-				List<>::iterator prev = i;
-				prev--;
-				l.erase( i );
-				i = prev;
-				continue;
-			}
-		 }
-		 @endcode
+		 * Erase an item from the list.
 		 *@param i (iterator) The item to erase.
 		 */
 		void erase( iterator i )
 		{
 			Link *pCur = i.pLink;
+			if( pCur == NULL ) return;
 			Link *pPrev = pCur->pPrev;
 			if( pPrev == NULL )
 			{
