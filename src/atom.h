@@ -104,6 +104,16 @@ namespace Bu
 
 			return *this;
 		}
+		
+		bool operator ==( const MyType &oth )
+		{
+			return (*pData) == (*oth.pData);
+		}
+
+		bool operator ==( const t &oth )
+		{
+			return (*pData) == oth;
+		}
 
 		t *operator ->()
 		{
