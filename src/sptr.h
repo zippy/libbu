@@ -139,6 +139,26 @@ namespace Bu
 		{
 			return pData == src;
 		}
+		
+		/**
+		 * Not equals comparison operator.
+		 *@param src (const SPtr<T> &) The SPtr to compare to.
+		 *@returns (bool) Are the equal?
+		 */
+		bool operator!=( const SPtr<T> &src ) const
+		{
+			return !(pData == src.pData);
+		}
+
+		/**
+		 * Not equals comparison operator.
+		 *@param src (const T *) The pointer to compare to.
+		 *@returns (bool) Are the equal?
+		 */
+		bool operator!=( const T *src ) const
+		{
+			return !(pData == src);
+		}
 
 		/**
 		 * Boolean cast operator. Do we have a pointer?

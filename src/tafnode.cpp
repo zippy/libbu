@@ -14,28 +14,6 @@ const Bu::TafNode::NodeType Bu::TafNode::getType() const
 	return eType;
 }
 
-/*
-const Bu::TafNode::PropList &Bu::TafNode::getProperties( const Bu::FString &sName ) const
-{
-	return hProp.get( sName );
-}
-
-const Bu::TafNode::NodeList &Bu::TafNode::getChildren( const Bu::FString &sName ) const
-{
-	return hChildren.get( sName );
-}
-
-const Bu::FString &Bu::TafNode::getProperty( const Bu::FString &sName ) const
-{
-	return getProperties( sName ).first();
-}
-
-const Bu::TafNode *Bu::TafNode::getChild( const Bu::FString &sName ) const
-{
-	return getChildren( sName ).first();
-}
-*/
-
 Bu::TafGroup::TafGroup( const Bu::FString &sName ) :
 	TafNode( typeGroup ),
 	sName( sName )
@@ -44,7 +22,6 @@ Bu::TafGroup::TafGroup( const Bu::FString &sName ) :
 
 Bu::TafGroup::~TafGroup()
 {
-	//printf("Entering Bu::TafNode::~TafNode() \"%s\"\n", sName.getStr() );
 	for( NodeList::iterator i = lChildren.begin(); i != lChildren.end(); i++ )
 	{
 		delete (*i);
