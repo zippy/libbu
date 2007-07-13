@@ -89,6 +89,15 @@ class name : public Bu::ExceptionBase											\
 		name( int nCode=0 ) throw ();										\
 };
 
+#define subExceptionDeclChild( name, parent )								\
+class name : public parent													\
+{																			\
+	public:																	\
+		name( const char *sFormat, ... ) throw ();							\
+		name( int nCode, const char *sFormat, ... ) throw();				\
+		name( int nCode=0 ) throw ();										\
+};
+
 #define subExceptionDeclBegin( name )										\
 class name : public Bu::ExceptionBase											\
 {																			\
@@ -119,6 +128,28 @@ name::name( int nCode, const char *lpFormat, ... ) throw() :				\
 }																			\
 name::name( int nCode ) throw() :											\
 	ExceptionBase( nCode )													\
+{																			\
+}
+
+#define subExceptionDefChild( name, parent )								\
+name::name( const char *lpFormat, ... ) throw() :							\
+	parent( 0 )																\
+{																			\
+	va_list ap;																\
+	va_start( ap, lpFormat );												\
+	setWhat( lpFormat, ap );												\
+	va_end( ap );															\
+}																			\
+name::name( int nCode, const char *lpFormat, ... ) throw() :				\
+	parent( nCode )															\
+{																			\
+	va_list ap;																\
+	va_start( ap, lpFormat );												\
+	setWhat( lpFormat, ap );												\
+	va_end( ap );															\
+}																			\
+name::name( int nCode ) throw() :											\
+	parent( nCode )															\
 {																			\
 }
 
