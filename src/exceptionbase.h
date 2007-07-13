@@ -89,6 +89,17 @@ class name : public Bu::ExceptionBase											\
 		name( int nCode=0 ) throw ();										\
 };
 
+#define subExceptionDeclBegin( name )										\
+class name : public Bu::ExceptionBase											\
+{																			\
+	public:																	\
+		name( const char *sFormat, ... ) throw ();							\
+		name( int nCode, const char *sFormat, ... ) throw();				\
+		name( int nCode=0 ) throw ();
+
+#define subExceptionDeclEnd()												\
+};
+
 #define subExceptionDef( name )												\
 name::name( const char *lpFormat, ... ) throw() :							\
 	ExceptionBase( 0 )														\
