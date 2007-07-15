@@ -47,9 +47,12 @@ namespace Bu
 		Bu::FString getAddress() const;
 
 	private:
+		void setAddress();
+
 		int nSocket;
 		bool bActive;
 		FString sReadBuf;
+		FString sAddress;
 	};
 }
 

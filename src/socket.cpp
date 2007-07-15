@@ -20,6 +20,7 @@ Bu::Socket::Socket( int nSocket ) :
 	nSocket( nSocket ),
 	bActive( true )
 {
+	setAddress();
 }
 
 Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
@@ -93,8 +94,8 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 			close();
 			throw ExceptionBase("Connection timeout.\n");
 		}
-		
 	}
+	setAddress();
 }
 
 Bu::Socket::~Socket()
@@ -297,7 +298,7 @@ bool Bu::Socket::isOpen()
 	return bActive;
 }
 
-Bu::FString Bu::Socket::getAddress() const
+void Bu::Socket::setAddress()
 {
 	struct sockaddr_in addr;
 	socklen_t len = sizeof(addr);
@@ -305,7 +306,11 @@ Bu::FString Bu::Socket::getAddress() const
 	getsockname( nSocket, (sockaddr *)(&addr), &len );
 	char buf[150];
 	sprintf( buf, "%s", inet_ntoa( addr.sin_addr ) );
+	sAddress = buf;
+}
 
-	return buf;
+Bu::FString Bu::Socket::getAddress() const
+{
+	return sAddress;
 }
 
