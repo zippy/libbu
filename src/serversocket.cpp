@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include "serversocket.h"
 #include "exceptions.h"
+#include "osx_compatibility.h"
 
 Bu::ServerSocket::ServerSocket( int nPort, int nPoolSize ) :
 	nPort( nPort )
@@ -117,9 +118,13 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 		nClient = ::accept( nServer, (struct sockaddr *)&clientname,
 				(int *)&size
 				);
-#else
-		nClient = ::accept( nServer, (struct sockaddr *)&clientname, &size );
-#endif
+#else /* not-cygwin */
+#ifdef __APPLE__
+  		nClient = ::accept( nServer, (struct sockaddr *)&clientname, (socklen_t*)&size );
+#else /* linux */
+  		nClient = ::accept( nServer, (struct sockaddr *)&clientname, &size );
+#endif /* __APPLE__ */
+#endif /* __CYGWIN__ */
 		if( nClient < 0 )
 		{
 			throw SocketException(

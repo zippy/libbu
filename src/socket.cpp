@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include "socket.h"
 #include "exceptions.h"
+#include "osx_compatibility.h"
 
 #define RBS (1024*2)
 

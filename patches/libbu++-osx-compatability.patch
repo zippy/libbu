@@ -1,0 +1,85 @@
+Index: src/server.cpp
+===================================================================
+--- src/server.cpp	(revision 345)
++++ src/server.cpp	(working copy)
+@@ -3,6 +3,7 @@
+ #include "bu/serversocket.h"
+ #include "bu/client.h"
+ #include "bu/socket.h"
++#include "osx_compatibility.h"
+ 
+ Bu::Server::Server() :
+ 	nTimeoutSec( 0 ),
+Index: src/socket.cpp
+===================================================================
+--- src/socket.cpp	(revision 345)
++++ src/socket.cpp	(working copy)
+@@ -13,6 +13,7 @@
+ #include <fcntl.h>
+ #include "socket.h"
+ #include "exceptions.h"
++#include "osx_compatibility.h"
+ 
+ #define RBS (1024*2)
+ 
+Index: src/osx_compatibility.h
+===================================================================
+--- src/osx_compatibility.h	(revision 0)
++++ src/osx_compatibility.h	(revision 0)
+@@ -0,0 +1,19 @@
++#ifndef OSX_COMPATIBILITY__H
++#define OSX_COMPATIBILITY__H
++
++#ifdef __APPLE__
++
++#ifndef TEMP_FAILURE_RETRY
++#define TEMP_FAILURE_RETRY(expression)            \
++  (__extension__                                  \
++    ({ long int __result;                         \
++      do __result = (long int) (expression);      \
++      while (__result == -1L && errno == EINTR);  \
++      __result; }))
++#endif
++
++#include <sched.h>
++
++#define pthread_yield() sched_yield()
++#endif /* __APPLE__ */
++#endif
+\ No newline at end of file
+Index: src/serversocket.cpp
+===================================================================
+--- src/serversocket.cpp	(revision 345)
++++ src/serversocket.cpp	(working copy)
+@@ -13,6 +13,7 @@
+ #include <fcntl.h>
+ #include "serversocket.h"
+ #include "exceptions.h"
++#include "osx_compatibility.h"
+ 
+ Bu::ServerSocket::ServerSocket( int nPort, int nPoolSize ) :
+ 	nPort( nPort )
+@@ -118,8 +119,12 @@
+ 				(int *)&size
+ 				);
+ #else
+-		nClient = ::accept( nServer, (struct sockaddr *)&clientname, &size );
++#ifdef __APPLE__
++  		nClient = ::accept( nServer, (struct sockaddr *)&clientname, (socklen_t*)&size );
++#else
++  		nClient = ::accept( nServer, (struct sockaddr *)&clientname, &size );
+ #endif
++#endif
+ 		if( nClient < 0 )
+ 		{
+ 			throw SocketException(
+Index: src/ito.cpp
+===================================================================
+--- src/ito.cpp	(revision 345)
++++ src/ito.cpp	(working copy)
+@@ -1,4 +1,5 @@
+ #include "ito.h"
++#include "osx_compatibility.h"
+ 
+ Bu::Ito::Ito()
+ {

@@ -9,6 +9,7 @@ public:
 		setName("FString");
 		addTest( Unit::compare1 );
 		addTest( Unit::compare2 );
+		addTest( Unit::appendSingle );
 	}
 
 	virtual ~Unit()
@@ -27,6 +28,14 @@ public:
 		Bu::FString b("Bobo");
 		unitTest( !(b == "Bob") );
 		unitTest( b == "Bobo" );
+	}
+
+	void appendSingle()
+	{
+		Bu::FString b;
+		for( char l = 'a'; l < 'g'; l++ )
+			b += l;
+		unitTest( b == "abcdef" );
 	}
 };
 

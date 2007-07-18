@@ -110,6 +110,10 @@ void doTimings()
 #define pem printf("---------\n%08X: %s\n%08X: %s\n", (unsigned int)str.c_str(), str.c_str(), (unsigned int)str2.c_str(), str2.c_str() );
 int main( int argc, char *argv )
 {
+	Bu::FString fs1;
+	for( int j = 0; j < 500000; j++ ) fs1 += (char)('a'+(j%26));
+	return 0;
+
 	Bu::FString str("th");
 
 	str.prepend("Hello ");

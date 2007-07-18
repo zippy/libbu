@@ -25,11 +25,11 @@ namespace Bu
 	 * generation in mind.  Like the standard string class you can specify what
 	 * datatype to use for each character.  Unlike the standard string class,
 	 * collection of appended and prepended terms is done lazily, making long
-	 * operations that involve many appends very inexpensive.  In addition internal
-	 * ref-counting means that if you pass strings around between functions there's
-	 * almost no overhead in time or memory since a reference is created and no
-	 * data is actually copied.  This also means that you never need to put any
-	 * FBasicString into a ref-counting container class.
+	 * operations that involve many appends very inexpensive.  In addition
+	 * internal ref-counting means that if you pass strings around between
+	 * functions there's almost no overhead in time or memory since a reference
+	 * is created and no data is actually copied.  This also means that you
+	 * never need to put any FBasicString into a ref-counting container class.
 	 *
 	 *@param chr (typename) Type of character (i.e. char)
 	 *@param nMinSize (int) Chunk size (default: 256)
@@ -126,7 +126,7 @@ namespace Bu
 			for( nLen = 0; pData[nLen] != (chr)0; nLen++ );
 			if( nLen == 0 )
 				return;
-			
+		
 			Chunk *pNew = newChunk( nLen );
 			cpy( pNew->pData, pData, nLen );
 
@@ -156,7 +156,16 @@ namespace Bu
 		 */
 		void append( const chr &cData )
 		{
-			append( &cData, 1 );
+			if( pLast && pLast->nLength < nMinSize )
+			{
+				pLast->pData[pLast->nLength] = cData;
+				++pLast->nLength; ++nLength;
+		//		pLast->pData[pLast->nLength] = (chr)0;
+			}
+			else
+			{
+				append( &cData, 1 );
+			}
 		}
 
 		/**
@@ -323,11 +332,21 @@ namespace Bu
 		 * Plus equals operator for FString.
 		 *@param pData (const chr) The character to append to your FString.
 		 */
-		MyType &operator +=( const chr pData )
+		MyType &operator +=( const chr cData )
 		{
-			append( &pData, 1 );
+			if( pLast && pLast->nLength < nMinSize )
+			{
+				pLast->pData[pLast->nLength] = cData;
+				++pLast->nLength; ++nLength;
+		//		pLast->pData[pLast->nLength] = (chr)0;
+			}
+			else
+			{
+				append( &cData, 1 );
+			}
+			//append( pData );
 
-			return (*this);
+			//return (*this);
 		}
 
 		/**
@@ -714,7 +733,7 @@ namespace Bu
 			Chunk *pNew = aChunk.allocate( 1 );
 			pNew->pNext = NULL;
 			pNew->nLength = nLen;
-			pNew->pData = aChr.allocate( nLen+1 );
+			pNew->pData = aChr.allocate( (nLen<nMinSize)?(nMinSize):(nLen)+1 );
 			pNew->pData[nLen] = (chr)0;
 			return pNew;
 		}
