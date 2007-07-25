@@ -9,7 +9,7 @@ Bu::File::File( const char *sName, const char *sFlags )
 	fh = fopen( sName, sFlags );
 	if( fh == NULL )
 	{
-		throw Bu::FileException( errno, strerror(errno) );
+		throw Bu::FileException( errno, "%s: %s", strerror(errno), sName );
 	}
 }
 
@@ -18,7 +18,7 @@ Bu::File::File( const Bu::FString &sName, const char *sFlags )
 	fh = fopen( sName.getStr(), sFlags );
 	if( fh == NULL )
 	{
-		throw Bu::FileException( errno, strerror(errno) );
+		throw Bu::FileException( errno, "%s: %s", strerror(errno), sName.getStr() );
 	}
 }
 
