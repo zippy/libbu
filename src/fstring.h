@@ -52,7 +52,6 @@ namespace Bu
 			pFirst( NULL ),
 			pLast( NULL )
 		{
-			append("");
 		}
 
 		FBasicString( const chr *pData ) :
