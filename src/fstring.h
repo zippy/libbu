@@ -52,6 +52,7 @@ namespace Bu
 			pFirst( NULL ),
 			pLast( NULL )
 		{
+			append("");
 		}
 
 		FBasicString( const chr *pData ) :
@@ -346,7 +347,7 @@ namespace Bu
 			}
 			//append( pData );
 
-			//return (*this);
+			return (*this);
 		}
 
 		/**
