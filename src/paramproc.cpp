@@ -11,7 +11,7 @@ Bu::ParamProc::ParamPtr::ParamPtr()
 	type = vtunset;
 }
 
-ptrtype( std::string, str     );
+ptrtype( Bu::FString, str     );
 ptrtype( uint64_t,    uint64  );
 ptrtype( uint32_t,    uint32  );
 ptrtype( uint16_t,    uint16  );
@@ -481,7 +481,7 @@ int Bu::ParamProc::help( int argc, char *argv[] )
 		if( (*i)->sWord.getStr() )
 		{
 			printf("--");
-			std::string sTmp = (*i)->sWord.getStr();
+			Bu::FString sTmp = (*i)->sWord.getStr();
 			if( (*i)->sExtra.getStr() )
 				sTmp += (*i)->sExtra.getStr();
 			printf( fmt, sTmp.c_str() );

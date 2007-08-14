@@ -183,6 +183,8 @@ namespace Bu
 		 */
 		void prepend( const chr *pData )
 		{
+			if( pData == NULL )
+				return;
 			long nLen;
 			for( nLen = 0; pData[nLen] != (chr)0; nLen++ );
 			
@@ -261,6 +263,7 @@ namespace Bu
 				return NULL;
 
 			flatten();
+			pFirst->pData[nLength] = (chr)0;
 			return pFirst->pData;
 		}
 		
@@ -274,6 +277,7 @@ namespace Bu
 				return NULL;
 
 			flatten();
+			pFirst->pData[nLength] = (chr)0;
 			return pFirst->pData;
 		}
 
@@ -287,6 +291,7 @@ namespace Bu
 				return NULL;
 
 			flatten();
+			pFirst->pData[nLength] = (chr)0;
 			return pFirst->pData;
 		}
 		
@@ -300,6 +305,7 @@ namespace Bu
 				return NULL;
 
 			flatten();
+			pFirst->pData[nLength] = (chr)0;
 			return pFirst->pData;
 		}
 
@@ -416,6 +422,7 @@ namespace Bu
 			}
 
 			flatten();
+			pFirst->pData[nLength] = (chr)0;
 			const chr *a = pData;
 			chr *b = pFirst->pData;
 			for( long j = 0; *a!=(chr)0 || *b!=(chr)0; j++, a++, b++ )

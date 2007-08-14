@@ -15,7 +15,7 @@ namespace Bu
 		{
 		public:
 			ParamPtr();
-			ParamPtr( std::string *str );
+			ParamPtr( Bu::FString *str );
 			ParamPtr( uint64_t    *uint64  );
 			ParamPtr( uint32_t    *uint32  );
 			ParamPtr( uint16_t    *uint16  );
@@ -55,7 +55,7 @@ namespace Bu
 			int type;
 			union
 			{
-				std::string *str;
+				Bu::FString *str;
 				uint64_t *uint64;
 				uint32_t *uint32;
 				uint16_t *uint16;

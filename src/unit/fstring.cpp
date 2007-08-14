@@ -10,6 +10,7 @@ public:
 		addTest( Unit::compare1 );
 		addTest( Unit::compare2 );
 		addTest( Unit::appendSingle );
+		addTest( Unit::shared1 );
 	}
 
 	virtual ~Unit()
@@ -36,6 +37,18 @@ public:
 		for( char l = 'a'; l < 'g'; l++ )
 			b += l;
 		unitTest( b == "abcdef" );
+		unitTest( strcmp( b.getStr(), "abcdef" ) == 0 );
+	}
+
+	void shared1()
+	{
+		Bu::FString a("Hey there");
+		Bu::FString b( a );
+		unitTest( a.getStr() == b.getStr() );
+		b += " guy";
+		unitTest( a.getStr() != b.getStr() );
+		a = b;
+		unitTest( a.getStr() == b.getStr() );
 	}
 };
 
