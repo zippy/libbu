@@ -207,6 +207,35 @@ namespace Bu
 
 		return ar;
 	}
+
+	template<typename value>
+	Archive &operator<<( Archive &ar, List<value> &h )
+	{
+		ar << h.getSize();
+		for( typename List<value>::iterator i = h.begin(); i != h.end(); i++ )
+		{
+			ar << (*i);
+		}
+
+		return ar;
+	}
+
+	template<typename value>
+	Archive &operator>>( Archive &ar, List<value> &h )
+	{
+		h.clear();
+		uint32_t nSize;
+		ar >> nSize;
+
+		for( uint32_t j = 0; j < nSize; j++ )
+		{
+			value v;
+			ar >> v;
+			h.append( v );
+		}
+
+		return ar;
+	}	
 }
 
 #endif
