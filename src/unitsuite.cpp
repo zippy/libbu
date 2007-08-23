@@ -1,6 +1,12 @@
 #include "unitsuite.h"
 
-Bu::UnitSuite::UnitSuite()
+Bu::UnitSuite::UnitSuite() :
+	iOptions( 0 )
+{
+}
+
+Bu::UnitSuite::UnitSuite( int iOptions ) :
+	iOptions( iOptions )
 {
 }
 
@@ -35,10 +41,23 @@ int Bu::UnitSuite::run( int argc, char *argv[] )
 					e.str.getStr()
 					);
 			}
+
+			if( (iOptions & optStopOnError) )
+				return 0;
+		}
+		catch( std::exception &e )
+		{
+			printf("failed with unknown exception.  what: %s\n", e.what() );
+
+			if( (iOptions & optStopOnError) )
+				return 0;
 		}
 		catch( ... )
 		{
 			printf("failed with external exception.\n");
+
+			if( (iOptions & optStopOnError) )
+				return 0;
 		}
 	}
 

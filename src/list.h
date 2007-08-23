@@ -142,6 +142,55 @@ namespace Bu
 		}
 
 		/**
+		 * Insert a new item in sort order by searching for the first item that
+		 * is larger and inserting this before it, or at the end if none are
+		 * larger.  If this is the only function used to insert data in the
+		 * List all items will be sorted.  To use this, the value type must
+		 * support the > operator.
+		 */
+		void insertSorted( const value &v )
+		{
+			Link *pNew = la.allocate( 1 );
+			pNew->pValue = va.allocate( 1 );
+			va.construct( pNew->pValue, v );
+			nSize++;
+			if( pFirst == NULL )
+			{
+				// Empty list
+				pFirst = pLast = pNew;
+				pNew->pNext = pNew->pPrev = NULL;
+				return;
+			}
+			else
+			{
+				Link *pCur = pFirst;
+				for(;;)
+				{
+					if( !(v > *(pCur->pValue)) )
+					{
+						pNew->pNext = pCur;
+						pNew->pPrev = pCur->pPrev;
+						pCur->pPrev = pNew;
+						if( pNew->pPrev == NULL )
+							pFirst = pNew;
+						else
+							pNew->pPrev->pNext = pNew;
+						return;
+					}
+					pCur = pCur->pNext;
+					if( pCur == NULL )
+					{
+						pNew->pNext = NULL;
+						pNew->pPrev = pLast;
+						pLast->pNext = pNew;
+						pLast = pNew;
+						return;
+					}
+				}
+			}
+		}
+
+		/**
 		 * An iterator to iterate through your list.
 		 */
 		typedef struct iterator

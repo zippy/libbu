@@ -49,6 +49,7 @@ namespace Bu
 	{
 	public:
 		UnitSuite();
+		UnitSuite( int iOptions );
 		virtual ~UnitSuite();
 
 		int run( int argc=0, char *argv[]=NULL );
@@ -68,6 +69,11 @@ namespace Bu
 			int nLine;
 			bool bFile;
 		};
+
+		enum
+		{
+			optStopOnError		= 0x000001
+		};
 		
 	protected:
 		void add( Test fTest, Bu::FString sName );
@@ -83,6 +89,8 @@ namespace Bu
 		typedef std::list<TestInfo> TestList;
 		TestList lTests;
 		FString sSuiteName;
+
+		int iOptions;
 	};
 }
 
