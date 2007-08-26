@@ -49,6 +49,8 @@ void Bu::TafReader::groupContent( Bu::TafGroup *pGroup )
 			return;
 		else if( c == '/' && la == '*' )
 			pGroup->addChild( readComment() );
+		else if( c == ':' )
+			throw TafException("Encountered stray ':' in taf stream.");
 		else
 			pGroup->addChild( readProperty() );
 	}
