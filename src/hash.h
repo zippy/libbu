@@ -304,7 +304,7 @@ namespace Bu
 		 * Get the number of items stored in the hash table.
 		 *@returns (uint32_t) The number of items stored in the hash table.
 		 */
-		uint32_t size()
+		uint32_t getSize()
 		{
 			return nFilled-nDeleted;
 		}
