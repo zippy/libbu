@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <string>
 #include <memory>
+#include <wordexp.h>
 #include "bu/archival.h"
 #include "bu/archive.h"
 #include "bu/hash.h"
@@ -395,6 +396,31 @@ namespace Bu
 		{
 			clear();
 			append( pData, nSize );
+		}
+
+		void expand()
+		{
+			flatten();
+
+			wordexp_t result;
+
+			/* Expand the string for the program to run.  */
+			switch (wordexp (pFirst->pData, &result, 0))
+			{
+				case 0:                       /* Successful.  */
+					{
+						set( result.we_wordv[0] );
+						wordfree( &result );
+						return;
+					}
+					break;
+				case WRDE_NOSPACE:
+					/* If the error was `WRDE_NOSPACE',
+					then perhaps part of the result was allocated.  */
+					wordfree (&result);
+				default:                    /* Some other error.  */
+					return;
+			}
 		}
 
 		/**
