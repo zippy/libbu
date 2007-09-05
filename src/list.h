@@ -91,6 +91,21 @@ namespace Bu
 			nSize = 0;
 		}
 
+		void enqueue( const value &v )
+		{
+			append( v );
+		}
+
+		value dequeue()
+		{
+			value v = *pFirst->pValue;
+
+			erase( begin() );
+
+			return v;
+		}
+
+
 		/**
 		 * Append a value to the list.
 		 *@param v (const value_type &) The value to append.
