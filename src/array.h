@@ -51,7 +51,7 @@ namespace Bu
 		{
 		}
 
-		operator 
+		//operator 
 
 		/**
 		 * Get the current size of the list.

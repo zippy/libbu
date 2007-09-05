@@ -152,7 +152,7 @@ namespace Bu
 
 	template<typename T> Archive &operator<<( Archive &ar, std::list<T> &l )
 	{
-		typename std::list<T>::size_type num = l.size();
+		typename std::list<T>::size_type num = l.getSize();
 		ar << num;
 		for( typename std::list<T>::const_iterator i = l.begin(); i != l.end();
 			 i++ )
@@ -181,7 +181,7 @@ namespace Bu
 	template<typename key, typename value>
 	Archive &operator<<( Archive &ar, Hash<key,value> &h )
 	{
-		ar << h.size();
+		ar << h.getSize();
 		for( typename Hash<key,value>::iterator i = h.begin(); i != h.end(); i++ )
 		{
 			//std::pair<key,value> p = *i;
