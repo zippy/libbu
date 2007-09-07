@@ -304,7 +304,8 @@ void Bu::Socket::setAddress()
 	struct sockaddr_in addr;
 	socklen_t len = sizeof(addr);
 	addr.sin_family = AF_INET;
-	getsockname( nSocket, (sockaddr *)(&addr), &len );
+	// getsockname( nSocket, (sockaddr *)(&addr), &len );
+	getpeername( nSocket, (sockaddr *)(&addr), &len );
 	char buf[150];
 	sprintf( buf, "%s", inet_ntoa( addr.sin_addr ) );
 	sAddress = buf;
