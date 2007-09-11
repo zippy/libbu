@@ -7,6 +7,7 @@
 #include "bu/list.h"
 #include "bu/ito.h"
 #include "bu/itomutex.h"
+#include "bu/itoqueue.h"
 #include "bu/set.h"
 
 namespace Bu
@@ -36,6 +37,7 @@ namespace Bu
 	 */
 	class ItoServer : public Ito
 	{
+		friend class ItoClient;
 	public:
 		ItoServer();
 		virtual ~ItoServer();
@@ -78,11 +80,13 @@ namespace Bu
 		fd_set fdActive;
 		typedef Hash<int,ServerSocket *> ServerHash;
 		ServerHash hServers;
-		//typedef Bu::Set<ItoClient *> ClientSet;
-		//ClientSet sClients;
-		//typedef Hash<int,Client *> ClientHash;
-		//ClientHash hClients;
-		ItoMutex im;
+		typedef Hash<int,ItoClient *> ClientHash;
+		typedef ItoQueue<ItoClient *> ClientQueue;
+		ClientHash hClients;
+		ClientQueue qClientCleanup;
+		ItoMutex imClients;
+
+		void clientCleanup( int iSocket );
 	};
 }
 

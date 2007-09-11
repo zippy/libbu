@@ -14,6 +14,18 @@ Bu::ItoServer::ItoServer() :
 
 Bu::ItoServer::~ItoServer()
 {
+	while( !qClientCleanup.isEmpty() )
+	{
+		ItoClient *pCli = qClientCleanup.dequeue();
+		pCli->join();
+		delete pCli;
+	}
+	for( ClientHash::iterator i = hClients.begin(); i != hClients.end(); i++ )
+	{
+		ItoClient *pCli = (*i);
+		pCli->join();
+		delete pCli;
+	}
 }
 
 void Bu::ItoServer::addPort( int nPort, int nPoolSize )
@@ -37,58 +49,16 @@ void Bu::ItoServer::setTimeout( int nTimeoutSec, int nTimeoutUSec )
 	this->nTimeoutSec = nTimeoutSec;
 	this->nTimeoutUSec = nTimeoutUSec;
 }
-/*
-void Bu::ItoServer::scan()
-{
-	struct timeval xTimeout = { nTimeoutSec, nTimeoutUSec };
-	
-	fd_set fdRead = fdActive;
-	fd_set fdWrite = fdActive;
-	fd_set fdException = fdActive;
 
-	if( TEMP_FAILURE_RETRY( select( FD_SETSIZE, &fdRead, NULL, &fdException, &xTimeout ) ) < 0 )
-	{
-		throw ExceptionBase("Error attempting to scan open connections.");
-	}
-
-	for( int j = 0; j < FD_SETSIZE; j++ )
-	{
-		if( FD_ISSET( j, &fdRead ) )
-		{
-			if( hServers.has( j ) )
-			{
-				ServerSocket *pSrv = hServers.get( j );
-				addClient( pSrv->accept(), pSrv->getPort() );
-			}
-			else
-			{
-				Client *pClient = hClients.get( j );
-				pClient->processInput();
-				if( !pClient->isOpen() )
-				{
-					onClosedConnection( pClient );
-					hClients.erase( j );
-					FD_CLR( j, &fdActive );
-				}
-			}
-		}
-	}
-
-	// Now we just try to write all the pending data on all the sockets.
-	// this could be done better eventually, if we care about the socket
-	// wanting to accept writes (using a select).
-	for( ClientHash::iterator i = hClients.begin(); i != hClients.end(); i++ )
-	{
-		(*i)->processOutput();
-	}
-}
-*/
 void Bu::ItoServer::addClient( int nSocket, int nPort )
 {
 	ItoClient *pC = new ItoClient( *this, nSocket, nPort, nTimeoutSec,
 			nTimeoutUSec );
 	pC->start();
-	
+
+	imClients.lock();
+	hClients.insert( nSocket, pC );
+	imClients.unlock();
 }
 
 void *Bu::ItoServer::run()
@@ -114,9 +84,24 @@ void *Bu::ItoServer::run()
 				addClient( pSrv->accept(), pSrv->getPort() );
 			}
 		}
+
+		while( !qClientCleanup.isEmpty() )
+		{
+			ItoClient *pCli = qClientCleanup.dequeue();
+			pCli->join();
+			delete pCli;
+		}
 	}
 
 	return NULL;
+}
+
+void Bu::ItoServer::clientCleanup( int iSocket )
+{
+	imClients.lock();
+	ItoClient *pCli = hClients.get( iSocket );
+	imClients.unlock();
+	qClientCleanup.enqueue( pCli );
 }
 
 Bu::ItoServer::ItoClient::ItoClient( ItoServer &rSrv, int iSocket, int iPort,
@@ -133,7 +118,6 @@ Bu::ItoServer::ItoClient::ItoClient( ItoServer &rSrv, int iSocket, int iPort,
 	pClient = new Client(
 		new Bu::Socket( iSocket )
 		);
-
 }
 
 Bu::ItoServer::ItoClient::~ItoClient()
@@ -163,6 +147,7 @@ void *Bu::ItoServer::ItoClient::run()
 			{
 				rSrv.onClosedConnection( pClient );
 
+				rSrv.clientCleanup( iSocket );
 				return NULL;
 			}
 		}
