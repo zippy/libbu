@@ -20,6 +20,9 @@ Bu::ItoServer::~ItoServer()
 		pCli->join();
 		delete pCli;
 	}
+	// TODO:  Make sure here that each client has shutdown it's socket, and
+	// maybe even written any extra data, we could put a timelimit on this...
+	// anyway, it's not as clean as it could be right now.
 	for( ClientHash::iterator i = hClients.begin(); i != hClients.end(); i++ )
 	{
 		ItoClient *pCli = (*i);
