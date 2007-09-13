@@ -8,6 +8,7 @@
 #include <list>
 #include "bu/hash.h"
 #include "bu/list.h"
+#include "bu/set.h"
 
 namespace Bu
 {
@@ -235,7 +236,36 @@ namespace Bu
 		}
 
 		return ar;
-	}	
+	}
+
+	template<typename value>
+	Archive &operator<<( Archive &ar, Set<value> &h )
+	{
+		ar << h.getSize();
+		for( typename Set<value>::iterator i = h.begin(); i != h.end(); i++ )
+		{
+			ar << (*i);
+		}
+
+		return ar;
+	}
+
+	template<typename value>
+	Archive &operator>>( Archive &ar, Set<value> &h )
+	{
+		h.clear();
+		uint32_t nSize;
+		ar >> nSize;
+
+		for( uint32_t j = 0; j < nSize; j++ )
+		{
+			value v;
+			ar >> v;
+			h.insert( v );
+		}
+
+		return ar;
+	}
 }
 
 #endif
