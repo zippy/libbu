@@ -64,7 +64,6 @@ void Bu::Client::processOutput()
 	if( sWriteBuf.getSize() > 0 )
 	{
 		int nAmnt = (sWriteBuf.getSize()<2048)?(sWriteBuf.getSize()):(2048);
-		printf("Transmitting %d of %ld bytes.\n", nAmnt, sWriteBuf.getSize() );
 		pSocket->write( sWriteBuf.getStr(), nAmnt );
 		sWriteBuf.trimFront( nAmnt );
 		//sWriteBuf.clear();
