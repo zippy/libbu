@@ -9,12 +9,12 @@
 namespace Bu
 {
 	/**
-	 * A thread-safe queue class.  This class is a very simple queue with some cool
-	 * extra functionality for use with the Ito system.  The main extra that it
-	 * provides is the option to either dequeue without blocking, with infinite
-	 * blocking, or with timed blocking, which will return a value if something is
-	 * enqueued within the specified time limit, or NULL if the time limit is
-	 * exceded.
+	 * A thread-safe queue class.  This class is a very simple queue with some
+	 * cool extra functionality for use with the Ito system.  The main extra
+	 * that it provides is the option to either dequeue without blocking, with
+	 * infinite blocking, or with timed blocking, which will return a value if
+	 * something is enqueued within the specified time limit, or NULL if the
+	 * time limit is exceded.
 	 *@author Mike Buland
 	 */
 	template <class T>
