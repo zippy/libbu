@@ -426,7 +426,7 @@ namespace Bu
 		{
 			uint32_t hash = __calcHashCode( k );
 			bool bFill;
-			uint32_t nPos = probe( hash, k, bFill );
+			uint32_t nPos = probe( hash, k, bFill, false );
 
 			if( bFill )
 			{
@@ -451,7 +451,7 @@ namespace Bu
 		{
 			uint32_t hash = __calcHashCode( k );
 			bool bFill;
-			uint32_t nPos = probe( hash, k, bFill );
+			uint32_t nPos = probe( hash, k, bFill, false );
 
 			if( bFill )
 			{
