@@ -7,6 +7,13 @@
  * cover a wide range of topics from streams and sockets to data structures to
  * data serialization and xml handling to threading.
  *
+ * This documentation is expanding all the time, and should contain
+ * comprehensive guides and API reference, but doesn't yet.  For now check out
+ * these sections:
+ * - @ref howto_streams
+ * - @ref howto_archives
+ * - @ref howto_threading
+ * - @ref howto_servers
  */
 
 /**

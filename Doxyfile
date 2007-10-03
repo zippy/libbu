@@ -80,7 +80,7 @@ WARN_LOGFILE           = Doxywarn
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = src
+INPUT                  = src src/doxy
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \

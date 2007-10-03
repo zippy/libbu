@@ -165,6 +165,7 @@ namespace Bu
 	 *@param keyalloc (typename) Memory allocator for hashtable keys
 	 *@param valuealloc (typename) Memory allocator for hashtable values
 	 *@param challoc (typename) Byte allocator for bitflags
+	 *@ingroup Containers
 	 */
 	template<typename key, typename value, typename sizecalc, typename keyalloc, typename valuealloc, typename challoc >
 	class Hash

@@ -10,9 +10,9 @@ namespace Bu
 	/**
 	 * Ito condition.  This is a fairly simple condition mechanism.  As you may
 	 * notice this class inherits from the ItoMutex class, this is because all
-	 * conditions must be within a locked block.  The standard usage of a condition
-	 * is to pause one thread, perhaps indefinately, until another thread signals
-	 * that it is alright to procede.
+	 * conditions must be within a locked block.  The standard usage of a
+	 * condition is to pause one thread, perhaps indefinately, until another
+	 * thread signals that it is alright to procede.
 	 * <br>
 	 * Standard usage for the thread that wants to wait is as follows:
 	 * <pre>
@@ -24,10 +24,11 @@ namespace Bu
 	 * ...  // Take care of what you have to.
 	 * cond.unlock();
 	 * </pre>
-	 * The usage for the triggering thread is much simpler, when it needs to tell
-	 * the others that it's time to grab some data it calls either signal or
-	 * broadcast.  See both of those functions for the difference.
+	 * The usage for the triggering thread is much simpler, when it needs to
+	 * tell the others that it's time to grab some data it calls either signal
+	 * or broadcast.  See both of those functions for the difference.
 	 *@author Mike Buland
+	 *@ingroup Threading
 	 */
 	class ItoCondition : public ItoMutex
 	{
@@ -43,9 +44,9 @@ namespace Bu
 		~ItoCondition();
 
 		/**
-		 * Wait forever, or until signalled.  This has to be called from within a
-		 * locked section, i.e. before calling this this object's lock function
-		 * should be called.
+		 * Wait forever, or until signalled.  This has to be called from within
+		 * a locked section, i.e. before calling this this object's lock
+		 * function should be called.
 		 */
 		int wait();
 
@@ -60,16 +61,18 @@ namespace Bu
 		int wait( int nSec, int nUSec );
 
 		/**
-		 * Notify the next thread waiting on this condition that they can go ahead.
-		 * This only signals one thread, the next one in the condition queue, that
-		 * it is safe to procede with whatever operation was being waited on.
+		 * Notify the next thread waiting on this condition that they can go
+		 * ahead.  This only signals one thread, the next one in the condition
+		 * queue, that it is safe to procede with whatever operation was being
+		 * waited on.
 		 */
 		int signal();
 
 		/**
-		 * Notify all threads waiting on this condition that they can go ahead now.
-		 * This function is slower than signal, but more effective in certain
-		 * situations where you may not know how many threads should be activated.
+		 * Notify all threads waiting on this condition that they can go ahead
+		 * now. This function is slower than signal, but more effective in
+		 * certain situations where you may not know how many threads should be
+		 * activated.
 		 */
 		int broadcast();
 

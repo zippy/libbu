@@ -1,0 +1,158 @@
+/**
+ *@page howto_streams Working With Streams
+ *
+ * Working with libbu++ streams is simple and very straight-forward, but there
+ * are a few things to understand when you pick them up for the first time.
+ *
+ *@section whatis What is a stream?
+ * A stream is a mechanism that allows data to be transported from one place to
+ * another without interruption and in order.  Examples of this include data
+ * being written to a file or being read from a file, data being written to a
+ * network socket or read from a network socket, and so on.
+ * Every type of stream will support a different number of options, for example
+ * file streams are usually seekable, that is, you can select where in the file
+ * you are reading and writing, however network sockets are not seekable.  All
+ * of these properties can be determined at runtime through the Stream class.
+ *
+ *@section filters Using filters with streams
+ * Libbu++ supports a special type of Stream that is known as a Filter.  Filters
+ * are actually streams, except instead of reading or writing to or from a
+ * file they read or write to or from another stream.  This provides a handy
+ * way of chaining any number of filters together along with end-point streams
+ * such as files.  One example of this would be applying a BZip2 compression
+ * filter to a file stream to compress all data being written to it.
+ * Once a filter is applied the transformations that it applies to the data will
+ * happen automatically as you use the stream.
+ *
+ * One important thing to remember about streams is that they will commonly
+ * change the options that you have when it comes to interacting with the
+ * stream.  This is not a bad thing, it is necesarry, but it is easy to tell
+ * when this is happening.  To continue with the above example, you can seek in
+ * a File stream, but not in a BZip2 filtered File stream.  This has to do with
+ * the way the compression algorithms work and restrict the operations that can
+ * be easily performed on the data.
+ *
+ * Not all changes that filters apply will be restrictive, filters such as the
+ * Buffer filter will add the ability to seek (to an extent) within the buffered
+ * data.
+ *
+ *@section difference How are libbu++ streams different form stl streams?
+ * While not globally true, many stl streams are designed for formatting the
+ * data that flows through the stream, that means that when you attempt to
+ * write a uint32_t into a standard stream it can be difficult to predict what
+ * the result will be, will it be the binary representation or a textual
+ * conversion?
+ *
+ * Libbu++ streams are very direct about how the data is handled.  All end-point
+ * streams will always handle the data that you provide or request without any
+ * modification or formatting, very much like the way libc style file access
+ * works.
+ *
+ * The design of Libbu++ streams was, from the begining, to try to make it as
+ * easy as possible to write general code that was as easy as possible to
+ * extend, and as clear as possible.  We have accomplished this by making
+ * streams simple, yet flexible, with a clear API and a flexible filter system
+ * that something geared towards more general formatting, conversion, and
+ * operator-only access can't touch.
+ *
+ *@section usage Using streams directly
+ * To create a stream depends on the type of stream that you're interested in,
+ * each type has it's own constructors designed to create the stream and get
+ * it ready for use.  We'll use the Bu::File stream as an example here.
+ *
+ *@code
+ 	// The constructor and each function call to access the stream could throw
+	// an exception, it's important to catch these and handle them
+	// appropriately.
+	try
+	{
+		// sFileName is a Bu::FString object containing the name of the file to
+		// open, possibly with path elements.  The second parameter works like
+		// the fopen mode parameter, and can be "w" for write, "r" for read, or
+		// "a" for append.  This will likely be replaced with a bitfield later.
+		Bu::File f( sFileName, "w");
+
+		// At this point we know our file is open, lets write some data to it
+		// The first parameter is a pointer to the data to write, the second is
+		// how many bytes to write.
+		f.write( "Test data, boring old test data.\n", 33 );
+
+		// We don't actually need to close the file explicitly, the
+		// deconstructor will take care of that for us, we could if we wanted
+		// to, simply by calling the f.close() function, but it isn't necesarry.
+	}
+	catch( Bu::FileException &e )
+	{
+		// Here we can report the error to the system, whatever it happened to
+		// be.
+		printf("Error:  %s\n", e.what() );
+	}
+ @endcode
+ * This is a most basic example, but it covers all the basics.  You don't need
+ * much more than this to write just about any file i/o program, just use the
+ * Bu::Stream::read() and Bu::Stream::write() functions.
+ *
+ * Now lets look at how to add a stream to the mix, we'll BZip2 compress the
+ * above example.
+ *@code
+ 	// Again, we want to catch exceptions in the entire file handling block.
+	try
+	{
+		// We create the file just like before, nothing different about this.
+		Bu::File f( sFileName, "w");
+
+		// Here, however, we create our Bu::BZip2 object, and pass it a
+		// reference to the file.  Now our data will go through Bu::BZip2, then
+		// into Bu::File and onto disk.  Notice that you don't have to specify
+		// wether you want to read or write explicitly, the filter can usually
+		// determine this for itself by examining the underlying stream.
+		Bu::BZip2 bz2( f );
+
+		// This is done exactly as before, but this time we write into bz2, not
+		// f.  We already know how to do this, because both BZip2 and File
+		// inherit from Bu::Stream, so they both have very similar (if not
+		// identicle) API.
+		bz2.write( "Test data, boring old test data.\n", 33 );
+
+		// Just like last time, we don't have to close either stream explicitly,
+		// they will be destroyed appropriately by the system, and in the
+		// correct order (bz2 first, then f).
+	}
+	catch( Bu::FileException &e )
+	{
+		// Here we can report the error to the system, whatever it happened to
+		// be.
+		printf("Error:  %s\n", e.what() );
+	}
+ @endcode
+ * 
+ * As you can tell in this example, using streams and filters is very easy to
+ * do, and even makes formerly very complex procedures take almost no time at
+ * all.
+ *
+ *@section usingmore Accepting strings in other classes and functions
+ *
+ * When writing a class or function that uses an already opened stream to read
+ * or write data from or to it's important to plan ahead, and probably accept
+ * an object reference of type Bu::Stream.  This makes your code immediately
+ * much more portable, useful, and flexible.  You don't have to change anything
+ * about the way you write your class or function, use the standard Bu::Stream
+ * functions like read and write just like before.
+ *
+ * For example, lets say you're creating a new image format, and need to be able
+ * to store images on disk and read them off again, so you write the approprate
+ * file fromat handlers.  By using Bu::Stream instead of Bu::File you allow
+ * anyone using your image format to send that data anywhere they would like,
+ * including files, sockets, memory buffers, composite archives, and even
+ * through types of streams that don't exist yet.  Not only that, but since
+ * every filter is a stream, anyone is now free to pass you a BZip2 filter or
+ * an encryption filter, or any other chain, so that your data can be
+ * compressed, and possibly encrypted, and sent over the network without any
+ * changes to your original code.
+ *
+ * Understandably you probably want to be sure of a few basics before you go
+ * writing image data to any old stream, such as ensuring the stream supports
+ * writing to begin with.  This can be easily handled by taking advantage of
+ * the capability accessors in Bu::Stream, these begin with "can" and "is," see
+ * the documentation for more information.
+ */

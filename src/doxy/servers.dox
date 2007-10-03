@@ -1,0 +1,11 @@
+/**
+ *@page howto_servers Creating Internet Servers
+ *
+ * Libbu++ provides a comprehensive set of classes for creating any type of
+ * server that you would like.  At the moment these are restricted to using
+ * the Bu::Socket subclass of Bu::Stream, and therefore the INET socket
+ * namespace.  This isn't much of a restriction, but hopefully it will be
+ * lifted in the future.
+ *
+ *@todo Finish this page.
+ */

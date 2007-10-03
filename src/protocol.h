@@ -8,7 +8,8 @@ namespace Bu
 	class Client;
 
 	/**
-	 *
+	 *@author Mike Buland
+	 *@ingroup Serving
 	 */
 	class Protocol
 	{

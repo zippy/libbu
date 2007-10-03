@@ -15,6 +15,9 @@ namespace Bu
 	 *
 	 * Although the accept function returns an integral file descriptor, it is
 	 * designed to be used with the Socket class.
+	 *
+	 *@author Mike Buland
+	 *@ingroup Serving
 	 */
 	class ServerSocket
 	{

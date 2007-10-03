@@ -33,6 +33,7 @@ namespace Bu
 	 *@param sizecalc (typename) Functor to compute new table size on rehash
 	 *@param keyalloc (typename) Memory allocator for hashtable keys
 	 *@param challoc (typename) Byte allocator for bitflags
+	 *@ingroup Containers
 	 */
 	template<typename key, typename sizecalc, typename keyalloc, typename challoc >
 	class Set

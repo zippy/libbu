@@ -10,6 +10,7 @@ namespace Bu
 {
 	/**
 	 *
+	 *@ingroup Taf
 	 */
 	class TafWriter
 	{

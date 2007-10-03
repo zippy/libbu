@@ -9,7 +9,8 @@
 namespace Bu
 {
 	/**
-	 *
+	 *@author Mike Buland
+	 *@ingroup Serving Streams
 	 */
 	class Socket : public Stream
 	{

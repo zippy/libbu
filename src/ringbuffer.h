@@ -6,6 +6,9 @@
 
 namespace Bu
 {
+	/**
+	 *@ingroup Containers
+	 */
 	template<typename value, typename valuealloc=std::allocator<value> >
 	class RingBuffer
 	{

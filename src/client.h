@@ -11,7 +11,8 @@ namespace Bu
 	class Socket;
 
 	/**
-	 *
+	 *@author Mike Buland
+	 *@ingroup Serving
 	 */
 	class Client
 	{

@@ -10,6 +10,7 @@ namespace Bu
 {
 	/**
 	 *
+	 *@ingroup Taf
 	 */
 	class TafNode
 	{
@@ -33,6 +34,10 @@ namespace Bu
 
 	class TafProperty;
 	class TafComment;
+	/**
+	 *
+	 *@ingroup Taf
+	 */
 	class TafGroup : public TafNode
 	{
 	public:
@@ -68,6 +73,10 @@ namespace Bu
 		NodeList lChildren;
 	};
 
+	/**
+	 *
+	 *@ingroup Taf
+	 */
 	class TafProperty : public TafNode
 	{
 	public:
@@ -82,6 +91,10 @@ namespace Bu
 		Bu::FString sValue;
 	};
 
+	/**
+	 *
+	 *@ingroup Taf
+	 */
 	class TafComment : public TafNode
 	{
 	public:

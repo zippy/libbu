@@ -9,6 +9,7 @@ namespace Bu
 {
 	/**
 	 *
+	 *@ingroup Containers
 	 */
 	template <typename t, typename talloc=std::allocator<t> >
 	class Atom

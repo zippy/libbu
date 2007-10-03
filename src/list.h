@@ -25,6 +25,7 @@ namespace Bu
 	 *@param value (typename) The type of data to store in your list
 	 *@param valuealloc (typename) Memory Allocator for your value type
 	 *@param linkalloc (typename) Memory Allocator for the list links.
+	 *@ingroup Containers
 	 */
 	template<typename value, typename valuealloc=std::allocator<value>, typename linkalloc=std::allocator<struct ListLink<value> > >
 	class List

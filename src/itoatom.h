@@ -9,6 +9,7 @@
 /**
  * A thread-safe wrapper class.
  *@author Mike Buland
+ *@ingroup Threading
  */
 template <class T>
 class ItoAtom

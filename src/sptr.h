@@ -9,6 +9,9 @@ namespace Bu
 	template<typename T> class SPtr;
 	template< typename Tb, typename Ta > SPtr<Tb> SPtrCast( SPtr<Ta> src );
 
+	/**
+	 *@ingroup Containers
+	 */
 	template<typename T>
 	class SPtr
 	{

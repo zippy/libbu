@@ -1,0 +1,9 @@
+/**
+ *@page howto_archives Archiving Your Data a.k.a. Serialization
+ *
+ * Archives are a simple system for providing basic-level data-structure
+ * serialization in a fast and simple manner.  They even provide a few more
+ * advanced capabilities for when you need them.
+ *
+ *@todo Finish this page.
+ */

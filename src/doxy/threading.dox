@@ -1,0 +1,15 @@
+/**
+ *@page howto_threading Making Applications Multi-threaded
+ *
+ * Libbu++ provides support for object oriented threading including full support
+ * for inter-thread communication and safety devices such as mutexes,
+ * conditions, and semaphores.  It even provides some of the basic foundation
+ * classes in thread-safe versions that often add extra functionality and make
+ * writing thread-safe programs as easy as could be.
+ *
+ * Threads in libbu++ are currently based on the posix model, but will hopefully
+ * adopt other methods behind the scenes for compatability with other operating
+ * systems.
+ *
+ *@todo Finish this page.
+ */
