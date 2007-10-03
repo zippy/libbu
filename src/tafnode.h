@@ -46,6 +46,7 @@ namespace Bu
 		virtual ~TafGroup();
 
 		const Bu::FString &getName() const;
+		void setName( const Bu::FString &sName );
 
 		const Bu::FString &getProperty( const Bu::FString &sName ) const;
 		const PropList &getProperties( const Bu::FString &sName ) const;
@@ -55,6 +56,9 @@ namespace Bu
 		TafGroup *addChild( TafGroup *pNode );
 		TafProperty *addChild( TafProperty *pNode );
 		TafComment *addChild( TafComment *pNode );
+		TafGroup *addGroup( const Bu::FString &sName );
+		TafProperty *addProperty(
+			const Bu::FString &sName, const Bu::FString &sValue );
 		const NodeList &getChildren() const;
 
 	private:
