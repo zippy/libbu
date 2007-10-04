@@ -71,8 +71,15 @@ void Bu::ProtocolHttp::onNewData( Bu::Client *pClient )
 
 			case 3:
 				SDB( 3 );
-				pClient->disconnect();
-				return;
+				if( iState != ttNewline )
+				{
+					pClient->disconnect();
+					return;
+				}
+				iState = 4;
+				break;
+
+			case 4:
 				break;
 		}
 	}
