@@ -44,13 +44,12 @@ namespace Bu
 		void clearProtocol();
 
 		bool isOpen();
+		void close();
 
 		const Bu::Socket *getSocket() const;
 
-		/**
-		 *@todo Make this not suck.
-		 */
 		void disconnect();
+		bool wantsDisconnect();
 
 	private:
 		Bu::Socket *pSocket;
@@ -58,6 +57,7 @@ namespace Bu
 		Bu::FString sReadBuf;
 		int nRBOffset;
 		Bu::FString sWriteBuf;
+		bool bWantsDisconnect;
 	};
 }
 

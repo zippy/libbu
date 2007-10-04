@@ -74,12 +74,26 @@ void Bu::Server::scan()
 		}
 	}
 
+	Bu::List<int> lDelete;
 	// Now we just try to write all the pending data on all the sockets.
 	// this could be done better eventually, if we care about the socket
 	// wanting to accept writes (using a select).
 	for( ClientHash::iterator i = hClients.begin(); i != hClients.end(); i++ )
 	{
 		(*i)->processOutput();
+		if( (*i)->wantsDisconnect() )
+		{
+			lDelete.append( i.getKey() );
+		}
+	}
+
+	for( Bu::List<int>::iterator i = lDelete.begin(); i != lDelete.end(); i++ )
+	{
+		Client *pClient = hClients.get( *i );
+		onClosedConnection( pClient );
+		pClient->close();
+		hClients.erase( *i );
+		FD_CLR( *i, &fdActive );
 	}
 }
 

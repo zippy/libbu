@@ -11,7 +11,8 @@
 Bu::Client::Client( Bu::Socket *pSocket ) :
 	pSocket( pSocket ),
 	pProto( NULL ),
-	nRBOffset( 0 )
+	nRBOffset( 0 ),
+	bWantsDisconnect( false )
 {
 }
 
@@ -205,5 +206,15 @@ const Bu::Socket *Bu::Client::getSocket() const
 
 void Bu::Client::disconnect()
 {
+	bWantsDisconnect = true;
 }
 
+bool Bu::Client::wantsDisconnect()
+{
+	return bWantsDisconnect;
+}
+
+void Bu::Client::close()
+{
+	pSocket->close();
+}

@@ -605,10 +605,26 @@ namespace Bu
 
 		/**
 		 * Find the index of the first occurrance of (sText)
-		 *@param sText (const char *) The string to search for.
+		 *@param sText (const chr *) The string to search for.
 		 *@returns (long) The index of the first occurrance. -1 for not found.
 		 */
-		long find( const char *sText )
+		long find( const chr cChar )
+		{
+			flatten();
+			for( long j = 0; j < pFirst->nLength; j++ )
+			{
+				if( pFirst->pData[j] == cChar )
+					return j;
+			}
+			return -1;
+		}
+		
+		/**
+		 * Find the index of the first occurrance of cChar
+		 *@param cChar (const chr) The character to search for.
+		 *@returns (long) The index of the first occurrance. -1 for not found.
+		 */
+		long find( const chr *sText )
 		{
 			long nTLen = strlen( sText );
 			flatten();
@@ -622,10 +638,10 @@ namespace Bu
 
 		/**
 		 * Do a reverse search for (sText)
-		 *@param sText (const char *) The string to search for.
+		 *@param sText (const chr *) The string to search for.
 		 *@returns (long) The index of the last occurrance. -1 for not found.
 		 */
-		long rfind( const char *sText )
+		long rfind( const chr *sText )
 		{
 			long nTLen = strlen( sText );
 			flatten();
