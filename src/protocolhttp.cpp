@@ -25,6 +25,7 @@ void Bu::ProtocolHttp::onNewConnection( Bu::Client *pClient )
 	iState = 0;
 }
 
+//#define SDB( i ) { }
 #define SDB( i ) printf("state %d: %d, \"%s\"\n", i, tt, sToken.getStr() )
 
 void Bu::ProtocolHttp::onNewData( Bu::Client *pClient )
@@ -62,7 +63,6 @@ void Bu::ProtocolHttp::onNewData( Bu::Client *pClient )
 				SDB( 2 );
 				if( strncmp( sToken.getStr(), "HTTP/", 5 ) )
 				{
-					printf("not http, disconnect.\n");
 					pClient->disconnect();
 					return;
 				}
@@ -72,7 +72,6 @@ void Bu::ProtocolHttp::onNewData( Bu::Client *pClient )
 					s = sToken.getStr()+5;
 					iMajor = strtol( s, &s2, 10 );
 					iMinor = strtol( s2+1, NULL, 10 );
-					printf("HTTP: %d.%d\n", iMajor, iMinor );
 					iState = 3;
 				}
 				break;
@@ -132,7 +131,6 @@ void Bu::ProtocolHttp::onNewData( Bu::Client *pClient )
 
 			case 20:
 				SDB( 20 );
-				printf("Content!");
 				break;
 		}
 	}
@@ -231,6 +229,7 @@ void Bu::ProtocolHttp::earlyResponse()
 	if( sMethod == "GET" )
 	{
 		onRequest( sMethod, sPath );
+		iState = 0;
 	}
 	else
 	{
