@@ -202,6 +202,7 @@ size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
 	int nWrote = TEMP_FAILURE_RETRY( ::write( nSocket, pBuf, nBytes ) );
 	if( nWrote < 0 )
 	{
+		if( errno == EAGAIN ) return 0;
 		throw ConnectionException( excodeWriteError, strerror(errno) );
 	}
 	return nWrote;
