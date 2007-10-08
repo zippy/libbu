@@ -24,6 +24,30 @@ namespace Bu
 
 		virtual void onNewConnection( Bu::Client *pClient );
 		virtual void onNewData( Bu::Client *pClient );
+
+		virtual void onRequest(
+			const Bu::FString &sMethod, const Bu::FString &sPath )=0;
+
+		class Response
+		{
+			friend class Bu::ProtocolHttp;
+		public:
+			Response( int iCode );
+			Response( int iCode, const Bu::FString &sReason );
+			virtual ~Response();
+
+			void setHeader( const Bu::FString &sKey, const Bu::FString &sVal );
+			void setContent( const Bu::FString &sCont );
+
+		private:
+			int iCode;
+			Bu::FString sReason;
+			typedef Bu::Hash<Bu::FString,Bu::FString> StringHash;
+			StringHash hHeaders;
+			Bu::FString sContent;
+		};
+		
+		void sendResponse( const Response &rRes );
 	
 	private:
 		enum TokenType
@@ -46,6 +70,9 @@ namespace Bu
 		TokenType getToken( Bu::FString &line );
 		bool isWS( char buf );
 		bool isSeperator( char buf );
+
+		void earlyResponse();
+		void lateResponse();
 
 	private: /* state */
 		Bu::Client *pClient;

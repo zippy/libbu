@@ -25,6 +25,7 @@ namespace Bu
 
 		Bu::FString &getInput();
 		Bu::FString &getOutput();
+		void write( const Bu::FString &sData );
 		void write( const void *pData, int nBytes );
 		void write( int8_t nData );
 		void write( int16_t nData );

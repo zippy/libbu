@@ -103,6 +103,11 @@ bool Bu::Client::isOpen()
 	return pSocket->isOpen();
 }
 
+void Bu::Client::write( const Bu::FString &sData )
+{
+	sWriteBuf += sData;
+}
+
 void Bu::Client::write( const void *pData, int nBytes )
 {
 	sWriteBuf.append( (const char *)pData, nBytes );
