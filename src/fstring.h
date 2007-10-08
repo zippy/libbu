@@ -444,6 +444,8 @@ namespace Bu
 			if( pFirst == NULL ) {
 				if( pData == NULL )
 					return true;
+				if( pData[0] == (chr)0 )
+					return true;
 				return false;
 			}
 

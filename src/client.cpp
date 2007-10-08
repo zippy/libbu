@@ -27,31 +27,34 @@ void Bu::Client::processInput()
 
 	for(;;)
 	{
-		nRead = pSocket->read( buf, nRead );
-		if( nRead < 0  )
+		try
 		{
-			throw Bu::ConnectionException(
-				excodeReadError,
-				"Read error: %s",
-				strerror( errno )
-				);
-		}
-		else if( nRead == 0 )
-		{
-			break;
-		}
-		else
-		{
-			nTotal += nRead;
-			sReadBuf.append( buf, nRead );
-			if( !pSocket->canRead() )
+			nRead = pSocket->read( buf, RBS );
+
+			if( nRead == 0 )
+			{
 				break;
+			}
+			else
+			{
+				nTotal += nRead;
+				sReadBuf.append( buf, nRead );
+				if( !pSocket->canRead() )
+					break;
+			}
+		}
+		catch( ConnectionException &e )
+		{
+			pSocket->close();
+			bWantsDisconnect = true;
+			break;
 		}
 	}
 
 	if( nTotal == 0 )
 	{
 		pSocket->close();
+		bWantsDisconnect = true;
 	}
 
 	if( pProto && nTotal )

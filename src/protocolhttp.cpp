@@ -25,17 +25,17 @@ void Bu::ProtocolHttp::onNewConnection( Bu::Client *pClient )
 	iState = 0;
 }
 
-//#define SDB( i ) { }
-#define SDB( i ) printf("state %d: %d, \"%s\"\n", i, tt, sToken.getStr() )
+#define SDB( i ) { }
+//#define SDB( i ) printf("state %d: %d, \"%s\"\n", i, tt, sToken.getStr() )
 
 void Bu::ProtocolHttp::onNewData( Bu::Client *pClient )
 {
-	logHexDump(
+/*	logHexDump(
 		1,
 		pClient->getInput().getStr(),
 		pClient->getInput().getSize(),
 		"input"
-		);
+		);*/
 
 	for(;;)
 	{
