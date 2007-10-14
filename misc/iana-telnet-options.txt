@@ -1,0 +1,486 @@
+
+TELNET OPTIONS
+
+(last updated 2003-11-06)
+
+The Telnet Protocol has a number of options that may be negotiated.
+These options are listed here.  "Internet Official Protocol Standards"
+(STD 1) provides more detailed information.
+
+Options  Name                                              References
+-------  -----------------------                           ----------
+   0     Binary Transmission                                 [RFC856]
+   1     Echo                                                [RFC857]
+   2     Reconnection                                      [NIC50005]
+   3     Suppress Go Ahead                                   [RFC858]
+   4     Approx Message Size Negotiation                   [ETHERNET]
+   5     Status                                              [RFC859]
+   6     Timing Mark                                         [RFC860]
+   7     Remote Controlled Trans and Echo                    [RFC726]
+   8     Output Line Width                                 [NIC50005]
+   9     Output Page Size                                  [NIC50005]
+  10     Output Carriage-Return Disposition                  [RFC652]
+  11     Output Horizontal Tab Stops                         [RFC653]
+  12     Output Horizontal Tab Disposition                   [RFC654]
+  13     Output Formfeed Disposition                         [RFC655]
+  14     Output Vertical Tabstops                            [RFC656]
+  15     Output Vertical Tab Disposition                     [RFC657]
+  16     Output Linefeed Disposition                         [RFC658]
+  17     Extended ASCII                                      [RFC698]
+  18     Logout                                              [RFC727]
+  19     Byte Macro                                          [RFC735]
+  20     Data Entry Terminal                         [RFC1043,RFC732]
+  21     SUPDUP                                       [RFC736,RFC734]
+  22     SUPDUP Output                                       [RFC749]
+  23     Send Location                                       [RFC779]
+  24     Terminal Type                                      [RFC1091]
+  25     End of Record                                       [RFC885]
+  26     TACACS User Identification                          [RFC927]
+  27     Output Marking                                      [RFC933]
+  28     Terminal Location Number                            [RFC946]
+  29     Telnet 3270 Regime                                 [RFC1041]
+  30     X.3 PAD                                            [RFC1053]
+  31     Negotiate About Window Size                        [RFC1073]
+  32     Terminal Speed                                     [RFC1079]
+  33     Remote Flow Control                                [RFC1372]
+  34     Linemode                                           [RFC1184]
+  35     X Display Location                                 [RFC1096]
+  36     Environment Option                                 [RFC1408]
+  37     Authentication Option                              [RFC2941]
+  38     Encryption Option                                  [RFC2946]
+  39     New Environment Option                             [RFC1572]
+  40     TN3270E                                            [RFC1647]
+  41     XAUTH                                              [Earhart]
+  42     CHARSET                                            [RFC2066]
+  43	 Telnet Remote Serial Port (RSP)                     [Barnes]
+  44     Com Port Control Option                            [RFC2217]
+  45     Telnet Suppress Local Echo                           [Atmar]
+  46     Telnet Start TLS                                       [Boe]
+  47     KERMIT                                             [RFC2840]
+  48     SEND-URL                                             [Croft]
+  49	 FORWARD_X					     [Altman]
+ 50-137  Unassigned					       [IANA]
+ 138     TELOPT PRAGMA LOGON				  [McGregory]
+ 139	 TELOPT SSPI LOGON                                [McGregory]
+ 140     TELOPT PRAGMA HEARTBEAT                          [McGregory]
+ 255     Extended-Options-List                               [RFC861]
+
+Telnet Authentication Types (Option 37)
+
+In [RFC2941], a list of authentication commands and types is
+documented.  Additions to the list are registerd by the IANA and
+documented here.  Note: Authentication types followed by (*) were
+never submitted to the IETF for consideration as an Internet standard.
+
+Command    Description                  Reference
+  0        IS                           [RFC2941]
+  1        SEND                         [RFC2941]
+  2        REPLY                        [RFC2941]
+  3        NAME                         [RFC2941]
+
+Type       Description                  Reference
+  0        NULL                         [RFC2941]
+  1        KERBEROS_V4                  [RFC2941]
+  2        KERBEROS_V5                  [RFC2942]
+  3        SPX                          [RFC2941] *
+  4        MINK                         [RFC2941] *
+  5        SRP                          [RFC2944]
+  6        RSA (also used by SRA)       [RFC2941]
+  7	   SSL                          [RFC2941]
+  8-9	   Unassigned			   [IANA]
+ 10        LOKI                         [RFC2941] *
+ 11        SSA                           [Schoch]
+ 12	   KEA_SJ                       [RFC2951]
+ 13	   KEA_SJ_INTEG			[RFC2951]
+ 14 	   DSS				[RFC2943]
+ 15        NTLM                            [Kahn] *
+
+In [RFC 1411], on the KERBEROS_V4 Telnet Authentication type there are
+a set of Suboption Commands.  Additions to the list are registerd by
+the IANA and documented here.
+
+Suboption	Command                  Reference
+   0            AUTH                     [RFC1411]
+   1            REJECT                   [RFC1411]
+   2            ACCEPT                   [RFC1411]
+   3            CHALLENGE                [RFC1411]
+   4            RESPONSE                 [RFC1411]
+   5            FORWARD                 [Brashear]
+   6            FORWARD-ACCEPT          [Brashear]
+   7            FORWARD-REJECT          [Brashear]
+   8            EXP                           [Wu]
+   9            PARAMS                        [Wu]
+
+
+In the KERBEROS_V5 Telnet Authentication type there are a set of
+Suboption Commands.  Additions to the list are registerd by the IANA
+and documented here.
+
+Suboption       Command                  Reference
+   0            AUTH                     [RFC2942]
+   1            REJECT                   [RFC2942]
+   2            ACCEPT                   [RFC2942]
+   3            RESPONSE                 [RFC2942]
+   4            FORWARD                  [RFC2942]
+   5            FORWARD_ACCEPT           [RFC2942]
+   6            FORWARD-REJECT           [RFC2942]
+
+
+In the DSS Telnet Authentication type there are a set of
+Suboption Commands.  Additions to the list are registerd by the IANA
+and documented here.
+
+Suboption       Command                  Reference
+   1            DSS_INITIALIZE           [RFC2943]
+   2            DSS_TOKENBA              [RFC2943]
+   3            DSS_CERTA_TOKENAB        [RFC2943]
+   4            DSS_CERTB_TOKENBA2       [RFC2943]
+
+
+In the SRP Telnet Authentication type there are a set of Suboption
+Commands.  Additions to the list are registerd by the IANA and
+documented here.
+
+Suboption       Command                  Reference
+   0            AUTH                     [RFC2944]
+   1            REJECT                   [RFC2944]
+   2            ACCEPT                   [RFC2944]
+   3            CHALLENGE                [RFC2944]
+   4            RESPONSE                 [RFC2944]
+   5-7          Unassigned               [RFC2944]
+   8            EXP                      [RFC2944]
+   9            PARAMS                   [RFC2944]
+
+
+In the KEA_SJ and KEA_SJ_INTEG Telnet Authentication types, there are
+a set of Suboption Commands.  Additions to the list are registerd by
+the IANA and documented here.
+
+Suboption       Command                  Reference
+   1            KEA_CERTA_RA             [RFC2951]
+   2            KEA_CERTB_RB_IVB_NONCEB  [RFC2951]
+   3            KEA_IVA_RESPONSEB_NONCEA [RFC2951]
+   4            KEA_RESPONSEA            [RFC2951]
+
+
+Telnet Encryption Types (Option 38)
+
+In the Telnet Encryption commands and types [RFC2946] there have been
+various implementations in several widely distributed versions of
+Telnet (e.g., at MIT, Stanford, and Columbia).  Originally, only two
+encryption types were specified.  Additional encryption types have
+been defined and are listed below.  Additions to the list are
+registerd by the IANA and documented here.
+
+Command
+
+   0    IS                               [RFC2946]
+   1    SUPPORT                          [RFC2946]
+   2    REPLY                            [RFC2946]
+   3    START                            [RFC2946]
+   4    END                              [RFC2946]
+   5    REQUEST-START                    [RFC2946]
+   6    REQUEST-END                      [RFC2946]
+   7    ENC_KEYID                        [RFC2946]
+   8    DEC_KEYID                        [RFC2946]
+
+Type                               
+
+   0    NULL				  [RFC2946]
+   1	DES_CFB64                         [RFC2946]
+   2	DES_OFB64                         [RFC2946]
+   3    DES3_CFB64                        [RFC2946]
+   4    DES3_OFB64                        [RFC2946]
+   5-7	Unassigned                           [IANA]
+   8	CAST5_40_CFB64                    [RFC2946]
+   9    CAST5_40_OFB64                    [RFC2946]
+  10    CAST128_CFB64                     [RFC2946]
+  11    CAST128_OFB64                     [RFC2946]
+  12    AES_CCM                         [Josefsson]
+
+In the DES3_CFB64 Telnet Encryption type there are a set of Suboption
+Commands.  Additions to the list are registerd by the IANA and
+documented here.
+
+Suboption       Command                  Reference
+   1            CFB64_IV                 [RFC2947]
+   2            CFB64_IV_OK              [RFC2947]
+   3            CFB64_IV_BAD             [RFC2947]
+
+
+In the DES3_OFB64 Telnet Encryption type there are a set of Suboption
+Commands.  Additions to the list are registerd by the IANA and
+documented here.
+
+Suboption       Command                  Reference
+   1            OFB64_IV                 [RFC2948]
+   2            OFB64_IV_OK              [RFC2948]
+   3            OFB64_IV_BAD             [RFC2948]
+
+
+In the CAST5_40_OFB64 and CAST128_OFB64 Telnet Encryption types, there
+are a set of Suboption Commands.  Additions to the list are registerd
+by the IANA and documented here.
+
+Suboption       Command                  Reference
+   1            OFB64_IV                 [RFC2949]
+   2            OFB64_IV_OK              [RFC2949]
+   3            OFB64_IV_BAD             [RFC2949]
+
+
+In the CAST5_40_CFB64 and CAST128_CFB64 Telnet Encryption types, there
+are a set of Suboption Commands.  Additions to the list are registerd
+by the IANA and documented here.
+
+Suboption       Command                  Reference
+   1            CFB64_IV                 [RFC2950]
+   2            CFB64_IV_OK              [RFC2950]
+   3            CFB64_IV_BAD             [RFC2950]
+
+
+In the DES_CFB64 Telnet Encryption type there are a set of Suboption
+Commands.  Additions to the list are registerd by the IANA and
+documented here.
+
+Suboption       Command                  Reference
+   1            CFB64_IV                 [RFC2952]
+   2            CFB64_IV_OK              [RFC2952]
+   3            CFB64_IV_BAD             [RFC2952]
+
+
+In the DES_OFB64 Telnet Encryption type there are a set of Suboption
+Commands.  Additions to the list are registerd by the IANA and
+documented here.
+
+Suboption       Command                  Reference
+   1            OFB64_IV                 [RFC2953]
+   2            OFB64_IV_OK              [RFC2953]
+   3            OFB64_IV_BAD             [RFC2953]
+
+
+REFERENCES
+
+[ETHERNET] "The Ethernet, A Local Area Network: Data Link Layer and
+           Physical Layer Specification", AA-K759B-TK, Digital
+           Equipment Corporation, Maynard, MA.  Also as: "The
+           Ethernet - A Local Area Network", Version 1.0, Digital
+           Equipment Corporation, Intel Corporation, Xerox
+           Corporation, September 1980.  And: "The Ethernet, A Local
+           Area Network: Data Link Layer and Physical Layer
+           Specifications", Digital, Intel and Xerox, November 1982.
+           And: XEROX, "The Ethernet, A Local Area Network: Data Link
+           Layer and Physical Layer Specification", X3T51/80-50, Xerox
+           Corporation, Stamford, CT., October 1980.
+
+[NIC50005] DDN Protocol Handbook, "Telnet Reconnection Option",
+           "Telnet Output Line Width Option", "Telnet Output Page Size
+           Option", NIC 50005, December 1985.
+
+[RFC652] Crocker, D., "Telnet Output Carriage-Return Disposition
+         Option", RFC 652, UCLA-NMC, October 1974.
+
+[RFC653] Crocker, D., "Telnet Output Horizontal Tabstops Option",
+         RFC 653, UCLA-NMC, October 1974.
+
+[RFC654] Crocker, D., "Telnet Output Horizontal Tab Disposition
+         Option", RFC 654, UCLA-NMC, October 1974.
+
+[RFC655] Crocker, D., "Telnet Output Formfeed Disposition Option",
+         RFC 655, UCLA-NMC, October 1974.
+
+[RFC656] Crocker, D., "Telnet Output Vertical Tabstops Option",
+         RFC 656, UCLA-NMC, October 1974.
+
+[RFC657] Crocker, D., "Telnet Output Vertical Tab Disposition Option",
+         RFC 657, UCLA-NMC, October 1974.
+
+[RFC658] Crocker, D., "Telnet Output Linefeed Disposition", RFC 658,
+         UCLA-NMC, October 1974.
+
+[RFC698] Tovar, "Telnet Extended ASCII Option", RFC 698, Stanford
+         University-AI, July 1975.
+
+[RFC726] Postel, J. and D. Crocker, "Remote Controlled Transmission
+         and Echoing Telnet Option", RFC 726, SRI-ARC, UC Irvine,
+         March 1977.
+
+[RFC727] Crispin, M., "Telnet Logout Option", RFC 727, Stanford
+         University-AI, April 1977.
+
+[RFC734] Crispin, M., "SUPDUP Protocol", RFC 734, Stanford,
+         October 1977.
+
+[RFC735] Crocker, D. and R. Gumpertz, "Revised Telnet Byte Marco
+         Option", RFC 735, Rand, CMU, November 1977.
+
+[RFC736] Crispin, M., "Telnet SUPDUP Option", Stanford University-AI,
+         RFC 736, Stanford, October 1977.
+
+[RFC749] Greenberg, B., "Telnet SUPDUP-OUTPUT Option", RFC 749,
+         MIT-Multics, September 1978.
+
+[RFC779] Killian, E., "Telnet Send-Location Option", RFC 779,
+         LLL, April 1981.
+
+[RFC856] Postel, J. and J. Reynolds, "Telnet Binary Transmission",
+         STD 27, RFC 856, USC/Information Sciences Institute, May
+         1983.
+
+[RFC857] Postel, J. and J. Reynolds, "Telnet Echo Option", STD 28, RFC
+         857, USC/Information Sciences Institute, May 1983.
+
+[RFC858] Postel, J. and J. Reynolds, "Telnet Suppress Go Ahead
+         Option", STD 29, RFC 858, USC/Information Sciences Institute,
+         May 1983.
+
+[RFC859] Postel, J. and J. Reynolds, "Telnet Status Option", STD 30,
+         RFC 859, USC/Information Sciences Institute, May 1983.
+
+[RFC860] Postel, J. and J. Reynolds, "Telnet Timing Mark Option",
+         STD 31, RFC 860, USC/Information Sciences Institute, May
+         1983.
+
+[RFC861] Postel, J. and J. Reynolds, "Telnet Extended Options - List
+         Option", STD 32, RFC 861, USC/Information Sciences Institute,
+         May 1983.
+
+[RFC885] Postel, J., "Telnet End of Record Option", RFC 885,
+         USC/Information Sciences Institute, December 1983.
+
+[RFC927] Anderson, B., "TACACS User Identification Telnet Option",
+         RFC 927, BBN, December 1984.
+
+[RFC933] Silverman, S., "Output Marking Telnet Option", RFC 933,
+         MITRE, January 1985.
+
+[RFC946] Nedved, R., "Telnet Terminal Location Number Option",
+         RFC 946, Carnegie-Mellon University, May 1985.
+
+[RDC1041] Rekhter, J., "Telnet 3270 Regime Option", RFC 1041,
+          IBM, January 1988.
+
+[RFC1043] Yasuda, A., and T. Thompson, "TELNET Data Entry Terminal
+          Option DODIIS Implementation", RFC 1043, DIA, February 1988.
+
+[RFC1053] Levy, S., and T. Jacobson, "Telnet X.3 PAD Option",
+          RFC 1053, Minnesota Supercomputer Center, April 1988.
+
+[RFC1073] Waitzman, D., "Telnet Window Size Option", RFC 1073,
+          BBN STC, October, 1988.
+
+[RFC1079] Hedrick, C., "Telnet Terminal Speed Option", RFC 1079,
+          Rutgers University, December 1988.
+
+[RFC1091] VanBokkelen, J., "Telnet Terminal Type Option",
+          RFC 1091, FTP Software, Inc., February 1989.
+
+[RFC1096] Marcy, G., "Telnet X Display Location Option", RFC 1096,
+          Carnegie Mellon University, March 1989.
+
+[RFC1184] Borman, D., Editor, "Telnet Linemode Option",
+          RFC 1184, Cray Research, Inc., October 1990.
+
+[RFC1372] Hedrick, C., and D. Borman, "Telnet Remote Flow Control
+         Option", RFC 1372, Rutgers University, Cray Research, Inc.,
+         October 1992.
+
+[RFC1408] Borman, D., Editor, "Telnet Environment Option", RFC 1408,
+          Cray Research, Inc., January 1993.
+
+[RFC1411] Borman, D., Editor, "Telnet Authentication: Kerberos 
+          Version 4", RFC 1411, Cray Research, Inc., January 1993.
+
+[RFC1416] Borman, D., Editor, "Telnet Authentication Option", RFC
+          1416, Cray Research, Inc., February 1993.
+
+[RFC1572] Alexander, S., Editor, "Telnet Environment Option", RFC1572,
+          Lachman Technology, Inc., January 1994.
+
+[RFC1647] Kelly, B., "TN3270 Enhancements", RFC1647, Auburn
+          University, July 1994.
+
+[RFC2066] Gellens, R., "Telnet CharSet Option", RFC 2066, Unisys,
+          January 1997.
+
+[RFC2217] Clark, G., "Telnet Com Port Control Option", RFC 2217, 
+          Cisco Systems, Inc., October 1997.
+
+[RFC2840] Altman, J., "Telnet Kermit Option", RFC 2840, May 2000.
+
+[RFC2941] Ts'o, T. and J. Altman, "Telnet Authentication Option",
+          RFC 2941, September 2000.
+
+[RFC2942] Ts'o, T., "Telnet Authentication: Kerberos Version 5",
+          RFC 2942, September 2000.
+
+[RFC2943] Housley, R., Horting, T. and P. Yee, "TELNET Authentication
+          Using DSA", RFC 2943, September 2000.
+
+[RFC2944] Wu, T., "Telnet Authentication: SRP", RFC 2944, September
+          2000. 
+
+[RFC2946] Ts'o, T., "Telnet Data Encryption Option", RFC 2946,
+          September 2000.
+ 
+[RFC2947] Altman, J., "Telnet Encryption: DES3 64 bit Cipher
+          Feedback", RFC 2947, September 2000.
+
+[RFC2948] Altman, J., "Telnet Encryption: DES3 64 bit Output
+          Feedback", RFC 2948, September 2000.
+
+[RFC2949] Altman, J., "Telnet Encryption: CAST-128 64 bit Output
+          Feedback", RFC 2949, September 2000.
+
+[RFC2950] Altman, J., "Telnet Encryption: CAST-128 64 bit Cipher
+          Feedback", September 2000.   
+
+[RFC2951] Housley, R., Horting, T. and P. Yee, "TELNET Authentication
+          Using KEA and SKIPJACK", September 2000.
+
+[RFC2952] Ts'o, T., "Telnet Encryption: DES 64 bit Cipher Feedback",
+          RFC 2952, September 2000.
+
+[RFC2953] Ts'o, T., "Telnet Encryption: DES 64 bit Output Feedback",
+          RFC 2953, September 2000.
+
+PEOPLE
+------
+
+[Altman] Jeffrey Altman, <jaltman@watsun.cc.columbia.edu>, August
+         1998, January 2000.
+
+[Atmar] Wirt Atmar, <atmar@aics-research.com>, June 1998.
+
+[Barnes] Robert Barnes, <rab@stallion.oz.au>, July 1997.
+
+[Boe] Michael Boe, <mboe@cisco.com>, June 1998.
+
+[Brashear] Derrick Brashear, <shadow@dementia.org>, January 1995.
+
+[Borman] Dave Borman, <dab@CRAY.COM>, January 1995.
+
+[Croft] David Croft, <david@infotrek.co.uk>, September 1998.
+
+[Earhart] Rob Earhart, <earhart+@CMU.EDU>, April 1995.
+
+[Horting] Todd Horting <thorting@spyrus.com>, April 1998.
+
+[Hudson] Tim Hudson <tjh@cryptsoft.com>, December 1998.
+
+[IANA] Internet Assigned Numbers Authority, <iana@isi.edu>, January 1995.
+
+[Josefsson] S. Josefsson <jas@extundo.com>, November 2003.
+       http://josefsson.org/shishi/shishi.html#Telnet%20encryption%20with%20AES-CCM
+
+[Kahn] Louis Kahn, <louisk@microsoft.com>, October 1998.
+
+[McGregory] Steve McGregory <stevemc@pragmasys.com>, December 1998.
+
+[Schoch]  Steven Schoch, <schoch@sheba.arc.nasa.gov>, January 1995.
+
+[Ts'o] Theodore Ts'o, <tytso@mit.edu>, September 1998.
+
+[Wu] Thomas Wu, <tjw@stanford.edu>, July 1997, September 1998.
+
+[]
+

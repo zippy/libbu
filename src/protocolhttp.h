@@ -11,7 +11,14 @@
 namespace Bu
 {
 	/**
-	 *
+	 * An HTTP Protocol handler.  Yes, I know that HTTP stands for Hyper Text
+	 * Transfer Protocol, and that the Protocol part is redundant, but in this
+	 * case the word Protocol is refering to the Libbu++ construct Bu::Protocol,
+	 * and not a means of encoding conversations.  Anyway, this class represents
+	 * a general HTTP server processor.  Every time a request comes in it calls
+	 * the onRequest function in a subclass with the method and URI that were
+	 * requested.  The sub-class can then do whatever it needs to to send back
+	 * a response.
 	 */
 	class ProtocolHttp : public Protocol
 	{

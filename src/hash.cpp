@@ -2,26 +2,6 @@
 
 namespace Bu { subExceptionDef( HashException ) }
 
-template<> uint32_t Bu::__calcHashCode<int>( const int &k )
-{
-	return k;
-}
-
-template<> bool Bu::__cmpHashKeys<int>( const int &a, const int &b )
-{
-	return a == b;
-}
-
-template<> uint32_t Bu::__calcHashCode<unsigned int>( const unsigned int &k )
-{
-	return k;
-}
-
-template<> bool Bu::__cmpHashKeys<unsigned int>( const unsigned int &a, const unsigned int &b )
-{
-	return a == b;
-}
-
 template<>
 uint32_t Bu::__calcHashCode<const char *>( const char * const &k )
 {

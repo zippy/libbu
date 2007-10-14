@@ -1008,12 +1008,16 @@ namespace Bu
 		challoc ca;
 		sizecalc szCalc;
 	};
+	
+	template<typename T> uint32_t __calcHashCode( const T &k )
+	{
+		return static_cast<uint32_t>( k );
+	}
 
-	template<> uint32_t __calcHashCode<int>( const int &k );
-	template<> bool __cmpHashKeys<int>( const int &a, const int &b );
-
-	template<> uint32_t __calcHashCode<unsigned int>( const unsigned int &k );
-	template<> bool __cmpHashKeys<unsigned int>( const unsigned int &a, const unsigned int &b );
+	template<typename T> bool __cmpHashKeys( const T &a, const T &b )
+	{
+		return (a == b);
+	}
 
 	template<> uint32_t __calcHashCode<const char *>( const char * const &k );
 	template<> bool __cmpHashKeys<const char *>( const char * const &a, const char * const &b );
