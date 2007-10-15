@@ -270,7 +270,7 @@ void Bu::ProtocolTelnet::write( const Bu::FString &sData )
 {
 	write( sData.getStr(), sData.getSize() );
 }
-#include "bu/logger.h"
+
 void Bu::ProtocolTelnet::write( const char *pData, int iSize )
 {
 	int iLast = 0, j;
@@ -281,9 +281,7 @@ void Bu::ProtocolTelnet::write( const char *pData, int iSize )
 			if( j+1 >= iSize ||
 				(pData[j+1] != '\r' && pData[j+1] != '\0') )
 			{
-				logHexDump( 1, pData+iLast, j-iLast, "bo" );
 				pClient->write( pData+iLast, j-iLast );
-				logHexDump( 1, "\n\r", 2, "ba" );
 				pClient->write( "\n\r", 2 );
 				iLast = j+1;
 			}
@@ -295,7 +293,6 @@ void Bu::ProtocolTelnet::write( const char *pData, int iSize )
 	}
 	if( j > iLast )
 	{
-		logHexDump( 1, pData+iLast, iSize-iLast, "bl" );
 		pClient->write( pData+iLast, iSize-iLast );
 	}
 	//pClient->write( pData, iSize );
