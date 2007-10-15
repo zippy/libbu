@@ -110,7 +110,7 @@ namespace Bu
 		bool isCanonical();
 
 		void write( const Bu::FString &sData );
-		void write( char *pData, int iSize );
+		void write( const char *pData, int iSize );
 		void write( char cData );
 
 	public:
