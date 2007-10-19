@@ -507,6 +507,18 @@ namespace Bu
 			bool bFinished;
 
 		public:
+			iterator( const iterator &i ) :
+				hsh( i.hsh ),
+				nPos( i.nPos ),
+				bFinished( i.bFinished )
+			{
+			}
+
+			bool isActive()
+			{
+				return !bFinished;
+			}
+
 			/**
 			 * Iterator incrementation operator. Move the iterator forward.
 			 */
