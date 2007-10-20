@@ -484,7 +484,7 @@ int Bu::ParamProc::help( int argc, char *argv[] )
 			Bu::FString sTmp = (*i)->sWord.getStr();
 			if( (*i)->sExtra.getStr() )
 				sTmp += (*i)->sExtra.getStr();
-			printf( fmt, sTmp.c_str() );
+			printf( fmt, sTmp.getStr() );
 		}
 		else
 		{

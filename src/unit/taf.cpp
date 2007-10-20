@@ -29,14 +29,14 @@ public:
 		fOut.write(data,strlen(data));
 		fOut.close();
 
-		Bu::File fIn(sFnTmp.c_str(), "rb");
+		Bu::File fIn(sFnTmp.getStr(), "rb");
 		Bu::TafReader tr(fIn);
 		
 		Bu::TafGroup *tn = tr.readGroup();
-		unitTest( !strcmp("Bob", tn->getProperty("name").c_str()) );
+		unitTest( !strcmp("Bob", tn->getProperty("name").getStr()) );
 		delete tn;
 
-		unlink(sFnTmp.c_str());
+		unlink(sFnTmp.getStr());
 #undef FN_TMP
 	}
 };

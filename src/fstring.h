@@ -11,6 +11,16 @@
 
 #define min( a, b )  ((a<b)?(a):(b))
 
+/* I borrowed this from someone who borrowed it from glib who borrowed it
+ * from...
+ */
+#if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+#define DEPRECATED  __attribute__((__deprecated__))
+#else
+#define DEPRECATED
+#endif /* __GNUC__ */
+
+
 namespace Bu
 {
 	template< typename chr >
@@ -286,6 +296,7 @@ namespace Bu
 		 * (std::string compatability) Get a pointer to the string array.
 		 *@returns (chr *) The string data.
 		 */
+		DEPRECATED
 		chr *c_str()
 		{
 			if( pFirst == NULL )
@@ -300,6 +311,7 @@ namespace Bu
 		 * (std::string compatability) Get a const pointer to the string array.
 		 *@returns (const chr *) The string data.
 		 */
+		DEPRECATED
 		const chr *c_str() const
 		{
 			if( pFirst == NULL )

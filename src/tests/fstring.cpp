@@ -27,13 +27,14 @@ Bu::FString genThing()
 	bob += "cd ";
 	bob += "efg";
 
-    printf("---bob------\n%08X: %s\n", (unsigned int)bob.c_str(), bob.c_str() );
+    printf("---bob------\n%08X: %s\n", (unsigned int)bob.getStr(),
+			bob.getStr() );
 	return bob;
 }
 
 void thing( Bu::FString str )
 {
-	printf("Hey:  %s\n", str.c_str() );
+	printf("Hey:  %s\n", str.getStr() );
 }
 
 void copyfunc( std::string temp )
@@ -107,7 +108,7 @@ void doTimings()
 	delete[] buf;
 }
 
-#define pem printf("---------\n%08X: %s\n%08X: %s\n", (unsigned int)str.c_str(), str.c_str(), (unsigned int)str2.c_str(), str2.c_str() );
+#define pem printf("---------\n%08X: %s\n%08X: %s\n", (unsigned int)str.getStr(), str.getStr(), (unsigned int)str2.getStr(), str2.getStr() );
 int main( int argc, char *argv )
 {
 	Bu::FString fs1;
@@ -137,7 +138,7 @@ int main( int argc, char *argv )
 	thing( str2 );
 	thing("test.");
 	
-	printf("%d == %d\n", Bu::__calcHashCode( str ), Bu::__calcHashCode( str.c_str() ) );
+	printf("%d == %d\n", Bu::__calcHashCode( str ), Bu::__calcHashCode( str.getStr() ) );
 
 	doTimings();
 }

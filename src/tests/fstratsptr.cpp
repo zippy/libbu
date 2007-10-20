@@ -22,8 +22,8 @@ void Swap(PersonPtr one, PersonPtr two)
 
 	printf(
 			"%s %s\n",
-			three->sFirstName->c_str(),
-			three->sLastName->c_str() );
+			three->sFirstName->getStr(),
+			three->sLastName->getStr() );
 }
 
 int main()
