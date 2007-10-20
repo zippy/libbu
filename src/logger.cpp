@@ -12,7 +12,7 @@ Bu::Logger::~Logger()
 {
 }
 
-void Bu::Logger::log( int nLevel, const char *sFile, const char *sFunction, int nLine, const char *sFormat, ...)
+void Bu::Logger::log( uint32_t nLevel, const char *sFile, const char *sFunction, int nLine, const char *sFormat, ...)
 {
 	if( (nLevel&nLevelMask) == 0 )
 		return;
@@ -112,12 +112,17 @@ void Bu::Logger::setFormat( const Bu::FString &str )
 	//write( fileno(stdout), sLogFormat.getStr(), sLogFormat.getSize() );
 }
 
-void Bu::Logger::setMask( int n )
+void Bu::Logger::setMask( uint32_t n )
 {
 	nLevelMask = n;
 }
 
-void Bu::Logger::setLevel( int n )
+uint32_t Bu::Logger::getMask()
+{
+	return nLevelMask;
+}
+
+void Bu::Logger::setLevel( uint32_t n )
 {
 	int j;
 	for( j = 31; j > 0; j-- )
@@ -134,8 +139,8 @@ void Bu::Logger::setLevel( int n )
 	}
 }
 
-void Bu::Logger::hexDump( int nLevel, const char *sFile, const char *sFunction,
-		int nLine, const void *pDataV, long nDataLen,
+void Bu::Logger::hexDump( uint32_t nLevel, const char *sFile,
+		const char *sFunction, int nLine, const void *pDataV, long nDataLen,
 		const char *lpName )
 {
 	log( nLevel, sFile, sFunction, nLine, "Displaying %ld bytes of %s.", nDataLen, lpName );
@@ -176,3 +181,4 @@ void Bu::Logger::hexDump( int nLevel, const char *sFile, const char *sFunction,
 	}
 	log( nLevel, sFile, sFunction, nLine, sBorder.getStr() );
 }
+

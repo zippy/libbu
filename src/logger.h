@@ -69,17 +69,18 @@ namespace Bu
 		virtual ~Logger();
 
 	public:
-		void log( int nLevel, const char *sFile, const char *sFunction, int nLine, const char *sFormat, ...);
+		void log( uint32_t nLevel, const char *sFile, const char *sFunction, int nLine, const char *sFormat, ...);
 
 		void setFormat( const Bu::FString &str );
-		void setMask( int n );
-		void setLevel( int n );
+		void setMask( uint32_t n );
+		void setLevel( uint32_t n );
+		uint32_t getMask();
 
-		void hexDump( int nLevel, const char *sFile, const char *sFunction, int nLine, const void *pData, long nDataLen, const char *lpName );
+		void hexDump( uint32_t nLevel, const char *sFile, const char *sFunction, int nLine, const void *pData, long nDataLen, const char *lpName );
 
 	private:
 		Bu::FString sLogFormat;
-		int nLevelMask;
+		uint32_t nLevelMask;
 	};
 }
 
