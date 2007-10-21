@@ -114,7 +114,8 @@ namespace Bu
 			hPlugin.insert( pInfo->sID, pReg );
 		}
 
-		void registerExternalPlugin( const char *sFName, const char *sPluginName )
+		void registerExternalPlugin( const Bu::FString &sFName,
+				const Bu::FString &sPluginName )
 		{
 			PluginReg *pReg;
 			try {
@@ -130,20 +131,23 @@ namespace Bu
 			pReg = new PluginReg;
 
 			pReg->bBuiltin = false;
-			pReg->dlHandle = dlopen( sFName, RTLD_NOW );
+			pReg->dlHandle = dlopen( sFName.getStr(), RTLD_NOW );
 			if( pReg->dlHandle == NULL )
 			{
-				throw PluginException( 1, "Error on %s: %s", sFName, dlerror() );
+				throw PluginException( 1, "Error on %s: %s", sFName.getStr(),
+						dlerror() );
 			}
-			pReg->pInfo = (PluginInfo *)dlsym( pReg->dlHandle, sPluginName );
+			pReg->pInfo = (PluginInfo *)dlsym( pReg->dlHandle,
+					sPluginName.getStr() );
 			if( pReg->pInfo == NULL )
 			{
-				throw PluginException( 2, "Error on %s: %s", sFName, dlerror() );
+				throw PluginException( 2, "Error on %s: %s", sFName.getStr(),
+						dlerror() );
 			}
 			hPlugin.insert( pReg->pInfo->sID, pReg );
 		}
 
-		T *instantiate( const char *lpName )
+		T *instantiate( const Bu::FString &lpName )
 		{
 			PluginReg *pReg = (PluginReg *)hPlugin[lpName];
 			if( pReg == NULL )
@@ -156,7 +160,7 @@ namespace Bu
 			return p;
 		}
 
-		bool hasPlugin( const char *lpName )
+		bool hasPlugin( const Bu::FString &lpName )
 		{
 			return hPlugin.has( lpName );
 		}
