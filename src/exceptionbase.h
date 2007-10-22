@@ -42,6 +42,8 @@ namespace Bu
 		 * @return 
 		 */
 		ExceptionBase( int nCode=0 ) throw();
+
+		ExceptionBase( const ExceptionBase &e ) throw ();
 		
 		/**
 		 * 
@@ -87,6 +89,7 @@ class name : public Bu::ExceptionBase											\
 		name( const char *sFormat, ... ) throw ();							\
 		name( int nCode, const char *sFormat, ... ) throw();				\
 		name( int nCode=0 ) throw ();										\
+		name( const name &e ) throw ();										\
 };
 
 #define subExceptionDeclChild( name, parent )								\
@@ -96,6 +99,7 @@ class name : public parent													\
 		name( const char *sFormat, ... ) throw ();							\
 		name( int nCode, const char *sFormat, ... ) throw();				\
 		name( int nCode=0 ) throw ();										\
+		name( const name &e ) throw ();										\
 };
 
 #define subExceptionDeclBegin( name )										\
@@ -104,7 +108,8 @@ class name : public Bu::ExceptionBase											\
 	public:																	\
 		name( const char *sFormat, ... ) throw ();							\
 		name( int nCode, const char *sFormat, ... ) throw();				\
-		name( int nCode=0 ) throw ();
+		name( int nCode=0 ) throw ();										\
+		name( const name &e ) throw ();
 
 #define subExceptionDeclEnd()												\
 };
@@ -129,6 +134,10 @@ name::name( int nCode, const char *lpFormat, ... ) throw() :				\
 name::name( int nCode ) throw() :											\
 	ExceptionBase( nCode )													\
 {																			\
+}																			\
+name::name( const name &e ) throw() :										\
+	ExceptionBase( e )														\
+{																			\
 }
 
 #define subExceptionDefChild( name, parent )								\
@@ -150,6 +159,10 @@ name::name( int nCode, const char *lpFormat, ... ) throw() :				\
 }																			\
 name::name( int nCode ) throw() :											\
 	parent( nCode )															\
+{																			\
+}																			\
+name::name( const name &e ) throw() :										\
+	ExceptionBase( e )														\
 {																			\
 }
 

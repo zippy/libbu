@@ -29,6 +29,13 @@ Bu::ExceptionBase::ExceptionBase( int nCode ) throw() :
 {
 }
 
+Bu::ExceptionBase::ExceptionBase( const ExceptionBase &e ) throw () :
+	nErrorCode( e.nErrorCode ),
+	sWhat( NULL )
+{
+	setWhat( e.sWhat );
+}
+
 Bu::ExceptionBase::~ExceptionBase() throw()
 {
 	if( sWhat )
