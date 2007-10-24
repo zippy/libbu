@@ -179,22 +179,32 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 size_t Bu::Socket::read( void *pBuf, size_t nBytes,
 		uint32_t nSec, uint32_t nUSec )
 {
+	struct timeval tv, nt, ct;
+	size_t nRead = 0;
+	
 	fd_set rfds;
 	FD_ZERO(&rfds);
 	FD_SET(nSocket, &rfds);
-	struct timeval tv = { nSec, nUSec };
-	int retval = select( nSocket+1, &rfds, NULL, NULL, &tv );
-	if( retval == -1 )
-		throw ConnectionException(
-			excodeBadReadError,
-			"Bad Read error"
-			);
-	if( !FD_ISSET( nSocket, &rfds ) )
-		throw ConnectionException(
-			excodeSocketTimeout,
-			"Socket timout on read"
-			);
-	return read( pBuf, nBytes );
+
+	gettimeofday( &nt, NULL );
+	nt.tv_sec += nSec;
+	nt.tv_usec += nUSec;
+
+	for(;;)
+	{
+		tv.tv_sec = nSec;
+		tv.tv_usec = nUSec;
+		select( nSocket+1, &rfds, NULL, NULL, &tv );
+		nRead += read( ((char *)pBuf)+nRead, nBytes-nRead );
+		if( nRead >= nBytes )
+			break;
+		gettimeofday( &ct, NULL );
+		if( (ct.tv_sec > nt.tv_sec) ||
+			(ct.tv_sec == nt.tv_sec &&
+			ct.tv_usec >= nt.tv_usec) )
+			break;
+	}
+	return nRead;
 }
 
 size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
@@ -204,6 +214,36 @@ size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
 	{
 		if( errno == EAGAIN ) return 0;
 		throw ConnectionException( excodeWriteError, strerror(errno) );
+	}
+	return nWrote;
+}
+
+size_t Bu::Socket::write( const void *pBuf, size_t nBytes, uint32_t nSec, uint32_t nUSec )
+{
+	struct timeval tv, nt, ct;
+	size_t nWrote = 0;
+	
+	fd_set wfds;
+	FD_ZERO(&wfds);
+	FD_SET(nSocket, &wfds);
+
+	gettimeofday( &nt, NULL );
+	nt.tv_sec += nSec;
+	nt.tv_usec += nUSec;
+
+	for(;;)
+	{
+		tv.tv_sec = nSec;
+		tv.tv_usec = nUSec;
+		select( nSocket+1, NULL, &wfds, NULL, &tv );
+		nWrote += write( ((char *)pBuf)+nWrote, nBytes-nWrote );
+		if( nWrote >= nBytes )
+			break;
+		gettimeofday( &ct, NULL );
+		if( (ct.tv_sec > nt.tv_sec) ||
+			(ct.tv_sec == nt.tv_sec &&
+			ct.tv_usec >= nt.tv_usec) )
+			break;
 	}
 	return nWrote;
 }

@@ -68,8 +68,8 @@ void Bu::Client::processOutput()
 	if( sWriteBuf.getSize() > 0 )
 	{
 		int nAmnt = (sWriteBuf.getSize()<2048)?(sWriteBuf.getSize()):(2048);
-		pSocket->write( sWriteBuf.getStr(), nAmnt );
-		sWriteBuf.trimFront( nAmnt );
+		int nReal = pSocket->write( sWriteBuf.getStr(), nAmnt );
+		sWriteBuf.trimFront( nReal );
 		//sWriteBuf.clear();
 	}
 }

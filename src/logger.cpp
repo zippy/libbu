@@ -20,7 +20,11 @@ void Bu::Logger::log( uint32_t nLevel, const char *sFile, const char *sFunction,
 	va_list ap;
 	va_start( ap, sFormat );
 	char *text;
-	vasprintf( &text, sFormat, ap );
+	if( vasprintf( &text, sFormat, ap ) < 0 )
+	{
+		printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! WTF?\n");
+		return;
+	}
 	va_end(ap);
 	
 	time_t t = time(NULL);
@@ -152,6 +156,11 @@ void Bu::Logger::hexDump( uint32_t nLevel, const char *sFile,
 	Bu::FString sLine;
 	for(;;)
 	{
+		{
+			char buf[15];
+			sprintf( buf, "%010d| ", j );
+			sLine += buf;
+		}
 		int kmax = 8;
 		if( nDataLen-j < 8 ) kmax = nDataLen-j;
 		for(int k = 0; k < 8; k++ )
@@ -171,7 +180,7 @@ void Bu::Logger::hexDump( uint32_t nLevel, const char *sFile,
 		for(int k = 0; k < kmax; k++ )
 		{
 			char buf[3];
-			sprintf( buf, "%c ", (pData[j+k]>32 && pData[j+k]<=128)?(pData[j+k]):('.') );
+			sprintf( buf, "%c", (pData[j+k]>32 && pData[j+k]<=128)?(pData[j+k]):('.') );
 			sLine += buf;
 		}
 		log( nLevel, sFile, sFunction, nLine, sLine.getStr() );
