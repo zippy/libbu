@@ -120,8 +120,28 @@ namespace Bu
 		virtual Archive &operator&&(double &);
 		virtual Archive &operator&&(long double &);
 
+		/**
+		 * For storage, get an ID for the pointer to the object you're going to
+		 * write.
+		 */
 		uint32_t getID( const void *ptr );
+
+		/**
+		 * For loading.  Assosiates an empty pointer with an id.  When you wind
+		 * up loading an id reference to a pointer for an object that may or
+		 * may not have loaded yet, call this with the id, if it has been loaded
+		 * already, you'll immediately get a pointer, if not, it will write one
+		 * for you when the time comes.
+		 */
 		void assocPtrID( void **ptr, uint32_t id );
+
+		/**
+		 * For loading.  Call this when you load an object that other things may
+		 * have pointers to.  It will assosiate every pointer that's been
+		 * registered with assocPtrID to the pointer passed in, and id passed
+		 * in.  It will also set things up so future calls to assocPtrID will
+		 * automatically succeed immediately.
+		 */
 		void readID( const void *ptr, uint32_t id );
 
 	private:
@@ -134,7 +154,7 @@ namespace Bu
 	Archive &operator<<(Archive &, class Bu::Archival &);
 	Archive &operator>>(Archive &, class Bu::Archival &);
 	//Archive &operator&&(Archive &s, class Bu::Archival &p);
-
+	
 	Archive &operator<<(Archive &, std::string &);
 	Archive &operator>>(Archive &, std::string &);
 	//Archive &operator&&(Archive &, std::string &);
@@ -178,6 +198,9 @@ namespace Bu
 
 		return ar;
 	}
+	
+	Archive &operator<<(Archive &, class Bu::Archival *p);
+	Archive &operator>>(Archive &, class Bu::Archival *p);
 
 	template<typename key, typename value>
 	Archive &operator<<( Archive &ar, Hash<key,value> &h )
