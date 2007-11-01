@@ -622,7 +622,7 @@ namespace Bu
 		 *@param sText (const chr *) The string to search for.
 		 *@returns (long) The index of the first occurrance. -1 for not found.
 		 */
-		long find( const chr cChar )
+		long find( const chr cChar ) const
 		{
 			flatten();
 			for( long j = 0; j < pFirst->nLength; j++ )
@@ -638,7 +638,7 @@ namespace Bu
 		 *@param cChar (const chr) The character to search for.
 		 *@returns (long) The index of the first occurrance. -1 for not found.
 		 */
-		long find( const chr *sText )
+		long find( const chr *sText ) const
 		{
 			long nTLen = strlen( sText );
 			flatten();
@@ -655,7 +655,7 @@ namespace Bu
 		 *@param sText (const chr *) The string to search for.
 		 *@returns (long) The index of the last occurrance. -1 for not found.
 		 */
-		long rfind( const chr *sText )
+		long rfind( const chr *sText ) const
 		{
 			long nTLen = strlen( sText );
 			flatten();
