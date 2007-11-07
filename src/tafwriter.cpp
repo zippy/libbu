@@ -49,10 +49,14 @@ void Bu::TafWriter::writeGroup( const Bu::TafGroup *pRoot )
 void Bu::TafWriter::writeProperty( const Bu::TafProperty *pProp )
 {
 	ident();
-	writeString( pProp->getName() );
-	if( pProp->getValue().getStr() != NULL )
+	if( pProp->getName().getStr() != NULL && pProp->getName() != "" )
 	{
+		writeString( pProp->getName() );
 		sOut.write("=", 1 );
+		writeString( pProp->getValue() );
+	}
+	else
+	{
 		writeString( pProp->getValue() );
 	}
 	sOut.write("\n", 1 );

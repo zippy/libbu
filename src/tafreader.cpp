@@ -63,7 +63,7 @@ Bu::TafProperty *Bu::TafReader::readProperty()
 	if( c != '=' )
 	{
 		//printf("  %s (true)\n", sName.getStr() );
-		return new Bu::TafProperty( sName, "" );
+		return new Bu::TafProperty( "", sName );
 	}
 	next();
 	FString sValue = readStr();
