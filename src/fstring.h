@@ -681,6 +681,50 @@ namespace Bu
 			appendChunk( pNew );
 		}
 
+		void format( const char *sFrmt, ...)
+		{
+			clear();
+
+			va_list ap;
+			va_start( ap, sFrmt );
+
+			long iLen = vsnprintf( NULL, 0, sFrmt, ap );
+			
+			Chunk *pNew = newChunk( iLen );
+			vsnprintf( pNew->pData, iLen+1, sFrmt, ap );
+			appendChunk( pNew );
+
+			va_end( ap );
+		}
+
+		void formatAppend( const char *sFrmt, ...)
+		{
+			va_list ap;
+			va_start( ap, sFrmt );
+
+			long iLen = vsnprintf( NULL, 0, sFrmt, ap );
+			
+			Chunk *pNew = newChunk( iLen );
+			vsnprintf( pNew->pData, iLen+1, sFrmt, ap );
+			appendChunk( pNew );
+
+			va_end( ap );
+		}
+
+		void formatPrepend( const char *sFrmt, ...)
+		{
+			va_list ap;
+			va_start( ap, sFrmt );
+
+			long iLen = vsnprintf( NULL, 0, sFrmt, ap );
+			
+			Chunk *pNew = newChunk( iLen );
+			vsnprintf( pNew->pData, iLen+1, sFrmt, ap );
+			prependChunk( pNew );
+
+			va_end( ap );
+		}
+
 		/**
 		 * Function the archiver calls to archive your FString.
 		 *@param ar (Archive) The archive which is archiving your FString.
