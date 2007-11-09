@@ -98,13 +98,15 @@ namespace Bu
 	class TafComment : public TafNode
 	{
 	public:
-		TafComment( const Bu::FString &sText );
+		TafComment( const Bu::FString &sText, bool bEOL=false );
 		virtual ~TafComment();
 
 		const Bu::FString &getText() const;
+		bool isEOLStyle() const;
 
 	private:
 		Bu::FString sText;
+		bool bEOL;
 	};
 }
 

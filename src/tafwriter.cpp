@@ -65,9 +65,18 @@ void Bu::TafWriter::writeProperty( const Bu::TafProperty *pProp )
 void Bu::TafWriter::writeComment( const Bu::TafComment *pComment )
 {
 	ident();
-	sOut.write("/*", 2 );
-	sOut.write( pComment->getText().getStr(), pComment->getText().getSize() );
-	sOut.write("*/ ", 3 );
+	if( pComment->isEOLStyle() )
+	{
+		sOut.write("//", 2 );
+		sOut.write( pComment->getText().getStr(), pComment->getText().getSize() );
+		sOut.write("\n", 1 );
+	}
+	else
+	{
+		sOut.write("/*", 2 );
+		sOut.write( pComment->getText().getStr(), pComment->getText().getSize() );
+		sOut.write("*/ ", 3 );
+	}
 }
 
 void Bu::TafWriter::writeString( const Bu::FString &str )

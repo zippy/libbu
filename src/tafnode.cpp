@@ -141,9 +141,10 @@ const Bu::FString &Bu::TafProperty::getValue() const
 	return sValue;
 }
 
-Bu::TafComment::TafComment( const Bu::FString &sText ) :
+Bu::TafComment::TafComment( const Bu::FString &sText, bool bEOL ) :
 	TafNode( typeComment ),
-	sText( sText )
+	sText( sText ),
+	bEOL( bEOL )
 {
 }
 
@@ -154,5 +155,10 @@ Bu::TafComment::~TafComment()
 const Bu::FString &Bu::TafComment::getText() const
 {
 	return sText;
+}
+
+bool Bu::TafComment::isEOLStyle() const
+{
+	return bEOL;
 }
 

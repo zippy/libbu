@@ -23,7 +23,7 @@ namespace Bu
 	private:
 		void groupContent( Bu::TafGroup *pNode );
 		Bu::TafProperty *readProperty();
-		Bu::TafComment *readComment();
+		Bu::TafComment *readComment( bool bEOL=false );
 		void ws();
 		bool isws();
 		void next();

@@ -49,6 +49,8 @@ void Bu::TafReader::groupContent( Bu::TafGroup *pGroup )
 			return;
 		else if( c == '/' && la == '*' )
 			pGroup->addChild( readComment() );
+		else if( c == '/' && la == '/' )
+			pGroup->addChild( readComment( true ) );
 		else if( c == ':' )
 			throw TafException("Encountered stray ':' in taf stream.");
 		else
@@ -71,22 +73,43 @@ Bu::TafProperty *Bu::TafReader::readProperty()
 	//printf("  %s = %s\n", sName.getStr(), sValue.getStr() );
 }
 
-Bu::TafComment *Bu::TafReader::readComment()
+Bu::TafComment *Bu::TafReader::readComment( bool bEOL )
 {
-	next();
 	FString sCmnt;
-	for(;;)
+	next();
+	if( bEOL )
 	{
-		next();
-		if( c == '*' && la == '/' )
+		for(;;)
 		{
-			next(); next();
-			break;
+			next();
+			if( c == '\n' && la == '\r' )
+			{
+				next(); next();
+				break;
+			}
+			else if( c == '\n' || c == '\r' )
+			{
+				next();
+				break;
+			}
+			sCmnt += c;
 		}
-		sCmnt += c;
+	}
+	else
+	{
+		for(;;)
+		{
+			next();
+			if( c == '*' && la == '/' )
+			{
+				next(); next();
+				break;
+			}
+			sCmnt += c;
+		}
 	}
 
-	return new TafComment( sCmnt );
+	return new TafComment( sCmnt, bEOL );
 }
 
 Bu::FString Bu::TafReader::readStr()
