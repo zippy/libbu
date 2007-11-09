@@ -79,7 +79,10 @@ Bu::TafComment *Bu::TafReader::readComment()
 	{
 		next();
 		if( c == '*' && la == '/' )
+		{
+			next(); next();
 			break;
+		}
 		sCmnt += c;
 	}
 
