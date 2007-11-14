@@ -409,8 +409,7 @@ namespace Bu
 				if( isFilled( j ) )
 					if( !isDeleted( j ) )
 					{
-						va.destroy( &aValues[j] );
-						ka.destroy( &aKeys[j] );
+						_erase( j );
 						onDelete();
 					}
 			}
