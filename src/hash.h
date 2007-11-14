@@ -776,6 +776,24 @@ namespace Bu
 
 			return lKeys;
 		}
+		
+		Bu::List<value> getValues() const
+		{
+			Bu::List<value> lValues;
+
+			for( uint32_t j = 0; j < nCapacity; j++ )
+			{
+				if( isFilled( j ) )
+				{
+					if( !isDeleted( j ) )
+					{
+						lValues.append( aValues[j] );
+					}
+				}
+			}
+
+			return lValues;
+		}
 
 	protected:
 		virtual void onInsert() {}
