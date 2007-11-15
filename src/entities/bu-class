@@ -5,7 +5,14 @@
 	<file
 		name="header"
 		filename="{=name:%tolower}.h"
->#ifndef {=name:%uccsplit:%toupper}_H
+>/*
+ * Copyright (C) 2007 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
+#ifndef {=name:%uccsplit:%toupper}_H
 #define {=name:%uccsplit:%toupper}_H
 
 #include &lt;stdint.h&gt;
@@ -33,7 +40,14 @@
 	<file
 		name="source"
 		filename="{=name:%tolower}.cpp"
->#include "bu/{=name:%tolower}.h"
+	>/*
+ * Copyright (C) 2007 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
+#include "bu/{=name:%tolower}.h"
 
 using namespace Bu;
 
