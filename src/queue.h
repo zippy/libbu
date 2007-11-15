@@ -8,6 +8,8 @@
 #ifndef BU_QUEUE_H
 #define BU_QUEUE_H
 
+#include <memory>
+
 namespace Bu
 {
 	template<typename value, typename valuealloc = std::allocator<value> >

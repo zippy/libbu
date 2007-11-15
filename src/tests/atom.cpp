@@ -16,7 +16,7 @@ typedef struct bob
 int main()
 {
 	Bu::Atom<int> aInt;
-	Bu::Atom<char *> aStr;
+	Bu::Atom<const char *> aStr;
 	Bu::Atom<bob> aBob;
 
 	aBob = bob();
