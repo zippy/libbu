@@ -18,6 +18,8 @@ public:
 		addTest( Unit::compare2 );
 		addTest( Unit::appendSingle );
 		addTest( Unit::shared1 );
+		addTest( Unit::insert );
+		addTest( Unit::remove );
 	}
 
 	virtual ~Unit()
@@ -56,6 +58,34 @@ public:
 		unitTest( a.getStr() != b.getStr() );
 		a = b;
 		unitTest( a.getStr() == b.getStr() );
+	}
+
+	void insert()
+	{
+		Bu::FString a("abcd");
+		a.insert( 2, "-!-", 3 );
+		unitTest( a == "ab-!-cd" );
+		
+		a.insert( 0, "!!", 2 );
+		unitTest( a == "!!ab-!-cd" );
+		
+		a.insert( -10, "789", 3 );
+		unitTest( a == "789!!ab-!-cd" );
+		
+		a.insert( 12, "89", 2 );
+		unitTest( a == "789!!ab-!-cd89" );
+		
+		a.insert( 1203, "12", 2 );
+		unitTest( a == "789!!ab-!-cd8912" );
+	}
+
+	void remove()
+	{
+		Bu::FString a("abHEYcd");
+		a.remove( 2, 3 );
+		unitTest( a == "abcd" );
+		a.remove( 2, 5 );
+		unitTest( a == "ab" );
 	}
 };
 

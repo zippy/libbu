@@ -226,6 +226,45 @@ namespace Bu
 			prependChunk( pNew );
 		}
 
+		void insert( long nPos, const chr *pData, long nLen )
+		{
+			if( nLen <= 0 )
+				return;
+			flatten();
+			if( nPos <= 0 )
+			{
+				prepend( pData, nLen );
+			}
+			else if( nPos >= nLength )
+			{
+				append( pData, nLen );
+			}
+			else
+			{
+				Chunk *p1 = newChunk( nPos );
+				Chunk *p2 = newChunk( nLen );
+				Chunk *p3 = newChunk( nLength-nPos );
+				cpy( p1->pData, pFirst->pData, nPos );
+				cpy( p2->pData, pData, nLen );
+				cpy( p3->pData, pFirst->pData+nPos, nLength-nPos );
+				clear();
+				appendChunk( p1 );
+				appendChunk( p2 );
+				appendChunk( p3 );
+			}
+		}
+
+		void remove( long nPos, long nLen )
+		{
+			if( nLen <= 0 || nPos < 0 || nPos >= nLength )
+				return;
+			if( nLen >= nLength-nPos )
+				nLen = nLength-nPos-1;
+			flatten();
+			cpy( pFirst->pData+nPos, pFirst->pData+nPos+nLen, nLen+1 );
+			nLength -= nPos;
+		}
+
 		/**
 		 *@todo void prepend( const chr &cData )
 		 */
