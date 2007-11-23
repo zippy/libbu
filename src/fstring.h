@@ -246,6 +246,8 @@ namespace Bu
 		{
 			if( nLength == nNewSize )
 				return;
+			if( nNewSize < 0 )
+				nNewSize = 0;
 
 			flatten();
 
