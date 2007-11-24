@@ -86,6 +86,9 @@ public:
 		unitTest( a == "abcd" );
 		a.remove( 2, 5 );
 		unitTest( a == "ab" );
+		a += "cdefghijklmnop";
+		a.remove( 5, 1 );
+		unitTest( a = "abcdeghijklmnop" );
 	}
 };
 

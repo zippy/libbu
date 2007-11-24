@@ -230,7 +230,6 @@ namespace Bu
 		{
 			if( nLen <= 0 )
 				return;
-			flatten();
 			if( nPos <= 0 )
 			{
 				prepend( pData, nLen );
@@ -241,6 +240,7 @@ namespace Bu
 			}
 			else
 			{
+				flatten();
 				Chunk *p1 = newChunk( nPos );
 				Chunk *p2 = newChunk( nLen );
 				Chunk *p3 = newChunk( nLength-nPos );
@@ -253,34 +253,34 @@ namespace Bu
 				appendChunk( p3 );
 			}
 		}
-	/*	
+
 		void insert( long nPos, const MyType &str )
 		{
-			if( nLen <= 0 )
-				return;
-			flatten();
 			if( nPos <= 0 )
 			{
-				prepend( pData, nLen );
+				prepend( str );
 			}
 			else if( nPos >= nLength )
 			{
-				append( pData, nLen );
+				append( str );
 			}
 			else
 			{
+				flatten();
 				Chunk *p1 = newChunk( nPos );
-				Chunk *p2 = newChunk( nLen );
 				Chunk *p3 = newChunk( nLength-nPos );
 				cpy( p1->pData, pFirst->pData, nPos );
-				cpy( p2->pData, pData, nLen );
 				cpy( p3->pData, pFirst->pData+nPos, nLength-nPos );
 				clear();
 				appendChunk( p1 );
-				appendChunk( p2 );
+				for( Chunk *pChnk = str->pFirst; pChnk; pChnk = pChnk->next )
+				{
+					appendChunk( copyChunk( pChnk ) );
+				}
+
 				appendChunk( p3 );
 			}
-		}*/
+		}
 
 		void insert( long nPos, const chr *pData )
 		{
@@ -291,11 +291,12 @@ namespace Bu
 		{
 			if( nLen <= 0 || nPos < 0 || nPos >= nLength )
 				return;
-			if( nLen >= nLength-nPos )
-				nLen = nLength-nPos-1;
+			if( nLen > nLength-nPos )
+				nLen = nLength-nPos;
 			flatten();
-			cpy( pFirst->pData+nPos, pFirst->pData+nPos+nLen, nLength-nPos+1 );
-			nLength -= nPos;
+			cpy( pFirst->pData+nPos, pFirst->pData+nPos+nLen, nLength-nPos-nLen+1 );
+			nLength -= nLen;
+			pFirst->nLength -= nLen;
 		}
 
 		/**
