@@ -40,7 +40,7 @@ Bu::TafGroup *Bu::TafReader::readGroup()
 	if( c != '}' )
 		throw TafException("Expected '}'");
 
-	next();
+	//next();
 
 	return pGroup;
 }
@@ -184,7 +184,17 @@ bool Bu::TafReader::isws()
 
 void Bu::TafReader::next()
 {
-	c = la;
-	sIn.read( &la, 1 );
+	if( c == '}' )
+	{
+		sIn.read( &c, 1 );
+		if( c != '}' )
+			sIn.read( &la, 1 );
+	}
+	else
+	{
+		c = la;
+		if( c != '}' )
+			sIn.read( &la, 1 );
+	}
 }
 
