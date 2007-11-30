@@ -7,8 +7,11 @@
 
 #include "process.h"
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <signal.h>
+#include <fcntl.h>
 
 Bu::Process::Process( const char *sName, char *const argv[] )
 {
@@ -22,12 +25,17 @@ Bu::Process::Process( const char *sName, const char *argv, ...)
 	va_start( ap, argv );
 	for(; va_arg( ap, const char *); iCnt++ );
 	va_end( ap );
+	printf("Params: %d\n", iCnt );
 
 	char const **list = new char const *[iCnt+2];
 	va_start( ap, argv );
 	list[0] = argv;
-	for( int j = 1; j < iCnt; j++ )
+	printf("list[0] = \"%s\"\n", argv );
+	for( int j = 1; j <= iCnt; j++ )
+	{
 		list[j] = va_arg( ap, const char *);
+		printf("list[%d] = \"%s\"\n", j, list[j] );
+	}
 	list[iCnt+1] = NULL;
 	va_end( ap );
 
@@ -52,6 +60,8 @@ void Bu::Process::gexec( const char *sName, char *const argv[] )
 	iStdOut = iaStdOut[0];
 	iStdErr = iaStdErr[0];
 
+//	fcntl( iStdOut, F_SETFL, fcntl( iStdOut, F_GETFL, 0 )|O_NONBLOCK );
+
 	iPid = fork();
 	if( iPid == 0 )
 	{
@@ -63,6 +73,9 @@ void Bu::Process::gexec( const char *sName, char *const argv[] )
 		dup2( iaStdErr[1], 2 );
 		execvp( sName, argv );
 	}
+	::close( iaStdIn[0] );
+	::close( iaStdOut[1] );
+	::close( iaStdErr[1] );
 }
 
 void Bu::Process::close()
@@ -71,7 +84,46 @@ void Bu::Process::close()
 
 size_t Bu::Process::read( void *pBuf, size_t nBytes )
 {
-	return ::read( iStdOut, pBuf, nBytes );
+	size_t iTotal = 0;
+	for(;;)
+	{
+		size_t iRet = ::read( iStdOut, (char *)pBuf+iTotal, nBytes-iTotal );
+		if( iRet == 0 )
+			return iTotal;
+		printf("--read=%d / %d--\n", iRet, iTotal+iRet );
+		iTotal += iRet;
+		if( iTotal == nBytes )
+			return iTotal;
+	}
+	/*
+	size_t iTotal = 0;
+	fd_set rfs;
+	FD_ZERO( &rfs );
+	for(;;)
+	{
+		if( waitpid( iPid, NULL, WNOHANG ) )
+		{
+			printf("!!!wait failed!\n");
+			size_t iRet = ::read( iStdOut, (char *)pBuf+iTotal,
+					nBytes-iTotal );
+			iTotal += iRet;
+			return iTotal;
+		}
+
+		FD_SET( iStdOut, &rfs );
+		select( iStdOut+1, &rfs, NULL, &rfs, NULL );
+		size_t iRet = ::read( iStdOut, (char *)pBuf+iTotal, nBytes-iTotal );
+		printf("--read=%d / %d--\n", iRet, iTotal+iRet );
+		iTotal += iRet;
+		if( iTotal == nBytes )
+			return iTotal;
+	}
+	*/
+}
+
+size_t Bu::Process::readErr( void *pBuf, size_t nBytes )
+{
+	return ::read( iStdErr, pBuf, nBytes );
 }
 
 size_t Bu::Process::write( const void *pBuf, size_t nBytes )

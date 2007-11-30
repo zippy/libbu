@@ -731,6 +731,39 @@ namespace Bu
 			}
 			return -1;
 		}
+		
+		/**
+		 * Find the index of the first occurrance of cChar
+		 *@param sText (const chr *) The string to search for.
+		 *@returns (long) The index of the first occurrance. -1 for not found.
+		 */
+		long find( long iStart, const chr cChar ) const
+		{
+			flatten();
+			for( long j = iStart; j < pFirst->nLength; j++ )
+			{
+				if( pFirst->pData[j] == cChar )
+					return j;
+			}
+			return -1;
+		}
+		
+		/**
+		 * Find the index of the first occurrance of sText
+		 *@param cChar (const chr) The character to search for.
+		 *@returns (long) The index of the first occurrance. -1 for not found.
+		 */
+		long find( long iStart, const chr *sText ) const
+		{
+			long nTLen = strlen( sText );
+			flatten();
+			for( long j = iStart; j < pFirst->nLength-nTLen; j++ )
+			{
+				if( !strncmp( sText, pFirst->pData+j, nTLen ) )
+					return j;
+			}
+			return -1;
+		}
 
 		/**
 		 * Do a reverse search for (sText)
