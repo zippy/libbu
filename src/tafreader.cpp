@@ -51,7 +51,10 @@ void Bu::TafReader::groupContent( Bu::TafGroup *pGroup )
 	{
 		ws();
 		if( c == '{' )
+		{
 			pGroup->addChild( readGroup() );
+			next();
+		}
 		else if( c == '}' )
 			return;
 		else if( c == '/' && la == '*' )
