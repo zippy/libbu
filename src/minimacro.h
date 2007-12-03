@@ -8,6 +8,9 @@
 #ifndef BU_MINI_MACRO_H
 #define BU_MINI_MACRO_H
 
+#include "bu/hash.h"
+#include "bu/fstring.h"
+
 namespace Bu
 {
 	/**
@@ -32,14 +35,20 @@ namespace Bu
 	 *     and a string to compare to.  This is then followed by a text segment
 	 *     that will be used if the test is true, and an optional text segment
 	 *     to be used if the test is false.
+	 *   - ':': command.  The ':' is immediately followed by a command string,
+	 *     of which there's only one right now, but that's ok.  These are not
+	 *     put into the output stream, but instead mark something for the
+	 *     parser.  Currently supported:
+	 *     - {:end}: end of parsing, stop here, also make note of how many input
+	 *       characters were used.
 	 * - Segments:
 	 *   - Each segment is seperated by a colon.
 	 *   - Filter segments give the name of the filter, followed by
 	 *     parenthesies.  Parameters may be provided within the parenthesies.
 	 *   - Text segments should always be quoted, but may contain any characters
 	 *     within the quotes, backslash is used as per C/ANSI/ISO standard.
-	 *     You can also quote any text using [" "] instead of quotes, which
-	 *     allows for nested strings.  The [" token is only recognised within
+	 *     You can also quote any text using [' '] instead of quotes, which
+	 *     allows for nested strings.  The [' token is only recognised within
 	 *     a macro.
 	 *
 	 *@verbatim
@@ -50,13 +59,68 @@ namespace Bu
 	 {?name="bob":"You're named bob!":"Who are you?  I only know bob..."}
 	 @endverbatim
 	 */
+	typedef Bu::Hash<Bu::FString, Bu::FString> StrHash;
 	class MiniMacro
 	{
 	public:
 		MiniMacro();
 		virtual ~MiniMacro();
 
+		Bu::FString parse( const Bu::FString &sIn );
+		void addVar( const Bu::FString &sName, const Bu::FString &sValue );
+
 	private:
+		const char *sCur;
+		Bu::FString parseRepl();
+		Bu::FString parseCond();
+		Bu::FString parseCmd();
+		Bu::FString callFunc(
+			const Bu::FString &sIn, const Bu::FString &sFunc );
+
+		StrHash hVars;
+
+	public:
+		typedef Bu::List<Bu::FString> StrList;
+		class Func
+		{
+		public:
+			Func(){}
+			virtual ~Func(){}
+			virtual Bu::FString call(
+				const Bu::FString &sIn, StrList &lsParam )=0;
+		};
+
+		class FuncToUpper : public Func
+		{
+		public:
+			FuncToUpper(){}
+			virtual ~FuncToUpper(){}
+			virtual Bu::FString call(
+				const Bu::FString &sIn, StrList &lsParam )
+			{
+				Bu::FString sOut( sIn );
+				sOut.toUpper();
+				return sOut;
+			}
+		};
+
+		class FuncToLower : public Func
+		{
+		public:
+			FuncToLower(){}
+			virtual ~FuncToLower(){}
+			virtual Bu::FString call(
+				const Bu::FString &sIn, StrList &lsParam )
+			{
+				Bu::FString sOut( sIn );
+				sOut.toLower();
+				return sOut;
+			}
+		};
+		
+	private:
+		typedef Bu::Hash<Bu::FString,class Func *> FuncHash;
+		FuncHash hFuncs;
 	};
 };
 
