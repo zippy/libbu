@@ -353,7 +353,7 @@ namespace Bu
 		chr *getStr()
 		{
 			if( pFirst == NULL )
-				return NULL;
+				return (chr *)"";
 
 			flatten();
 			pFirst->pData[nLength] = (chr)0;
@@ -367,7 +367,7 @@ namespace Bu
 		const chr *getStr() const
 		{
 			if( pFirst == NULL )
-				return NULL;
+				return (chr *)"";
 
 			flatten();
 			pFirst->pData[nLength] = (chr)0;
