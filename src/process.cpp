@@ -25,16 +25,13 @@ Bu::Process::Process( const char *sName, const char *argv, ...)
 	va_start( ap, argv );
 	for(; va_arg( ap, const char *); iCnt++ );
 	va_end( ap );
-	printf("Params: %d\n", iCnt );
 
 	char const **list = new char const *[iCnt+2];
 	va_start( ap, argv );
 	list[0] = argv;
-	printf("list[0] = \"%s\"\n", argv );
 	for( int j = 1; j <= iCnt; j++ )
 	{
 		list[j] = va_arg( ap, const char *);
-		printf("list[%d] = \"%s\"\n", j, list[j] );
 	}
 	list[iCnt+1] = NULL;
 	va_end( ap );
