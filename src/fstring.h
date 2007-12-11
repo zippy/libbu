@@ -1006,7 +1006,7 @@ namespace Bu
 		mutable chralloc aChr;
 		mutable chunkalloc aChunk;
 	};
-
+	
 	typedef FBasicString<char> FString;
 
 	template<> uint32_t __calcHashCode<FString>( const FString &k );
