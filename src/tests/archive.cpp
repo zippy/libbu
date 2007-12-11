@@ -5,8 +5,8 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "archive.h"
-#include "file.h"
+#include "bu/archive.h"
+#include "bu/file.h"
 
 using namespace Bu;
 

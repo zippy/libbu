@@ -5,8 +5,8 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "fstring.h"
-#include "unitsuite.h"
+#include "bu/fstring.h"
+#include "bu/unitsuite.h"
 
 class Unit : public Bu::UnitSuite
 {

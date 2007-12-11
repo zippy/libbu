@@ -5,9 +5,9 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "unitsuite.h"
-#include "file.h"
-#include "tafreader.h"
+#include "bu/unitsuite.h"
+#include "bu/file.h"
+#include "bu/tafreader.h"
 
 #include <string.h>
 #include <unistd.h>

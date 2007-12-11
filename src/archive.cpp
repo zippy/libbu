@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "archive.h"
+#include "bu/archive.h"
 
 Bu::Archive::Archive( Stream &rStream, bool bLoading ) :
 	bLoading( bLoading ),
