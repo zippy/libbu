@@ -87,7 +87,6 @@ size_t Bu::Process::read( void *pBuf, size_t nBytes )
 		size_t iRet = ::read( iStdOut, (char *)pBuf+iTotal, nBytes-iTotal );
 		if( iRet == 0 )
 			return iTotal;
-		printf("--read=%d / %d--\n", iRet, iTotal+iRet );
 		iTotal += iRet;
 		if( iTotal == nBytes )
 			return iTotal;
