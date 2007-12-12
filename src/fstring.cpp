@@ -5,6 +5,9 @@
  * terms of the license contained in the file LICENSE.
  */
 
+#define BU_TRACE
+#include "bu/trace.h"
+
 #include "fstring.h"
 #include "hash.h"
 
@@ -34,3 +37,8 @@ std::basic_ostream<char>& operator<< (std::basic_ostream<char> &os, const Bu::FS
 	return os;
 }
 
+
+template<> void Bu::__tracer_format<Bu::FString>( const Bu::FString &v )
+{
+	printf("(%ld)\"%s\"", v.getSize(), v.getStr() );
+}

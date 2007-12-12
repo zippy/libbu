@@ -12,13 +12,14 @@ void doThing2( int x, const char *bob )
 	TRACE( x, bob );
 }
 
-void doThing( int x )
+void doThing( int8_t x )
 {
 	TRACE( x );
 }
 
 int main( int argc, char *argv[] )
 {
+	TRACE( argc, argv );
 	doThing( 54 );
 	doThing2( 128, "Hello" );
 	doThing3( 266, "Goodbye", argv );

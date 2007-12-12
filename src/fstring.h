@@ -1011,6 +1011,10 @@ namespace Bu
 
 	template<> uint32_t __calcHashCode<FString>( const FString &k );
 	template<> bool __cmpHashKeys<FString>( const FString &a, const FString &b );
+	
+#ifdef BU_TRACE
+	template<> void __tracer_format<FString>( const FString &v );
+#endif
 }
 
 #include <ostream>
