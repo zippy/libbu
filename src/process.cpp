@@ -48,14 +48,14 @@ void Bu::Process::gexec( const char *sName, char *const argv[] )
 {
 	int iaStdIn[2];
 	int iaStdOut[2];
-	int iaStdErr[2];
+//	int iaStdErr[2];
 	pipe( iaStdIn );
 	pipe( iaStdOut );
-	pipe( iaStdErr );
+//	pipe( iaStdErr );
 
 	iStdIn = iaStdIn[1];
 	iStdOut = iaStdOut[0];
-	iStdErr = iaStdErr[0];
+//	iStdErr = iaStdErr[0];
 
 //	fcntl( iStdOut, F_SETFL, fcntl( iStdOut, F_GETFL, 0 )|O_NONBLOCK );
 
@@ -64,15 +64,15 @@ void Bu::Process::gexec( const char *sName, char *const argv[] )
 	{
 		::close( iaStdIn[1] );
 		::close( iaStdOut[0] );
-		::close( iaStdErr[0] );
+//		::close( iaStdErr[0] );
 		dup2( iaStdIn[0], 0 );
 		dup2( iaStdOut[1], 1 );
-		dup2( iaStdErr[1], 2 );
+//		dup2( iaStdErr[1], 2 );
 		execvp( sName, argv );
 	}
 	::close( iaStdIn[0] );
 	::close( iaStdOut[1] );
-	::close( iaStdErr[1] );
+//	::close( iaStdErr[1] );
 }
 
 void Bu::Process::close()
