@@ -240,7 +240,7 @@ void Bu::ParamProc::process( int argc, char *argv[] )
 					{
 						if( s->val.isSet() )
 						{
-							if( s->sValue.getStr() == NULL )
+							if( s->sValue == "" )
 							{
 								s->val = argv[arg]+s->sWord.getSize()+3;
 							}
@@ -268,7 +268,7 @@ void Bu::ParamProc::process( int argc, char *argv[] )
 						int add = 0;
 						if( s->val.isSet() )
 						{
-							if( s->sValue.getStr() == NULL )
+							if( s->sValue == "" )
 							{
 								if( arg+1 >= argc )
 								{
@@ -314,7 +314,7 @@ void Bu::ParamProc::process( int argc, char *argv[] )
 							bool bUsed = false;
 							if( s->val.isSet() )
 							{
-								if( s->sValue.getStr() == NULL )
+								if( s->sValue == "" )
 								{
 									s->val = argv[arg]+chr+1;
 									bUsed = true;
@@ -349,7 +349,7 @@ void Bu::ParamProc::process( int argc, char *argv[] )
 							bool bUsed = false;
 							if( s->val.isSet() )
 							{
-								if( s->sValue.getStr() == NULL )
+								if( s->sValue == "" )
 								{
 									s->val = argv[arg+1];
 									bUsed = true;
@@ -397,7 +397,7 @@ Bu::ParamProc::ArgSpec *Bu::ParamProc::checkWord( const char *arg )
 	std::list<ArgSpec *>::const_iterator i;
 	for( i = lArg.begin(); i != lArg.end(); i++ )
 	{
-		if( (*i)->sWord.getStr() == NULL )
+		if( (*i)->sWord == "" )
 			continue;
 
 		if( !strcmp( (*i)->sWord.getStr(), arg ) )
