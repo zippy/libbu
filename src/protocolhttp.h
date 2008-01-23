@@ -26,6 +26,7 @@ namespace Bu
 	 * the onRequest function in a subclass with the method and URI that were
 	 * requested.  The sub-class can then do whatever it needs to to send back
 	 * a response.
+	 *@ingroup Serving
 	 */
 	class ProtocolHttp : public Protocol
 	{

@@ -17,6 +17,7 @@ namespace Bu
 {
 	/**
 	 *
+	 *@ingroup Streams
 	 */
 	class BZip2 : public Bu::Filter
 	{

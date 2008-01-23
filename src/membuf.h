@@ -17,6 +17,7 @@ namespace Bu
 {
 	/**
 	 * A memory buffer stream.
+	 *@ingroup Streams
 	 */
 	class MemBuf : public Stream
 	{

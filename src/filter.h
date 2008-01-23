@@ -32,6 +32,7 @@ namespace Bu
 	 * many filters such as compression filters will buffer data until they have
 	 * enough to create a compression block, in these cases the leftover data
 	 * will be returned by close.
+	 *@ingroup Streams
 	 */
 	class Filter : public Bu::Stream
 	{

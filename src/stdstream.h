@@ -14,6 +14,9 @@
 
 namespace Bu
 {
+	/**
+	 *@ingroup Streams
+	 */
 	class StdStream : public Stream
 	{
 	public:

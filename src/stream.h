@@ -24,6 +24,7 @@ namespace Bu
 	 * The constructor of a child class should pretty much universally be used
 	 * to open the stream.  I can't think of anything that should require an
 	 * exception.
+	 *@ingroup Streams
 	 */
 	class Stream
 	{

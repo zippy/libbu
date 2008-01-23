@@ -24,3 +24,8 @@
  *@defgroup Taf
  * Taf is the best!
  */
+
+/**
+ *@defgroup Streams
+ * Streams are for data.
+ */

@@ -15,6 +15,10 @@
 
 namespace Bu
 {
+	/**
+	 * A file stream.
+	 *@ingroup Streams
+	 */
 	class File : public Bu::Stream
 	{
 	public:

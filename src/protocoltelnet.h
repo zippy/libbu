@@ -58,6 +58,7 @@ namespace Bu
 	}
 	 @endcode
 	 *
+	 *@ingroup Serving
 	 */
 	class ProtocolTelnet : public Protocol
 	{
