@@ -5,7 +5,9 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "tafwriter.h"
+#include "bu/tafwriter.h"
+#include "bu/tafnode.h"
+#include "bu/stream.h"
 
 Bu::TafWriter::TafWriter( Bu::Stream &sOut ) :
 	sOut( sOut ),

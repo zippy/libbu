@@ -9,12 +9,17 @@
 #define BU_TAF_WRITER_H
 
 #include <stdint.h>
-#include "bu/tafnode.h"
-#include "bu/stream.h"
+
 #include "bu/fstring.h"
 
 namespace Bu
 {
+	class Stream;
+	class TafNode;
+	class TafGroup;
+	class TafProperty;
+	class TafComment;
+
 	/**
 	 *
 	 *@ingroup Taf

@@ -11,6 +11,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "bu/fstring.h"
+
 namespace Bu
 {
 	/**
@@ -49,6 +51,8 @@ namespace Bu
 		 *@returns (size_t) Amount of data actually written.
 		 */
 		virtual size_t write( const void *pBuf, size_t nBytes ) = 0;
+
+		virtual size_t write( const Bu::FString &sBuf );
 
 		/**
 		 * Get the current position in the stream.

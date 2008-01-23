@@ -10,8 +10,6 @@
 
 #include <stdint.h>
 #include <string>
-#include "bu/archival.h"
-#include "bu/stream.h"
 #include <list>
 #include "bu/hash.h"
 #include "bu/list.h"
@@ -19,6 +17,9 @@
 
 namespace Bu
 {
+	class Archival;
+	class Stream;
+
 	/**
 	 * Provides a framework for serialization of objects and primitives.  The
 	 * archive will handle any basic primitive, a few special types, like char *

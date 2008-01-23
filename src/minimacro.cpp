@@ -132,3 +132,13 @@ void Bu::MiniMacro::addVar(
 	hVars.insert( sName, sValue );
 }
 
+bool Bu::MiniMacro::hasVar( const Bu::FString &sName )
+{
+	return hVars.has( sName );
+}
+
+const Bu::FString &Bu::MiniMacro::getvar( const Bu::FString &sName )
+{
+	return hVars.get( sName );
+}
+

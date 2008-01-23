@@ -68,6 +68,8 @@ namespace Bu
 
 		Bu::FString parse( const Bu::FString &sIn );
 		void addVar( const Bu::FString &sName, const Bu::FString &sValue );
+		bool hasVar( const Bu::FString &sName );
+		const Bu::FString &getvar( const Bu::FString &sName );
 
 	private:
 		const char *sCur;

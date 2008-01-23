@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "stream.h"
+#include "bu/stream.h"
 
 Bu::Stream::Stream()
 {
@@ -13,5 +13,10 @@ Bu::Stream::Stream()
 
 Bu::Stream::~Stream()
 {
+}
+
+size_t Bu::Stream::write( const Bu::FString &sBuf )
+{
+	return write( sBuf.getStr(), sBuf.getSize() );
 }
 

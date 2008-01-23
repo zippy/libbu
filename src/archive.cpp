@@ -6,6 +6,8 @@
  */
 
 #include "bu/archive.h"
+#include "bu/stream.h"
+#include "bu/archival.h"
 
 Bu::Archive::Archive( Stream &rStream, bool bLoading ) :
 	bLoading( bLoading ),

@@ -16,7 +16,9 @@
 #include "bu/archive.h"
 #include "bu/hash.h"
 
+#ifndef min
 #define min( a, b )  ((a<b)?(a):(b))
+#endif
 
 /* I borrowed this from someone who borrowed it from glib who borrowed it
  * from...

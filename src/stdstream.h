@@ -23,6 +23,7 @@ namespace Bu
 		virtual void close();
 		virtual size_t read( void *pBuf, size_t nBytes );
 		virtual size_t write( const void *pBuf, size_t nBytes );
+		using Stream::write;
 		virtual long tell();
 		virtual void seek( long offset );
 		virtual void setPos( long pos );
