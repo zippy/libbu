@@ -70,6 +70,7 @@ namespace Bu
 		void addVar( const Bu::FString &sName, const Bu::FString &sValue );
 		bool hasVar( const Bu::FString &sName );
 		const Bu::FString &getvar( const Bu::FString &sName );
+		int getPosition();
 
 	private:
 		const char *sCur;
@@ -80,6 +81,8 @@ namespace Bu
 			const Bu::FString &sIn, const Bu::FString &sFunc );
 
 		StrHash hVars;
+		bool bContinue;
+		int iLastPos;
 
 	public:
 		typedef Bu::List<Bu::FString> StrList;

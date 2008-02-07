@@ -20,8 +20,9 @@ Bu::MiniMacro::~MiniMacro()
 
 Bu::FString Bu::MiniMacro::parse( const Bu::FString &sIn )
 {
+	bContinue = true;
 	Bu::FString sOut;
-	for( sCur = sIn.getStr(); *sCur; sCur++ )
+	for( sCur = sIn.getStr(); *sCur && bContinue; sCur++ )
 	{
 		if( *sCur == '{' )
 		{
@@ -52,6 +53,8 @@ Bu::FString Bu::MiniMacro::parse( const Bu::FString &sIn )
 			sOut += *sCur;
 		}
 	}
+
+	iLastPos = (int)sCur - (int)sIn.getStr();
 
 	return sOut;
 }
@@ -101,6 +104,29 @@ Bu::FString Bu::MiniMacro::parseCond()
 Bu::FString Bu::MiniMacro::parseCmd()
 {
 	Bu::FString sOut;
+	const char *sNext = sCur;
+	for(; *sNext != ':' && *sNext != '}' && *sNext != '\0'; sNext++ );
+	if( *sNext != '\0' )
+	{
+		Bu::FString sName( sCur, (int)sNext-(int)sCur );
+		if( sName == "end" )
+		{
+			sCur = sNext;
+			bContinue = false;
+			return sOut;
+		}
+		else
+		{
+			throw Bu::ExceptionBase("Unknown command '%s'.",
+				sName.getStr()
+				);
+		}
+	}
+	else
+	{
+		printf("Uh...?\n");
+	}
+
 	printf("%20s\n", sCur );
 	return sOut;
 }
@@ -140,5 +166,10 @@ bool Bu::MiniMacro::hasVar( const Bu::FString &sName )
 const Bu::FString &Bu::MiniMacro::getvar( const Bu::FString &sName )
 {
 	return hVars.get( sName );
+}
+
+int Bu::MiniMacro::getPosition()
+{
+	return iLastPos;
 }
 

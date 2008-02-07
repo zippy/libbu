@@ -64,11 +64,12 @@ void Bu::ItoServer::addClient( int nSocket, int nPort )
 {
 	ItoClient *pC = new ItoClient( *this, nSocket, nPort, nTimeoutSec,
 			nTimeoutUSec );
-	pC->start();
 
 	imClients.lock();
 	hClients.insert( nSocket, pC );
 	imClients.unlock();
+	
+	pC->start();
 }
 
 void *Bu::ItoServer::run()
