@@ -57,6 +57,7 @@ namespace Bu
 		virtual void setBlocking( bool bBlocking=true );
 
 		Bu::FString getAddress() const;
+		operator int() const;
 
 	private:
 		void setAddress();

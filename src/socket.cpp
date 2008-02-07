@@ -364,3 +364,7 @@ Bu::FString Bu::Socket::getAddress() const
 	return sAddress;
 }
 
+Bu::Socket::operator int() const
+{
+	return nSocket;
+}

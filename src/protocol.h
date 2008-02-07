@@ -10,6 +10,8 @@
 
 #include <stdint.h>
 
+#include "bu/fstring.h"
+
 namespace Bu
 {
 	class Client;
@@ -26,6 +28,7 @@ namespace Bu
 
 		virtual void onNewConnection( Bu::Client *pClient )=0;
 		virtual void onNewData( Bu::Client *pClient )=0;
+		virtual void onMessage( Bu::Client *pClient, const Bu::FString &sMsg );
 
 	private:
 

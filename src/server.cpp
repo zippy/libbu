@@ -109,10 +109,39 @@ void Bu::Server::addClient( int nSocket, int nPort )
 	FD_SET( nSocket, &fdActive );
 
 	Client *c = new Client(
-		new Bu::Socket( nSocket )
+		new Bu::Socket( nSocket ),
+		new SrvClientLinkFactory()
 		);
 	hClients.insert( nSocket, c );
 
 	onNewConnection( c, nPort );
+}
+
+Bu::Server::SrvClientLink::SrvClientLink( Bu::Client *pClient ) :
+	pClient( pClient )
+{
+}
+
+Bu::Server::SrvClientLink::~SrvClientLink()
+{
+}
+
+void Bu::Server::SrvClientLink::sendMsg( const Bu::FString &sMsg )
+{
+	pClient->onMessage( sMsg );
+}
+
+Bu::Server::SrvClientLinkFactory::SrvClientLinkFactory()
+{
+}
+
+Bu::Server::SrvClientLinkFactory::~SrvClientLinkFactory()
+{
+}
+
+Bu::ClientLink *Bu::Server::SrvClientLinkFactory::createLink(
+		Bu::Client *pClient )
+{
+	return new SrvClientLink( pClient );
 }
 

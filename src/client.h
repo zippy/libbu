@@ -16,6 +16,7 @@ namespace Bu
 {
 	class Protocol;
 	class Socket;
+	class ClientLinkFactory;
 
 	/**
 	 *@author Mike Buland
@@ -24,7 +25,7 @@ namespace Bu
 	class Client
 	{
 	public:
-		Client( Bu::Socket *pSocket );
+		Client( Bu::Socket *pSocket, Bu::ClientLinkFactory *pfLink );
 		virtual ~Client();
 
 		void processInput();
@@ -59,6 +60,10 @@ namespace Bu
 		void disconnect();
 		bool wantsDisconnect();
 
+		class ClientLink *getLink();
+
+		void onMessage( const Bu::FString &sMsg );
+
 	private:
 		Bu::Socket *pSocket;
 		Bu::Protocol *pProto;
@@ -66,6 +71,7 @@ namespace Bu
 		int nRBOffset;
 		Bu::FString sWriteBuf;
 		bool bWantsDisconnect;
+		class Bu::ClientLinkFactory *pfLink;
 	};
 }
 

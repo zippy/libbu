@@ -127,7 +127,8 @@ Bu::ItoServer::ItoClient::ItoClient( ItoServer &rSrv, int iSocket, int iPort,
 	FD_SET( iSocket, &fdActive );
 
 	pClient = new Client(
-		new Bu::Socket( iSocket )
+		new Bu::Socket( iSocket ),
+		new SrvClientLinkFactory( rSrv )
 		);
 }
 
@@ -137,7 +138,10 @@ Bu::ItoServer::ItoClient::~ItoClient()
 
 void *Bu::ItoServer::ItoClient::run()
 {
+	imProto.lock();
 	rSrv.onNewConnection( pClient, iPort );
+	pClient->processOutput();
+	imProto.unlock();
 
 	for(;;)
 	{
@@ -151,14 +155,29 @@ void *Bu::ItoServer::ItoClient::run()
 			throw ExceptionBase("Error attempting to scan open connections.");
 		}
 
+		while( !qMsg.isEmpty() )
+		{
+			imProto.lock();
+			Bu::FString *pMsg = qMsg.dequeue();
+			pClient->onMessage( *pMsg );
+			delete pMsg;
+			pClient->processOutput();
+			imProto.unlock();
+		}
+
 		if( FD_ISSET( iSocket, &fdRead ) )
 		{
+			imProto.lock();
 			pClient->processInput();
+			imProto.unlock();
 			if( !pClient->isOpen() )
 			{
+				imProto.lock();
 				rSrv.onClosedConnection( pClient );
+				imProto.unlock();
 
 				rSrv.clientCleanup( iSocket );
+				
 				return NULL;
 			}
 		}
@@ -166,9 +185,55 @@ void *Bu::ItoServer::ItoClient::run()
 		// Now we just try to write all the pending data on the socket.
 		// this could be done better eventually, if we care about the socket
 		// wanting to accept writes (using a select).
+		imProto.lock();
 		pClient->processOutput();
+		imProto.unlock();
 	}
 
 	return NULL;
+}
+
+Bu::ItoServer::SrvClientLink::SrvClientLink( ItoClient *pClient ) :
+	pClient( pClient )
+{
+}
+
+Bu::ItoServer::SrvClientLink::~SrvClientLink()
+{
+}
+
+void Bu::ItoServer::SrvClientLink::sendMsg( const Bu::FString &sMsg )
+{
+	if( !pClient->imProto.trylock() )
+	{
+		pClient->pClient->onMessage( sMsg );
+		pClient->pClient->processOutput();
+		pClient->imProto.unlock();
+	}
+	else
+	{
+		Bu::FString *pMsg = new Bu::FString( sMsg );
+		pClient->qMsg.enqueue( pMsg );
+	}
+}
+
+Bu::ItoServer::SrvClientLinkFactory::SrvClientLinkFactory(
+		Bu::ItoServer &rSrv ) :
+	rSrv( rSrv )
+{
+}
+
+Bu::ItoServer::SrvClientLinkFactory::~SrvClientLinkFactory()
+{
+}
+
+Bu::ClientLink *Bu::ItoServer::SrvClientLinkFactory::createLink(
+		Bu::Client *pClient )
+{
+	rSrv.imClients.lock();
+	ItoClient *pCli = rSrv.hClients.get( *pClient->getSocket() );
+	rSrv.imClients.unlock();
+
+	return new SrvClientLink( pCli );
 }
 

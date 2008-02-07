@@ -5,19 +5,13 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/protocol.h"
+#include "clientlinkfactory.h"
 
-using namespace Bu;
-
-Bu::Protocol::Protocol()
+Bu::ClientLinkFactory::ClientLinkFactory()
 {
 }
 
-Bu::Protocol::~Protocol()
-{
-}
-
-void Bu::Protocol::onMessage( Bu::Client *pClient, const Bu::FString &sMsg )
+Bu::ClientLinkFactory::~ClientLinkFactory()
 {
 }
 

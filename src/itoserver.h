@@ -17,6 +17,9 @@
 #include "bu/itoqueue.h"
 #include "bu/set.h"
 
+#include "bu/clientlink.h"
+#include "bu/clientlinkfactory.h"
+
 namespace Bu
 {
 	class ServerSocket;
@@ -47,6 +50,7 @@ namespace Bu
 	class ItoServer : public Ito
 	{
 		friend class ItoClient;
+		friend class SrvClientLinkFactory;
 	public:
 		ItoServer();
 		virtual ~ItoServer();
@@ -65,14 +69,19 @@ namespace Bu
 		virtual void *run();
 
 	private:
+		class SrvClientLink;
 		class ItoClient : public Ito
 		{
+		friend class Bu::ItoServer::SrvClientLink;
 		public:
 			ItoClient( ItoServer &rSrv, int nSocket, int nPort,
 					int nTimeoutSec, int nTimeoutUSec );
 			virtual ~ItoClient();
 
 			virtual void *run();
+
+			typedef ItoQueue<Bu::FString *> StringQueue;
+			StringQueue qMsg;
 
 		private:
 			ItoServer &rSrv;
@@ -82,6 +91,31 @@ namespace Bu
 			int iPort;
 			int nTimeoutSec;
 			int nTimeoutUSec;
+			ItoMutex imProto;
+		};
+
+		class SrvClientLink : public Bu::ClientLink
+		{
+		public:
+			SrvClientLink( ItoClient *pClient );
+			virtual ~SrvClientLink();
+
+			virtual void sendMsg( const Bu::FString &sMsg );
+
+		private:
+			ItoClient *pClient;
+		};
+
+		class SrvClientLinkFactory : public Bu::ClientLinkFactory
+		{
+		public:
+			SrvClientLinkFactory( ItoServer &rSrv );
+			virtual ~SrvClientLinkFactory();
+
+			virtual Bu::ClientLink *createLink( Bu::Client *pClient );
+
+		private:
+			ItoServer &rSrv;
 		};
 
 		int nTimeoutSec;

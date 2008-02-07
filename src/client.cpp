@@ -11,15 +11,18 @@
 #include <errno.h>
 #include "bu/exceptions.h"
 #include "bu/protocol.h"
+#include "bu/clientlink.h"
+#include "bu/clientlinkfactory.h"
 
 /** Read buffer size. */
 #define RBS		(1024*2)
 
-Bu::Client::Client( Bu::Socket *pSocket ) :
+Bu::Client::Client( Bu::Socket *pSocket, class Bu::ClientLinkFactory *pfLink ) :
 	pSocket( pSocket ),
 	pProto( NULL ),
 	nRBOffset( 0 ),
-	bWantsDisconnect( false )
+	bWantsDisconnect( false ),
+	pfLink( pfLink )
 {
 }
 
@@ -233,3 +236,15 @@ void Bu::Client::close()
 {
 	pSocket->close();
 }
+
+Bu::ClientLink *Bu::Client::getLink()
+{
+	return pfLink->createLink( this );
+}
+
+void Bu::Client::onMessage( const Bu::FString &sMsg )
+{
+	if( pProto )
+		pProto->onMessage( this, sMsg );
+}
+

@@ -13,6 +13,9 @@
 #include "bu/fstring.h"
 #include "bu/list.h"
 
+#include "bu/clientlink.h"
+#include "bu/clientlinkfactory.h"
+
 namespace Bu
 {
 	class ServerSocket;
@@ -58,6 +61,27 @@ namespace Bu
 		virtual void onClosedConnection( Client *pClient )=0;
 
 	private:
+		class SrvClientLink : public Bu::ClientLink
+		{
+		public:
+			SrvClientLink( Bu::Client *pClient );
+			virtual ~SrvClientLink();
+
+			virtual void sendMsg( const Bu::FString &sMsg );
+
+		private:
+			Bu::Client *pClient;
+		};
+
+		class SrvClientLinkFactory : public Bu::ClientLinkFactory
+		{
+		public:
+			SrvClientLinkFactory();
+			virtual ~SrvClientLinkFactory();
+
+			virtual Bu::ClientLink *createLink( Bu::Client *pClient );
+		};
+
 		int nTimeoutSec;
 		int nTimeoutUSec;
 		fd_set fdActive;
