@@ -126,7 +126,7 @@ Bu::Server::SrvClientLink::~SrvClientLink()
 {
 }
 
-void Bu::Server::SrvClientLink::sendMsg( const Bu::FString &sMsg )
+void Bu::Server::SrvClientLink::sendMessage( const Bu::FString &sMsg )
 {
 	pClient->onMessage( sMsg );
 }

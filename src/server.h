@@ -67,7 +67,7 @@ namespace Bu
 			SrvClientLink( Bu::Client *pClient );
 			virtual ~SrvClientLink();
 
-			virtual void sendMsg( const Bu::FString &sMsg );
+			virtual void sendMessage( const Bu::FString &sMsg );
 
 		private:
 			Bu::Client *pClient;

@@ -100,7 +100,7 @@ namespace Bu
 			SrvClientLink( ItoClient *pClient );
 			virtual ~SrvClientLink();
 
-			virtual void sendMsg( const Bu::FString &sMsg );
+			virtual void sendMessage( const Bu::FString &sMsg );
 
 		private:
 			ItoClient *pClient;

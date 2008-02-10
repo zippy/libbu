@@ -202,7 +202,7 @@ Bu::ItoServer::SrvClientLink::~SrvClientLink()
 {
 }
 
-void Bu::ItoServer::SrvClientLink::sendMsg( const Bu::FString &sMsg )
+void Bu::ItoServer::SrvClientLink::sendMessage( const Bu::FString &sMsg )
 {
 	if( !pClient->imProto.trylock() )
 	{

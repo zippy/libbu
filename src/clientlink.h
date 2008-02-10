@@ -18,7 +18,7 @@ namespace Bu
 		ClientLink();
 		virtual ~ClientLink();
 
-		virtual void sendMsg( const Bu::FString &sMsg )=0;
+		virtual void sendMessage( const Bu::FString &sMsg )=0;
 	};
 };
 
