@@ -28,7 +28,7 @@ Bu::TafGroup *Bu::TafReader::readGroup()
 {
 	ws();
 	if( c != '{' )
-		throw TafException("Expected '{'");
+		throw TafException("Expected '{' at %d:%d.", iLine, iCol );
 	next();
 	ws();
 	FString sName = readStr();
@@ -39,7 +39,7 @@ Bu::TafGroup *Bu::TafReader::readGroup()
 	groupContent( pGroup );
 
 	if( c != '}' )
-		throw TafException("Expected '}'");
+		throw TafException("Expected '}' at %d:%d.", iLine, iCol );
 
 	//next();
 
@@ -147,7 +147,7 @@ Bu::FString Bu::TafReader::readStr()
 				else if( c == '"' )
 					c = '"';
 				else
-					throw TafException("Invalid escape sequence.");
+					throw TafException("Invalid escape sequence at %d:%d.", iLine, iCol );
 			}
 			else if( c == '"' )
 				break;
