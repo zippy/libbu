@@ -13,7 +13,8 @@ using namespace Bu;
 
 Bu::TafReader::TafReader( Bu::Stream &sIn ) :
 	c( 0 ),
-	sIn( sIn )
+	sIn( sIn ),
+	iLine( 1 ), iCol( 1 )
 {
 	next(); next();
 }
@@ -62,7 +63,7 @@ void Bu::TafReader::groupContent( Bu::TafGroup *pGroup )
 		else if( c == '/' && la == '/' )
 			pGroup->addChild( readComment( true ) );
 		else if( c == ':' )
-			throw TafException("Encountered stray ':' in taf stream.");
+			throw TafException("Encountered stray ':' in taf stream at %d:%d.", iLine, iCol );
 		else
 			pGroup->addChild( readProperty() );
 	}
@@ -187,6 +188,13 @@ bool Bu::TafReader::isws()
 
 void Bu::TafReader::next()
 {
+	if( c == '\n' )
+	{
+		iLine++;
+		iCol = 1;
+	}
+	else
+		iCol++;
 	if( c == '}' )
 	{
 		sIn.read( &c, 1 );

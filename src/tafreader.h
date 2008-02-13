@@ -37,6 +37,7 @@ namespace Bu
 		Bu::FString readStr();
 		char c, la;
 		Bu::Stream &sIn;
+		int iLine, iCol;
 	};
 }
 
