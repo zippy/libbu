@@ -7,3 +7,4 @@
 
 #include "heap.h"
 
+namespace Bu { subExceptionDef( HeapException ) }

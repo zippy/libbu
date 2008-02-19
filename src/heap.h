@@ -12,10 +12,13 @@
 #include <string.h>
 #include <memory>
 #include <iostream>
+#include "bu/exceptionbase.h"
 #include "bu/util.h"
 
 namespace Bu
 {
+	subExceptionDecl( HeapException );
+
 	template<typename item>
 	struct __basicLTCmp
 	{
@@ -24,26 +27,58 @@ namespace Bu
 			return a <= b;
 		}
 	};
+	
+	template<typename item>
+	struct __basicGTCmp
+	{
+		bool operator()( const item &a, const item &b )
+		{
+			return a >= b;
+		}
+	};
+
+	template<typename item>
+	struct __basicPtrLTCmp
+	{
+		bool operator()( const item &a, const item &b )
+		{
+			return *a <= *b;
+		}
+	};
+	
+	template<typename item>
+	struct __basicPtrGTCmp
+	{
+		bool operator()( const item &a, const item &b )
+		{
+			return *a >= *b;
+		}
+	};
 
 	template<typename item, typename cmpfunc=__basicLTCmp<item>, typename itemalloc=std::allocator<item> >
 	class Heap
 	{
 	public:
 		Heap() :
-			iSize( 40 ),
+			iSize( 7 ),
 			iFill( 0 ),
-			aItem( new item[iSize] )
+			aItem( ia.allocate( iSize ) )
 		{
 		}
 
 		virtual ~Heap()
 		{
-			delete[] aItem;
+			for( int j = 0; j < iFill; j++ )
+				ia.destroy( &aItem[j] );
+			ia.deallocate( aItem, iSize );
 			aItem = NULL;
 		}
 
 		void push( item i )
 		{
+			if( iFill+1 >= iSize )
+				upSize();
+
 			for( int j = 0; j < iFill; )
 			{
 				if( cmp( i, aItem[j] ) )
@@ -60,7 +95,7 @@ namespace Bu
 					j = j*2+2;
 				}
 			}
-			aItem[iFill] = i;
+			ia.construct( &aItem[iFill], i );
 			for( int j = iFill; j >= 0; )
 			{
 				int k = (j-1)/2;
@@ -75,11 +110,15 @@ namespace Bu
 
 		item &peek()
 		{
+			if( iFill == 0 )
+				throw HeapException("Heap empty.");
 			return aItem[0];
 		}
 
 		void pop()
 		{
+			if( iFill == 0 )
+				throw HeapException("Heap empty.");
 			int j;
 			for( j = 0; j < iFill; )
 			{
@@ -97,6 +136,7 @@ namespace Bu
 					break;
 			}
 			aItem[j] = aItem[iFill-1];
+			ia.destroy( &aItem[iFill-1] );
 			iFill--;
 		}
 
@@ -121,13 +161,24 @@ namespace Bu
 					  );
 			}
 			printf("}\n");
-		}		
+		}
+
+	private:
+		void upSize()
+		{
+			item *aNewItems = ia.allocate( iSize*2+1 );
+			memcpy( aNewItems, aItem, sizeof(item)*iFill );
+			ia.deallocate( aItem, iSize );
+			aItem = aNewItems;
+			iSize = iSize*2+1;
+		}
 
 	private:
 		int iSize;
 		int iFill;
 		item *aItem;
 		cmpfunc cmp;
+		itemalloc ia;
 	};
 };
 

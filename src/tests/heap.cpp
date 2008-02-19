@@ -5,7 +5,7 @@
 
 int main()
 {
-	Bu::Heap<int> hInt;
+	Bu::Heap<int, Bu::__basicGTCmp<int> > hInt;
 
 	for( int j = 0; j < 15; j++ )
 	{
