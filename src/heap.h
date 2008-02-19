@@ -24,7 +24,7 @@ namespace Bu
 	{
 		bool operator()( const item &a, const item &b )
 		{
-			return a <= b;
+			return a < b;
 		}
 	};
 	
@@ -33,7 +33,7 @@ namespace Bu
 	{
 		bool operator()( const item &a, const item &b )
 		{
-			return a >= b;
+			return a > b;
 		}
 	};
 
@@ -42,7 +42,7 @@ namespace Bu
 	{
 		bool operator()( const item &a, const item &b )
 		{
-			return *a <= *b;
+			return *a < *b;
 		}
 	};
 	
@@ -51,7 +51,7 @@ namespace Bu
 	{
 		bool operator()( const item &a, const item &b )
 		{
-			return *a >= *b;
+			return *a > *b;
 		}
 	};
 
@@ -74,7 +74,7 @@ namespace Bu
 			aItem = NULL;
 		}
 
-		void push( item i )
+		void enqueue( item i )
 		{
 			if( iFill+1 >= iSize )
 				upSize();
@@ -96,14 +96,17 @@ namespace Bu
 				}
 			}
 			ia.construct( &aItem[iFill], i );
-			for( int j = iFill; j >= 0; )
+			if( iFill > 0 )
 			{
-				int k = (j-1)/2;
-				if( cmp( aItem[k], aItem[j] ) )
-					break;
+				for( int j = iFill; j >= 0; )
+				{
+					int k = (j-1)/2;
+					if( cmp( aItem[k], aItem[j] ) )
+						break;
 
-				swap( aItem[k], aItem[j] );
-				j = k;
+					swap( aItem[k], aItem[j] );
+					j = k;
+				}
 			}
 			iFill++;
 		}
@@ -115,10 +118,11 @@ namespace Bu
 			return aItem[0];
 		}
 
-		void pop()
+		item dequeue()
 		{
 			if( iFill == 0 )
 				throw HeapException("Heap empty.");
+			item iRet = aItem[0];
 			int j;
 			for( j = 0; j < iFill; )
 			{
@@ -138,6 +142,18 @@ namespace Bu
 			aItem[j] = aItem[iFill-1];
 			ia.destroy( &aItem[iFill-1] );
 			iFill--;
+
+			return iRet;
+		}
+
+		bool isEmpty()
+		{
+			return (iFill==0);
+		}
+
+		int getSize()
+		{
+			return iFill;
 		}
 
 		void print()

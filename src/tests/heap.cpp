@@ -3,26 +3,49 @@
 
 #include "bu/heap.h"
 
+typedef struct num
+{
+	num( int iNum, int iOrder ) : iNum( iNum ), iOrder( iOrder )
+	{
+	}
+
+	num( const num &src ) : iNum( src.iNum ), iOrder( src.iOrder )
+	{
+	}
+
+	int iNum;
+	int iOrder;
+
+	bool operator<( const num &oth ) const
+	{
+		if( iNum == oth.iNum )
+			return iOrder < oth.iOrder;
+		return iNum < oth.iNum;
+	}
+	bool operator>( const num &oth ) const
+	{
+		return iNum > oth.iNum;
+	}
+} num;
+
 int main()
 {
-	Bu::Heap<int, Bu::__basicGTCmp<int> > hInt;
+	Bu::Heap<num> hNum;
 
-	for( int j = 0; j < 15; j++ )
+	for( int j = 0; j < 30; j++ )
 	{
 		int r = rand()%10;
 		printf("Pushing: %d, top: ", r );
-		hInt.push( r );
-		printf("%d\n", hInt.peek() );
+		hNum.enqueue( num( r, j ) );
+		printf("%d\n", hNum.peek().iNum );
 	}
 
-	for( int j = 0; j < 15; j++ )
+	while( !hNum.isEmpty() )
 	{
-		printf("%d ", hInt.peek() );
-		hInt.pop();
+		printf("(%d:%d) ", hNum.peek().iOrder, hNum.peek().iNum );
+		hNum.dequeue();
 	}
 	printf("\n");
-	
-//	hInt.print();
 
 	return 0;
 }
