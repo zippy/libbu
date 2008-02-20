@@ -35,6 +35,46 @@ namespace Bu
 	{
 		return min( max( a, b ), c );
 	}
+	
+	//
+	//  Basic comparison functors
+	//
+	template<typename item>
+	struct __basicLTCmp
+	{
+		bool operator()( const item &a, const item &b )
+		{
+			return a < b;
+		}
+	};
+	
+	template<typename item>
+	struct __basicGTCmp
+	{
+		bool operator()( const item &a, const item &b )
+		{
+			return a > b;
+		}
+	};
+
+	template<typename item>
+	struct __basicPtrLTCmp
+	{
+		bool operator()( const item &a, const item &b )
+		{
+			return *a < *b;
+		}
+	};
+	
+	template<typename item>
+	struct __basicPtrGTCmp
+	{
+		bool operator()( const item &a, const item &b )
+		{
+			return *a > *b;
+		}
+	};
+
 };
 
 #endif

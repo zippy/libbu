@@ -19,42 +19,6 @@ namespace Bu
 {
 	subExceptionDecl( HeapException );
 
-	template<typename item>
-	struct __basicLTCmp
-	{
-		bool operator()( const item &a, const item &b )
-		{
-			return a < b;
-		}
-	};
-	
-	template<typename item>
-	struct __basicGTCmp
-	{
-		bool operator()( const item &a, const item &b )
-		{
-			return a > b;
-		}
-	};
-
-	template<typename item>
-	struct __basicPtrLTCmp
-	{
-		bool operator()( const item &a, const item &b )
-		{
-			return *a < *b;
-		}
-	};
-	
-	template<typename item>
-	struct __basicPtrGTCmp
-	{
-		bool operator()( const item &a, const item &b )
-		{
-			return *a > *b;
-		}
-	};
-
 	template<typename item, typename cmpfunc=__basicLTCmp<item>, typename itemalloc=std::allocator<item> >
 	class Heap
 	{

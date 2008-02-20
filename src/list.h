@@ -10,6 +10,7 @@
 
 #include <memory>
 #include "bu/exceptionbase.h"
+#include "bu/util.h"
 
 namespace Bu
 {
@@ -34,12 +35,14 @@ namespace Bu
 	 *@param linkalloc (typename) Memory Allocator for the list links.
 	 *@ingroup Containers
 	 */
-	template<typename value, typename valuealloc=std::allocator<value>, typename linkalloc=std::allocator<struct ListLink<value> > >
+	template<typename value, typename cmpfunc=__basicGTCmp<value>,
+		typename valuealloc=std::allocator<value>,
+		typename linkalloc=std::allocator<struct ListLink<value> > >
 	class List
 	{
 	private:
 		typedef struct ListLink<value> Link;
-		typedef class List<value, valuealloc, linkalloc> MyType;
+		typedef class List<value, cmpfunc, valuealloc, linkalloc> MyType;
 
 	public:
 		List() :
@@ -189,7 +192,7 @@ namespace Bu
 				Link *pCur = pFirst;
 				for(;;)
 				{
-					if( !(v > *(pCur->pValue)) )
+					if( !cmp( v, *(pCur->pValue)) )
 					{
 						pNew->pNext = pCur;
 						pNew->pPrev = pCur->pPrev;
@@ -218,7 +221,7 @@ namespace Bu
 		 */
 		typedef struct iterator
 		{
-			friend class List<value, valuealloc, linkalloc>;
+			friend class List<value, cmpfunc, valuealloc, linkalloc>;
 		private:
 			Link *pLink;
 			MyType &rList;
@@ -357,7 +360,7 @@ namespace Bu
 		 */
 		typedef struct const_iterator
 		{
-			friend class List<value, valuealloc, linkalloc>;
+			friend class List<value, cmpfunc, valuealloc, linkalloc>;
 		private:
 			Link *pLink;
 			const MyType &rList;
@@ -584,6 +587,7 @@ namespace Bu
 		linkalloc la;
 		valuealloc va;
 		int nSize;
+		cmpfunc cmp;
 	};
 }
 

@@ -251,6 +251,7 @@ namespace Bu
 				if( isFilled( j ) )
 					if( !isDeleted( j ) )
 					{
+						_erase( j );
 						onDelete();
 					}
 			}
