@@ -293,7 +293,7 @@ namespace Bu
 		 * Get the current hash table capacity. (Changes at re-hash)
 		 *@returns (uint32_t) The current capacity.
 		 */
-		uint32_t getCapacity()
+		uint32_t getCapacity() const
 		{
 			return nCapacity;
 		}
@@ -303,7 +303,7 @@ namespace Bu
 		 * not-yet-cleaned-up deleted items.)
 		 *@returns (uint32_t) The current fill state.
 		 */
-		uint32_t getFill()
+		uint32_t getFill() const
 		{
 			return nFilled;
 		}
@@ -312,7 +312,7 @@ namespace Bu
 		 * Get the number of items stored in the hash table.
 		 *@returns (uint32_t) The number of items stored in the hash table.
 		 */
-		uint32_t getSize()
+		uint32_t getSize() const
 		{
 			return nFilled-nDeleted;
 		}
@@ -322,7 +322,7 @@ namespace Bu
 		 * cleaned up.
 		 *@returns (uint32_t) The number of deleted items.
 		 */
-		uint32_t getDeleted()
+		uint32_t getDeleted() const
 		{
 			return nDeleted;
 		}
