@@ -12,6 +12,12 @@
 #include <exception>
 #include <stdarg.h>
 
+// This shouldn't normally be defined here, I don't think it's all that portable
+// and it also changes the class interface, we should find out how much of
+// an issue that is, we could just put in an empty getBacktrace() function for
+// when you don't have support for it...
+#define LIBBU_EXCEPTION_BACKTRACE
+
 namespace Bu
 {
 	/**
@@ -83,9 +89,15 @@ namespace Bu
 		 */
 		void setWhat( const char *lpText );
 
+		const char *getBacktrace() const throw();
+
 	private:
 		int nErrorCode;	/**< The code for the error that occured. */
 		char *sWhat;	/**< The text string telling people what went wrong. */
+#ifdef LIBBU_EXCEPTION_BACKTRACE
+		char *sBT;		/**< The backtrace text. */
+		void createBacktrace();
+#endif
 	};
 }
 
