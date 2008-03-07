@@ -13,6 +13,7 @@
 
 namespace Bu
 {
+	typedef Bu::Hash<Bu::FString, Bu::FString> StrHash;
 	/**
 	 * A processor for Libbu++ brand Mini Macros.  These are really simple, but
 	 * still fairly flexible.  It's mainly text replacement, but with a few
@@ -59,17 +60,18 @@ namespace Bu
 	 {?name="bob":"You're named bob!":"Who are you?  I only know bob..."}
 	 @endverbatim
 	 */
-	typedef Bu::Hash<Bu::FString, Bu::FString> StrHash;
 	class MiniMacro
 	{
 	public:
 		MiniMacro();
+		MiniMacro( const StrHash &sVarSrc );
 		virtual ~MiniMacro();
 
 		Bu::FString parse( const Bu::FString &sIn );
 		void addVar( const Bu::FString &sName, const Bu::FString &sValue );
 		bool hasVar( const Bu::FString &sName );
-		const Bu::FString &getvar( const Bu::FString &sName );
+		const Bu::FString &getVar( const Bu::FString &sName );
+		const StrHash &getVars();
 		int getPosition();
 
 	private:

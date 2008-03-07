@@ -14,6 +14,14 @@ Bu::MiniMacro::MiniMacro()
 	hFuncs.insert("tolower", new FuncToLower() );
 }
 
+Bu::MiniMacro::MiniMacro( const StrHash &sVarSrc )
+{
+	for( StrHash::const_iterator i = sVarSrc.begin(); i != sVarSrc.end(); i++ )
+	{
+		addVar( i.getKey(), i.getValue() );
+	}
+}
+
 Bu::MiniMacro::~MiniMacro()
 {
 }
@@ -163,9 +171,14 @@ bool Bu::MiniMacro::hasVar( const Bu::FString &sName )
 	return hVars.has( sName );
 }
 
-const Bu::FString &Bu::MiniMacro::getvar( const Bu::FString &sName )
+const Bu::FString &Bu::MiniMacro::getVar( const Bu::FString &sName )
 {
 	return hVars.get( sName );
+}
+
+const Bu::StrHash &Bu::MiniMacro::getVars()
+{
+	return hVars;
 }
 
 int Bu::MiniMacro::getPosition()
