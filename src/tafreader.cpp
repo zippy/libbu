@@ -146,6 +146,12 @@ Bu::FString Bu::TafReader::readStr()
 				}
 				else if( c == '"' )
 					c = '"';
+				else if( c == '\\' )
+					c = '\\';
+				else if( c == 'n' )
+					c = '\n';
+				else if( c == 't' )
+					c = '\t';
 				else
 					throw TafException("Invalid escape sequence at %d:%d.", iLine, iCol );
 			}

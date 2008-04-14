@@ -97,6 +97,8 @@ void Bu::TafWriter::writeString( const Bu::FString &str )
 	{
 		if( *s == '\"' )
 			sOut.write("\\\"", 2 );
+		else if( *s == '\\' )
+			sOut.write("\\\\", 2 );
 		else
 			sOut.write( s, 1 );
 	}
