@@ -8,6 +8,7 @@
 #include <dirent.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <stdlib.h>
 #include "bu/protocolhttp.h"
 #include "bu/logger.h"
 

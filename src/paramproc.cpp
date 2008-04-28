@@ -7,6 +7,7 @@
 
 #include "paramproc.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 #define ptrtype( iitype, iiname ) \
 	Bu::ParamProc::ParamPtr::ParamPtr( iitype *iiname ) :	\

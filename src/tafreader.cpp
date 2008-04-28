@@ -9,6 +9,8 @@
 #include "bu/exceptions.h"
 #include "bu/fstring.h"
 
+#include <stdlib.h>
+
 using namespace Bu;
 
 Bu::TafReader::TafReader( Bu::Stream &sIn ) :

@@ -21,6 +21,10 @@
  * - @ref howto_archives
  * - @ref howto_threading
  * - @ref howto_servers
+ * - @ref howto_taf
+ * - @ref howto_plugins
+ * - @ref howto_unittest
+ * - @ref howto_params
  */
 
 /**

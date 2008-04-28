@@ -9,6 +9,7 @@
 #define FORMULA_H
 
 #include <stdint.h>
+#include <stdlib.h>
 
 #include <math.h>
 //#include "sbuffer.h"

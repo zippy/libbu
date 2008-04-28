@@ -9,6 +9,7 @@
 #include <stdarg.h>
 #include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 Bu::Logger::Logger()
 {

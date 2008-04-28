@@ -116,7 +116,7 @@ void doTimings()
 }
 
 #define pem printf("---------\n%08X: %s\n%08X: %s\n", (unsigned int)str.getStr(), str.getStr(), (unsigned int)str2.getStr(), str2.getStr() );
-int main( int argc, char *argv )
+int main( int argc, char *argv[] )
 {
 	Bu::FString fs1;
 	for( int j = 0; j < 500000; j++ ) fs1 += (char)('a'+(j%26));

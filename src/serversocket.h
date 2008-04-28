@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include "bu/fstring.h"
+#include <sys/select.h>
 
 namespace Bu
 {

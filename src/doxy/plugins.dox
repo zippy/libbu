@@ -1,0 +1,17 @@
+/*
+ * Copyright (C) 2007-2008 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
+/**
+ *@page howto_plugins Creating Plugins and Plugin Frameworks
+ *
+ * Libbu++ offers a simple yet safe mechanism for dealing with plugins, it
+ * allows a program to have "builtin" plugins or DLL/SO based dynamically loaded
+ * plugnis.  Plugins are then referred to by name, are checked for type-safety,
+ * and are managed to avoid memory leaks.
+ *
+ *@todo Finish this page.
+ */

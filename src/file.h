@@ -9,6 +9,8 @@
 #define BU_FILE_H
 
 #include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
 
 #include "bu/stream.h"
 #include "bu/fstring.h"

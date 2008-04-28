@@ -9,6 +9,7 @@
 #define BU_SERVER_H
 
 #include <stdint.h>
+#include <sys/select.h>
 
 #include "bu/fstring.h"
 #include "bu/list.h"

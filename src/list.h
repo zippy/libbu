@@ -353,7 +353,7 @@ namespace Bu
 				pLink = oth.pLink;
 				return *this;
 			}
-		};
+		} iterator;
 		
 		/**
 		 *@see iterator
@@ -465,7 +465,7 @@ namespace Bu
 				pLink = oth.pLink;
 				return *this;
 			}
-		};
+		} const_iterator;
 
 		/**
 		 * Get an iterator pointing to the first item in the list.

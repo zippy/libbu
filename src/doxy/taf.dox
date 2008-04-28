@@ -1,0 +1,16 @@
+/*
+ * Copyright (C) 2007-2008 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
+/**
+ *@page howto_taf Using the Textual Archive Format
+ *
+ * Libbu++ provides support for TAF, the Textual Archive Format, a very simple
+ * grouped key/value pair format with the ability to support trees of data.
+ * It's like XML-Light.
+ *
+ *@todo Finish this page.
+ */

@@ -368,7 +368,7 @@ namespace Bu
 			{
 				return hsh.getKeyAtPos( nPos );
 			}
-		};
+		} iterator;
 		
 		/**
 		 * Iteration structure for iterating through the hash (const).
@@ -466,7 +466,7 @@ namespace Bu
 			{
 				return hsh.getKeyAtPos( nPos );
 			}
-		};
+		} const_iterator;
 
 		/**
 		 * Get an iterator pointing to the first item in the hash table.
