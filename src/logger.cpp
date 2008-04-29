@@ -159,14 +159,14 @@ void Bu::Logger::hexDump( uint32_t nLevel, const char *sFile,
 	const unsigned char *pData = (const unsigned char *)pDataV;
 	int j = 0;
 	Bu::FString sBorder;
-	for( int l = 0; l < 8*3+2*8+2; l++ ) sBorder += ((l!=8*3)?("-"):("+"));
+	for( int l = 0; l < 8*3+2*8+2+5; l++ ) sBorder += ((l!=11&&l!=37)?("-"):("+"));
 	log( nLevel, sFile, sFunction, nLine, sBorder.getStr() );
 	Bu::FString sLine;
 	for(;;)
 	{
 		{
-			char buf[15];
-			sprintf( buf, "%010d| ", j );
+			char buf[16];
+			sprintf( buf, "%010d | ", j );
 			sLine += buf;
 		}
 		int kmax = 8;
