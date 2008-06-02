@@ -127,6 +127,19 @@ const Bu::FString &Bu::TafGroup::getProperty( const Bu::FString &sName ) const
 	return hProp.get( sName ).first();
 }
 
+const Bu::FString &Bu::TafGroup::getProperty( const Bu::FString &sName,
+	const Bu::FString &sDef ) const
+{
+	try
+	{
+		return getProperty( sName );
+	}
+	catch( Bu::HashException &e )
+	{
+		return sDef;
+	}
+}
+
 Bu::TafProperty::TafProperty( const Bu::FString &sName, const Bu::FString &sValue ) :
 	TafNode( typeProperty ),
 	sName( sName ),

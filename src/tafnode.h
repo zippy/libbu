@@ -61,6 +61,8 @@ namespace Bu
 		void setName( const Bu::FString &sName );
 
 		const Bu::FString &getProperty( const Bu::FString &sName ) const;
+		const Bu::FString &getProperty( const Bu::FString &sName,
+			const Bu::FString &sDef ) const;
 		const PropList &getProperties( const Bu::FString &sName ) const;
 		const TafGroup *getChild( const Bu::FString &sName ) const;
 		const GroupList &getChildren( const Bu::FString &sName ) const;

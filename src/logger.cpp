@@ -155,6 +155,9 @@ void Bu::Logger::hexDump( uint32_t nLevel, const char *sFile,
 		const char *sFunction, int nLine, const void *pDataV, long nDataLen,
 		const char *lpName )
 {
+	if( (nLevel&nLevelMask) == 0 )
+		return;
+
 	log( nLevel, sFile, sFunction, nLine, "Displaying %ld bytes of %s.", nDataLen, lpName );
 	const unsigned char *pData = (const unsigned char *)pDataV;
 	int j = 0;
