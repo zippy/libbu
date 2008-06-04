@@ -105,7 +105,7 @@ namespace Bu
 #define unitTest( tst ) if( !(tst) )							\
 {																\
 	throw Bu::UnitSuite::Failed( #tst, __FILE__, __LINE__ );	\
-}
-#define unitFailed( msg ) throw Bu::UnitSuite::Failed(msg, __FILE__, __LINE__);
+} else (void)0
+#define unitFailed( msg ) throw Bu::UnitSuite::Failed(msg, __FILE__, __LINE__)
 
 #endif

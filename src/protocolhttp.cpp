@@ -33,7 +33,7 @@ void Bu::ProtocolHttp::onNewConnection( Bu::Client *pClient )
 	iState = 0;
 }
 
-#define SDB( i ) { }
+#define SDB( i ) (void)0
 //#define SDB( i ) printf("state %d: %d, \"%s\"\n", i, tt, sToken.getStr() )
 
 void Bu::ProtocolHttp::onNewData( Bu::Client *pClient )

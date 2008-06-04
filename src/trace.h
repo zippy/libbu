@@ -34,7 +34,7 @@ namespace Bu
 				n++;									\
 				break;									\
 			}											\
-		}
+		} (void)0
 	
 	template<typename t1> void __tracer( const char *pf, t1 &v1 )
 	{
@@ -163,7 +163,7 @@ namespace Bu
 #ifdef BU_TRACE
 # define TRACE(args...) Bu::__tracer( __PRETTY_FUNCTION__, ##args )
 #else
-# define TRACE(args...) {}
+# define TRACE(args...) (void)0
 #endif
 
 #endif
