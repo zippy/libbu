@@ -473,7 +473,8 @@ Bu::Archive &Bu::operator>>(Bu::Archive &ar, class Bu::Archival *p )
 
 Bu::Archive &Bu::operator<<( Bu::Archive &ar, std::string &s )
 {
-	ar << (uint32_t)s.length();
+	// This should be defined as long anyway, this is just insurance
+	ar << (long)s.length();
 	ar.write( s.c_str(), s.length() );
 
 	return ar;
@@ -481,7 +482,7 @@ Bu::Archive &Bu::operator<<( Bu::Archive &ar, std::string &s )
 
 Bu::Archive &Bu::operator>>( Bu::Archive &ar, std::string &s )
 {
-	uint32_t l;
+	long l;
 	ar >> l;
 	char *tmp = new char[l+1];
 	tmp[l] = '\0';

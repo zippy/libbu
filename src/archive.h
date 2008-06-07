@@ -256,10 +256,10 @@ namespace Bu
 	Archive &operator>>( Archive &ar, Hash<key,value> &h )
 	{
 		h.clear();
-		uint32_t nSize;
+		long nSize;
 		ar >> nSize;
 
-		for( uint32_t j = 0; j < nSize; j++ )
+		for( long j = 0; j < nSize; j++ )
 		{
 			key k; value v;
 			ar >> k >> v;
@@ -285,10 +285,10 @@ namespace Bu
 	Archive &operator>>( Archive &ar, List<value> &h )
 	{
 		h.clear();
-		uint32_t nSize;
+		long nSize;
 		ar >> nSize;
 
-		for( uint32_t j = 0; j < nSize; j++ )
+		for( long j = 0; j < nSize; j++ )
 		{
 			value v;
 			ar >> v;
@@ -314,10 +314,10 @@ namespace Bu
 	Archive &operator>>( Archive &ar, Set<value> &h )
 	{
 		h.clear();
-		uint32_t nSize;
+		long nSize;
 		ar >> nSize;
 
-		for( uint32_t j = 0; j < nSize; j++ )
+		for( long j = 0; j < nSize; j++ )
 		{
 			value v;
 			ar >> v;

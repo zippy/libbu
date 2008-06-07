@@ -15,6 +15,7 @@ public:
 	{
 		setName("Archive");
 		addTest( Unit::testPrimitives );
+		addTest( Unit::testContainers );
 	}
 
 	virtual ~Unit()
@@ -42,8 +43,8 @@ public:
 			ar << (unsigned int)14;
 			ar << (long)15;
 			ar << (unsigned long)16;
-			//ar << (long long)17;
-			//ar << (unsigned long long)18;
+			ar << (long long)17;
+			ar << (unsigned long long)18;
 			ar.close();
 		}
 		mb.setPos( 0 );
@@ -65,8 +66,8 @@ public:
 			unsigned int p14;
 			long p15;
 			unsigned long p16;
-			//long long p17;
-			//unsigned long long p18;
+			long long p17;
+			unsigned long long p18;
 			ar >> p1;
 			ar >> p2;
 			ar >> p3;
@@ -83,8 +84,8 @@ public:
 			ar >> p14;
 			ar >> p15;
 			ar >> p16;
-			//ar >> p17;
-			//ar >> p18;
+			ar >> p17;
+			ar >> p18;
 			unitTest( p1 == 1 );
 			unitTest( p2 == 2 );
 			unitTest( p3 == 3 );
@@ -101,8 +102,41 @@ public:
 			unitTest( p14 == 14 );
 			unitTest( p15 == 15 );
 			unitTest( p16 == 16 );
-			//unitTest( p17 == 17 );
-			//unitTest( p18 == 18 );
+			unitTest( p17 == 17 );
+			unitTest( p18 == 18 );
+			ar.close();
+		}
+	}
+	
+	void testContainers()
+	{
+		Bu::MemBuf mb;
+		{
+			Bu::Archive ar( mb, Bu::Archive::save );
+			Bu::FString sStr("This is a test string.");
+			Bu::List<int> lList;
+			lList.append( 10 );
+			lList.append( 20 );
+			lList.append( 30 );
+			lList.append( 40 );
+			ar << sStr;
+			ar << lList;
+			ar.close();
+		}
+		mb.setPos( 0 );
+		{
+			Bu::Archive ar( mb, Bu::Archive::load );
+			Bu::FString sStr;
+			Bu::List<int> lList;
+			ar >> sStr;
+			ar >> lList;
+			unitTest( sStr == "This is a test string." );
+			unitTest( lList.getSize() == 4 );
+			Bu::List<int>::iterator i = lList.begin();
+			unitTest( *i == 10 ); i++;
+			unitTest( *i == 20 ); i++;
+			unitTest( *i == 30 ); i++;
+			unitTest( *i == 40 );
 			ar.close();
 		}
 	}

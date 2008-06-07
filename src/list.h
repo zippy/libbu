@@ -535,7 +535,7 @@ namespace Bu
 		 * Get the current size of the list.
 		 *@returns (int) The current size of the list.
 		 */
-		int getSize() const
+		long getSize() const
 		{
 			return nSize;
 		}
@@ -586,7 +586,7 @@ namespace Bu
 		Link *pLast;
 		linkalloc la;
 		valuealloc va;
-		int nSize;
+		long nSize;
 		cmpfunc cmp;
 	};
 }
