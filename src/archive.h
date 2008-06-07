@@ -14,6 +14,7 @@
 #include "bu/hash.h"
 #include "bu/list.h"
 #include "bu/set.h"
+#include "bu/util.h"
 
 namespace Bu
 {
@@ -96,7 +97,7 @@ namespace Bu
 		virtual Archive &operator<<(uint16_t);
 		virtual Archive &operator<<(uint32_t);
 		virtual Archive &operator<<(uint64_t);
-		virtual Archive &operator<<(long);
+//		virtual Archive &operator<<(long);
 		virtual Archive &operator<<(float);
 		virtual Archive &operator<<(double);
 		virtual Archive &operator<<(long double);
@@ -110,7 +111,7 @@ namespace Bu
 		virtual Archive &operator>>(uint16_t &);
 		virtual Archive &operator>>(uint32_t &);
 		virtual Archive &operator>>(uint64_t &);
-		virtual Archive &operator>>(long &);
+//		virtual Archive &operator>>(long &);
 		virtual Archive &operator>>(float &);
 		virtual Archive &operator>>(double &);
 		virtual Archive &operator>>(long double &);

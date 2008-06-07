@@ -74,7 +74,6 @@ namespace Bu
 			return *a > *b;
 		}
 	};
-
 };
 
 #endif

@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stddef.h>
 
 namespace Bu
 {
@@ -27,7 +28,7 @@ namespace Bu
 		{												\
 			if( *n == ',' || *n == ')' )				\
 			{											\
-				fwrite( s, (int)n-(int)s, 1, stdout );	\
+				fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );	\
 				fwrite("=", 1, 1, stdout);				\
 				__tracer_format( vv );					\
 				s = n;									\
@@ -42,7 +43,7 @@ namespace Bu
 		const char *s = pf;
 		const char *n = pf;
 		looper( v1 );
-		fwrite( s, (int)n-(int)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
 	}
 	
@@ -54,7 +55,7 @@ namespace Bu
 		const char *n = pf;
 		looper( v1 );
 		looper( v2 );
-		fwrite( s, (int)n-(int)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
 	}
 	
@@ -67,7 +68,7 @@ namespace Bu
 		looper( v1 );
 		looper( v2 );
 		looper( v3 );
-		fwrite( s, (int)n-(int)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
 	}
 	
@@ -81,7 +82,7 @@ namespace Bu
 		looper( v2 );
 		looper( v3 );
 		looper( v4 );
-		fwrite( s, (int)n-(int)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
 	}
 	
@@ -96,7 +97,7 @@ namespace Bu
 		looper( v3 );
 		looper( v4 );
 		looper( v5 );
-		fwrite( s, (int)n-(int)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
 	}
 	
@@ -114,7 +115,7 @@ namespace Bu
 		looper( v4 );
 		looper( v5 );
 		looper( v6 );
-		fwrite( s, (int)n-(int)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
 	}
 	
@@ -133,7 +134,7 @@ namespace Bu
 		looper( v5 );
 		looper( v6 );
 		looper( v7 );
-		fwrite( s, (int)n-(int)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
 	}
 #undef looper
@@ -148,8 +149,8 @@ namespace Bu
 	template<> void __tracer_format<uint64_t>( const uint64_t &v );
 	template<> void __tracer_format<bool>( const bool &v );
 	template<> void __tracer_format<char>( const char &v );
-	template<> void __tracer_format<long>( const long &v );
-	template<> void __tracer_format<unsigned long>( const unsigned long &v );
+	//template<> void __tracer_format<long>( const long &v );
+	//template<> void __tracer_format<unsigned long>( const unsigned long &v );
 	template<> void __tracer_format<float>( const float &v );
 	template<> void __tracer_format<double>( const double &v );
 	template<> void __tracer_format<void *>( void * const &v );

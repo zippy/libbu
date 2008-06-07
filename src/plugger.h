@@ -14,6 +14,7 @@
 #include <dlfcn.h>
 #include "bu/exceptions.h"
 #include "bu/fstring.h"
+#include <stddef.h>
 
 namespace Bu
 {
@@ -86,7 +87,7 @@ namespace Bu
 	{
 	public:
 		typedef Bu::Hash<Bu::FString, PluginReg *> PluginHash;
-		typedef Bu::Hash<int, void *> InstHash;
+		typedef Bu::Hash<ptrdiff_t, void *> InstHash;
 
 	public:
 		Plugger()
@@ -161,7 +162,7 @@ namespace Bu
 				return NULL;
 
 			T *p = (T *)pReg->pInfo->createPlugin();
-			hObj.insert( (int )p, pReg );
+			hObj.insert( (ptrdiff_t)p, pReg );
 			//printf("pReg:  %08X, pPlug: %08X\n", pReg, p );
 		
 			return p;
@@ -181,7 +182,7 @@ namespace Bu
 
 			pReg->pInfo->destroyPlugin( pPlug );
 
-			hObj.erase( (int)pPlug );
+			hObj.erase( (ptrdiff_t)pPlug );
 		}
 
 		void unloadAll()

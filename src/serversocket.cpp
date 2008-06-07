@@ -117,7 +117,7 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 	if( FD_ISSET( nServer, &fdRead ) )
 	{
 		struct sockaddr_in clientname;
-		size_t size;
+		socklen_t size;
 		int nClient;
 
 		size = sizeof( clientname );

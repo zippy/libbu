@@ -62,7 +62,7 @@ Bu::FString Bu::MiniMacro::parse( const Bu::FString &sIn )
 		}
 	}
 
-	iLastPos = (int)sCur - (int)sIn.getStr();
+	iLastPos = (ptrdiff_t)sCur - (ptrdiff_t)sIn.getStr();
 
 	return sOut;
 }
@@ -76,7 +76,7 @@ Bu::FString Bu::MiniMacro::parseRepl()
 		for(; *sNext != ':' && *sNext != '}' && *sNext != '\0'; sNext++ );
 		if( *sNext == '\0' )
 			break;
-		Bu::FString sName( sCur, (int)sNext-(int)sCur );
+		Bu::FString sName( sCur, (ptrdiff_t)sNext-(ptrdiff_t)sCur );
 		if( bIsFirst )
 		{
 			sOut = hVars[sName];
@@ -116,7 +116,7 @@ Bu::FString Bu::MiniMacro::parseCmd()
 	for(; *sNext != ':' && *sNext != '}' && *sNext != '\0'; sNext++ );
 	if( *sNext != '\0' )
 	{
-		Bu::FString sName( sCur, (int)sNext-(int)sCur );
+		Bu::FString sName( sCur, (ptrdiff_t)sNext-(ptrdiff_t)sCur );
 		if( sName == "end" )
 		{
 			sCur = sNext;
@@ -152,7 +152,7 @@ Bu::FString Bu::MiniMacro::callFunc(
 		for(; *s == ' ' || *s == '\t' || *s == '\r' || *s == '\n'; s++ );
 		const char *sNext;
 		for( sNext = s; *sNext && *sNext != ')' && *sNext != ','; sNext++ );
-		Bu::FString p( s, (int)sNext-(int)s );
+		Bu::FString p( s, (ptrdiff_t)sNext-(ptrdiff_t)s );
 		lsParams.append( p );
 		sNext++;
 		s = sNext;

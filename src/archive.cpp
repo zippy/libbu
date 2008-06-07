@@ -89,12 +89,12 @@ Bu::Archive &Bu::Archive::operator<<(uint64_t p)
 {
 	write( &p, sizeof(p) );
 	return *this;
-}
+}/*
 Bu::Archive &Bu::Archive::operator<<(long p)
 {
 	write( &p, sizeof(p) );
 	return *this;
-}
+}*/
 Bu::Archive &Bu::Archive::operator<<(float p)
 {
 	write( &p, sizeof(p) );
@@ -155,12 +155,12 @@ Bu::Archive &Bu::Archive::operator>>(uint64_t &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
-}
+}/*
 Bu::Archive &Bu::Archive::operator>>(long &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
-}
+}*/
 Bu::Archive &Bu::Archive::operator>>(float &p)
 {
 	read( &p, sizeof(p) );
@@ -371,9 +371,9 @@ Bu::Archive &Bu::operator>>( Bu::Archive &ar, std::string &s )
 
 uint32_t Bu::Archive::getID( const void *ptr )
 {
-	if( hPtrID.has( (int)ptr ) )
-		return hPtrID.get( (int)ptr );
-	hPtrID.insert( (int)ptr, nNextID );
+	if( hPtrID.has( (ptrdiff_t)ptr ) )
+		return hPtrID.get( (ptrdiff_t)ptr );
+	hPtrID.insert( (ptrdiff_t)ptr, nNextID );
 	return nNextID++;
 }
 
@@ -393,7 +393,7 @@ void Bu::Archive::assocPtrID( void **ptr, uint32_t id )
 
 void Bu::Archive::readID( const void *ptr, uint32_t id )
 {
-	hPtrID.insert( id, (int)ptr );
+	hPtrID.insert( id, (ptrdiff_t)ptr );
 
 	if( hPtrDest.has( id ) )
 	{

@@ -34,7 +34,7 @@ Bu::FString genThing()
 	bob += "cd ";
 	bob += "efg";
 
-    printf("---bob------\n%08X: %s\n", (unsigned int)bob.getStr(),
+    printf("---bob------\n%08tX: %s\n", (ptrdiff_t)bob.getStr(),
 			bob.getStr() );
 	return bob;
 }
@@ -115,7 +115,7 @@ void doTimings()
 	delete[] buf;
 }
 
-#define pem printf("---------\n%08X: %s\n%08X: %s\n", (unsigned int)str.getStr(), str.getStr(), (unsigned int)str2.getStr(), str2.getStr() );
+#define pem printf("---------\n%08tX: %s\n%08tX: %s\n", (ptrdiff_t)str.getStr(), str.getStr(), (ptrdiff_t)str2.getStr(), str2.getStr() );
 int main( int argc, char *argv[] )
 {
 	Bu::FString fs1;

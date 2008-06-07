@@ -58,7 +58,7 @@ template<> void Bu::__tracer_format<char>( const char &v )
 {
 	printf("%hhd", v );
 }
-
+/*
 template<> void Bu::__tracer_format<long>( const long &v )
 {
 	printf("%ld", v );
@@ -67,7 +67,7 @@ template<> void Bu::__tracer_format<long>( const long &v )
 template<> void Bu::__tracer_format<unsigned long>( const unsigned long &v )
 {
 	printf("%lu", v );
-}
+}*/
 
 template<> void Bu::__tracer_format<float>( const float &v )
 {
@@ -81,7 +81,7 @@ template<> void Bu::__tracer_format<double>( const double &v )
 
 template<> void Bu::__tracer_format<void *>( void * const &v )
 {
-	printf("0x%08X", (unsigned int)v );
+	printf("0x%08X", (ptrdiff_t)v );
 }
 
 template<> void Bu::__tracer_format<char *>( char * const &v )
@@ -99,7 +99,7 @@ template<> void Bu::__tracer_format<char **>( char ** const &v )
 
 template<> void Bu::__tracer_format<void const *>( void const * const &v )
 {
-	printf("0x%08X", (unsigned int)v );
+	printf("0x%08X", (ptrdiff_t)v );
 }
 
 template<> void Bu::__tracer_format<char const *>( char const * const &v )

@@ -55,7 +55,10 @@ void Bu::ExceptionBase::setWhat( const char *lpFormat, va_list &vargs )
 	if( sWhat ) delete[] sWhat;
 	int nSize;
 
-	nSize = vsnprintf( NULL, 0, lpFormat, vargs );
+	va_list vargs2;
+	va_copy( vargs2, vargs );
+	nSize = vsnprintf( NULL, 0, lpFormat, vargs2 );
+	va_end( vargs2 );
 	sWhat = new char[nSize+1];
 	vsnprintf( sWhat, nSize+1, lpFormat, vargs );
 }
