@@ -57,7 +57,7 @@ public:
 			uint32_t p6;
 			int64_t p7;
 			uint64_t p8;
-			signed char p9;
+			char p9;
 			unsigned char p10;
 			short p11;
 			unsigned short p12;

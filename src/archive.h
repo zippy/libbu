@@ -88,6 +88,33 @@ namespace Bu
 		virtual void write(const void *, int32_t);
 		virtual void read(void *, int32_t);
 		
+		virtual Archive &operator<<(bool p);
+		virtual Archive &operator<<(char p);
+		virtual Archive &operator<<(signed char p);
+		virtual Archive &operator<<(unsigned char p);
+		virtual Archive &operator<<(signed short p);
+		virtual Archive &operator<<(unsigned short p);
+		virtual Archive &operator<<(signed int p);
+		virtual Archive &operator<<(unsigned int p);
+		virtual Archive &operator<<(signed long p);
+		virtual Archive &operator<<(unsigned long p);
+		virtual Archive &operator<<(signed long long p);
+		virtual Archive &operator<<(unsigned long long p);
+		
+		virtual Archive &operator>>(bool &p);
+		virtual Archive &operator>>(char &p);
+		virtual Archive &operator>>(signed char &p);
+		virtual Archive &operator>>(unsigned char &p);
+		virtual Archive &operator>>(signed short &p);
+		virtual Archive &operator>>(unsigned short &p);
+		virtual Archive &operator>>(signed int &p);
+		virtual Archive &operator>>(unsigned int &p);
+		virtual Archive &operator>>(signed long &p);
+		virtual Archive &operator>>(unsigned long &p);
+		virtual Archive &operator>>(signed long long &p);
+		virtual Archive &operator>>(unsigned long long &p);
+
+		/*
 		virtual Archive &operator<<(bool);
 		virtual Archive &operator<<(int8_t);
 		virtual Archive &operator<<(int16_t);
@@ -128,6 +155,7 @@ namespace Bu
 		virtual Archive &operator&&(float &);
 		virtual Archive &operator&&(double &);
 		virtual Archive &operator&&(long double &);
+		*/
 
 		/**
 		 * For storage, get an ID for the pointer to the object you're going to

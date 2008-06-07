@@ -45,6 +45,129 @@ bool Bu::Archive::isLoading()
 {
 	return bLoading;
 }
+
+Bu::Archive &Bu::Archive::operator<<(bool p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(char p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(signed char p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(unsigned char p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(signed short p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(unsigned short p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(signed int p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(unsigned int p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(signed long p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(unsigned long p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(signed long long p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(unsigned long long p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+
+Bu::Archive &Bu::Archive::operator>>(bool &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(char &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(signed char &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(unsigned char &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(signed short &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(unsigned short &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(signed int &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(unsigned int &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(signed long &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(unsigned long &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(signed long long &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(unsigned long long &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+/*
 Bu::Archive &Bu::Archive::operator<<(bool p)
 {
 	write( &p, sizeof(p) );
@@ -89,12 +212,12 @@ Bu::Archive &Bu::Archive::operator<<(uint64_t p)
 {
 	write( &p, sizeof(p) );
 	return *this;
-}/*
+}
 Bu::Archive &Bu::Archive::operator<<(long p)
 {
 	write( &p, sizeof(p) );
 	return *this;
-}*/
+}
 Bu::Archive &Bu::Archive::operator<<(float p)
 {
 	write( &p, sizeof(p) );
@@ -155,12 +278,12 @@ Bu::Archive &Bu::Archive::operator>>(uint64_t &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
-}/*
+}
 Bu::Archive &Bu::Archive::operator>>(long &p)
 {
 	read( &p, sizeof(p) );
 	return *this;
-}*/
+}
 Bu::Archive &Bu::Archive::operator>>(float &p)
 {
 	read( &p, sizeof(p) );
@@ -320,7 +443,7 @@ Bu::Archive &Bu::Archive::operator&&(long double &p)
 		return *this << p;
 	}
 }
-
+*/
 
 Bu::Archive &Bu::operator<<(Bu::Archive &s, Bu::Archival &p)
 {
