@@ -1,0 +1,71 @@
+Random Access Archive Format
+----------------------------
+
+This is the basic archive format for libbu++'s random access archive system.
+Unlike the traditional archive, given a unique key any object may be accessed
+at any time, and hopefully very quickly.
+
+To make this as portable as possible the basic interface to the RAA is very
+simple and seperated from any IO or formatting directly, any number af backends
+could be constructed quite simply, this is a description of the first of these
+formats.
+
+In order to make the system handle objects that are any size, and grow quickly
+and easily, I believe we should resort to a simple block allocation mechanism
+with uniform block sizes linked in chains, effectively accessed via "inodes."
+
+Therefore given a blocksize and a Table of Contents (TOC) any object should be
+easy to find.  The TOC can be implemented as an in-place hash table to minimize
+the amount of memory that must be sacraficed for very large, seldom used
+structures.
+
+The basic header:
+
+00-03: Magic Number, something cute, I dunno yet (encoding independant)
+04:    Byte count/order for standard indexes (8/4 for 64/32bit systems)
+       High order bit masked out determines endianness (1 = big, 0 = small)
+       The program will only accept one word-width for now, we can make it
+       adjustable later, or fix this at 4 bytes.
+05-08: Blocksize in bytes, could be anything, I don't think we need to worry
+       about OS related things for this, but it should be set intelligently by
+       the owner.  This includes the bytes reserved for a block header.
+09-12: Total block count, includes both used and unused blocks.
+13-16: Total used blocks, useful for determining when to expand.
+17-24: Reserved for flags and the like, should be all zeros for now.
+
+At this point are a number of "blocks" each with their own header and data are
+laid out sequentially, accessing one should be easy, seek to
+  (header size)+(block size)*(block number)
+
+The block header is as follows:
+
+00-03: First block in chain.  If this number matches the current block index
+       then this block is the first in a chain.
+04-07: Next block in chain.  If this number matches the current block index
+       then this block is the last in the chain.
+08-11: Prev block in chain.  If this number matches the current block index
+       then this block is the first in the chain.
+12-15: Number of bytes used/allocated remaining in the chain.  If this is the
+       first block, then this is the total size of the object accross all
+       blocks in the chain.  For the last block in the chain this will usually
+       be less than the available space.
+16-19: Reserved flagspace or something, make sure it's all zeros.
+20-xx: Block data, whatever you wanted to store.  At the moment this is going
+       to be (blocksize) - 20 for now, it will change if the block header
+       changes.
+
+Thus far we have described a generic system for storing dynamic "substreams" of
+data within a larger stream using a block-allocation system.  This is handy on
+it's own, and implemented as a seperate mechanism, but as handy as it is, it's
+not as useful without a table of contents, described here.
+
+Any above composite datastream that uses a TOC will have the TOC be the first
+block chain.  The TOC will initially be a basic in-place hash table, but may
+be changed to a b-tree depending on what kind of data is being used.  This basic
+table of contents simply links a generated UID from a program to the appropriate
+block chain.
+
+Systems like the above could be augmented with additional meta-data in order to
+create flexible, small, in-file file systems and the like.  For example,
+providing simple fixed-width data structures to tie to "inodes" (the program
+generated UIDs) you could have a mini posix filesystem in no time.
