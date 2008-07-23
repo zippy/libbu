@@ -7,10 +7,17 @@ namespace Bu
 	class CacheHandler
 	{
 	public:
-		CacheHandler();
-		virtual ~CacheHandler();
+		CacheHandler()
+		{
+		}
 
-		forceLoad()
+		virtual ~CacheHandler()
+		{
+		}
+
+		void forceLoad()
+		{
+		}
 	private:
 	};
 };
