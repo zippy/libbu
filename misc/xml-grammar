@@ -1,0 +1,7 @@
+document ::= prolog element misc*
+
+prolog ::= XMLDecl misc* (doctypedecl misc*)?
+
+XMLDecl ::= '<?xml' VersionInfo EncodingDecl? SDDecl? ws? '?>'
+
+VersionInfo ::= ws

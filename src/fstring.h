@@ -187,7 +187,26 @@ namespace Bu
 				append( &cData, 1 );
 			}
 		}
-
+		
+		/**
+		 * Append another FString to this one.
+		 *@param sData (MyType &) The FString to append.
+		 */
+		void append( const MyType & sData )
+		{
+			append( sData.getStr(), sData.getSize() );
+		}
+		
+		/**
+		 * Append another FString to this one.
+		 *@param sData (MyType &) The FString to append.
+		 *@param nLen How much data to append.
+		 */
+		void append( const MyType & sData, long nLen )
+		{
+			append( sData.getStr(), nLen );
+		}
+		
 		/**
 		 * Prepend another FString to this one.
 		 *@param sData (MyType &) The FString to prepend.
