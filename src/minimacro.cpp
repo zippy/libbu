@@ -81,12 +81,12 @@ Bu::FString Bu::MiniMacro::parseRepl()
 		{
 			sOut = hVars[sName];
 			bIsFirst = false;
-			printf("Variable: \"%s\"\n", sName.getStr() );
+			//printf("Variable: \"%s\"\n", sName.getStr() );
 		}
 		else
 		{
 			sOut = callFunc( sOut, sName );
-			printf("Filter: \"%s\"\n", sName.getStr() );
+			//printf("Filter: \"%s\"\n", sName.getStr() );
 		}
 		if( *sNext == '}' )
 		{
@@ -105,7 +105,7 @@ Bu::FString Bu::MiniMacro::parseRepl()
 Bu::FString Bu::MiniMacro::parseCond()
 {
 	Bu::FString sOut;
-	printf("%20s\n", sCur );
+	//printf("%20s\n", sCur );
 	return sOut;
 }
 
@@ -132,10 +132,10 @@ Bu::FString Bu::MiniMacro::parseCmd()
 	}
 	else
 	{
-		printf("Uh...?\n");
+		//printf("Uh...?\n");
 	}
 
-	printf("%20s\n", sCur );
+	//printf("%20s\n", sCur );
 	return sOut;
 }
 
