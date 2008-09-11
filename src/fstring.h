@@ -492,6 +492,20 @@ namespace Bu
 			return (*this);
 		}
 
+		MyType operator +( const MyType &rRight )
+		{
+			MyType ret( *this );
+			ret.append( rRight );
+			return ret;
+		}
+
+		MyType operator +( const chr *pRight )
+		{
+			MyType ret( *this );
+			ret.append( pRight );
+			return ret;
+		}
+
 		/**
 		 * Reset your FString to this character array.
 		 *@param pData (const chr *) The character array to set your FString to.
@@ -1032,6 +1046,12 @@ namespace Bu
 
 	template<> uint32_t __calcHashCode<FString>( const FString &k );
 	template<> bool __cmpHashKeys<FString>( const FString &a, const FString &b );
+	template<class T> FBasicString<T> operator +( const T *pLeft, const FBasicString<T> &rRight )
+	{
+		Bu::FBasicString<T> ret( pLeft );
+		ret.append( rRight );
+		return ret;
+	}
 	
 #ifdef BU_TRACE
 	template<> void __tracer_format<FString>( const FString &v );

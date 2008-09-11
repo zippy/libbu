@@ -20,6 +20,10 @@ public:
 		addTest( Unit::shared1 );
 		addTest( Unit::insert );
 		addTest( Unit::remove );
+		addTest( Unit::add1 );
+		addTest( Unit::add2 );
+		addTest( Unit::add3 );
+		addTest( Unit::add4 );
 	}
 
 	virtual ~Unit()
@@ -89,6 +93,40 @@ public:
 		a += "cdefghijklmnop";
 		a.remove( 5, 1 );
 		unitTest( a = "abcdeghijklmnop" );
+	}
+
+	void add1()
+	{
+		Bu::FString a("hi there");
+		Bu::FString b(", yeah!");
+		Bu::FString c = a + b;
+
+		unitTest( c == "hi there, yeah!" );
+	}
+
+	void add2()
+	{
+		Bu::FString a("hi there");
+		Bu::FString c = a + ", yeah!";
+
+		unitTest( c == "hi there, yeah!" );
+	}
+
+	void add3()
+	{
+		Bu::FString a("hi there");
+		Bu::FString b(", yeah!");
+		Bu::FString c = a + ", Mr. Man" + b;
+
+		unitTest( c == "hi there, Mr. Man, yeah!" );
+	}
+
+	void add4()
+	{
+		Bu::FString b(", yeah!");
+		Bu::FString c = "hi there" + b;
+
+		unitTest( c == "hi there, yeah!" );
 	}
 };
 
