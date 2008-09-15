@@ -1,12 +1,14 @@
 #include "bu/nidsstream.h"
 
 Bu::NidsStream::NidsStream( Nids &rNids ) :
-	rNids( rNids )
+	rNids( rNids ),
+	iPos( 0 )
 {
 }
 
 Bu::NidsStream::NidsStream( const Bu::NidsStream &rSrc ) :
-	rNids( rSrc.rNids )
+	rNids( rSrc.rNids ),
+	iPos( 0 )
 {
 	
 }

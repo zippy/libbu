@@ -1,5 +1,6 @@
 #include "bu/file.h"
 #include "bu/nids.h"
+#include "bu/nidsstream.h"
 
 int main( int argc, char *argv[] )
 {
@@ -15,5 +16,10 @@ int main( int argc, char *argv[] )
 	n.initialize( 1024, 5 );
 
 	Bu::NidsStream s = n.openStream( n.createStream() );
+
+	Bu::FString sBuf("Hey there, man...uh...how's it going?");
+	s.write( sBuf );
+
+	return 0;
 }
 

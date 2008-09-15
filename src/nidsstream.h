@@ -14,9 +14,9 @@ namespace Bu
 		 * These can only be created by the Nids class.
 		 */
 		NidsStream( Nids &rNids );
-		NidsStream( const NidsStream &rSrc );
 
 	public:
+		NidsStream( const NidsStream &rSrc );
 		virtual ~NidsStream();
 
 		virtual void close();
@@ -42,6 +42,7 @@ namespace Bu
 		Nids &rNids;
 		typedef struct Bu::Hash<int, struct Nids::Block *> BlockHash;
 		BlockHash hBlock;
+		long iPos; 
 	};
 };
 
