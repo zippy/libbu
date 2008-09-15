@@ -11,7 +11,11 @@
 #include <stdint.h>
 #include <string>
 #include <memory>
+
+#ifndef WIN32
 #include <wordexp.h>
+#endif
+
 #include "bu/archival.h"
 #include "bu/archive.h"
 #include "bu/hash.h"
@@ -531,6 +535,7 @@ namespace Bu
 		{
 			flatten();
 
+#ifndef WIN32
 			wordexp_t result;
 
 			/* Expand the string for the program to run.  */
@@ -550,6 +555,7 @@ namespace Bu
 				default:                    /* Some other error.  */
 					return;
 			}
+#endif
 		}
 
 		/**
@@ -1060,5 +1066,9 @@ namespace Bu
 
 #include <ostream>
 std::basic_ostream<char>& operator<< (std::basic_ostream<char> &os, const Bu::FString &val );
+
+#ifndef VALTEST
+#undef cpy
+#endif
 
 #endif
