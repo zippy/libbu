@@ -25,7 +25,7 @@ int main()
 
 	for( int j = 0; j < 10; j++ )
 	{
-		printf("%d\n", lb[j].value()->nID );
+		printf("%d\n", lb[j].getValue()->nID );
 	}
 }
 

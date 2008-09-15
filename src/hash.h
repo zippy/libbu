@@ -16,6 +16,7 @@
 #include <utility>
 #include "bu/exceptionbase.h"
 #include "bu/list.h"
+#include "bu/util.h"
 ///#include "archival.h"
 ///#include "archive.h"
 
@@ -97,7 +98,22 @@ namespace Bu
 		 * Direct function for retrieving a value out of the HashProxy.
 		 *@returns (value_type &) The value pointed to by this HashProxy.
 		 */
+		DEPRECATED
 		_value &value()
+		{
+			if( bFilled == false )
+				throw HashException(
+						excodeNotFilled,
+						"No data assosiated with that key."
+						);
+			return *pValue;
+		}
+		
+		/**
+		 * Direct function for retrieving a value out of the HashProxy.
+		 *@returns (value_type &) The value pointed to by this HashProxy.
+		 */
+		_value &getValue()
 		{
 			if( bFilled == false )
 				throw HashException(
@@ -165,7 +181,39 @@ namespace Bu
 	};
 
 	/**
-	 * Libbu Template Hash Table
+	 * Libbu++ Template Hash Table.  This is your average hash table, that uses
+	 * template functions in order to do fast, efficient, generalized hashing.
+	 * It's pretty easy to use, and works well with all other libbu++ types so
+	 * far.
+	 *
+	 * In order to use it, I recommend the following for all basic usage:
+	 *@code
+	 // Define a Hash typedef with strings as keys and ints as values.
+	 typedef Bu::Hash<Bu::FString, int> StrIntHash;
+
+	 // Create one
+	 StrIntHash hInts;
+
+	 // Insert some integers
+	 hInts["one"] = 1;
+	 hInts["forty-two"] = 42;
+	 hInts.insert("forty two", 42 );
+
+	 // Get values out of the hash, the last two options are the most explicit,
+	 // and must be used if the hash's value type does not match what you're
+	 // comparing to exactly.
+	 if( hInts["one"] == 1 ) doSomething();
+	 if( hInts["forty-two"].value() == 42 ) doSomething();
+	 if( hInts.get("forty two") == 42 ) doSomething();
+
+	 // Iterate through the Hash
+	 for( StrIntHash::iterator i = hInts.begin(); i != hInts.end(); i++ )
+	 {
+	 	// i.getValue() works too
+	 	print("'%s' = %d\n", i.getKey().getStr(), (*i) );
+	 }
+	 												
+	 @endcode
 	 *@param key (typename) The datatype of the hashtable keys
 	 *@param value (typename) The datatype of the hashtable data
 	 *@param sizecalc (typename) Functor to compute new table size on rehash

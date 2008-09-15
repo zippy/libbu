@@ -512,7 +512,7 @@ void Bu::Archive::assocPtrID( void **ptr, uint32_t id )
 	if( !hPtrDest.has( id ) )
 		hPtrDest.insert( id, List<void **>() );
 			
-	hPtrDest[id].value().append( ptr );
+	hPtrDest[id].getValue().append( ptr );
 }
 
 void Bu::Archive::readID( const void *ptr, uint32_t id )

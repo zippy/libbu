@@ -15,18 +15,22 @@ class Unit : public Bu::UnitSuite
 {
 private:
 	typedef Bu::Hash<Bu::FString, int> StrIntHash;
+	typedef Bu::Hash<Bu::FString, Bu::FString> StrStrHash;
+
 public:
 	Unit()
 	{
 		setName("Hash");
-		addTest( Unit::test_probe );
+		addTest( Unit::insert1 );
+		addTest( Unit::insert2 );
+		addTest( Unit::probe1 );
 	}
 
 	virtual ~Unit()
 	{
 	}
 
-	void test_probe()
+	void probe1()
 	{
 		StrIntHash h;
 		char buf[20];
@@ -37,6 +41,20 @@ public:
 			h[sTmp] = i;
 			unitTest( h.has(sTmp) );
 		}
+	}
+
+	void insert1()
+	{
+		StrIntHash h;
+		h["Hi"] = 42;
+		unitTest( h["Hi"] == 42 );
+	}
+
+	void insert2()
+	{
+		StrStrHash h;
+		h["Hi"] = "Yo";
+		unitTest( h["Hi"].getValue() == "Yo" );
 	}
 };
 

@@ -1,9 +1,13 @@
 #ifndef BU_NIDS_H
 #define BU_NIDS_H
 
+#include <stdint.h>
+#include "bu/bitstring.h"
+
 namespace Bu
 {
 	class Stream;
+	class NidsStream;
 
 	/**
 	 * Numerically Indexed Data Streams.  This is a working name so I can
@@ -14,6 +18,7 @@ namespace Bu
 	 */
 	class Nids
 	{
+		friend class NidsStream;
 	public:
 		Nids( Bu::Stream &sStore );
 		virtual ~Nids();
@@ -39,10 +44,34 @@ namespace Bu
 		/**
 		 * Return a new Stream object assosiated with the given stream ID.
 		 */
-		Bu::Stream &openStream( int iID );
+		NidsStream openStream( int iID );
+
+	private:
+		typedef struct Block
+		{
+			uint32_t iFirstBlock;
+			uint32_t iNextBlock;
+			uint32_t iPrevBlock;
+			uint32_t iBytesUsed;
+			uint32_t iReserved;
+			unsigned char pData[0];
+		} Block;
+
+		enum
+		{
+			blockUnused	=	0xFFFFFFFFUL
+		};
+
+		void extendStream( int iID, int iBlockCount=1 );
+		void getBlock( int iIndex, struct Nids::Block *pBlock );
+		void setBlock( int iIndex, struct Nids::Block *pBlock );
 
 	private:
 		Bu::Stream &sStore;
+		int iBlockSize;
+		int iBlocks;
+		int iBlockStart;
+		Bu::BitString bsBlockUsed;
 	};
 };
 

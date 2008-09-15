@@ -22,16 +22,17 @@ structures.
 The basic header:
 
 00-03: Magic Number, something cute, I dunno yet (encoding independant)
-04:    Byte count/order for standard indexes (8/4 for 64/32bit systems)
-       High order bit masked out determines endianness (1 = big, 0 = small)
+04:    Version code (0)
+05:    Byte count/order for standard indexes (8/4 for 64/32bit systems)
+       High order bit masked out determines endianness (1 = big, 0 = little)
        The program will only accept one word-width for now, we can make it
        adjustable later, or fix this at 4 bytes.
-05-08: Blocksize in bytes, could be anything, I don't think we need to worry
+06-09: Blocksize in bytes, could be anything, I don't think we need to worry
        about OS related things for this, but it should be set intelligently by
        the owner.  This includes the bytes reserved for a block header.
-09-12: Total block count, includes both used and unused blocks.
-13-16: Total used blocks, useful for determining when to expand.
-17-24: Reserved for flags and the like, should be all zeros for now.
+10-13: Total block count, includes both used and unused blocks.
+14-17: Total used blocks, useful for determining when to expand.
+18-24: Reserved for flags and the like, should be all zeros for now.
 
 At this point are a number of "blocks" each with their own header and data are
 laid out sequentially, accessing one should be easy, seek to
@@ -45,10 +46,9 @@ The block header is as follows:
        then this block is the last in the chain.
 08-11: Prev block in chain.  If this number matches the current block index
        then this block is the first in the chain.
-12-15: Number of bytes used/allocated remaining in the chain.  If this is the
-       first block, then this is the total size of the object accross all
-       blocks in the chain.  For the last block in the chain this will usually
-       be less than the available space.
+12-15: Number of bytes used.  If this is the first block, this is the total
+       amount of data in the stream, otherwise it's the amount of data in the
+	   current block.
 16-19: Reserved flagspace or something, make sure it's all zeros.
 20-xx: Block data, whatever you wanted to store.  At the moment this is going
        to be (blocksize) - 20 for now, it will change if the block header

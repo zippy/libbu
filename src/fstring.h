@@ -19,20 +19,11 @@
 #include "bu/archival.h"
 #include "bu/archive.h"
 #include "bu/hash.h"
+#include "bu/util.h"
 
 #ifndef min
 #define min( a, b )  ((a<b)?(a):(b))
 #endif
-
-/* I borrowed this from someone who borrowed it from glib who borrowed it
- * from...
- */
-#if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
-#define DEPRECATED  __attribute__((__deprecated__))
-#else
-#define DEPRECATED
-#endif /* __GNUC__ */
-
 
 namespace Bu
 {

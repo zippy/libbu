@@ -7,59 +7,47 @@
 #define random() rand()
 #endif
 
-#define bitsToBytes( nBits ) (((nBits/8)+((nBits%8)?(1):(0))));
+#define bitsToBytes( iBits ) (((iBits/8)+((iBits%8)?(1):(0))));
 
 Bu::BitString::BitString()
 {
 	caData = NULL;
 	cTopByteMask = 0;
-	nBits = nBytes = 0;
+	iBits = iBytes = 0;
 }
 
 Bu::BitString::BitString( const Bu::BitString &xSrc )
 {
-	nBits = xSrc.nBits;
-	nBytes = xSrc.nBytes;
+	iBits = xSrc.iBits;
+	iBytes = xSrc.iBytes;
 	cTopByteMask = xSrc.cTopByteMask;
-	caData = new unsigned char[nBytes];
-	memcpy( caData, xSrc.caData, nBytes );
+	caData = new unsigned char[iBytes];
+	memcpy( caData, xSrc.caData, iBytes );
 
 	fixup();
 }
 
-Bu::BitString::BitString( long nNewBits, bool bFillRandomly )
+Bu::BitString::BitString( long iNewBits, bool bFillRandomly )
 {
 	long j;
-	nBits = nNewBits;
-	nBytes = bitsToBytes( nNewBits );//(nNewBits/8)+((nNewBits%8)?(1):(0));
-	caData = new unsigned char[nBytes];
+	iBits = iNewBits;
+	iBytes = bitsToBytes( iNewBits );//(iNewBits/8)+((iNewBits%8)?(1):(0));
+	caData = new unsigned char[iBytes];
 
-	// This can either mean that there are a multiple of eight bits or zero, if there are zero you're an idiot
-	// (zero can't happen, because we would allocate an extra byte and never use it)
-	if( (nBits%8 == 0) )
-	{
-		cTopByteMask = 0xFF;
-	}
-	else
-	{
-		cTopByteMask = 0;
-		for( j = 0; j < (nBits%8); j++ )
-		{
-			cTopByteMask |= (1<<j);
-		}
-	}
+	setMask();
 
 	if( bFillRandomly )
 	{
-		// rand() only returns a value up to RAND_MAX (0x7FFF on my system) so I'll just use the low order byte)
-		for( j = 0; j < nBytes; j++ )
+		// rand() only returns a value up to RAND_MAX (0x7FFF on my system) so
+		// I'll just use the low order byte)
+		for( j = 0; j < iBytes; j++ )
 		{
 			caData[j] = (unsigned char)(random() & 0xFF);
 		}
 	}
 	else
 	{
-		clearString();
+		clear();
 	}
 
 	fixup();
@@ -76,11 +64,11 @@ Bu::BitString &Bu::BitString::operator=( const Bu::BitString &xSrc )
 	{
 		delete[] caData;
 	}
-	nBits = xSrc.nBits;
-	nBytes = xSrc.nBytes;
+	iBits = xSrc.iBits;
+	iBytes = xSrc.iBytes;
 	cTopByteMask = xSrc.cTopByteMask;
-	caData = new unsigned char[nBytes];
-	memcpy( caData, xSrc.caData, nBytes );
+	caData = new unsigned char[iBytes];
+	memcpy( caData, xSrc.caData, iBytes );
 
 	fixup();
 
@@ -91,7 +79,7 @@ Bu::BitString Bu::BitString::operator~()
 {
 	Bu::BitString xRet( *this );
 
-	for( int j = 0; j < xRet.nBytes; j++ )
+	for( int j = 0; j < xRet.iBytes; j++ )
 	{
 		xRet.caData[j] = ~xRet.caData[j];
 	}
@@ -101,24 +89,24 @@ Bu::BitString Bu::BitString::operator~()
 	return xRet;
 }
 
-Bu::BitString Bu::BitString::operator<<( const long nAmt )
+Bu::BitString Bu::BitString::operator<<( const long iAmt )
 {
-	if( nAmt == 0 )
+	if( iAmt == 0 )
 	{
 		return (*this);
 	}
-	//int nByteShift = nAmt/8;
+	//int iByteShift = iAmt/8;
 
-	Bu::BitString xSub( getBitLength() );
+	Bu::BitString xSub( getSize() );
 
-	long shft = (nAmt%8);
-	long base = (nAmt/8);
+	long shft = (iAmt%8);
+	long base = (iAmt/8);
 	unsigned char lowmask=0;
 	for( long j = 0; j < 8-shft; j++ )
 	{
 		lowmask |= (1<<j);
 	}
-	for( long j = 0; j < xSub.nBytes; j++ )
+	for( long j = 0; j < xSub.iBytes; j++ )
 	{
 		xSub.caData[base+j] = ((caData[j]>>shft)&(lowmask)) | ((caData[j+1]<<(8-shft))&(~lowmask));
 	}
@@ -127,97 +115,97 @@ Bu::BitString Bu::BitString::operator<<( const long nAmt )
 	return xSub;
 }
 
-Bu::BitString Bu::BitString::operator>>( const long nAmt )
+Bu::BitString Bu::BitString::operator>>( const long iAmt )
 {
-	if( nAmt == 0 )
+	if( iAmt == 0 )
 	{
 		return (*this);
 	}
 	return (*this);
 }
 
-void Bu::BitString::shiftLeft( long nAmt )
+void Bu::BitString::shiftLeft( long iAmt )
 {
-	if( nAmt == 0 )
+	if( iAmt == 0 )
 	{
 		return;
 	}
-	else if( nAmt < 0 )
+	else if( iAmt < 0 )
 	{
-		shiftRight( -nAmt );
+		shiftRight( -iAmt );
 		return;
 	}
 
-	long nByteShift = nAmt/8;
-	long nBitShift = nAmt%8;
+	long iByteShift = iAmt/8;
+	long iBitShift = iAmt%8;
 
 	long j;
-	for( j = nBytes-1; j >= 0; j-- )
+	for( j = iBytes-1; j >= 0; j-- )
 	{
-		caData[j] = (((j-nByteShift)<0)?(0):((caData[j-nByteShift]<<nBitShift))) | (((j-nByteShift-1)<0)?(0):((caData[j-nByteShift-1]>>(8-nBitShift))));
+		caData[j] = (((j-iByteShift)<0)?(0):((caData[j-iByteShift]<<iBitShift))) | (((j-iByteShift-1)<0)?(0):((caData[j-iByteShift-1]>>(8-iBitShift))));
 	}
 
 	fixup();
 }
 
-void Bu::BitString::shiftRight( long nAmt )
+void Bu::BitString::shiftRight( long iAmt )
 {
-	if( nAmt == 0 )
+	if( iAmt == 0 )
 	{
 		return;
 	}
-	else if( nAmt < 0 )
+	else if( iAmt < 0 )
 	{
-		shiftLeft( -nAmt );
+		shiftLeft( -iAmt );
 		return;
 	}
 
-	long nByteShift = nAmt/8;
-	long nBitShift = nAmt%8;
+	long iByteShift = iAmt/8;
+	long iBitShift = iAmt%8;
 
 	long j;
-	for( j = 0; j < nBytes; j++ )
+	for( j = 0; j < iBytes; j++ )
 	{
-		caData[j] = (((j+nByteShift)>nBytes)?(0):((caData[j+nByteShift]>>nBitShift))) | (((j+nByteShift+1)>nBytes)?(0):((caData[j+nByteShift+1]<<(8-nBitShift))));
+		caData[j] = (((j+iByteShift)>iBytes)?(0):((caData[j+iByteShift]>>iBitShift))) | (((j+iByteShift+1)>iBytes)?(0):((caData[j+iByteShift+1]<<(8-iBitShift))));
 	}
 
 	fixup();
 }
 /*
-long Bu::BitString::bitsToBytes( long nBits )
+long Bu::BitString::bitsToBytes( long iBits )
 {
-	return (nBits/8)+((nBits%8)?(1):(0));
+	return (iBits/8)+((iBits%8)?(1):(0));
 }
 */
 void Bu::BitString::fixup()
 {
 	if( caData != NULL )
 	{
-		caData[nBytes-1] &= cTopByteMask;
+		caData[iBytes-1] &= cTopByteMask;
 	}
 }
 
-void Bu::BitString::setBit( long nBit, bool bBitState )
+void Bu::BitString::setBit( long iBit, bool bBitState )
 {
 	if( bBitState )
 	{
-		caData[nBit/8] |= (1<<(nBit%8));
+		caData[iBit/8] |= (1<<(iBit%8));
 	}
 	else
 	{
-		caData[nBit/8] &= ~(1<<(nBit%8));
+		caData[iBit/8] &= ~(1<<(iBit%8));
 	}
 }
 
-void Bu::BitString::flipBit( long nBit )
+void Bu::BitString::flipBit( long iBit )
 {
-	caData[nBit/8] ^= (1<<(nBit%8));
+	caData[iBit/8] ^= (1<<(iBit%8));
 }
 
-bool Bu::BitString::getBit( long nBit )
+bool Bu::BitString::getBit( long iBit )
 {
-	if( nBit >= nBits || nBit < 0 ) return false;
-	if( (caData[nBit/8] & (1<<(nBit%8))) == 0 )
+	if( iBit >= iBits || iBit < 0 ) return false;
+	if( (caData[iBit/8] & (1<<(iBit%8))) == 0 )
 	{
 		return false;
 	}
@@ -226,23 +214,28 @@ bool Bu::BitString::getBit( long nBit )
 
 long Bu::BitString::getBitLength()
 {
-	return nBits;
+	return iBits;
 }
 
-class Bu::BitString Bu::BitString::getSubString( long nLower, long nUpper )
+long Bu::BitString::getSize()
 {
-	if( nUpper == 0 || nUpper < nLower ) nUpper = nBits;
+	return iBits;
+}
 
-	Bu::BitString xSub( nUpper-nLower+1 );
+class Bu::BitString Bu::BitString::getSubString( long iLower, long iUpper )
+{
+	if( iUpper == 0 || iUpper < iLower ) iUpper = iBits;
 
-	long shft = (nLower%8);
-	long base = (nLower/8);
+	Bu::BitString xSub( iUpper-iLower+1 );
+
+	long shft = (iLower%8);
+	long base = (iLower/8);
 	unsigned char lowmask=0;
 	for( long j = 0; j < 8-shft; j++ )
 	{
 		lowmask |= (1<<j);
 	}
-	for( long j = 0; j < xSub.nBytes; j++ )
+	for( long j = 0; j < xSub.iBytes; j++ )
 	{
 		xSub.caData[j] = ((caData[base+j]>>shft)&(lowmask)) | ((caData[base+j+1]<<(8-shft))&(~lowmask));
 	}
@@ -251,15 +244,15 @@ class Bu::BitString Bu::BitString::getSubString( long nLower, long nUpper )
 	return xSub;
 }
 
-long Bu::BitString::toLong( long nStart, long nSize )
+long Bu::BitString::toLong( long iStart, long iSize )
 {
-	if( nSize < 1 ) nSize = 1;
-	if( nSize > 32 ) nSize = 32;
-	if( nStart < 0 ) return 0;
-	if( nStart+nSize > getBitLength() ) return 0;
+	if( iSize < 1 ) iSize = 1;
+	if( iSize > 32 ) iSize = 32;
+	if( iStart < 0 ) return 0;
+	if( iStart+iSize > getSize() ) return 0;
 
 	Bu::BitString tmpo;
-	tmpo = getSubString( nStart, nStart+nSize-1 );
+	tmpo = getSubString( iStart, iStart+iSize-1 );
 	long x = *((long *)tmpo.caData);
 
 	return x;
@@ -267,17 +260,17 @@ long Bu::BitString::toLong( long nStart, long nSize )
 /*
 std::string Bu::BitString::toString( bool bAddSpacers )
 {
-	long nSz = nBits;
+	long iSz = iBits;
 	if( bAddSpacers )
 	{
-		nSz += (nBits/8);
-		if( nBits%8 == 0 ) nSz--;
+		iSz += (iBits/8);
+		if( iBits%8 == 0 ) iSz--;
 	}
 	std::string xStr;
 
 	int bw=0;
 	int of=0;
-	for( int j = nBits-1; j >= 0; j-- )
+	for( int j = iBits-1; j >= 0; j-- )
 	{
 		if( getBit( j ) )
 		{
@@ -291,7 +284,7 @@ std::string Bu::BitString::toString( bool bAddSpacers )
 		if( bAddSpacers )
 		{
 			bw++;
-			if( bw >= 8 && j < nBits-1 )
+			if( bw >= 8 && j < iBits-1 )
 			{
 				bw = 0;
 				of++;
@@ -303,74 +296,111 @@ std::string Bu::BitString::toString( bool bAddSpacers )
 	return xStr;
 }
 */
-void Bu::BitString::clearString()
+void Bu::BitString::clear()
 {
 	if( caData != NULL )
 	{
-		memset( caData, 0, nBytes );
+		memset( caData, 0, iBytes );
 	}
 }
 
-bool Bu::BitString::setBitLength( long nLength, bool bClear )
+bool Bu::BitString::setBitLength( long iLength, bool bClear )
 {
-	if( nBits != nLength )
+	return setSize( iLength, bClear );
+}
+
+bool Bu::BitString::setSize( long iLength, bool bClear )
+{
+	// First, if there's nothing, then allocate an empty one.
+	if( caData == NULL )
 	{
-		if( bClear || caData == NULL )
+		iBits = iLength;
+		iBytes = bitsToBytes( iLength );
+		caData = new unsigned char[iBytes];
+		memset( caData, 0, iBytes );
+		return true;
+	}
+
+	// If the new length is the same as the old, don't do anything, but do
+	// check to see if we should still clear the data.
+	if( iBits != iLength )
+	{
+		// Ok, we are changing the number if bits, but are we changing the
+		// number of bytes?
+		long iNewBytes = bitsToBytes( iLength );
+		if( iBytes == iNewBytes )
 		{
-			//long j;
-			nBits = nLength;
-			nBytes = bitsToBytes( nLength );//(nNewBits/8)+((nNewBits%8)?(1):(0));
-			if( caData != NULL ) delete[] caData;
-			caData = new unsigned char[nBytes];
-			memset( caData, 0, nBytes );
+			// No? That makes life easier
+			iBits = iLength;
+			setMask();
+			if( bClear )
+			{
+				clear();
+			}
 		}
 		else
 		{
-			//long j;
-			nBits = nLength;
-			long nNewBytes = bitsToBytes( nLength );//(nNewBits/8)+((nNewBits%8)?(1):(0));
-			unsigned char *tmp = caData;
-			caData = new unsigned char[nBytes];
-			if( nNewBytes < nBytes )
+			// Ok, reallocate and copy...
+			iBits = iLength;
+			long iNewBytes = bitsToBytes( iLength );
+			if( bClear )
 			{
-				memcpy( caData, tmp, nNewBytes );
+				delete[] caData;
+				caData = new unsigned char[iNewBytes];
+				memset( caData, 0, iNewBytes );
 			}
 			else
 			{
-				memcpy( caData, tmp, nBytes );
+				unsigned char *tmp = caData;
+				caData = new unsigned char[iBytes];
+				if( iNewBytes < iBytes )
+				{
+					memcpy( caData, tmp, iNewBytes );
+				}
+				else
+				{
+					memcpy( caData, tmp, iBytes );
+				}
+				delete[] tmp;
 			}
-			delete[] tmp;
-			nBytes = nNewBytes;
+			iBytes = iNewBytes;
+			
+			setMask();
 		}
 
-		// This can either mean that there are a multiple of eight bits or zero, if there are zero you're an idiot
-		// (zero can't happen, because we would allocate an extra byte and never use it)
-		if( (nBits%8 == 0) )
-		{
-			cTopByteMask = 0xFF;
-		}
-		else
-		{
-			cTopByteMask = 0;
-			for( long j = 0; j < (nBits%8); j++ )
-			{
-				cTopByteMask |= (1<<j);
-			}
-		}
 	}
 	else if( bClear )
 	{
-		clearString();
+		clear();
 	}
 
 	return true;
+}
+
+void Bu::BitString::setMask()
+{
+	// This can either mean that there are a multiple of eight bits or
+	// zero, if there are zero you're an idiot (zero can't happen, because
+	// we would allocate an extra byte and never use it)
+	if( (iBits%8 == 0) )
+	{
+		cTopByteMask = 0xFF;
+	}
+	else
+	{
+		cTopByteMask = 0;
+		for( long j = 0; j < (iBits%8); j++ )
+		{
+			cTopByteMask |= (1<<j);
+		}
+	}
 }
 
 void Bu::BitString::randomize()
 {
 	if( caData != NULL )
 	{
-		for( int j = 0; j < nBytes; j++ )
+		for( int j = 0; j < iBytes; j++ )
 		{
 			caData[j] = (unsigned char)(random() & 0xFF);
 		}
@@ -382,7 +412,7 @@ void Bu::BitString::invert()
 {
 	if( caData != NULL )
 	{
-		for( long j = 0; j < nBytes; j++ )
+		for( long j = 0; j < iBytes; j++ )
 		{
 			caData[j] = ~caData[j];
 		}
@@ -392,7 +422,7 @@ void Bu::BitString::invert()
 
 long Bu::BitString::getHighestOrderBitPos()
 {
-	for( long j = nBits-1; j >= 0; j-- )
+	for( long j = iBits-1; j >= 0; j-- )
 	{
 		if( getBit( j ) )
 		{
@@ -405,34 +435,23 @@ long Bu::BitString::getHighestOrderBitPos()
 /*
 bool Bu::BitString::writeToFile( FILE *fh )
 {
-	fwrite( &nBits, sizeof(long), 1, fh );
-	fwrite( caData, sizeof(char), nBytes, fh );
+	fwrite( &iBits, sizeof(long), 1, fh );
+	fwrite( caData, sizeof(char), iBytes, fh );
 	
 	return true;
 }
 
 bool Bu::BitString::readFromFile( FILE *fh )
 {
-	fread( &nBits, sizeof(long), 1, fh );
+	fread( &iBits, sizeof(long), 1, fh );
 	
-	nBytes = bitsToBytes( nBits );
+	iBytes = bitsToBytes( iBits );
 	if( caData ) delete[] caData;
-	caData = new unsigned char[nBytes];
+	caData = new unsigned char[iBytes];
 
-	fread( caData, sizeof(char), nBytes, fh );
+	fread( caData, sizeof(char), iBytes, fh );
 
-	if( (nBits%8 == 0) )
-	{
-		cTopByteMask = 0xFF;
-	}
-	else
-	{
-		cTopByteMask = 0;
-		for( int j = 0; j < (nBits%8); j++ )
-		{
-			cTopByteMask |= (1<<j);
-		}
-	}
+	setMask();
 	
 	fixup();
 
