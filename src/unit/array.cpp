@@ -15,7 +15,8 @@ public:
 	{
 		setName("Array");
 		addTest( Unit::general );
-		addTest( Unit::iterate );
+		addTest( Unit::iterate1 );
+		addTest( Unit::iterate2 );
 	}
 
 	virtual ~Unit()
@@ -34,7 +35,7 @@ public:
 		unitTest( ai[1] == 10 );
 	}
 
-	void iterate()
+	void iterate1()
 	{
 		Bu::Array<int> ai;
 		for( int j = 0; j < 10; j++ )
@@ -49,7 +50,13 @@ public:
 		for( Bu::Array<int>::const_iterator i = ci.begin(); i != ci.end(); i++ )
 			unitTest( (*i) == j++ );
 	}
-	
+
+	void iterate2()
+	{
+		Bu::Array<int> ai;
+		for( Bu::Array<int>::iterator i = ai.begin(); i != ai.end(); i++ )
+			unitFailed("Empty lists shouldn't be iterated through.");
+	}
 };
 
 int main( int argc, char *argv[] )

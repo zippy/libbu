@@ -7,6 +7,8 @@
 
 #include "bu/bzip2.h"
 #include "bu/exceptions.h"
+#define BU_TRACE
+#include "bu/trace.h"
 
 using namespace Bu;
 
@@ -14,16 +16,19 @@ Bu::BZip2::BZip2( Bu::Stream &rNext, int nCompression ) :
 	Bu::Filter( rNext ),
 	nCompression( nCompression )
 {
+	TRACE( nCompression );
 	start();
 }
 
 Bu::BZip2::~BZip2()
 {
+	TRACE();
 	stop();
 }
 
 void Bu::BZip2::start()
 {
+	TRACE();
 	bzState.state = NULL;
 	bzState.bzalloc = NULL;
 	bzState.bzfree = NULL;
@@ -35,6 +40,7 @@ void Bu::BZip2::start()
 
 size_t Bu::BZip2::stop()
 {
+	TRACE();
 	if( bzState.state )
 	{
 		if( bReading )
@@ -72,6 +78,7 @@ size_t Bu::BZip2::stop()
 
 void Bu::BZip2::bzError( int code )
 {
+	TRACE( code );
 	switch( code )
 	{
 		case BZ_OK:
@@ -115,10 +122,12 @@ void Bu::BZip2::bzError( int code )
 
 size_t Bu::BZip2::read( void *pData, size_t nBytes )
 {
+	TRACE( pData, nBytes );
+	printf("READ!!!\n");
 	if( !bzState.state )
 	{
 		bReading = true;
-		BZ2_bzDecompressInit( &bzState, 0, 0 );
+		BZ2_bzDecompressInit( &bzState, 7, 0 );
 		bzState.next_in = pBuf;
 		bzState.avail_in = 0;
 	}
@@ -167,6 +176,7 @@ size_t Bu::BZip2::read( void *pData, size_t nBytes )
 
 size_t Bu::BZip2::write( const void *pData, size_t nBytes )
 {
+	TRACE( pData, nBytes );
 	if( !bzState.state )
 	{
 		bReading = false;
@@ -198,6 +208,7 @@ size_t Bu::BZip2::write( const void *pData, size_t nBytes )
 
 bool Bu::BZip2::isOpen()
 {
+	TRACE();
 	return (bzState.state != NULL);
 }
 

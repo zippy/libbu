@@ -157,6 +157,8 @@ namespace Bu
 				src( src ),
 				iPos( iPos )
 			{
+				if( this->iPos >= src.getSize() )
+					this->iPos = -1;
 			}
 
 			MyType &src;
@@ -218,6 +220,8 @@ namespace Bu
 				src( src ),
 				iPos( iPos )
 			{
+				if( this->iPos >= src.getSize() )
+					this->iPos = -1;
 			}
 
 			const MyType &src;

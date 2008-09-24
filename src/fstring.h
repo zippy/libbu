@@ -21,10 +21,6 @@
 #include "bu/hash.h"
 #include "bu/util.h"
 
-#ifndef min
-#define min( a, b )  ((a<b)?(a):(b))
-#endif
-
 namespace Bu
 {
 	template< typename chr >
@@ -1070,6 +1066,7 @@ namespace Bu
 	}
 	
 #ifdef BU_TRACE
+	template<typename t> void __tracer_format( const t &v );
 	template<> void __tracer_format<FString>( const FString &v );
 #endif
 }

@@ -45,6 +45,7 @@ namespace Bu
 		looper( v1 );
 		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
+		fflush( stdout );
 	}
 	
 	template<typename t1, typename t2> void __tracer( const char *pf,
@@ -57,6 +58,7 @@ namespace Bu
 		looper( v2 );
 		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
+		fflush( stdout );
 	}
 	
 	template<typename t1, typename t2, typename t3>
@@ -70,6 +72,7 @@ namespace Bu
 		looper( v3 );
 		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
+		fflush( stdout );
 	}
 	
 	template<typename t1, typename t2, typename t3, typename t4>
@@ -84,6 +87,7 @@ namespace Bu
 		looper( v4 );
 		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
+		fflush( stdout );
 	}
 	
 	template<typename t1, typename t2, typename t3, typename t4, typename t5>
@@ -99,6 +103,7 @@ namespace Bu
 		looper( v5 );
 		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
+		fflush( stdout );
 	}
 	
 	template<typename t1, typename t2, typename t3, typename t4, typename t5,
@@ -117,6 +122,7 @@ namespace Bu
 		looper( v6 );
 		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
+		fflush( stdout );
 	}
 	
 	template<typename t1, typename t2, typename t3, typename t4, typename t5,
@@ -136,6 +142,7 @@ namespace Bu
 		looper( v7 );
 		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
 		fwrite( "\n", 1, 1, stdout );
+		fflush( stdout );
 	}
 #undef looper
 	
