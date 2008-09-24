@@ -7,7 +7,6 @@
 
 #include "bu/bzip2.h"
 #include "bu/exceptions.h"
-#define BU_TRACE
 #include "bu/trace.h"
 
 using namespace Bu;
@@ -123,11 +122,10 @@ void Bu::BZip2::bzError( int code )
 size_t Bu::BZip2::read( void *pData, size_t nBytes )
 {
 	TRACE( pData, nBytes );
-	printf("READ!!!\n");
 	if( !bzState.state )
 	{
 		bReading = true;
-		BZ2_bzDecompressInit( &bzState, 7, 0 );
+		BZ2_bzDecompressInit( &bzState, 0, 0 );
 		bzState.next_in = pBuf;
 		bzState.avail_in = 0;
 	}
