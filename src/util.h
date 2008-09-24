@@ -28,15 +28,33 @@ namespace Bu
 	}
 
 	template<typename item>
+	const item &min( const item &a, const item &b )
+	{
+		return a<b?a:b;
+	}
+	
+	template<typename item>
 	item &min( item &a, item &b )
 	{
 		return a<b?a:b;
 	}
 	
 	template<typename item>
+	const item &max( const item &a, const item &b )
+	{
+		return a>b?a:b;
+	}
+	
+	template<typename item>
 	item &max( item &a, item &b )
 	{
 		return a>b?a:b;
+	}
+	
+	template<typename item>
+	const item &mid( const item &a, const item &b, const item &c )
+	{
+		return min( max( a, b ), c );
 	}
 	
 	template<typename item>

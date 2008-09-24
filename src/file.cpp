@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 Bu::File::File( const char *sName, const char *sFlags )
 {
@@ -138,7 +139,16 @@ bool Bu::File::isBlocking()
 
 void Bu::File::setBlocking( bool bBlocking )
 {
-	return;
+	if( bBlocking )
+		fcntl( 
+			fileno( fh ),
+			F_SETFL, fcntl( fileno( fh ), F_GETFL, 0 )&(~O_NONBLOCK)
+			);
+	else
+		fcntl( 
+			fileno( fh ),
+			F_SETFL, fcntl( fileno( fh ), F_GETFL, 0 )|O_NONBLOCK
+			);
 }
 
 #ifndef WIN32

@@ -12,6 +12,7 @@
 #include <stdarg.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <errno.h>
 
 Bu::Process::Process( const char *sName, char *const argv[] )
 {
@@ -69,6 +70,7 @@ void Bu::Process::gexec( const char *sName, char *const argv[] )
 		dup2( iaStdOut[1], 1 );
 //		dup2( iaStdErr[1], 2 );
 		execvp( sName, argv );
+		throw Bu::ExceptionBase("Hey, execvp failed!");
 	}
 	::close( iaStdIn[0] );
 	::close( iaStdOut[1] );
@@ -81,6 +83,8 @@ void Bu::Process::close()
 
 size_t Bu::Process::read( void *pBuf, size_t nBytes )
 {
+	return TEMP_FAILURE_RETRY( ::read( iStdOut, pBuf, nBytes ) );
+	/*
 	size_t iTotal = 0;
 	for(;;)
 	{
@@ -91,6 +95,7 @@ size_t Bu::Process::read( void *pBuf, size_t nBytes )
 		if( iTotal == nBytes )
 			return iTotal;
 	}
+	*/
 	/*
 	size_t iTotal = 0;
 	fd_set rfs;
@@ -124,7 +129,7 @@ size_t Bu::Process::readErr( void *pBuf, size_t nBytes )
 
 size_t Bu::Process::write( const void *pBuf, size_t nBytes )
 {
-	return ::write( iStdIn, pBuf, nBytes );
+	return TEMP_FAILURE_RETRY( ::write( iStdIn, pBuf, nBytes ) );
 }
 
 long Bu::Process::tell()
@@ -190,5 +195,9 @@ bool Bu::Process::isBlocking()
 
 void Bu::Process::setBlocking( bool bBlocking )
 {
+	if( bBlocking )
+		fcntl( iStdOut, F_SETFL, fcntl( iStdOut, F_GETFL, 0 )&(~O_NONBLOCK) );
+	else
+		fcntl( iStdOut, F_SETFL, fcntl( iStdOut, F_GETFL, 0 )|O_NONBLOCK );
 }
 

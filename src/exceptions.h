@@ -16,6 +16,7 @@ namespace Bu
 	subExceptionDecl( XmlException )
 	subExceptionDecl( TafException )
 	subExceptionDecl( FileException )
+	subExceptionDecl( FifoException )
 	subExceptionDecl( SocketException )
 	subExceptionDecl( ConnectionException )
 	subExceptionDecl( PluginException )
