@@ -86,6 +86,7 @@ namespace Bu
 		}
 
 		FBasicString( const MyType &rSrc ) :
+			Archival(),
 			nLength( 0 ),
 			pFirst( NULL ),
 			pLast( NULL )
