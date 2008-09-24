@@ -34,15 +34,15 @@ long Bu::StdStream::tell()
 	return 0;
 }
 
-void Bu::StdStream::seek( long offset )
+void Bu::StdStream::seek( long )
 {
 }
 
-void Bu::StdStream::setPos( long pos )
+void Bu::StdStream::setPos( long )
 {
 }
 
-void Bu::StdStream::setPosEnd( long pos )
+void Bu::StdStream::setPosEnd( long )
 {
 }
 
@@ -91,7 +91,7 @@ bool Bu::StdStream::isBlocking()
 	return true;
 }
 
-void Bu::StdStream::setBlocking( bool bBlocking )
+void Bu::StdStream::setBlocking( bool )
 {
 }
 

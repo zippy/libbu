@@ -9,10 +9,17 @@
 
 int main( int argc, char *argv[] )
 {
+	if( argc < 2 )
+	{
+		printf("usage: %s <formula>\n", argv[0] );
+		return -1;
+	}
 	Bu::Formula<uint32_t> uForm;
 	Bu::Formula<double> dForm;
 
 	printf("u: %s = %u\n", argv[1], uForm.run( argv[1] ) );
 	printf("d: %s = %f\n", argv[1], dForm.run( argv[1] ) );
+
+	return 0;
 }
 

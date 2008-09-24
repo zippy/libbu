@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-int main( int agrc, char *argv[] )
+int main()
 {
 	//Bu::Process p( argv[1], argv+1 );
 	    Bu::Process p("mplayer", "mplayer", "dvd://", "-framedrop",

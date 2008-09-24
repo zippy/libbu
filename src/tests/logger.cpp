@@ -17,7 +17,7 @@ class Thing
 			lineLog( 2, "Want a thing?");
 		}
 
-		void go( int i )
+		void go( int )
 		{
 			lineLog( 1, "GO!!!!");
 		}
@@ -32,6 +32,6 @@ int main()
 	logHexDump( 5, "This is a test of the hex-dump facility", 16, "Random stuff");
 
 	Thing gh;
-	gh.go( 6);
+	gh.go( 6 );
 }
 

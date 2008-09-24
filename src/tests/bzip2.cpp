@@ -10,10 +10,16 @@
 
 int main( int argc, char *argv[] )
 {
+	if( argc < 3 )
+	{
+		printf("usage:  %s <in> <out>\n", argv[0] );
+		return -1;
+	}
+
 	char buf[1024];
 	size_t nRead;
 
-	Bu::File f( "test.bz2", "wb" );
+	Bu::File f( argv[0], "wb" );
 	Bu::BZip2 bz2( f );
 
 	Bu::File fin( argv[1], "rb");

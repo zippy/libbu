@@ -103,7 +103,7 @@ namespace Bu
 			FuncToUpper(){}
 			virtual ~FuncToUpper(){}
 			virtual Bu::FString call(
-				const Bu::FString &sIn, StrList &lsParam )
+				const Bu::FString &sIn, StrList & )
 			{
 				Bu::FString sOut( sIn );
 				sOut.toUpper();
@@ -117,7 +117,7 @@ namespace Bu
 			FuncToLower(){}
 			virtual ~FuncToLower(){}
 			virtual Bu::FString call(
-				const Bu::FString &sIn, StrList &lsParam )
+				const Bu::FString &sIn, StrList & )
 			{
 				Bu::FString sOut( sIn );
 				sOut.toLower();

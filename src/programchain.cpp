@@ -85,7 +85,7 @@ void Bu::ProgramChain::emergencyShutdown()
 	lLink.clear();
 }
 
-LinkMessage *Bu::ProgramChain::broadcastIRM( LinkMessage *pMsgOut, ProgramLink *pSender )
+LinkMessage *Bu::ProgramChain::broadcastIRM( LinkMessage *pMsgOut, ProgramLink * /*pSender*/ )
 {
 	for( Bu::List<Bu::ProgramLink *>::iterator i = lLink.begin();
 		 i != lLink.end(); i++ )

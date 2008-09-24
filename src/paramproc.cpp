@@ -435,19 +435,19 @@ Bu::ParamProc::ArgSpec *Bu::ParamProc::checkLetr( const char arg )
 	return NULL;
 }
 
-int Bu::ParamProc::cmdParam( int argc, char *argv[] )
+int Bu::ParamProc::cmdParam( int /*argc*/, char *argv[] )
 {
 	printf("Unhandled command parameter \"%s\" found!\n", argv[0] );
 	return 0;
 }
 
-int Bu::ParamProc::unknownParam( int argc, char *argv[] )
+int Bu::ParamProc::unknownParam( int /*argc*/, char *argv[] )
 {
 	printf("Unknown parameter \"%s\" found!\n", argv[0] );
 	return 0;
 }
 
-int Bu::ParamProc::help( int argc, char *argv[] )
+int Bu::ParamProc::help( int /*argc*/, char * /*argv*/ [] )
 {
 	std::list<Banner *>::const_iterator b = lBan.begin();
 	std::list<ArgSpec *>::const_iterator i;

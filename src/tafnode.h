@@ -33,7 +33,7 @@ namespace Bu
 		TafNode( NodeType eType );
 		virtual ~TafNode();
 
-		const NodeType getType() const;
+		NodeType getType() const;
 
 	private:
 		NodeType eType;

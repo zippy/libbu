@@ -116,7 +116,7 @@ void doTimings()
 }
 
 #define pem printf("---------\n%08tX: %s\n%08tX: %s\n", (ptrdiff_t)str.getStr(), str.getStr(), (ptrdiff_t)str2.getStr(), str2.getStr() );
-int main( int argc, char *argv[] )
+int main( )
 {
 	Bu::FString fs1;
 	for( int j = 0; j < 500000; j++ ) fs1 += (char)('a'+(j%26));
@@ -148,5 +148,7 @@ int main( int argc, char *argv[] )
 	printf("%d == %d\n", Bu::__calcHashCode( str ), Bu::__calcHashCode( str.getStr() ) );
 
 	doTimings();
+
+	return 0;
 }
 

@@ -576,7 +576,7 @@ namespace Bu
 			return *pLast->pValue;
 		}
 
-		const bool isEmpty() const
+		bool isEmpty() const
 		{
 			return (nSize == 0);
 		}

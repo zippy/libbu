@@ -39,7 +39,7 @@ namespace Bu
 
 	struct __calcNextTSize_fast
 	{
-		uint32_t operator()( uint32_t nCapacity, uint32_t nFill, uint32_t nDeleted ) const
+		uint32_t operator()( uint32_t nCapacity, uint32_t, uint32_t nDeleted ) const
 		{
 			if( nDeleted >= nCapacity/2 )
 				return nCapacity;
@@ -506,7 +506,7 @@ namespace Bu
 		{
 			uint32_t hash = __calcHashCode( k );
 			bool bFill;
-			uint32_t nPos = probe( hash, k, bFill, false );
+			uint32_t nPos = probe( hash, k, bFill );
 
 			if( bFill )
 			{
@@ -530,6 +530,14 @@ namespace Bu
 		{
 			bool bFill;
 			probe( __calcHashCode( k ), k, bFill, false );
+
+			return bFill;
+		}
+		
+		virtual bool has( key k ) const
+		{
+			bool bFill;
+			probe( __calcHashCode( k ), k, bFill );
 
 			return bFill;
 		}
@@ -979,7 +987,7 @@ namespace Bu
 			return nCur;
 		}
 		
-		uint32_t probe( uint32_t hash, key k, bool &bFill, bool rehash=true ) const
+		uint32_t probe( uint32_t hash, key k, bool &bFill ) const
 		{
 			uint32_t nCur = hash%nCapacity;
 

@@ -260,17 +260,17 @@ long Bu::Socket::tell()
 	throw UnsupportedException();
 }
 
-void Bu::Socket::seek( long offset )
+void Bu::Socket::seek( long )
 {
 	throw UnsupportedException();
 }
 
-void Bu::Socket::setPos( long pos )
+void Bu::Socket::setPos( long )
 {
 	throw UnsupportedException();
 }
 
-void Bu::Socket::setPosEnd( long pos )
+void Bu::Socket::setPosEnd( long )
 {
 	throw UnsupportedException();
 }
@@ -336,6 +336,14 @@ bool Bu::Socket::isBlocking()
 
 void Bu::Socket::setBlocking( bool bBlocking )
 {
+	if( bBlocking )
+	{
+		fcntl( nSocket, F_SETFL, fcntl( nSocket, F_GETFL, 0 ) & ~O_NONBLOCK );
+	}
+	else
+	{
+		fcntl( nSocket, F_SETFL, fcntl( nSocket, F_GETFL, 0 ) | O_NONBLOCK );
+	}
 }
 
 void Bu::Socket::flush()

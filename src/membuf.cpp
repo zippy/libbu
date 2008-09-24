@@ -116,7 +116,7 @@ bool Bu::MemBuf::isBlocking()
 	return true;
 }
 
-void Bu::MemBuf::setBlocking( bool bBlocking )
+void Bu::MemBuf::setBlocking( bool )
 {
 }
 

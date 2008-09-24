@@ -24,7 +24,7 @@ Bu::Process::Process( const char *sName, const char *argv, ...)
 	int iCnt = 0;
 	va_list ap;
 	va_start( ap, argv );
-	for(; va_arg( ap, const char *); iCnt++ );
+	for(; va_arg( ap, const char *); iCnt++ ) { }
 	va_end( ap );
 
 	char const **list = new char const *[iCnt+2];
@@ -137,15 +137,15 @@ long Bu::Process::tell()
 	return 0;
 }
 
-void Bu::Process::seek( long offset )
+void Bu::Process::seek( long )
 {
 }
 
-void Bu::Process::setPos( long pos )
+void Bu::Process::setPos( long )
 {
 }
 
-void Bu::Process::setPosEnd( long pos )
+void Bu::Process::setPosEnd( long )
 {
 }
 

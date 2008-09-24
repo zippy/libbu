@@ -17,7 +17,7 @@ Bu::Protocol::~Protocol()
 {
 }
 
-void Bu::Protocol::onMessage( Bu::Client *pClient, const Bu::FString &sMsg )
+void Bu::Protocol::onMessage( Bu::Client *, const Bu::FString & )
 {
 }
 

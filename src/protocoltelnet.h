@@ -88,7 +88,7 @@ namespace Bu
 		 * the line or not, the data will be cleared from the buffer when this
 		 * function returns, any changes made to the buffer will be destroyed.
 		 */
-		virtual void gotLine( Bu::FString &sLine ){};
+		virtual void gotLine( Bu::FString & /*sLine*/ ){};
 
 		/**
 		 * Override this function to be notified of any new data that comes in
@@ -98,7 +98,7 @@ namespace Bu
 		 * child class in this function, the buffer will never be cleared unless
 		 * it happens in this function's override.
 		 */
-		virtual void gotData( Bu::FString &sData ){};
+		virtual void gotData( Bu::FString & /*sData*/ ){};
 
 		/**
 		 * Using this function to enable or disable canonical mode only affects
@@ -126,7 +126,7 @@ namespace Bu
 		 * If you wish to know the current dimensions of the client window,
 		 * override this function, it will be called whenever the size changes.
 		 */
-		virtual void onSubNAWS( uint16_t iWidth, uint16_t iHeight ){};
+		virtual void onSubNAWS( uint16_t /*iWidth*/, uint16_t /*iHeight*/ ){};
 
 		/**
 		 * This function is called whenever an unknown sub negotiation option is
@@ -135,7 +135,8 @@ namespace Bu
 		 * can handle it yourself if you'd like.  Feel free to change the
 		 * sSubBuf, it will be cleared as soon as this function returns anyway.
 		 */
-		virtual void onSubUnknown( char cSubOpt, Bu::FString &sSubBuf ){};
+		virtual void onSubUnknown( char /*cSubOpt*/,
+			Bu::FString & /*sSubBuf*/ ){};
 
 	private:
 		/**

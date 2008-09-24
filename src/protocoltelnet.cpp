@@ -571,7 +571,7 @@ bool Bu::ProtocolTelnet::Option::isLocalSet()
 	return (bool)(fOpts&fLocalIs);
 }
 
-void Bu::ProtocolTelnet::Option::remoteEnable( bool bSet )
+void Bu::ProtocolTelnet::Option::remoteEnable( bool /*bSet*/ )
 {
 	return;
 }

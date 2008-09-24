@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "tafnode.h"
+#include "bu/tafnode.h"
 
 Bu::TafNode::TafNode( NodeType eType ) :
 	eType( eType )
@@ -16,7 +16,7 @@ Bu::TafNode::~TafNode()
 {
 }
 
-const Bu::TafNode::NodeType Bu::TafNode::getType() const
+Bu::TafNode::NodeType Bu::TafNode::getType() const
 {
 	return eType;
 }

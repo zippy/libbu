@@ -21,7 +21,8 @@ Bu::UnitSuite::~UnitSuite()
 {
 }
 
-int Bu::UnitSuite::run( int argc, char *argv[] )
+// Argument handling is coming soon, I promise.
+int Bu::UnitSuite::run( int /*argc*/, char * /*argv */ [] )
 {
 	for( TestList::iterator i = lTests.begin(); i != lTests.end(); i++ )
 	{

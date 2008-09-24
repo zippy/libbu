@@ -57,7 +57,7 @@ public:
 	{
 	}
 
-	virtual void onNewConnection( Bu::Client *pClient, int iPort )
+	virtual void onNewConnection( Bu::Client *pClient, int )
 	{
 		printf("New connection.\n");
 
@@ -75,7 +75,7 @@ private:
 
 };
 
-int main( int argc, char *argv[] )
+int main()
 {
 	TelServer ts;
 	

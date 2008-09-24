@@ -138,7 +138,7 @@ namespace Bu
 		{
 			if( !pData ) return;
 			long nLen;
-			for( nLen = 0; pData[nLen] != (chr)0; nLen++ );
+			for( nLen = 0; pData[nLen] != (chr)0; nLen++ ) { }
 			if( nLen == 0 )
 				return;
 		
@@ -220,7 +220,7 @@ namespace Bu
 			if( pData == NULL )
 				return;
 			long nLen;
-			for( nLen = 0; pData[nLen] != (chr)0; nLen++ );
+			for( nLen = 0; pData[nLen] != (chr)0; nLen++ ) { }
 			
 			Chunk *pNew = newChunk( nLen );
 			cpy( pNew->pData, pData, nLen );

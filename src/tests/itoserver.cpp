@@ -24,7 +24,7 @@ public:
 		TRACE();
 	}
 
-	virtual void onNewConnection( Bu::Client *pClient )
+	virtual void onNewConnection( Bu::Client * )
 	{
 		TRACE();
 		// Huh...
@@ -50,7 +50,7 @@ public:
 		TRACE();
 	}
 
-	virtual void onNewConnection( Bu::Client *pClient, int iPort )
+	virtual void onNewConnection( Bu::Client *pClient, int )
 	{
 		TRACE();
 		pClient->setProtocol( new ProtocolEcho() );

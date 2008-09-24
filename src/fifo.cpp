@@ -80,15 +80,15 @@ long Bu::Fifo::tell()
 	return -1;
 }
 
-void Bu::Fifo::seek( long offset )
+void Bu::Fifo::seek( long )
 {
 }
 
-void Bu::Fifo::setPos( long pos )
+void Bu::Fifo::setPos( long )
 {
 }
 
-void Bu::Fifo::setPosEnd( long pos )
+void Bu::Fifo::setPosEnd( long )
 {
 }
 
