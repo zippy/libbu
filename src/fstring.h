@@ -390,6 +390,24 @@ namespace Bu
 			return pFirst->pData;
 		}
 
+		MyType getSubStr( long iStart, long iSize=-1 ) const
+		{
+			if( iStart < 0 )
+				iStart = 0;
+			if( iStart >= nLength )
+				return "";
+			if( iSize < 0 )
+				iSize = nLength;
+			if( iStart+iSize > nLength )
+				iSize = nLength-iStart;
+			if( iSize == 0 )
+				return "";
+
+			flatten();
+			MyType ret( pFirst->pData+iStart, iSize );
+			return ret;
+		}
+
 		/**
 		 * (std::string compatability) Get a pointer to the string array.
 		 *@returns (chr *) The string data.

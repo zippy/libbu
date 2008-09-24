@@ -24,6 +24,8 @@ public:
 		addTest( Unit::add2 );
 		addTest( Unit::add3 );
 		addTest( Unit::add4 );
+		addTest( Unit::add5 );
+		addTest( Unit::subStr1 );
 	}
 
 	virtual ~Unit()
@@ -127,6 +129,25 @@ public:
 		Bu::FString c = "hi there" + b;
 
 		unitTest( c == "hi there, yeah!" );
+	}
+
+	void add5()
+	{
+		Bu::FString b;
+		Bu::FString c = "sup?";
+		b += "hey, " + c;
+		
+		unitTest( b == "hey, sup?" );
+	}
+
+	void subStr1()
+	{
+		Bu::FString a("abcdefghijklmnop");
+		unitTest( a.getSubStr( 5, 3 ) == "fgh" );
+		unitTest( a.getSubStr( 10 ) == "klmnop" );
+		unitTest( a.getSubStr( 40 ) == "" );
+		unitTest( a.getSubStr( -10 ) == "abcdefghijklmnop" );
+		unitTest( a.getSubStr( -15, 4 ) == "abcd" );
 	}
 };
 
