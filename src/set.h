@@ -16,8 +16,6 @@
 #include <utility>
 #include "bu/exceptionbase.h"
 #include "bu/list.h"
-///#include "archival.h"
-///#include "archive.h"
 
 #define bitsToBytes( n ) (n/32+(n%32>0 ? 1 : 0))
 
@@ -355,7 +353,7 @@ namespace Bu
 			{
 				if( &hsh != &oth.hsh )
 					throw SetException(
-						"Cannot mix iterators from different hash objects.");
+						"Cannot mix iterators from different set objects.");
 				nPos = oth.nPos;
 				bFinished = oth.bFinished;
 			}
@@ -371,7 +369,7 @@ namespace Bu
 		} iterator;
 		
 		/**
-		 * Iteration structure for iterating through the hash (const).
+		 * Iteration structure for iterating through the set (const).
 		 */
 		typedef struct const_iterator
 		{

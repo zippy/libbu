@@ -13,7 +13,7 @@
 #include <list>
 #include "bu/hash.h"
 #include "bu/list.h"
-#include "bu/set.h"
+//#include "bu/set.h"
 #include "bu/util.h"
 
 namespace Bu
@@ -298,11 +298,12 @@ namespace Bu
 		return ar;
 	}
 
-	template<typename value>
-	Archive &operator<<( Archive &ar, Set<value> &h )
+	template<typename value, int inc, typename valuealloc> class Array;
+	template<typename value, int inc, typename valuealloc>
+	Archive &operator<<( Archive &ar, Array<value, inc, valuealloc> &h )
 	{
 		ar << h.getSize();
-		for( typename Set<value>::iterator i = h.begin(); i != h.end(); i++ )
+		for( typename Array<value, inc, valuealloc>::iterator i = h.begin(); i != h.end(); i++ )
 		{
 			ar << (*i);
 		}
@@ -310,8 +311,38 @@ namespace Bu
 		return ar;
 	}
 
-	template<typename value>
-	Archive &operator>>( Archive &ar, Set<value> &h )
+	template<typename value, int inc, typename valuealloc>
+	Archive &operator>>(Archive &ar, Array<value, inc, valuealloc> &h )
+	{
+		h.clear();
+		long nSize;
+		ar >> nSize;
+		
+		h.setCapacity( nSize );
+		for( long j = 0; j < nSize; j++ )
+		{
+			value v;
+			ar >> v;
+			h.append( v );
+		}
+		return ar;
+	}
+
+	template<typename key, typename b, typename c, typename d> class Set;
+	template<typename key, typename b, typename c, typename d>
+	Archive &operator<<( Archive &ar, Set<key, b, c, d> &h )
+	{
+		ar << h.getSize();
+		for( typename Set<key, b, c, d>::iterator i = h.begin(); i != h.end(); i++ )
+		{
+			ar << (*i);
+		}
+
+		return ar;
+	}
+
+	template<typename key, typename b, typename c, typename d>
+	Archive &operator>>( Archive &ar, Set<key, b, c, d> &h )
 	{
 		h.clear();
 		long nSize;
@@ -319,7 +350,7 @@ namespace Bu
 
 		for( long j = 0; j < nSize; j++ )
 		{
-			value v;
+			key v;
 			ar >> v;
 			h.insert( v );
 		}
