@@ -139,6 +139,9 @@ bool Bu::File::isBlocking()
 
 void Bu::File::setBlocking( bool bBlocking )
 {
+#ifdef WIN32
+	fprintf(stderr, "STUB: Bu::File::setBlocking\n");
+#else
 	if( bBlocking )
 		fcntl( 
 			fileno( fh ),
@@ -149,6 +152,7 @@ void Bu::File::setBlocking( bool bBlocking )
 			fileno( fh ),
 			F_SETFL, fcntl( fileno( fh ), F_GETFL, 0 )|O_NONBLOCK
 			);
+#endif
 }
 
 #ifndef WIN32
