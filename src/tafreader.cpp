@@ -6,7 +6,6 @@
  */
 
 #include "bu/tafreader.h"
-#include "bu/exceptions.h"
 #include "bu/fstring.h"
 
 #include <stdlib.h>

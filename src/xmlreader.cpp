@@ -1,6 +1,7 @@
 #include "bu/xmlreader.h"
 #include "bu/stream.h"
-#include "bu/exceptions.h"
+
+namespace Bu { subExceptionDef( XmlException ) }
 
 Bu::XmlReader::XmlReader( Stream &rInput ) :
 	rInput( rInput ),

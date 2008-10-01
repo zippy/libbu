@@ -19,10 +19,11 @@
 #include <errno.h>
 #include <fcntl.h>
 #include "socket.h"
-#include "exceptions.h"
 #include "osx_compatibility.h"
 
 #define RBS (1024*2)
+
+namespace Bu { subExceptionDef( SocketException ) }
 
 Bu::Socket::Socket( int nSocket ) :
 	nSocket( nSocket ),
@@ -50,7 +51,7 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 	flags |= O_NONBLOCK;
 	if (fcntl(nSocket, F_SETFL, flags) < 0)
 	{
-		throw ExceptionBase("Couldn't set socket options.\n");
+		throw Bu::SocketException("Couldn't set socket options.\n");
 	}
      
 	/* Connect to the server. */
@@ -63,7 +64,7 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 		hostinfo = gethostbyname( sAddr.getStr() );
 		if (hostinfo == NULL)
 		{
-			throw ExceptionBase("Couldn't resolve hostname.\n");
+			throw Bu::SocketException("Couldn't resolve hostname.\n");
 		}
 		xServerName.sin_addr = *(struct in_addr *) hostinfo->h_addr;
 	}
@@ -136,8 +137,8 @@ void Bu::Socket::read()
 		{
 			//printf("errno: %d, %s\n", errno, strerror( errno ) );
 			//perror("readInput");
-			throw ConnectionException(
-				excodeReadError,
+			throw SocketException(
+				SocketException::cRead,
 				"Read error: %s",
 				strerror( errno )
 				);
@@ -162,8 +163,8 @@ void Bu::Socket::read()
 				struct timeval tv = { 0, 0 };
 				int retval = select( nSocket+1, &rfds, NULL, NULL, &tv );
 				if( retval == -1 )
-					throw ConnectionException(
-						excodeBadReadError,
+					throw SocketException(
+						SocketException::cBadRead,
 						"Bad Read error"
 						);
 				if( !FD_ISSET( nSocket, &rfds ) )
@@ -178,7 +179,7 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 	int nRead = TEMP_FAILURE_RETRY( ::read( nSocket, pBuf, nBytes ) );
 	if( nRead < 0 )
 	{
-		throw ConnectionException( excodeReadError, strerror(errno) );
+		throw SocketException( SocketException::cRead, strerror(errno) );
 	}
 	return nRead;
 }
@@ -220,7 +221,7 @@ size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
 	if( nWrote < 0 )
 	{
 		if( errno == EAGAIN ) return 0;
-		throw ConnectionException( excodeWriteError, strerror(errno) );
+		throw SocketException( SocketException::cWrite, strerror(errno) );
 	}
 	return nWrote;
 }
@@ -288,8 +289,8 @@ bool Bu::Socket::canRead()
 	struct timeval tv = { 0, 0 };
 	int retval = select( nSocket+1, &rfds, NULL, NULL, &tv );
 	if( retval == -1 )
-		throw ConnectionException(
-			excodeBadReadError,
+		throw SocketException(
+			SocketException::cBadRead,
 			"Bad Read error"
 			);
 	if( !FD_ISSET( nSocket, &rfds ) )
@@ -305,8 +306,8 @@ bool Bu::Socket::canWrite()
 	struct timeval tv = { 0, 0 };
 	int retval = select( nSocket+1, NULL, &wfds, NULL, &tv );
 	if( retval == -1 )
-		throw ConnectionException(
-			excodeBadReadError,
+		throw SocketException(
+			SocketException::cBadRead,
 			"Bad Read error"
 			);
 	if( !FD_ISSET( nSocket, &wfds ) )

@@ -12,9 +12,11 @@
 #include "bu/fstring.h"
 #include "bu/hash.h"
 #include "bu/list.h"
+#include "bu/exceptionbase.h"
 
 namespace Bu
 {
+	subExceptionDecl( TafException );
 	/**
 	 *
 	 *@ingroup Taf

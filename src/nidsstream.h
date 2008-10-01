@@ -13,10 +13,10 @@ namespace Bu
 		/**
 		 * These can only be created by the Nids class.
 		 */
-		NidsStream( Nids &rNids );
+		NidsStream( Nids &rNids, uint32_t uStream );
 
 	public:
-		NidsStream( const NidsStream &rSrc );
+//		NidsStream( const NidsStream &rSrc );
 		virtual ~NidsStream();
 
 		virtual void close();
@@ -40,9 +40,12 @@ namespace Bu
 
 	private:
 		Nids &rNids;
-		typedef struct Bu::Hash<int, struct Nids::Block *> BlockHash;
-		BlockHash hBlock;
-		long iPos; 
+		uint32_t uStream;
+		Nids::Block *pCurBlock;
+		uint32_t uCurBlock;
+		uint32_t uSize;
+		uint32_t uBlockSize;
+		uint32_t uPos; 
 	};
 };
 

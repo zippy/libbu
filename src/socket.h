@@ -10,11 +10,22 @@
 
 #include <stdint.h>
 
-#include "stream.h"
-#include "fstring.h"
+#include "bu/stream.h"
+#include "bu/fstring.h"
+#include "bu/exceptionbase.h"
 
 namespace Bu
 {
+	subExceptionDeclBegin( SocketException );
+		enum {
+			cRead,
+			cWrite,
+			cBadRead,
+			cClosed,
+			cTimeout
+		};
+	subExceptionDeclEnd();
+
 	/**
 	 *@author Mike Buland
 	 *@ingroup Serving

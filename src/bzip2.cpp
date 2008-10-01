@@ -6,7 +6,6 @@
  */
 
 #include "bu/bzip2.h"
-#include "bu/exceptions.h"
 #include "bu/trace.h"
 
 using namespace Bu;

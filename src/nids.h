@@ -3,11 +3,14 @@
 
 #include <stdint.h>
 #include "bu/bitstring.h"
+#include "bu/exceptionbase.h"
 
 namespace Bu
 {
 	class Stream;
 	class NidsStream;
+
+	subExceptionDecl( NidsException )
 
 	/**
 	 * Numerically Indexed Data Streams.  This is a working name so I can
@@ -22,6 +25,14 @@ namespace Bu
 	public:
 		Nids( Bu::Stream &sStore );
 		virtual ~Nids();
+
+		/**
+		 * Initialize this object based on the data already in the assosiated
+		 * stream.  This will be called automatically for you if you forget,
+		 * but if you want to pre-initialize for some reason, just call this
+		 * once before you actually start doing anything with your Nids.
+		 */
+		void initialize();
 
 		/**
 		 * Create a new Nids system in the assosiated stream.  This should be
@@ -46,14 +57,16 @@ namespace Bu
 		 */
 		NidsStream openStream( int iID );
 
+		int getBlockSize();
+
 	private:
 		typedef struct Block
 		{
-			uint32_t iFirstBlock;
-			uint32_t iNextBlock;
-			uint32_t iPrevBlock;
-			uint32_t iBytesUsed;
-			uint32_t iReserved;
+			uint32_t uFirstBlock;
+			uint32_t uNextBlock;
+			uint32_t uPrevBlock;
+			uint32_t uBytesUsed;
+			uint32_t uReserved;
 			unsigned char pData[0];
 		} Block;
 
@@ -62,9 +75,14 @@ namespace Bu
 			blockUnused	=	0xFFFFFFFFUL
 		};
 
-		void extendStream( int iID, int iBlockCount=1 );
-		void getBlock( int iIndex, struct Nids::Block *pBlock );
-		void setBlock( int iIndex, struct Nids::Block *pBlock );
+		uint32_t createBlock( uint32_t uFirstBlock, uint32_t uPrevBlock,
+			int iPreAllocate=1 );
+		void getBlock( uint32_t uIndex, struct Nids::Block *pBlock );
+		void setBlock( uint32_t uIndex, struct Nids::Block *pBlock );
+		void updateStreamSize( uint32_t uIndex, uint32_t uSize );
+		uint32_t getNextBlock( uint32_t uIndex, struct Nids::Block *pBlock );
+		Block *newBlock();
+		void deleteBlock( Block *pBlock );
 
 	private:
 		Bu::Stream &sStore;

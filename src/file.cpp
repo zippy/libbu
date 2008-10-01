@@ -6,11 +6,12 @@
  */
 
 #include "file.h"
-#include "exceptions.h"
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+namespace Bu { subExceptionDef( FileException ) }
 
 Bu::File::File( const char *sName, const char *sFlags )
 {

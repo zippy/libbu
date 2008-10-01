@@ -14,9 +14,12 @@
 
 #include "bu/stream.h"
 #include "bu/fstring.h"
+#include "bu/exceptionbase.h"
 
 namespace Bu
 {
+	subExceptionDecl( FileException );
+
 	/**
 	 * A file stream.
 	 *@ingroup Streams

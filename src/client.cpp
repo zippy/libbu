@@ -9,7 +9,6 @@
 #include "bu/socket.h"
 #include <stdlib.h>
 #include <errno.h>
-#include "bu/exceptions.h"
 #include "bu/protocol.h"
 #include "bu/clientlink.h"
 #include "bu/clientlinkfactory.h"
@@ -53,7 +52,7 @@ void Bu::Client::processInput()
 					break;
 			}
 		}
-		catch( ConnectionException &e )
+		catch( Bu::SocketException &e )
 		{
 			pSocket->close();
 			bWantsDisconnect = true;

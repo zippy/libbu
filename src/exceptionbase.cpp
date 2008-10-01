@@ -38,6 +38,7 @@ Bu::ExceptionBase::ExceptionBase( int nCode ) throw() :
 }
 
 Bu::ExceptionBase::ExceptionBase( const ExceptionBase &e ) throw () :
+	std::exception( e ),
 	nErrorCode( e.nErrorCode ),
 	sWhat( NULL )
 {
@@ -83,3 +84,8 @@ int Bu::ExceptionBase::getErrorCode()
 	return nErrorCode;
 }
 
+
+namespace Bu
+{
+	subExceptionDef( UnsupportedException )
+}

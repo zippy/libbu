@@ -6,3 +6,5 @@
  */
 
 #include "plugger.h"
+
+namespace Bu { subExceptionDef( PluginException ) }

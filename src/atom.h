@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 #include <memory>
-#include "bu/exceptions.h"
+#include "bu/exceptionbase.h"
 
 namespace Bu
 {

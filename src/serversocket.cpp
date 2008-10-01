@@ -18,9 +18,10 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
-#include "serversocket.h"
-#include "exceptions.h"
-#include "osx_compatibility.h"
+#include "bu/serversocket.h"
+#include "bu/osx_compatibility.h"
+
+namespace Bu { subExceptionDef( ServerSocketException ) }
 
 Bu::ServerSocket::ServerSocket( int nPort, int nPoolSize ) :
 	nPort( nPort )
@@ -64,7 +65,7 @@ void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
 	nServer = socket( PF_INET, SOCK_STREAM, 0 );
 	if( nServer < 0 )
 	{
-		throw Bu::SocketException("Couldn't create a listen socket.");
+		throw Bu::ServerSocketException("Couldn't create a listen socket.");
 	}
 
 	int opt = 1;
@@ -78,12 +79,12 @@ void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
 
 	if( bind( nServer, (struct sockaddr *) &name, sizeof(name) ) < 0 )
 	{
-		throw Bu::SocketException("Couldn't bind to the listen socket.");
+		throw Bu::ServerSocketException("Couldn't bind to the listen socket.");
 	}
 
 	if( listen( nServer, nPoolSize ) < 0 )
 	{
-		throw Bu::SocketException(
+		throw Bu::ServerSocketException(
 			"Couldn't begin listening to the server socket."
 			);
 	}
@@ -109,7 +110,7 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 
 	if( TEMP_FAILURE_RETRY(select( nServer+1, &fdRead, NULL, NULL, &xT )) < 0 )
 	{
-		throw SocketException(
+		throw Bu::ServerSocketException(
 			"Error scanning for new connections: %s", strerror( errno )
 			);
 	}
@@ -134,7 +135,7 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 #endif /* __CYGWIN__ */
 		if( nClient < 0 )
 		{
-			throw SocketException(
+			throw Bu::ServerSocketException(
 				"Error accepting a new connection: %s", strerror( errno )
 				);
 		}
@@ -150,7 +151,7 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 			flags |= O_NONBLOCK;
 			if( fcntl( nClient, F_SETFL, flags ) < 0)
 			{
-				throw SocketException(
+				throw Bu::ServerSocketException(
 					"Error setting option on client socket: %s",
 					strerror( errno )
 					);

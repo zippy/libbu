@@ -6,7 +6,6 @@
  */
 
 #include "bu/minimacro.h"
-#include "bu/exceptions.h"
 
 Bu::MiniMacro::MiniMacro()
 {

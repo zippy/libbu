@@ -10,10 +10,13 @@
 
 #include <stdint.h>
 #include "bu/fstring.h"
+#include "bu/exceptionbase.h"
 #include <sys/select.h>
 
 namespace Bu
 {
+	subExceptionDecl( ServerSocketException );
+
 	/**
 	 * A single tcp/ip server socket.  When created the server socket will bind
 	 * to the specified interface and port, and immediately begin listening for

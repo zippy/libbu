@@ -2,10 +2,13 @@
 #define BU_XML_READER_H
 
 #include "bu/fstring.h"
+#include "bu/exceptionbase.h"
 
 namespace Bu
 {
 	class Stream;
+
+	subExceptionDecl( XmlException );
 
 	class XmlReader
 	{

@@ -10,15 +10,17 @@ int main( int argc, char *argv[] )
 		return 1;
 	}
 
-	Bu::File fOut( argv[1], "wb");
+	Bu::File fOut( argv[1], "wb+");
 	Bu::Nids n( fOut );
 
-	n.initialize( 1024, 5 );
+//	n.initialize( 120, 5 );
 
 	Bu::NidsStream s = n.openStream( n.createStream() );
-
-	Bu::FString sBuf("Hey there, man...uh...how's it going?");
+/*
+	Bu::FString sBuf( 350 );
+	memset( sBuf.getStr(), 'a', 350 );
 	s.write( sBuf );
+	*/
 
 	return 0;
 }

@@ -6,11 +6,12 @@
  */
 
 #include "fifo.h"
-#include "exceptions.h"
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+namespace Bu { subExceptionDef( FifoException ) }
 
 Bu::Fifo::Fifo( const Bu::FString &sName, int iFlags, mode_t mAcc ) :
 	iFlags( iFlags ),

@@ -3,9 +3,20 @@
 #include "bu/nidsstream.h"
 #include <stdio.h>
 
-Bu::Nids::Nids( Bu::Stream &sStore ) :
-	sStore( sStore )
+#define NIDS_MAGIC_CODE		"\xFF\xC3\x99\xBD"
+
+namespace Bu
 {
+	subExceptionDef( NidsException )
+}
+
+Bu::Nids::Nids( Bu::Stream &sStore ) :
+	sStore( sStore ),
+	iBlockSize( 0 ),
+	iBlocks( 0 ),
+	iBlockStart( -1 )
+{
+	printf("blockUnused = %u\n", blockUnused );
 	printf("Stream caps:\n"
 		"  canRead:    %s\n"
 		"  canWrite:   %s\n"
@@ -25,10 +36,23 @@ Bu::Nids::Nids( Bu::Stream &sStore ) :
 		sStore.isOpen()?"yes":"no"
 		);
 	printf("sizeof(Block) = %db\n", sizeof(Block) );
+
+
 }
 
 Bu::Nids::~Nids()
 {
+}
+
+void Bu::Nids::initialize()
+{
+	char buf[4];
+	sStore.read( buf, 4 );
+	if( memcmp( buf, NIDS_MAGIC_CODE, 4 ) )
+	{
+		throw NidsException(
+			"Stream does not appear to be a valid NIDS format.");
+	}
 }
 
 void Bu::Nids::initialize( int iBlockSize, int iPreAllocate )
@@ -37,7 +61,7 @@ void Bu::Nids::initialize( int iBlockSize, int iPreAllocate )
 	int iBuf = 0;
 
 	// Magic number
-	sStore.write( "\xFF\xC3\x99\xBD", 4 );
+	sStore.write( NIDS_MAGIC_CODE, 4 );
 
 	// Version (0)
 	sStore.write( &cBuf, 1 );
@@ -59,56 +83,112 @@ void Bu::Nids::initialize( int iBlockSize, int iPreAllocate )
 	this->iBlockSize = iBlockSize;
 	this->iBlocks = iPreAllocate;
 	this->iBlockStart = sStore.tell();
+	printf("iBlockStart = %d\n", this->iBlockStart );
 	bsBlockUsed.setSize( iPreAllocate, true );
 
 	printf("%d blocks, %db each, %db block offset\n",
 		iBlocks, iBlockSize, iBlockStart );
 
-	char *block = new char[iBlockSize];
+	Block *block = (Block *)new char[iBlockSize];
 	memset( block, 0, iBlockSize );
+	block->uFirstBlock = block->uNextBlock = block->uPrevBlock = blockUnused;
 	for( int j = 0; j < iPreAllocate; j++ )
 	{
 		sStore.write( block, iBlockSize );
 	}
+	delete[] (char *)block;
 }
 
-int Bu::Nids::createStream( int iPreAllocate )
+uint32_t Bu::Nids::createBlock( uint32_t uFirstBlock, uint32_t uPrevBlock,
+	int /*iPreAllocate*/ )
 {
 	for( int j = 0; j < iBlocks; j++ )
 	{
 		if( !bsBlockUsed.getBit( j ) )
 		{
-			Block b = { j, blockUnused, blockUnused, 0, 0 };
+			Block b = { j, blockUnused, uPrevBlock, 0, 0, { } };
+			if( uFirstBlock != blockUnused )
+				b.uFirstBlock = uFirstBlock;
 			bsBlockUsed.setBit( j );
 			sStore.setPos( iBlockStart+(iBlockSize*j) );
 			sStore.write( &b, sizeof(b) );
+			return j;
 		}
 	}
-	return 0;
+	return blockUnused;
 }
 
-void Bu::Nids::deleteStream( int iID )
+int Bu::Nids::createStream( int iPreAllocate )
+{
+	return createBlock( blockUnused, blockUnused, iPreAllocate );
+}
+
+void Bu::Nids::deleteStream( int /*iID*/ )
 {
 }
 
 Bu::NidsStream Bu::Nids::openStream( int iID )
 {
-	return NidsStream( *this );
+	if( iBlockStart < 0 )
+	{
+		initialize();
+	}
+	return NidsStream( *this, iID );
 }
 
+int Bu::Nids::getBlockSize()
+{
+	return iBlockSize;
+}
+/*
 void Bu::Nids::extendStream( int iID, int iBlockCount )
 {
-}
+}*/
 
-void Bu::Nids::getBlock( int iIndex, Bu::Nids::Block *pBlock )
+void Bu::Nids::getBlock( uint32_t uIndex, Bu::Nids::Block *pBlock )
 {
-	sStore.setPos( iBlockStart + (iBlockSize*iIndex) );
+	sStore.setPos( iBlockStart + (iBlockSize*uIndex) );
 	sStore.read( pBlock, iBlockSize );
 }
 
-void Bu::Nids::setBlock( int iIndex, Bu::Nids::Block *pBlock )
+void Bu::Nids::setBlock( uint32_t uIndex, Bu::Nids::Block *pBlock )
 {
-	sStore.setPos( iBlockStart + (iBlockSize*iIndex) );
+	sStore.setPos( iBlockStart + (iBlockSize*uIndex) );
 	sStore.write( pBlock, iBlockSize );
+}
+
+void Bu::Nids::updateStreamSize( uint32_t uIndex, uint32_t uSize )
+{
+	sStore.setPos( iBlockStart + (iBlockSize*uIndex)+4*3 );
+	sStore.write( &uSize, 4 );
+}
+
+uint32_t Bu::Nids::getNextBlock( uint32_t uIndex,
+	struct Bu::Nids::Block *pBlock )
+{
+	uint32_t uNew;
+	if( pBlock->uNextBlock == blockUnused )
+	{
+		uNew = createBlock( pBlock->uFirstBlock, uIndex );
+		sStore.setPos( iBlockStart + (iBlockSize*uIndex)+1*4 );
+		sStore.write( &uNew, 4 );
+		getBlock( uNew, pBlock );
+	}
+	else
+	{
+		uNew = pBlock->uNextBlock;
+		getBlock( pBlock->uNextBlock, pBlock );
+	}
+	return uNew;
+}
+
+Bu::Nids::Block *Bu::Nids::newBlock()
+{
+	return (Block *)new char[iBlockSize];
+}
+
+void Bu::Nids::deleteBlock( Block *pBlock )
+{
+	delete[] (char *)pBlock;
 }
 

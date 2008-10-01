@@ -12,12 +12,14 @@
 #include "bu/hash.h"
 #include "bu/list.h"
 #include <dlfcn.h>
-#include "bu/exceptions.h"
+#include "bu/exceptionbase.h"
 #include "bu/fstring.h"
 #include <stddef.h>
 
 namespace Bu
 {
+	subExceptionDecl( PluginException );
+
 	typedef struct PluginInfo
 	{
 		const char *sID;

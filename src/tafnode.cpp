@@ -7,6 +7,8 @@
 
 #include "bu/tafnode.h"
 
+namespace Bu { subExceptionDef( TafException ) }
+
 Bu::TafNode::TafNode( NodeType eType ) :
 	eType( eType )
 {
