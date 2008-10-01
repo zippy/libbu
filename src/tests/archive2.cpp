@@ -82,7 +82,7 @@ void write()
 {
 	C *c = new C;
 	
-	Bu::File f( "test.archive", "wb");
+	Bu::File f( "test.archive", Bu::File::Write );
 	Bu::Archive ar( f, Bu::Archive::save );
 	ar << c;
 }

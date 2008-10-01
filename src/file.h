@@ -10,7 +10,6 @@
 
 #include <stdint.h>
 #include <sys/types.h>
-#include <stdlib.h>
 
 #include "bu/stream.h"
 #include "bu/fstring.h"
@@ -27,9 +26,8 @@ namespace Bu
 	class File : public Bu::Stream
 	{
 	public:
-		File( const char *sName, const char *sFlags );
-		File( const Bu::FString &sName, const char *sFlags );
-		File( int fd, const char *sFlags );
+		File( const Bu::FString &sName, int iFlags );
+		File( int fd );
 		virtual ~File();
 
 		virtual void close();
@@ -56,6 +54,19 @@ namespace Bu
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
 
+		enum {
+			// Flags
+			Read		= 0x01,	//< Open file for reading
+			Write		= 0x02, //< Open file for writing
+			Create		= 0x04, //< Create file if it doesn't exist
+			Truncate	= 0x08, //< Truncate file if it does exist
+			Append		= 0x10, //< Always append on every write
+			NonBlock	= 0x20, //< Open file in non-blocking mode
+			Exclusive	= 0x44, //< Create file, if it exists then fail
+
+			// Helpful mixes
+			ReadWrite	= 0x03 //< Open for reading and writing
+		};
 		/**
 		 * Create a temp file and return its handle
 		 *@param sName (Bu::FString) Give in the form: "/tmp/tmpfileXXXXXXXX"
@@ -65,11 +76,11 @@ namespace Bu
 		 *@returns (Bu::File) A file object representing your temp file.
 		 */
 #ifndef WIN32
-		inline static Bu::File tempFile( Bu::FString &sName, const char *sFlags )
+		inline static Bu::File tempFile( Bu::FString &sName, int /*iFlags*/ )
 		{
 			int afh_d = mkstemp( sName.getStr() );
 
-			return Bu::File( afh_d, sFlags );
+			return Bu::File( afh_d );
 		}
 
 		/**
@@ -87,8 +98,10 @@ namespace Bu
 #endif
 
 	private:
-		FILE *fh;
+		int getPosixFlags( int iFlags );
 
+	private:
+		int fd;
 	};
 }
 

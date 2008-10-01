@@ -19,10 +19,10 @@ int main( int argc, char *argv[] )
 	char buf[1024];
 	size_t nRead;
 
-	Bu::File f( argv[0], "wb" );
+	Bu::File f( argv[0], Bu::File::Write );
 	Bu::BZip2 bz2( f );
 
-	Bu::File fin( argv[1], "rb");
+	Bu::File fin( argv[1], Bu::File::Read );
 
 	for(;;)
 	{

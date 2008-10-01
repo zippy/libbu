@@ -13,13 +13,13 @@ int main( int argc, char *argv[] )
 {
 	if( argc == 1 )
 	{
-		Bu::File f("test.taf", "rb");
+		Bu::File f("test.taf", Bu::File::Read );
 		Bu::TafReader tr( f );
 
 		Bu::TafGroup *pGroup = tr.readGroup();
 		
 		{
-			Bu::File fo("out.taf", "wb");
+			Bu::File fo("out.taf", Bu::File::Write );
 			Bu::TafWriter tw( fo );
 			tw.writeGroup( pGroup );
 		}
@@ -28,13 +28,13 @@ int main( int argc, char *argv[] )
 	}
 	else if( argc == 3 )
 	{
-		Bu::File f( argv[1], "rb");
+		Bu::File f( argv[1], Bu::File::Read );
 		Bu::TafReader tr( f );
 
 		Bu::TafGroup *pGroup = tr.readGroup();
 		
 		{
-			Bu::File fo( argv[2], "wb");
+			Bu::File fo( argv[2], Bu::File::Write );
 			Bu::TafWriter tw( fo );
 			tw.writeGroup( pGroup );
 		}

@@ -12,7 +12,7 @@ using namespace Bu;
 
 int main()
 {
-	File f("test.dat", "wb");
+	File f("test.dat", File::Write );
 	Archive ar( f, Archive::save );
 
 	std::string s("Hello there");

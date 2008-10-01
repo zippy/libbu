@@ -3,7 +3,7 @@
 #include "bu/nidsstream.h"
 #include <stdio.h>
 
-#define NIDS_MAGIC_CODE		"\xFF\xC3\x99\xBD"
+#define NIDS_MAGIC_CODE		((unsigned char *)"\xFF\xC3\x99\xBD")
 
 namespace Bu
 {
@@ -36,8 +36,10 @@ Bu::Nids::Nids( Bu::Stream &sStore ) :
 		sStore.isOpen()?"yes":"no"
 		);
 	printf("sizeof(Block) = %db\n", sizeof(Block) );
-
-
+	printf("Magic:  %02X%02X%02X%02X\n",
+		NIDS_MAGIC_CODE[0], NIDS_MAGIC_CODE[1],
+		NIDS_MAGIC_CODE[2], NIDS_MAGIC_CODE[3]
+		);
 }
 
 Bu::Nids::~Nids()
@@ -46,13 +48,16 @@ Bu::Nids::~Nids()
 
 void Bu::Nids::initialize()
 {
-	char buf[4];
-	sStore.read( buf, 4 );
+	unsigned char buf[4];
+	if( sStore.read( buf, 4 ) < 4 )
+		throw NidsException("Input stream appears to be empty.");
 	if( memcmp( buf, NIDS_MAGIC_CODE, 4 ) )
 	{
 		throw NidsException(
 			"Stream does not appear to be a valid NIDS format.");
 	}
+
+
 }
 
 void Bu::Nids::initialize( int iBlockSize, int iPreAllocate )

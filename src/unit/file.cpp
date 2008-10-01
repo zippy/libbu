@@ -31,7 +31,7 @@ public:
 	//
 	void writeFull()
 	{
-		Bu::File sf("testfile1", "wb");
+		Bu::File sf("testfile1", Bu::File::Write );
 		for( int c = 0; c < 256; c++ )
 		{
 			unsigned char ch = (unsigned char)c;
@@ -49,7 +49,7 @@ public:
 
 	void readBlocks()
 	{
-		Bu::File sf("testfile1", "rb");
+		Bu::File sf("testfile1", Bu::File::Read );
 		unsigned char buf[50];
 		size_t total = 0;
 		for(;;)
@@ -74,7 +74,7 @@ public:
 	{
 		try
 		{
-			Bu::File sf("doesn'texist", "rb");
+			Bu::File sf("doesn'texist", Bu::File::Read );
 			unitFailed("No exception thrown");
 		}
 		catch( Bu::FileException &e )
@@ -85,7 +85,7 @@ public:
 
 	void readError2()
 	{
-		Bu::File sf("testfile1", "rb");
+		Bu::File sf("testfile1", Bu::File::Read );
 		char buf[256];
 		int r = sf.read( buf, 256 );
 		unitTest( r == 256 );

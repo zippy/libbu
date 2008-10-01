@@ -10,30 +10,24 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 namespace Bu { subExceptionDef( FileException ) }
 
-Bu::File::File( const char *sName, const char *sFlags )
+Bu::File::File( const Bu::FString &sName, int iFlags ) :
+	fd( -1 )
 {
-	fh = fopen( sName, sFlags );
-	if( fh == NULL )
+	fd = ::open( sName.getStr(), getPosixFlags( iFlags ) );
+	if( fd < 0 )
 	{
-		throw Bu::FileException( errno, "%s: %s", strerror(errno), sName );
+		throw Bu::FileException( errno, "%s: %s",
+			strerror(errno), sName.getStr() );
 	}
 }
 
-Bu::File::File( const Bu::FString &sName, const char *sFlags )
+Bu::File::File( int fd ) :
+	fd( fd )
 {
-	fh = fopen( sName.getStr(), sFlags );
-	if( fh == NULL )
-	{
-		throw Bu::FileException( errno, "%s: %s", strerror(errno), sName.getStr() );
-	}
-}
-
-Bu::File::File( int fd, const char *sFlags )
-{
-	fh = fdopen( fd, sFlags );
 }
 
 Bu::File::~File()
@@ -43,69 +37,68 @@ Bu::File::~File()
 
 void Bu::File::close()
 {
-	if( fh )
+	if( fd >= 0 )
 	{
-		fclose( fh );
-		fh = NULL;
+		if( ::close( fd ) )
+		{
+			throw Bu::FileException( errno, "%s",
+				strerror(errno) );
+		}
+		fd = -1;
 	}
 }
 
 size_t Bu::File::read( void *pBuf, size_t nBytes )
 {
-	if( !fh )
+	if( fd < 0 )
 		throw FileException("File not open.");
 
-	int nAmnt = fread( pBuf, 1, nBytes, fh );
-
-	//if( nAmnt == 0 )
-	//	throw FileException("End of file.");
-
-	return nAmnt;
+	return ::read( fd, pBuf, nBytes );
 }
 
 size_t Bu::File::write( const void *pBuf, size_t nBytes )
 {
-	if( !fh )
+	if( fd < 0 )
 		throw FileException("File not open.");
 
-	return fwrite( pBuf, 1, nBytes, fh );
+	return ::write( fd, pBuf, nBytes );
 }
 
 long Bu::File::tell()
 {
-	if( !fh )
+	if( fd < 0 )
 		throw FileException("File not open.");
 
-	return ftell( fh );
+	return lseek( fd, 0, SEEK_CUR );
 }
 
 void Bu::File::seek( long offset )
 {
-	if( !fh )
+	if( fd < 0 )
 		throw FileException("File not open.");
 
-	fseek( fh, offset, SEEK_CUR );
+	lseek( fd, offset, SEEK_CUR );
 }
 
 void Bu::File::setPos( long pos )
 {
-	if( !fh )
+	if( fd < 0 )
 		throw FileException("File not open.");
 
-	fseek( fh, pos, SEEK_SET );
+	lseek( fd, pos, SEEK_SET );
 }
 
 void Bu::File::setPosEnd( long pos )
 {
-	if( !fh )
+	if( fd < 0 )
 		throw FileException("File not open.");
 	
-	fseek( fh, pos, SEEK_END );
+	lseek( fd, pos, SEEK_END );
 }
 
 bool Bu::File::isEOS()
 {
-	return feof( fh );
+	return false;
 }
 
 bool Bu::File::canRead()
@@ -145,13 +138,13 @@ void Bu::File::setBlocking( bool bBlocking )
 #else
 	if( bBlocking )
 		fcntl( 
-			fileno( fh ),
-			F_SETFL, fcntl( fileno( fh ), F_GETFL, 0 )&(~O_NONBLOCK)
+			fd,
+			F_SETFL, fcntl( fd, F_GETFL, 0 )&(~O_NONBLOCK)
 			);
 	else
 		fcntl( 
-			fileno( fh ),
-			F_SETFL, fcntl( fileno( fh ), F_GETFL, 0 )|O_NONBLOCK
+			fd,
+			F_SETFL, fcntl( fd, F_GETFL, 0 )|O_NONBLOCK
 			);
 #endif
 }
@@ -159,22 +152,52 @@ void Bu::File::setBlocking( bool bBlocking )
 #ifndef WIN32
 void Bu::File::truncate( long nSize )
 {
-	ftruncate( fileno( fh ), nSize );
+	ftruncate( fd, nSize );
 }
 
 void Bu::File::chmod( mode_t t )
 {
-	fchmod( fileno( fh ), t );
+	fchmod( fd, t );
 }
 #endif
 
 void Bu::File::flush()
 {
-	fflush( fh );
+	// There is no flushing with direct I/O...
+	//fflush( fh );
 }
 
 bool Bu::File::isOpen()
 {
-	return (fh != NULL);
+	return (fd > -1);
+}
+
+int Bu::File::getPosixFlags( int iFlags )
+{
+	int iRet = 0;
+	switch( (iFlags&ReadWrite) )
+	{
+		// According to posix, O_RDWR is not necesarilly O_RDONLY|O_WRONLY, so
+		// lets be proper and use the right value in the right place.
+		case Read:		iRet = O_RDONLY; break;
+		case Write:		iRet = O_WRONLY; break;
+		case ReadWrite:	iRet = O_RDWR; break;
+		default:
+			throw FileException(
+				"You must specify Read, Write, or both when opening a file.");
+	}
+
+	if( (iFlags&Create) )
+		iRet |= O_CREAT;
+	if( (iFlags&Append) )
+		iRet |= O_APPEND;
+	if( (iFlags&Truncate) )
+		iRet |= O_TRUNC;
+	if( (iFlags&NonBlock) )
+		iRet |= O_NONBLOCK;
+	if( (iFlags&Exclusive) )
+		iRet |= O_EXCL;
+
+	return iRet;
 }
 

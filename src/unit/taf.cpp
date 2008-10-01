@@ -29,14 +29,14 @@ public:
 	{
 #define FN_TMP ("/tmp/tmpXXXXXXXX")
 		Bu::FString sFnTmp(FN_TMP);
-		Bu::File fOut = Bu::File::tempFile( sFnTmp, "wb" );
+		Bu::File fOut = Bu::File::tempFile( sFnTmp, Bu::File::Write );
 		const char *data =
 "{test: name=\"Bob\"}"
 ;
 		fOut.write(data,strlen(data));
 		fOut.close();
 
-		Bu::File fIn(sFnTmp.getStr(), "rb");
+		Bu::File fIn(sFnTmp.getStr(), Bu::File::Read );
 		Bu::TafReader tr(fIn);
 		
 		Bu::TafGroup *tn = tr.readGroup();
