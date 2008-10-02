@@ -19,7 +19,7 @@ int main( int argc, char *argv[] )
 		Bu::TafGroup *pGroup = tr.readGroup();
 		
 		{
-			Bu::File fo("out.taf", Bu::File::Write );
+			Bu::File fo("out.taf", Bu::File::Write|Bu::File::Create );
 			Bu::TafWriter tw( fo );
 			tw.writeGroup( pGroup );
 		}
@@ -34,7 +34,7 @@ int main( int argc, char *argv[] )
 		Bu::TafGroup *pGroup = tr.readGroup();
 		
 		{
-			Bu::File fo( argv[2], Bu::File::Write );
+			Bu::File fo( argv[2], Bu::File::Write|Bu::File::Create );
 			Bu::TafWriter tw( fo );
 			tw.writeGroup( pGroup );
 		}

@@ -18,7 +18,7 @@ namespace Bu { subExceptionDef( FileException ) }
 Bu::File::File( const Bu::FString &sName, int iFlags ) :
 	fd( -1 )
 {
-	fd = ::open( sName.getStr(), getPosixFlags( iFlags ) );
+	fd = ::open( sName.getStr(), getPosixFlags( iFlags ), 0666 );
 	if( fd < 0 )
 	{
 		throw Bu::FileException( errno, "%s: %s",
