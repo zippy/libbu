@@ -151,7 +151,7 @@ void Bu::File::setBlocking( bool bBlocking )
 }
 
 #ifndef WIN32
-Bu::File Bu::File::tempFile( Bu::FString &sName, int /*iFlags*/ )
+Bu::File Bu::File::tempFile( Bu::FString &sName )
 {
 	int afh_d = mkstemp( sName.getStr() );
 

@@ -56,27 +56,27 @@ namespace Bu
 
 		enum {
 			// Flags
-			Read		= 0x01,	//< Open file for reading
-			Write		= 0x02, //< Open file for writing
-			Create		= 0x04, //< Create file if it doesn't exist
-			Truncate	= 0x08, //< Truncate file if it does exist
-			Append		= 0x10, //< Always append on every write
-			NonBlock	= 0x20, //< Open file in non-blocking mode
-			Exclusive	= 0x44, //< Create file, if it exists then fail
+			Read		= 0x01,	///< Open file for reading
+			Write		= 0x02, ///< Open file for writing
+			Create		= 0x04, ///< Create file if it doesn't exist
+			Truncate	= 0x08, ///< Truncate file if it does exist
+			Append		= 0x10, ///< Always append on every write
+			NonBlock	= 0x20, ///< Open file in non-blocking mode
+			Exclusive	= 0x44, ///< Create file, if it exists then fail
 
 			// Helpful mixes
-			ReadWrite	= 0x03 //< Open for reading and writing
+			ReadWrite	= 0x03 ///< Open for reading and writing
 		};
 		/**
-		 * Create a temp file and return its handle
+		 * Create a temp file and return its handle.  The file is opened 
+		 * Read/Write.
 		 *@param sName (Bu::FString) Give in the form: "/tmp/tmpfileXXXXXXXX"
 		 *		It will alter your (sName) setting the 'X's to random
 		 *		characters.
-		 *@param sFlags (const char *) Standard file flags 'rb'... etc..
 		 *@returns (Bu::File) A file object representing your temp file.
 		 */
 #ifndef WIN32
-		static Bu::File tempFile( Bu::FString &sName, int iFlags );
+		static Bu::File tempFile( Bu::FString &sName );
 
 		/**
 		 * Set the size of the file to (nSize). You can either grow or shrink

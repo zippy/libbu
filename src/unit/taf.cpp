@@ -29,7 +29,7 @@ public:
 	{
 #define FN_TMP ("/tmp/tmpXXXXXXXX")
 		Bu::FString sFnTmp(FN_TMP);
-		Bu::File fOut = Bu::File::tempFile( sFnTmp, Bu::File::Write );
+		Bu::File fOut = Bu::File::tempFile( sFnTmp );
 		const char *data =
 "{test: name=\"Bob\"}"
 ;
