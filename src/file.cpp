@@ -204,7 +204,7 @@ int Bu::File::getPosixFlags( int iFlags )
 	if( (iFlags&NonBlock) )
 		iRet |= O_NONBLOCK;
 #endif
-	if( (iFlags&Exclusive) )
+	if( (iFlags&Exclusive) == Exclusive )
 		iRet |= O_EXCL;
 
 	return iRet;
