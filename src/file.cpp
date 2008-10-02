@@ -200,8 +200,10 @@ int Bu::File::getPosixFlags( int iFlags )
 		iRet |= O_APPEND;
 	if( (iFlags&Truncate) )
 		iRet |= O_TRUNC;
+#ifndef WIN32
 	if( (iFlags&NonBlock) )
 		iRet |= O_NONBLOCK;
+#endif
 	if( (iFlags&Exclusive) )
 		iRet |= O_EXCL;
 
