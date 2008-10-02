@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdlib.h> // for mkstemp
 
 namespace Bu { subExceptionDef( FileException ) }
 
@@ -150,6 +151,12 @@ void Bu::File::setBlocking( bool bBlocking )
 }
 
 #ifndef WIN32
+Bu::File Bu::File::tempFile( Bu::FString &sName, int /*iFlags*/ )
+{
+	int afh_d = mkstemp( sName.getStr() );
+
+	return Bu::File( afh_d );
+}
 void Bu::File::truncate( long nSize )
 {
 	ftruncate( fd, nSize );

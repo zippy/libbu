@@ -76,12 +76,7 @@ namespace Bu
 		 *@returns (Bu::File) A file object representing your temp file.
 		 */
 #ifndef WIN32
-		inline static Bu::File tempFile( Bu::FString &sName, int /*iFlags*/ )
-		{
-			int afh_d = mkstemp( sName.getStr() );
-
-			return Bu::File( afh_d );
-		}
+		static Bu::File tempFile( Bu::FString &sName, int iFlags );
 
 		/**
 		 * Set the size of the file to (nSize). You can either grow or shrink

@@ -104,6 +104,11 @@ Bu::TafProperty *Bu::TafGroup::addProperty(
 	return addChild( new TafProperty( sName, sValue ) );
 }
 
+bool Bu::TafGroup::hasChild( const Bu::FString &sName ) const
+{
+	return hChildren.has( sName );
+}
+
 const Bu::TafGroup::GroupList &Bu::TafGroup::getChildren( const Bu::FString &sName ) const
 {
 	return hChildren.get( sName );
@@ -117,6 +122,11 @@ const Bu::TafGroup::NodeList &Bu::TafGroup::getChildren() const
 const Bu::TafGroup *Bu::TafGroup::getChild( const Bu::FString &sName ) const
 {
 	return hChildren.get( sName ).first();
+}
+
+bool Bu::TafGroup::hasProperty( const Bu::FString &sName ) const
+{
+	return hProp.has( sName );
 }
 
 const Bu::TafGroup::PropList &Bu::TafGroup::getProperties( const Bu::FString &sName ) const

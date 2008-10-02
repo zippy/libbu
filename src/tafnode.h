@@ -62,10 +62,12 @@ namespace Bu
 		const Bu::FString &getName() const;
 		void setName( const Bu::FString &sName );
 
+		bool hasProperty( const Bu::FString &sName ) const;
 		const Bu::FString &getProperty( const Bu::FString &sName ) const;
 		const Bu::FString &getProperty( const Bu::FString &sName,
 			const Bu::FString &sDef ) const;
 		const PropList &getProperties( const Bu::FString &sName ) const;
+		bool hasChild( const Bu::FString &sName ) const;
 		const TafGroup *getChild( const Bu::FString &sName ) const;
 		const GroupList &getChildren( const Bu::FString &sName ) const;
 		TafNode *addChild( TafNode *pNode );
