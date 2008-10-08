@@ -15,6 +15,7 @@ public:
 	{
 		setName("MemBuf");
 		addTest( Unit::testWriteRead01 );
+		addTest( Unit::testOverwrite1 );
 	}
 
 	virtual ~Unit()
@@ -38,6 +39,21 @@ public:
 		mb.seek( -3 );
 		unitTest( mb.read( buf, 7 ) == 3 );
 		unitTest( !strncmp( buf, "eFG", 3 ) );
+	}
+
+	void testOverwrite1()
+	{
+		Bu::MemBuf mb;
+		unitTest( mb.write("0123456789") == 10 );
+		mb.setPos( 4 );
+		unitTest( mb.write("-5-") == 3 );
+		mb.setPos( 9 );
+		mb.write("Hey!!!");
+		unitTest( mb.tell() == 15 );
+		char buf[50];
+		mb.setPos( 0 );
+		buf[mb.read( buf, 50 )] = '\0';
+		unitTest( !strcmp( buf, "0123-5-78Hey!!!" ) );
 	}
 };
 

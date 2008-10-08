@@ -41,9 +41,29 @@ size_t Bu::MemBuf::read( void *pBuf, size_t nBytes )
 	
 size_t Bu::MemBuf::write( const void *pBuf, size_t nBytes )
 {
-	sBuf.append( (const char *)pBuf, nBytes );
-	nPos += nBytes;
-	return nBytes;
+	if( nPos == sBuf.getSize() )
+	{
+		// Easiest, just append the data.
+		sBuf.append( (const char *)pBuf, nBytes );
+		nPos += nBytes;
+		return nBytes;
+	}
+	else
+	{
+		// Trickier, we must do this in two parts, overwrite, then append
+		// Frist, overwrite.
+		int iOver = sBuf.getSize() - nPos;
+		if( iOver > nBytes )
+			iOver = nBytes;
+		memcpy( sBuf.getStr()+nPos, pBuf, iOver );
+		// Then append
+		if( iOver < nBytes )
+		{
+			sBuf.append( ((const char *)pBuf)+iOver, nBytes-iOver );
+		}
+		nPos += nBytes;
+		return nBytes;
+	}
 }
 
 long Bu::MemBuf::tell()

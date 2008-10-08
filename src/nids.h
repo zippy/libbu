@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2008 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #ifndef BU_NIDS_H
 #define BU_NIDS_H
 
@@ -75,12 +82,17 @@ namespace Bu
 			blockUnused	=	0xFFFFFFFFUL
 		};
 
+		void initBlock( uint32_t uPos, uint32_t uFirstBlock,
+			uint32_t uPrevBlock, bool bNew=false );
 		uint32_t createBlock( uint32_t uFirstBlock, uint32_t uPrevBlock,
 			int iPreAllocate=1 );
 		void getBlock( uint32_t uIndex, struct Nids::Block *pBlock );
 		void setBlock( uint32_t uIndex, struct Nids::Block *pBlock );
 		void updateStreamSize( uint32_t uIndex, uint32_t uSize );
-		uint32_t getNextBlock( uint32_t uIndex, struct Nids::Block *pBlock );
+		uint32_t getNextBlock( uint32_t uIndex, struct Nids::Block *pBlock,
+			bool bCreate=true);
+
+		// Block allocation routines
 		Block *newBlock();
 		void deleteBlock( Block *pBlock );
 
