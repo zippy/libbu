@@ -52,7 +52,7 @@ size_t Bu::MemBuf::write( const void *pBuf, size_t nBytes )
 	{
 		// Trickier, we must do this in two parts, overwrite, then append
 		// Frist, overwrite.
-		int iOver = sBuf.getSize() - nPos;
+		size_t iOver = sBuf.getSize() - nPos;
 		if( iOver > nBytes )
 			iOver = nBytes;
 		memcpy( sBuf.getStr()+nPos, pBuf, iOver );
