@@ -640,6 +640,7 @@ namespace Bu
 						"Cannot mix iterators from different hash objects.");
 				nPos = oth.nPos;
 				bFinished = oth.bFinished;
+				return *this;
 			}
 
 			/**
@@ -756,6 +757,7 @@ namespace Bu
 						"Cannot mix iterators from different hash objects.");
 				nPos = oth.nPos;
 				bFinished = oth.bFinished;
+				return *this;
 			}
 
 			/**
