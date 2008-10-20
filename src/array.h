@@ -184,6 +184,26 @@ namespace Bu
 					iPos = -1;
 				return *this;
 			}
+			
+			iterator operator--( int )
+			{
+				if( iPos < 0 )
+					throw ArrayException(
+						"Cannot increment iterator past end of array.");
+					iPos--;
+				if( iPos < 0 )
+					iPos = -1;
+				return *this;
+			}
+			
+			iterator operator--()
+			{
+				if( iPos < src.getSize() )
+					iPos--;
+				if( iPos <= 0 )
+					iPos = -1;
+				return *this;
+			}
 
 			bool operator==( const iterator &oth )
 			{
@@ -247,6 +267,26 @@ namespace Bu
 					iPos = -1;
 				return *this;
 			}
+			
+			const_iterator operator--( int )
+			{
+				if( iPos < 0 )
+					throw ArrayException(
+						"Cannot increment iterator past end of array.");
+					iPos--;
+				if( iPos < 0 )
+					iPos = -1;
+				return *this;
+			}
+			
+			const_iterator operator--()
+			{
+				if( iPos < src.getSize() )
+					iPos--;
+				if( iPos <= 0 )
+					iPos = -1;
+				return *this;
+			}
 
 			bool operator==( const const_iterator &oth )
 			{
@@ -293,6 +333,45 @@ namespace Bu
 		const_iterator end() const
 		{
 			return const_iterator( *this, -1 );
+		}
+
+		/**
+		 * If order is important, use this.  It will delete the suggested item
+		 * and move the rest of the data up a spot.  This is a time O(n)
+		 * operation.  If the order isn't important, check swapErase
+		 */
+		void erase( iterator i )
+		{
+			for( int j = i.iPos; j < iSize; j++ )
+			{
+				va.destroy( &pData[j] );
+				if( j == iSize-1 )
+				{
+					iSize--;
+					return;
+				}
+				va.construct( &pData[j], pData[j+1] );
+			}
+		}
+
+		/**
+		 * In order to make swapErase faster, what it does is swap the given
+		 * item in the array with the last item, then make the array shorter
+		 * by one.  It changes the order of the elements in the array, so it
+		 * should be used carefully, but it is time O(1) instead of O(n) like
+		 * erase.
+		 */
+		void swapErase( iterator i )
+		{
+			if( i.iPos == iSize-1 )
+			{
+				erase( i );
+				return;
+			}
+			va.destroy( &pData[i.iPos] );
+			va.construct( &pData[i.iPos], pData[iSize-1] );
+			va.destroy( &pData[iSize-1] );
+			iSize--;
 		}
 
 	private:
