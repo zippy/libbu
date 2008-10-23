@@ -11,15 +11,20 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <sys/socket.h>
 #include <sys/time.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 #include <errno.h>
 #include <fcntl.h>
 #include "socket.h"
 #include "osx_compatibility.h"
+
+#ifndef WIN32
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ #include <netdb.h>
+ #include <arpa/inet.h>
+#else
+ #include <Winsock2.h>
+#endif
 
 #define RBS (1024*2)
 
@@ -46,6 +51,7 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 	}
 
 	// These lines set the socket to non-blocking, a good thing?
+#ifndef WIN32
 	int flags;
 	flags = fcntl(nSocket, F_GETFL, 0);
 	flags |= O_NONBLOCK;
@@ -53,6 +59,16 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 	{
 		throw Bu::SocketException("Couldn't set socket options.\n");
 	}
+#else
+	//-------------------------
+	// Set the socket I/O mode: In this case FIONBIO
+	// enables or disables the blocking mode for the 
+	// socket based on the numerical value of iMode.
+	// If iMode = 0, blocking is enabled; 
+	// If iMode != 0, non-blocking mode is enabled.
+	u_long iMode = 1;
+	ioctlsocket(nSocket, FIONBIO, &iMode);
+#endif
      
 	/* Connect to the server. */
 	//printf("Resolving hostname (%s)...\n", sAddr );
@@ -115,7 +131,9 @@ void Bu::Socket::close()
 {
 	if( bActive )
 	{
+#ifndef WIN32
 		fsync( nSocket );
+#endif
 		::close( nSocket );
 	}
 	bActive = false;
@@ -176,7 +194,11 @@ void Bu::Socket::read()
 
 size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 {
+#ifndef WIN32
 	int nRead = TEMP_FAILURE_RETRY( ::read( nSocket, pBuf, nBytes ) );
+#else
+	int nRead = ::read( nSocket, pBuf, nBytes );
+#endif
 	if( nRead < 0 )
 	{
 		throw SocketException( SocketException::cRead, strerror(errno) );
@@ -194,9 +216,15 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes,
 	FD_ZERO(&rfds);
 	FD_SET(nSocket, &rfds);
 
+#ifndef WIN32
 	gettimeofday( &nt, NULL );
 	nt.tv_sec += nSec;
 	nt.tv_usec += nUSec;
+#else
+	DWORD dwStart = GetTickCount();
+	uint64_t uOver = dwStart + ((nUSec / 1000) * (nSec * 1000));
+	DWORD dwEnd = uOver>4294967295U?uOver-4294967295U:uOver;
+#endif
 
 	for(;;)
 	{
@@ -206,18 +234,28 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes,
 		nRead += read( ((char *)pBuf)+nRead, nBytes-nRead );
 		if( nRead >= nBytes )
 			break;
+#ifndef WIN32
 		gettimeofday( &ct, NULL );
 		if( (ct.tv_sec > nt.tv_sec) ||
 			(ct.tv_sec == nt.tv_sec &&
 			ct.tv_usec >= nt.tv_usec) )
 			break;
+#else
+		DWORD dwNow = GetTickCount();
+		if( dwNow > dwEnd )
+			break;
+#endif
 	}
 	return nRead;
 }
 
 size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
 {
+#ifndef WIN32
 	int nWrote = TEMP_FAILURE_RETRY( ::write( nSocket, pBuf, nBytes ) );
+#else
+	int nWrote = ::write( nSocket, pBuf, nBytes );
+#endif
 	if( nWrote < 0 )
 	{
 		if( errno == EAGAIN ) return 0;
@@ -235,9 +273,15 @@ size_t Bu::Socket::write( const void *pBuf, size_t nBytes, uint32_t nSec, uint32
 	FD_ZERO(&wfds);
 	FD_SET(nSocket, &wfds);
 
+#ifndef WIN32
 	gettimeofday( &nt, NULL );
 	nt.tv_sec += nSec;
 	nt.tv_usec += nUSec;
+#else
+	DWORD dwStart = GetTickCount();
+	uint64_t uOver = dwStart + ((nUSec / 1000) * (nSec * 1000));
+	DWORD dwEnd = uOver>4294967295U?uOver-4294967295U:uOver;
+#endif
 
 	for(;;)
 	{
@@ -247,11 +291,17 @@ size_t Bu::Socket::write( const void *pBuf, size_t nBytes, uint32_t nSec, uint32
 		nWrote += write( ((char *)pBuf)+nWrote, nBytes-nWrote );
 		if( nWrote >= nBytes )
 			break;
+#ifndef WIN32
 		gettimeofday( &ct, NULL );
 		if( (ct.tv_sec > nt.tv_sec) ||
 			(ct.tv_sec == nt.tv_sec &&
 			ct.tv_usec >= nt.tv_usec) )
 			break;
+#else
+		DWORD dwNow = GetTickCount();
+		if( dwNow > dwEnd )
+			break;
+#endif
 	}
 	return nWrote;
 }
@@ -337,6 +387,7 @@ bool Bu::Socket::isBlocking()
 
 void Bu::Socket::setBlocking( bool bBlocking )
 {
+#ifndef WIN32
 	if( bBlocking )
 	{
 		fcntl( nSocket, F_SETFL, fcntl( nSocket, F_GETFL, 0 ) & ~O_NONBLOCK );
@@ -345,6 +396,20 @@ void Bu::Socket::setBlocking( bool bBlocking )
 	{
 		fcntl( nSocket, F_SETFL, fcntl( nSocket, F_GETFL, 0 ) | O_NONBLOCK );
 	}
+#else
+	u_long iMode;
+	if( bBlocking )
+		iMode = 0;
+	else
+		iMode = 1;
+	//-------------------------
+	// Set the socket I/O mode: In this case FIONBIO
+	// enables or disables the blocking mode for the 
+	// socket based on the numerical value of iMode.
+	// If iMode = 0, blocking is enabled; 
+	// If iMode != 0, non-blocking mode is enabled.
+	ioctlsocket(nSocket, FIONBIO, &iMode);
+#endif	
 }
 
 void Bu::Socket::flush()
@@ -355,6 +420,10 @@ bool Bu::Socket::isOpen()
 {
 	return bActive;
 }
+
+#ifdef WIN32
+ typedef int socklen_t;
+#endif
 
 void Bu::Socket::setAddress()
 {
