@@ -73,7 +73,11 @@ namespace Bu
 	private:
 		void setAddress();
 
+#ifdef WIN32
+		unsigned int nSocket;
+#else
 		int nSocket;
+#endif
 		bool bActive;
 		FString sReadBuf;
 		FString sAddress;

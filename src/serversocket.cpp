@@ -5,6 +5,13 @@
  * terms of the license contained in the file LICENSE.
  */
 
+#ifndef WIN32
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ #include <netdb.h>
+ #include <arpa/inet.h>
+#endif
+
 #include <time.h>
 #include <string.h>
 #include <stdio.h>
@@ -12,14 +19,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <termios.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/inet.h>
+//#include <termios.h>
 #include <fcntl.h>
 #include "bu/serversocket.h"
 #include "bu/osx_compatibility.h"
+#include "bu/win32_compatibility.h"
 
 namespace Bu { subExceptionDef( ServerSocketException ) }
 
@@ -50,7 +54,11 @@ Bu::ServerSocket::ServerSocket(const FString &sAddr,int nPort, int nPoolSize) :
 	name.sin_family = AF_INET;
 	name.sin_port = htons( nPort );
 
+#ifdef WIN32
+	name.sin_addr.s_addr = inet_addr( sAddr.getStr() );
+#else
 	inet_aton( sAddr.getStr(), &name.sin_addr );
+#endif
 
 	startServer( name, nPoolSize );
 }
@@ -139,14 +147,17 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 				"Error accepting a new connection: %s", strerror( errno )
 				);
 		}
+
+#ifndef WIN32
 		char tmpa[20];
 		inet_ntop( AF_INET, (void *)&clientname.sin_addr, tmpa, 20 );
 		//"New connection from host %s, port %hd.",
 		//  tmpa, ntohs (clientname.sin_port) );
+#endif
 		
 		{
+#ifndef WIN32
 			int flags;
-
 			flags = fcntl( nClient, F_GETFL, 0 );
 			flags |= O_NONBLOCK;
 			if( fcntl( nClient, F_SETFL, flags ) < 0)
@@ -156,6 +167,16 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 					strerror( errno )
 					);
 			}
+#else
+			//-------------------------
+			// Set the socket I/O mode: In this case FIONBIO
+			// enables or disables the blocking mode for the 
+			// socket based on the numerical value of iMode.
+			// If iMode = 0, blocking is enabled; 
+			// If iMode != 0, non-blocking mode is enabled.
+			u_long iMode = 1;
+			ioctlsocket(nClient, FIONBIO, &iMode);			
+#endif
 		}
 
 		return nClient;

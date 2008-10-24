@@ -11,7 +11,12 @@
 #include <stdint.h>
 #include "bu/fstring.h"
 #include "bu/exceptionbase.h"
-#include <sys/select.h>
+
+#ifdef WIN32
+ #include <Winsock2.h>
+#else
+ #include <sys/select.h>
+#endif
 
 namespace Bu
 {
@@ -45,7 +50,11 @@ namespace Bu
 		void startServer( struct sockaddr_in &name, int nPoolSize );
 
 		fd_set fdActive;
+#ifdef WIN32
+		unsigned int nServer;
+#else
 		int nServer;
+#endif
 		int nPort;
 	};
 }

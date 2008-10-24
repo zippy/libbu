@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include "socket.h"
 #include "osx_compatibility.h"
+#include "win32_compatibility.h"
 
 #ifndef WIN32
  #include <sys/socket.h>
@@ -194,11 +195,7 @@ void Bu::Socket::read()
 
 size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 {
-#ifndef WIN32
 	int nRead = TEMP_FAILURE_RETRY( ::read( nSocket, pBuf, nBytes ) );
-#else
-	int nRead = ::read( nSocket, pBuf, nBytes );
-#endif
 	if( nRead < 0 )
 	{
 		throw SocketException( SocketException::cRead, strerror(errno) );
@@ -209,7 +206,7 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 size_t Bu::Socket::read( void *pBuf, size_t nBytes,
 		uint32_t nSec, uint32_t nUSec )
 {
-	struct timeval tv, nt, ct;
+	struct timeval tv;
 	size_t nRead = 0;
 	
 	fd_set rfds;
@@ -217,6 +214,7 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes,
 	FD_SET(nSocket, &rfds);
 
 #ifndef WIN32
+	struct timeval nt, ct;
 	gettimeofday( &nt, NULL );
 	nt.tv_sec += nSec;
 	nt.tv_usec += nUSec;
@@ -251,11 +249,7 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes,
 
 size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
 {
-#ifndef WIN32
 	int nWrote = TEMP_FAILURE_RETRY( ::write( nSocket, pBuf, nBytes ) );
-#else
-	int nWrote = ::write( nSocket, pBuf, nBytes );
-#endif
 	if( nWrote < 0 )
 	{
 		if( errno == EAGAIN ) return 0;
@@ -266,7 +260,7 @@ size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
 
 size_t Bu::Socket::write( const void *pBuf, size_t nBytes, uint32_t nSec, uint32_t nUSec )
 {
-	struct timeval tv, nt, ct;
+	struct timeval tv;
 	size_t nWrote = 0;
 	
 	fd_set wfds;
@@ -274,6 +268,7 @@ size_t Bu::Socket::write( const void *pBuf, size_t nBytes, uint32_t nSec, uint32
 	FD_SET(nSocket, &wfds);
 
 #ifndef WIN32
+	struct timeval nt, ct;
 	gettimeofday( &nt, NULL );
 	nt.tv_sec += nSec;
 	nt.tv_usec += nUSec;
@@ -421,9 +416,9 @@ bool Bu::Socket::isOpen()
 	return bActive;
 }
 
-#ifdef WIN32
- typedef int socklen_t;
-#endif
+//#ifdef WIN32
+// typedef int socklen_t;
+//#endif
 
 void Bu::Socket::setAddress()
 {
