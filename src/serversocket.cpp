@@ -35,11 +35,11 @@ Bu::ServerSocket::ServerSocket( int nPort, int nPoolSize ) :
 
 	/* Give the socket a name. */
 	name.sin_family = AF_INET;
-	name.sin_port = htons( nPort );
+	name.sin_port = DYNLOAD htons( nPort );
 
 	// I think this specifies who we will accept connections from,
 	// a good thing to make configurable later on
-	name.sin_addr.s_addr = htonl( INADDR_ANY );
+	name.sin_addr.s_addr = DYNLOAD htonl( INADDR_ANY );
 
 	startServer( name, nPoolSize );
 }
@@ -52,10 +52,11 @@ Bu::ServerSocket::ServerSocket(const FString &sAddr,int nPort, int nPoolSize) :
 
 	/* Give the socket a name. */
 	name.sin_family = AF_INET;
-	name.sin_port = htons( nPort );
+
+	name.sin_port = DYNLOAD htons( nPort );
 
 #ifdef WIN32
-	name.sin_addr.s_addr = inet_addr( sAddr.getStr() );
+	name.sin_addr.s_addr = DYNLOAD inet_addr( sAddr.getStr() );
 #else
 	inet_aton( sAddr.getStr(), &name.sin_addr );
 #endif
@@ -70,27 +71,29 @@ Bu::ServerSocket::~ServerSocket()
 void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
 {
 	/* Create the socket. */
-	nServer = socket( PF_INET, SOCK_STREAM, 0 );
+	nServer = DYNLOAD socket( PF_INET, SOCK_STREAM, 0 );
+
 	if( nServer < 0 )
 	{
 		throw Bu::ServerSocketException("Couldn't create a listen socket.");
 	}
 
 	int opt = 1;
-	setsockopt(
-		nServer,
-		SOL_SOCKET,
-		SO_REUSEADDR,
-		(char *)&opt,
-		sizeof( opt )
-		);
+	DYNLOAD setsockopt(
+			nServer,
+			SOL_SOCKET,
+			SO_REUSEADDR,
+			(char *)&opt,
+			sizeof( opt )
+			);
 
-	if( bind( nServer, (struct sockaddr *) &name, sizeof(name) ) < 0 )
+	if( DYNLOAD bind(
+				nServer, (struct sockaddr *) &name, sizeof(name) ) < 0 )
 	{
 		throw Bu::ServerSocketException("Couldn't bind to the listen socket.");
 	}
 
-	if( listen( nServer, nPoolSize ) < 0 )
+	if( DYNLOAD listen( nServer, nPoolSize ) < 0 )
 	{
 		throw Bu::ServerSocketException(
 			"Couldn't begin listening to the server socket."
@@ -116,20 +119,29 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 	xT.tv_sec = nTimeoutSec;
 	xT.tv_usec = nTimeoutUSec;	
 
-	if( TEMP_FAILURE_RETRY(select( nServer+1, &fdRead, NULL, NULL, &xT )) < 0 )
+	if( TEMP_FAILURE_RETRY(
+			DYNLOAD select( nServer+1, &fdRead, NULL, NULL, &xT )) < 0 )
 	{
 		throw Bu::ServerSocketException(
 			"Error scanning for new connections: %s", strerror( errno )
 			);
 	}
 
+#ifdef WIN32
+	if( DynamicWinsock2::DYN_FD_ISSET( nServer, &fdRead ) )
+#else
 	if( FD_ISSET( nServer, &fdRead ) )
+#endif
 	{
 		struct sockaddr_in clientname;
 		socklen_t size;
 		int nClient;
 
 		size = sizeof( clientname );
+#ifdef WIN32
+		nClient = DYNLOAD accept( 
+				nServer, (struct sockaddr *)&clientname, (int *)&size);
+#else /* not-WIN32 */
 #ifdef __CYGWIN__
 		nClient = ::accept( nServer, (struct sockaddr *)&clientname,
 				(int *)&size
@@ -141,6 +153,7 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
   		nClient = ::accept( nServer, (struct sockaddr *)&clientname, &size );
 #endif /* __APPLE__ */
 #endif /* __CYGWIN__ */
+#endif /* WIN32 */
 		if( nClient < 0 )
 		{
 			throw Bu::ServerSocketException(
@@ -175,7 +188,7 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 			// If iMode = 0, blocking is enabled; 
 			// If iMode != 0, non-blocking mode is enabled.
 			u_long iMode = 1;
-			ioctlsocket(nClient, FIONBIO, &iMode);			
+			DYNLOAD ioctlsocket(nClient, FIONBIO, &iMode);			
 #endif
 		}
 

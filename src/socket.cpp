@@ -44,7 +44,7 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 	bActive = false;
      
 	/* Create the socket. */
-	nSocket = socket( PF_INET, SOCK_STREAM, 0 );
+	nSocket = DYNLOAD socket( PF_INET, SOCK_STREAM, 0 );
 	
 	if( nSocket < 0 )
 	{
@@ -68,7 +68,7 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 	// If iMode = 0, blocking is enabled; 
 	// If iMode != 0, non-blocking mode is enabled.
 	u_long iMode = 1;
-	ioctlsocket(nSocket, FIONBIO, &iMode);
+	DYNLOAD ioctlsocket(nSocket, FIONBIO, &iMode);
 #endif
      
 	/* Connect to the server. */
@@ -77,8 +77,8 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 		struct hostent *hostinfo;
      
 		xServerName.sin_family = AF_INET;
-		xServerName.sin_port = htons( nPort );
-		hostinfo = gethostbyname( sAddr.getStr() );
+		xServerName.sin_port = DYNLOAD htons( nPort );
+		hostinfo = DYNLOAD gethostbyname( sAddr.getStr() );
 		if (hostinfo == NULL)
 		{
 			throw Bu::SocketException("Couldn't resolve hostname.\n");
@@ -88,7 +88,7 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 
 	//printf("Making actual connection...");
 	//fflush( stdout );
-	connect(
+	DYNLOAD connect(
 		nSocket,
 		(struct sockaddr *)&xServerName,
 		sizeof(xServerName)
@@ -113,7 +113,7 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 		tv.tv_sec = nTimeout;
 		tv.tv_usec = 0;
 		
-		retval = select( nSocket+1, &rfds, &wfds, &efds, &tv );
+		retval = DYNLOAD select( nSocket+1, &rfds, &wfds, &efds, &tv );
 
 		if( retval == 0 )
 		{
@@ -195,7 +195,12 @@ void Bu::Socket::read()
 
 size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 {
+#ifdef WIN32
+	int nRead = TEMP_FAILURE_RETRY( 
+			DYNLOAD recv( nSocket, (char *) pBuf, nBytes, 0 ) );
+#else
 	int nRead = TEMP_FAILURE_RETRY( ::read( nSocket, pBuf, nBytes ) );
+#endif
 	if( nRead < 0 )
 	{
 		throw SocketException( SocketException::cRead, strerror(errno) );
@@ -213,34 +218,34 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes,
 	FD_ZERO(&rfds);
 	FD_SET(nSocket, &rfds);
 
-#ifndef WIN32
+#ifdef WIN32
+	DWORD dwStart = GetTickCount();
+	uint64_t uOver = dwStart + ((nUSec / 1000) * (nSec * 1000));
+	DWORD dwEnd = uOver>4294967295U?uOver-4294967295U:uOver;
+#else
 	struct timeval nt, ct;
 	gettimeofday( &nt, NULL );
 	nt.tv_sec += nSec;
 	nt.tv_usec += nUSec;
-#else
-	DWORD dwStart = GetTickCount();
-	uint64_t uOver = dwStart + ((nUSec / 1000) * (nSec * 1000));
-	DWORD dwEnd = uOver>4294967295U?uOver-4294967295U:uOver;
 #endif
 
 	for(;;)
 	{
 		tv.tv_sec = nSec;
 		tv.tv_usec = nUSec;
-		select( nSocket+1, &rfds, NULL, NULL, &tv );
+		DYNLOAD select( nSocket+1, &rfds, NULL, NULL, &tv );
 		nRead += read( ((char *)pBuf)+nRead, nBytes-nRead );
 		if( nRead >= nBytes )
 			break;
-#ifndef WIN32
+#ifdef WIN32
+		DWORD dwNow = GetTickCount();
+		if( dwNow > dwEnd )
+			break;
+#else
 		gettimeofday( &ct, NULL );
 		if( (ct.tv_sec > nt.tv_sec) ||
 			(ct.tv_sec == nt.tv_sec &&
 			ct.tv_usec >= nt.tv_usec) )
-			break;
-#else
-		DWORD dwNow = GetTickCount();
-		if( dwNow > dwEnd )
 			break;
 #endif
 	}
@@ -249,7 +254,12 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes,
 
 size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
 {
+#ifdef WIN32
+	int nWrote = TEMP_FAILURE_RETRY( 
+			DYNLOAD send( nSocket, (const char *) pBuf, nBytes, 0 ) );
+#else
 	int nWrote = TEMP_FAILURE_RETRY( ::write( nSocket, pBuf, nBytes ) );
+#endif
 	if( nWrote < 0 )
 	{
 		if( errno == EAGAIN ) return 0;
@@ -267,34 +277,34 @@ size_t Bu::Socket::write( const void *pBuf, size_t nBytes, uint32_t nSec, uint32
 	FD_ZERO(&wfds);
 	FD_SET(nSocket, &wfds);
 
-#ifndef WIN32
+#ifdef WIN32
+	DWORD dwStart = GetTickCount();
+	uint64_t uOver = dwStart + ((nUSec / 1000) * (nSec * 1000));
+	DWORD dwEnd = uOver>4294967295U?uOver-4294967295U:uOver;
+#else
 	struct timeval nt, ct;
 	gettimeofday( &nt, NULL );
 	nt.tv_sec += nSec;
 	nt.tv_usec += nUSec;
-#else
-	DWORD dwStart = GetTickCount();
-	uint64_t uOver = dwStart + ((nUSec / 1000) * (nSec * 1000));
-	DWORD dwEnd = uOver>4294967295U?uOver-4294967295U:uOver;
 #endif
 
 	for(;;)
 	{
 		tv.tv_sec = nSec;
 		tv.tv_usec = nUSec;
-		select( nSocket+1, NULL, &wfds, NULL, &tv );
+		DYNLOAD select( nSocket+1, NULL, &wfds, NULL, &tv );
 		nWrote += write( ((char *)pBuf)+nWrote, nBytes-nWrote );
 		if( nWrote >= nBytes )
 			break;
-#ifndef WIN32
+#ifdef WIN32
+		DWORD dwNow = GetTickCount();
+		if( dwNow > dwEnd )
+			break;
+#else
 		gettimeofday( &ct, NULL );
 		if( (ct.tv_sec > nt.tv_sec) ||
 			(ct.tv_sec == nt.tv_sec &&
 			ct.tv_usec >= nt.tv_usec) )
-			break;
-#else
-		DWORD dwNow = GetTickCount();
-		if( dwNow > dwEnd )
 			break;
 #endif
 	}
@@ -332,13 +342,17 @@ bool Bu::Socket::canRead()
 	FD_ZERO(&rfds);
 	FD_SET(nSocket, &rfds);
 	struct timeval tv = { 0, 0 };
-	int retval = select( nSocket+1, &rfds, NULL, NULL, &tv );
+	int retval = DYNLOAD select( nSocket+1, &rfds, NULL, NULL, &tv );
 	if( retval == -1 )
 		throw SocketException(
 			SocketException::cBadRead,
 			"Bad Read error"
 			);
+#ifdef WIN32
+	if( !DynamicWinsock2::DYN_FD_ISSET( nSocket, &rfds ) )
+#else
 	if( !FD_ISSET( nSocket, &rfds ) )
+#endif
 		return false;
 	return true;
 }
@@ -349,13 +363,17 @@ bool Bu::Socket::canWrite()
 	FD_ZERO(&wfds);
 	FD_SET(nSocket, &wfds);
 	struct timeval tv = { 0, 0 };
-	int retval = select( nSocket+1, NULL, &wfds, NULL, &tv );
+	int retval = DYNLOAD select( nSocket+1, NULL, &wfds, NULL, &tv );
 	if( retval == -1 )
 		throw SocketException(
 			SocketException::cBadRead,
 			"Bad Read error"
 			);
+#ifdef WIN32
+	if( !DynamicWinsock2::DYN_FD_ISSET( nSocket, &wfds ) )
+#else
 	if( !FD_ISSET( nSocket, &wfds ) )
+#endif
 		return false;
 	return true;
 }
@@ -403,7 +421,7 @@ void Bu::Socket::setBlocking( bool bBlocking )
 	// socket based on the numerical value of iMode.
 	// If iMode = 0, blocking is enabled; 
 	// If iMode != 0, non-blocking mode is enabled.
-	ioctlsocket(nSocket, FIONBIO, &iMode);
+	DYNLOAD ioctlsocket(nSocket, FIONBIO, &iMode);
 #endif	
 }
 
@@ -416,20 +434,20 @@ bool Bu::Socket::isOpen()
 	return bActive;
 }
 
-//#ifdef WIN32
-// typedef int socklen_t;
-//#endif
-
 void Bu::Socket::setAddress()
 {
 	struct sockaddr_in addr;
 	socklen_t len = sizeof(addr);
 	addr.sin_family = AF_INET;
 	// getsockname( nSocket, (sockaddr *)(&addr), &len );
-	getpeername( nSocket, (sockaddr *)(&addr), &len );
+	DYNLOAD getpeername( nSocket, (sockaddr *)(&addr), &len );
+#ifdef WIN32
+	DYNLOAD inet_ntoa( sAddress, addr.sin_addr );
+#else
 	char buf[150];
 	sprintf( buf, "%s", inet_ntoa( addr.sin_addr ) );
 	sAddress = buf;
+#endif
 }
 
 Bu::FString Bu::Socket::getAddress() const
