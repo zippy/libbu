@@ -3,21 +3,13 @@
 
 namespace Bu
 {
-	template<class obtype>
 	class CacheHandler
 	{
 	public:
-		CacheHandler()
-		{
-		}
-
-		virtual ~CacheHandler()
-		{
-		}
-
-		void forceLoad()
-		{
-		}
+		CacheHandler();
+		virtual ~CacheHandler();
+		virtual void load()=0;
+		virtual void unload()=0;
 
 	private:
 	};

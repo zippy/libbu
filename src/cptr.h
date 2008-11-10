@@ -23,6 +23,16 @@ namespace Bu
 			rCache.decRef( pData );
 		}
 
+		obtype &operator*()
+		{
+			return *pData;
+		}
+
+		obtype *operator->()
+		{
+			return pData;
+		}
+
 	private:
 		Bu::Cache<obtype> &rCache;
 		obtype *pData;

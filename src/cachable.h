@@ -16,4 +16,13 @@ namespace Bu
 	template<> long getCacheId<Cachable>( const Cachable *o );
 };
 
+#define DECL_CACHABLE( name ) \
+	namespace Bu { template<> long getCacheId<name>( const name *o ); }
+
+#define DEF_CACHABLE( name ) \
+	template<> long Bu::getCacheId<name>( const name *o ) \
+	{	\
+		return getCacheId<Bu::Cachable>( (Bu::Cachable *)o );	\
+	}
+
 #endif

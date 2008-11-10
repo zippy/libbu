@@ -3,6 +3,8 @@
 
 #include "bu/cptr.h"
 #include "bu/hash.h"
+#include "bu/list.h"
+#include "bu/cachehandler.h"
 
 #define BU_TRACE
 #include "bu/trace.h"
@@ -29,6 +31,21 @@ namespace Bu
 		virtual ~Cache()
 		{
 			TRACE();
+			for( HandlerList::iterator i = lHandler.begin();
+				 i != lHandler.end(); i++ )
+			{
+				delete *i;
+			}
+		}
+
+		void appendHandler( CacheHandler *pHand )
+		{
+			lHandler.append( pHand );
+		}
+
+		void prependHandler( CacheHandler *pHand )
+		{
+			lHandler.prepend( pHand );
 		}
 
 		Ptr insert( obtype *pData )
@@ -37,6 +54,18 @@ namespace Bu
 			CacheEntry e = {pData, 0};
 			hEnt.insert( getCacheId( pData ), e );
 			return Ptr( *this, pData );
+		}
+
+		Ptr get( cid cId )
+		{
+			TRACE();
+			return Ptr( *this, hEnt.get( cId ).pData );
+		}
+
+		int getRefCnt( cid cId )
+		{
+			TRACE();
+			return hEnt.get( cId ).iRefs;
 		}
 
 	private:
@@ -64,6 +93,8 @@ namespace Bu
 		typedef Bu::Hash<cid, CacheEntry> CidHash;
 		//RefHash hRefs;
 		CidHash hEnt;
+		typedef Bu::List<CacheHandler *> HandlerList;
+		HandlerList lHandler;
 	};
 };
 
