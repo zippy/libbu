@@ -6,6 +6,7 @@
  */
 
 #include "bu/unitsuite.h"
+#include "bu/hash.h"
 #include "bu/array.h"
 
 class Unit : public Bu::UnitSuite
@@ -17,6 +18,7 @@ public:
 		addTest( Unit::general );
 		addTest( Unit::iterate1 );
 		addTest( Unit::iterate2 );
+		addTest( Unit::copy );
 	}
 
 	virtual ~Unit()
@@ -56,6 +58,39 @@ public:
 		Bu::Array<int> ai;
 		for( Bu::Array<int>::iterator i = ai.begin(); i != ai.end(); i++ )
 			unitFailed("Empty lists shouldn't be iterated through.");
+	}
+
+	void copy()
+	{
+		typedef Bu::Hash<Bu::FString, Bu::FString> StrHash;
+		typedef Bu::Array<StrHash> StrHashArray;
+
+		StrHash h1;
+		h1["Hi"] = "Yo";
+		h1["Bye"] = "Later";
+
+		StrHash h2;
+		h2["Test"] = "Bloop";
+		h2["Foo"] = "ooF";
+
+		StrHashArray a1;
+		a1.append( h1 );
+		a1.append( h2 );
+
+		StrHashArray a2(a1);
+
+		unitTest( a2[0].get("Hi") == "Yo" );
+		unitTest( a2[0].get("Bye") == "Later" );
+		unitTest( a2[1].get("Test") == "Bloop" );
+		unitTest( a2[1].get("Foo") == "ooF" );
+
+		StrHashArray a3;
+		a3 = a1;
+
+		unitTest( a3[0].get("Hi") == "Yo" );
+		unitTest( a3[0].get("Bye") == "Later" );
+		unitTest( a3[1].get("Test") == "Bloop" );
+		unitTest( a3[1].get("Foo") == "ooF" );
 	}
 };
 

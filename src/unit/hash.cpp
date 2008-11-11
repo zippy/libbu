@@ -54,7 +54,17 @@ public:
 	{
 		StrStrHash h;
 		h["Hi"] = "Yo";
+		h["Bye"] = "Later";
 		unitTest( h["Hi"].getValue() == "Yo" );
+
+		StrStrHash h2(h);
+		unitTest( h2["Hi"].getValue() = "Yo" );
+		unitTest( h2["Bye"].getValue() = "Later" );
+
+		StrStrHash h3;
+		h3 = h;
+		unitTest( h3["Hi"].getValue() = "Yo" );
+		unitTest( h3["Bye"].getValue() = "Later" );
 	}
 };
 

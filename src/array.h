@@ -42,6 +42,7 @@ namespace Bu
 			iSize( 0 ),
 			iCapacity( 0 )
 		{
+			*this = src;
 		}
 		
 		Array( long iSetCap ) :
@@ -55,6 +56,16 @@ namespace Bu
 		~Array()
 		{
 			clear();
+		}
+
+		MyType &operator=( const MyType &src )
+		{
+			clear();
+			setCapacity( src.iCapacity );
+			long iTop=src.getSize();
+			for( long i=0; i<iTop; ++i )
+				append( src[i] );
+			return *this;
 		}
 
 		/**
