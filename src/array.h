@@ -62,9 +62,12 @@ namespace Bu
 		{
 			clear();
 			setCapacity( src.iCapacity );
-			long iTop=src.getSize();
-			for( long i=0; i<iTop; ++i )
+
+			long iTop = src.getSize();
+			for( long i = 0; i < iTop; ++i )
+			{
 				append( src[i] );
+			}
 			return *this;
 		}
 
