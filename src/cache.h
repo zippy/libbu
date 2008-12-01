@@ -11,16 +11,15 @@
 
 namespace Bu
 {
-	template<class obtype> class Cache;
-	template<class obtype> long getCacheId( const obtype *o );
-
 	template<class obtype>
 	class Cache
 	{
 	friend class Bu::CPtr<obtype>;
-	typedef Bu::CPtr<obtype> Ptr;
+		typedef Bu::CPtr<obtype> Ptr;
+		typedef Bu::CacheHandler<obtype> Handler;
+		typedef Bu::List<Handler *> HandlerList;
 	public:
-		typedef long cid;	/**< Cache ID type. Unique cache entry ID. */
+		typedef long cid_t;	/**< Cache ID type. Unique cache entry ID. */
 
 	public:
 		Cache()
@@ -31,19 +30,19 @@ namespace Bu
 		virtual ~Cache()
 		{
 			TRACE();
-			for( HandlerList::iterator i = lHandler.begin();
+/*			for( HandlerList::iterator i = lHandler.begin();
 				 i != lHandler.end(); i++ )
 			{
 				delete *i;
 			}
-		}
+*/		}
 
-		void appendHandler( CacheHandler *pHand )
+		void appendHandler( Handler *pHand )
 		{
 			lHandler.append( pHand );
 		}
 
-		void prependHandler( CacheHandler *pHand )
+		void prependHandler( Handler *pHand )
 		{
 			lHandler.prepend( pHand );
 		}
@@ -52,33 +51,33 @@ namespace Bu
 		{
 			TRACE();
 			CacheEntry e = {pData, 0};
-			hEnt.insert( getCacheId( pData ), e );
+			hEnt.insert( /*pData*/ 0 , e );
 			return Ptr( *this, pData );
 		}
 
-		Ptr get( cid cId )
+		Ptr get( cid_t cId )
 		{
 			TRACE();
 			return Ptr( *this, hEnt.get( cId ).pData );
 		}
 
-		int getRefCnt( cid cId )
+		int getRefCnt( cid_t cId )
 		{
 			TRACE();
 			return hEnt.get( cId ).iRefs;
 		}
 
 	private:
-		void incRef( obtype *pData )
+		void incRef( cid_t cId )
 		{
 			TRACE();
-			hEnt.get( getCacheId( pData ) ).iRefs++;
+			hEnt.get( cId ).iRefs++;
 		}
 
-		void decRef( obtype *pData )
+		void decRef( cid_t cId )
 		{
 			TRACE();
-			CacheEntry &e = hEnt.get( getCacheId( pData ) );
+			CacheEntry &e = hEnt.get( cId );
 			e.iRefs--;
 		}
 
@@ -90,10 +89,9 @@ namespace Bu
 		} CacheEntry;
 
 		//typedef Bu::Hash<ptrdiff_t, int> RefHash;
-		typedef Bu::Hash<cid, CacheEntry> CidHash;
+		typedef Bu::Hash<cid_t, CacheEntry> CidHash;
 		//RefHash hRefs;
 		CidHash hEnt;
-		typedef Bu::List<CacheHandler *> HandlerList;
 		HandlerList lHandler;
 	};
 };

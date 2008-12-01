@@ -1,9 +1,8 @@
 #include <stdio.h>
 
 #include "bu/cache.h"
-#include "bu/cachable.h"
 
-class Bob : public Bu::Cachable
+class Bob
 {
 public:
 	Bob()
@@ -36,24 +35,55 @@ public:
 	int iInt;
 };
 
-DECL_CACHABLE( Bob );
-DEF_CACHABLE( Bob );
+class BobHandler : public Bu::CacheHandler<Bob>
+{
+public:
+	BobHandler() :
+		cLastId( 0 )
+	{
+	}
+
+	~BobHandler()
+	{
+	}
+
+	virtual Bu::CPtr<Bob> load()
+	{
+	}
+
+	virtual void unload( Bu::CPtr<Bob> pObj )
+	{
+	}
+
+	virtual Bu::CPtr<Bob> create()
+	{
+	}
+
+	virtual Bu::CPtr<Bob> create( Bob &rSrc )
+	{
+	}
+
+	virtual void destroy( Bu::CPtr<Bob> pObj )
+	{
+	}
+
+private:
+	Bu::Cache<Bob>::cid_t cLastId;
+};
 
 int main()
 {
-	Bu::Cache<Bob> bobCache;
+	typedef Bu::Cache<Bob> BobCache;
+	typedef Bu::CPtr<Bob> BobPtr;
 
-	Bu::CPtr<Bob> pB1 = bobCache.insert( new Bob() );
+	BobCache bobCache;
 
+	BobPtr pB1 = bobCache.insert( new Bob() );
 	(*pB1).setInt( 44 );
-	
 	printf("RefCnt = %d\n", bobCache.getRefCnt( 0 ) );
 
-	Bu::CPtr<Bob> pB2 = bobCache.get( 0 );
-	
+	BobPtr pB2 = bobCache.get( 0 );
 	printf("RefCnt = %d\n", bobCache.getRefCnt( 0 ) );
-
 	printf("Int = %d\n", pB2->getInt() );
-
 }
 
