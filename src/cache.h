@@ -4,22 +4,30 @@
 #include "bu/cptr.h"
 #include "bu/hash.h"
 #include "bu/list.h"
-#include "bu/cachehandler.h"
+#include "bu/cachestore.h"
 
 #define BU_TRACE
 #include "bu/trace.h"
 
 namespace Bu
 {
-	template<class obtype>
+	template<class obtype, class keytype>
 	class Cache
 	{
-	friend class Bu::CPtr<obtype>;
-		typedef Bu::CPtr<obtype> Ptr;
-		typedef Bu::CacheHandler<obtype> Handler;
-		typedef Bu::List<Handler *> HandlerList;
+	friend class Bu::CPtr<obtype, keytype>;
 	public:
-		typedef long cid_t;	/**< Cache ID type. Unique cache entry ID. */
+		typedef Bu::CPtr<obtype, keytype> Ptr;
+	private:
+		typedef Bu::CacheStore<obtype, keytype> Store;
+		typedef Bu::List<Store *> StoreList;
+		
+		typedef struct CacheEntry
+		{
+			obtype *pData;
+			int iRefs;
+		} CacheEntry;
+
+		typedef Bu::Hash<keytype, CacheEntry> CidHash;
 
 	public:
 		Cache()
@@ -30,51 +38,51 @@ namespace Bu
 		virtual ~Cache()
 		{
 			TRACE();
-/*			for( HandlerList::iterator i = lHandler.begin();
-				 i != lHandler.end(); i++ )
+			for( typename StoreList::iterator i = lStore.begin();
+				 i != lStore.end(); i++ )
 			{
 				delete *i;
 			}
-*/		}
-
-		void appendHandler( Handler *pHand )
-		{
-			lHandler.append( pHand );
 		}
 
-		void prependHandler( Handler *pHand )
+		void appendStore( Store *pHand )
 		{
-			lHandler.prepend( pHand );
+			lStore.append( pHand );
+		}
+
+		void prependStore( Store *pHand )
+		{
+			lStore.prepend( pHand );
 		}
 
 		Ptr insert( obtype *pData )
 		{
 			TRACE();
 			CacheEntry e = {pData, 0};
-			hEnt.insert( /*pData*/ 0 , e );
+			hEnt.insert( 0 , e );
 			return Ptr( *this, pData );
 		}
 
-		Ptr get( cid_t cId )
+		Ptr get( keytype cId )
 		{
 			TRACE();
 			return Ptr( *this, hEnt.get( cId ).pData );
 		}
 
-		int getRefCnt( cid_t cId )
+		int getRefCnt( keytype cId )
 		{
 			TRACE();
 			return hEnt.get( cId ).iRefs;
 		}
 
 	private:
-		void incRef( cid_t cId )
+		void incRef( keytype cId )
 		{
 			TRACE();
 			hEnt.get( cId ).iRefs++;
 		}
 
-		void decRef( cid_t cId )
+		void decRef( keytype cId )
 		{
 			TRACE();
 			CacheEntry &e = hEnt.get( cId );
@@ -82,17 +90,8 @@ namespace Bu
 		}
 
 	private:
-		typedef struct CacheEntry
-		{
-			obtype *pData;
-			int iRefs;
-		} CacheEntry;
-
-		//typedef Bu::Hash<ptrdiff_t, int> RefHash;
-		typedef Bu::Hash<cid_t, CacheEntry> CidHash;
-		//RefHash hRefs;
 		CidHash hEnt;
-		HandlerList lHandler;
+		StoreList lStore;
 	};
 };
 

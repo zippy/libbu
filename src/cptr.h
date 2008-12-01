@@ -3,31 +3,29 @@
 
 namespace Bu
 {
-	template<class obtype> class Cache;
+	template<class obtype, class keytype> class Cache;
 
 	/**
 	 * Cache Pointer - Provides access to data that is held within the cache.
 	 * This provides safe, refcounting access to data stored in the cache, with
 	 * support for lazy loading.
 	 */
-	template<class obtype>
+	template<class obtype, class keytype>
 	class CPtr
 	{
-	friend class Bu::Cache<obtype>;
-	public:
-		typedef long cid_t;	/**< Cache ID type. Unique cache entry ID. */
+	friend class Bu::Cache<obtype, keytype>;
 	private:
-		CPtr( Cache<obtype> &rCache, obtype *pData ) :
+		CPtr( Cache<obtype, keytype> &rCache, obtype *pData ) :
 			rCache( rCache ),
 			pData( pData )
 		{
-			rCache.incRef( cId );
+			rCache.incRef( kId );
 		}
 
 	public:
 		virtual ~CPtr()
 		{
-			rCache.decRef( cId );
+			rCache.decRef( kId );
 		}
 
 		obtype &operator*()
@@ -41,9 +39,9 @@ namespace Bu
 		}
 
 	private:
-		Bu::Cache<obtype> &rCache;
+		Bu::Cache<obtype, keytype> &rCache;
 		obtype *pData;
-		cid_t cId;
+		keytype kId;
 	};
 };
 

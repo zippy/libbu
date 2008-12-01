@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
 
 #include "bu/cache.h"
 
@@ -35,55 +38,74 @@ public:
 	int iInt;
 };
 
-class BobHandler : public Bu::CacheHandler<Bob>
+class BobStore : public Bu::CacheStore<Bob, long>
 {
 public:
-	BobHandler() :
+	BobStore() :
 		cLastId( 0 )
 	{
+		TRACE();
 	}
 
-	~BobHandler()
+	~BobStore()
 	{
+		TRACE();
 	}
 
-	virtual Bu::CPtr<Bob> load()
+	virtual Bob *load( const long &key )
 	{
+		TRACE();
+		return NULL;
 	}
 
-	virtual void unload( Bu::CPtr<Bob> pObj )
+	virtual void unload( Bob *pObj )
 	{
+		TRACE();
+		delete pObj;
 	}
 
-	virtual Bu::CPtr<Bob> create()
+	virtual long create( Bob *rSrc )
 	{
+		TRACE();
+		return ++cLastId;
 	}
 
-	virtual Bu::CPtr<Bob> create( Bob &rSrc )
+	virtual void destroy( Bob *pObj, const long &key )
 	{
-	}
-
-	virtual void destroy( Bu::CPtr<Bob> pObj )
-	{
+		TRACE();
+		delete pObj;
 	}
 
 private:
-	Bu::Cache<Bob>::cid_t cLastId;
+	long cLastId;
 };
 
-int main()
+int main( int argc, char *argv[] )
 {
-	typedef Bu::Cache<Bob> BobCache;
-	typedef Bu::CPtr<Bob> BobPtr;
+	TRACE();
+	if( argc < 3 )
+	{
+		printf("Try: %s [icufd] [<id/value>]\n\n", argv[0] );
+		return 0;
+	}
 
-	BobCache bobCache;
+	switch( argv[1][0] )
+	{
+		case 'i':
+			mkdir("bobcache", 0755 );
+			printf("Initialized cache:  %s\n", strerror( errno ) );
+			return 0;
 
-	BobPtr pB1 = bobCache.insert( new Bob() );
-	(*pB1).setInt( 44 );
-	printf("RefCnt = %d\n", bobCache.getRefCnt( 0 ) );
+		case 'c':
+			typedef Bu::Cache<Bob, long> BobCache;
+			typedef BobCache::Ptr BobPtr;
 
-	BobPtr pB2 = bobCache.get( 0 );
-	printf("RefCnt = %d\n", bobCache.getRefCnt( 0 ) );
-	printf("Int = %d\n", pB2->getInt() );
+			BobCache cBob;
+
+			cBob.appendStore( new BobStore() );
+
+			return 0;
+	}
+
 }
 
