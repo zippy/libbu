@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <string.h>
 
 namespace Bu
 {
@@ -26,7 +27,12 @@ namespace Bu
 	#define looper( vv ) 								\
 		for( ; *n; n++ ) 								\
 		{												\
-			if( *n == ',' || *n == ')' )				\
+			if( bInBracket == true )					\
+			{											\
+				if( *n == '>' )							\
+					bInBracket = false;					\
+			}											\
+			else if( *n == ',' || *n == ')' )			\
 			{											\
 				fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );	\
 				fwrite("=", 1, 1, stdout);				\
@@ -35,6 +41,10 @@ namespace Bu
 				n++;									\
 				break;									\
 			}											\
+			else if( *n == '<' )						\
+			{											\
+				bInBracket = true;						\
+			}											\
 		} (void)0
 	
 	template<typename t1> void __tracer( const char *pf, t1 &v1 )
@@ -42,8 +52,9 @@ namespace Bu
 		printf("trace: ");
 		const char *s = pf;
 		const char *n = pf;
+		bool bInBracket = false;
 		looper( v1 );
-		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, strlen(s), stdout );
 		fwrite( "\n", 1, 1, stdout );
 		fflush( stdout );
 	}
@@ -54,9 +65,10 @@ namespace Bu
 		printf("trace: ");
 		const char *s = pf;
 		const char *n = pf;
+		bool bInBracket = false;
 		looper( v1 );
 		looper( v2 );
-		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, strlen(s), stdout );
 		fwrite( "\n", 1, 1, stdout );
 		fflush( stdout );
 	}
@@ -67,10 +79,11 @@ namespace Bu
 		printf("trace: ");
 		const char *s = pf;
 		const char *n = pf;
+		bool bInBracket = false;
 		looper( v1 );
 		looper( v2 );
 		looper( v3 );
-		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, strlen(s), stdout );
 		fwrite( "\n", 1, 1, stdout );
 		fflush( stdout );
 	}
@@ -81,11 +94,12 @@ namespace Bu
 		printf("trace: ");
 		const char *s = pf;
 		const char *n = pf;
+		bool bInBracket = false;
 		looper( v1 );
 		looper( v2 );
 		looper( v3 );
 		looper( v4 );
-		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, strlen(s), stdout );
 		fwrite( "\n", 1, 1, stdout );
 		fflush( stdout );
 	}
@@ -96,12 +110,13 @@ namespace Bu
 		printf("trace: ");
 		const char *s = pf;
 		const char *n = pf;
+		bool bInBracket = false;
 		looper( v1 );
 		looper( v2 );
 		looper( v3 );
 		looper( v4 );
 		looper( v5 );
-		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, strlen(s), stdout );
 		fwrite( "\n", 1, 1, stdout );
 		fflush( stdout );
 	}
@@ -114,13 +129,14 @@ namespace Bu
 		printf("trace: ");
 		const char *s = pf;
 		const char *n = pf;
+		bool bInBracket = false;
 		looper( v1 );
 		looper( v2 );
 		looper( v3 );
 		looper( v4 );
 		looper( v5 );
 		looper( v6 );
-		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, strlen(s), stdout );
 		fwrite( "\n", 1, 1, stdout );
 		fflush( stdout );
 	}
@@ -133,6 +149,7 @@ namespace Bu
 		printf("trace: ");
 		const char *s = pf;
 		const char *n = pf;
+		bool bInBracket = false;
 		looper( v1 );
 		looper( v2 );
 		looper( v3 );
@@ -140,7 +157,7 @@ namespace Bu
 		looper( v5 );
 		looper( v6 );
 		looper( v7 );
-		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, 1, stdout );
+		fwrite( s, (ptrdiff_t)n-(ptrdiff_t)s, strlen(s), stdout );
 		fwrite( "\n", 1, 1, stdout );
 		fflush( stdout );
 	}
@@ -156,8 +173,8 @@ namespace Bu
 	template<> void __tracer_format<uint64_t>( const uint64_t &v );
 	template<> void __tracer_format<bool>( const bool &v );
 	template<> void __tracer_format<char>( const char &v );
-	//template<> void __tracer_format<long>( const long &v );
-	//template<> void __tracer_format<unsigned long>( const unsigned long &v );
+	template<> void __tracer_format<long>( const long &v );
+	template<> void __tracer_format<unsigned long>( const unsigned long &v );
 	template<> void __tracer_format<float>( const float &v );
 	template<> void __tracer_format<double>( const double &v );
 	template<> void __tracer_format<void *>( void * const &v );

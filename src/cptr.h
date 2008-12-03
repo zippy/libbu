@@ -15,9 +15,11 @@ namespace Bu
 	{
 	friend class Bu::Cache<obtype, keytype>;
 	private:
-		CPtr( Cache<obtype, keytype> &rCache, obtype *pData ) :
+		CPtr( Cache<obtype, keytype> &rCache, obtype *pData,
+			const keytype &kId ) :
 			rCache( rCache ),
-			pData( pData )
+			pData( pData ),
+			kId( kId )
 		{
 			rCache.incRef( kId );
 		}
@@ -36,6 +38,11 @@ namespace Bu
 		obtype *operator->()
 		{
 			return pData;
+		}
+
+		const keytype &getKey()
+		{
+			return kId;
 		}
 
 	private:

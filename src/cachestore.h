@@ -1,8 +1,6 @@
 #ifndef BU_CACHE_STORE_H
 #define BU_CACHE_STORE_H
 
-#include "bu/cptr.h"
-
 namespace Bu
 {
 	/**
@@ -21,10 +19,8 @@ namespace Bu
 		{
 		}
 
-		typedef Bu::CPtr<obtype, keytype> Ptr;
-
 		virtual obtype *load( const keytype &key )=0;
-		virtual void unload( obtype *pObj )=0;
+		virtual void unload( obtype *pObj, const keytype &key )=0;
 		virtual keytype create( obtype *pSrc )=0;
 		virtual void destroy( obtype *pObj, const keytype &key )=0;
 
