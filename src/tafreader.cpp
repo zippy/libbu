@@ -200,7 +200,6 @@ bool Bu::TafReader::isws()
 
 void Bu::TafReader::next()
 {
-	printf("%d:%d: read '%c' (%d)\n", iLine, iCol, c, c );
 	if( c == '\n' )
 	{
 		iLine++;
