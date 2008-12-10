@@ -1,4 +1,4 @@
-{test:
+{"test":
 	{repo:
 		url = "http://svn.xagasoft.com/libbu++"
 		name = libbu++

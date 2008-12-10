@@ -15,7 +15,7 @@ using namespace Bu;
 Bu::TafReader::TafReader( Bu::Stream &sIn ) :
 	c( 0 ),
 	sIn( sIn ),
-	iLine( 1 ), iCol( 1 )
+	iLine( 1 ), iCol( -1 )
 {
 	next(); next();
 }
@@ -29,18 +29,21 @@ Bu::TafGroup *Bu::TafReader::readGroup()
 {
 	ws();
 	if( c != '{' )
-		throw TafException("Expected '{' at %d:%d.", iLine, iCol );
+		throw TafException("%d:%d: Expected '{' got '%c'.", iLine, iCol, c );
 	next();
 	ws();
 	FString sName = readStr();
 	TafGroup *pGroup = new TafGroup( sName );
+	ws();
+	if( c != ':' )
+		throw TafException("%d:%d: Expected ':' got '%c'.", iLine, iCol, c );
 	next();
 	//printf("Node[%s]:\n", sName.getStr() );
 
 	groupContent( pGroup );
 
 	if( c != '}' )
-		throw TafException("Expected '}' at %d:%d.", iLine, iCol );
+		throw TafException("%d:%d: Expected '}' got '%c'.", iLine, iCol, c );
 
 	//next();
 
@@ -64,7 +67,8 @@ void Bu::TafReader::groupContent( Bu::TafGroup *pGroup )
 		else if( c == '/' && la == '/' )
 			pGroup->addChild( readComment( true ) );
 		else if( c == ':' )
-			throw TafException("Encountered stray ':' in taf stream at %d:%d.", iLine, iCol );
+			throw TafException("%d:%d: Encountered stray ':' in taf stream.",
+				iLine, iCol );
 		else
 			pGroup->addChild( readProperty() );
 	}
@@ -154,7 +158,8 @@ Bu::FString Bu::TafReader::readStr()
 				else if( c == 't' )
 					c = '\t';
 				else
-					throw TafException("Invalid escape sequence at %d:%d.", iLine, iCol );
+					throw TafException("%d:%d: Invalid escape sequence '\\%c'.",
+						iLine, iCol, c );
 			}
 			else if( c == '"' )
 				break;
@@ -195,6 +200,7 @@ bool Bu::TafReader::isws()
 
 void Bu::TafReader::next()
 {
+	printf("%d:%d: read '%c' (%d)\n", iLine, iCol, c, c );
 	if( c == '\n' )
 	{
 		iLine++;
