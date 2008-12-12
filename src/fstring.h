@@ -916,6 +916,31 @@ namespace Bu
 			}
 		}
 
+		typedef chr *iterator;
+		typedef const chr *const_iterator;
+
+		iterator begin()
+		{
+			flatten();
+			return pFirst->pData;
+		}
+
+		const_iterator begin() const
+		{
+			flatten();
+			return pFirst->pData;
+		}
+
+		iterator end()
+		{
+			return pFirst->pData+pFirst->nLength;
+		}
+
+		const_iterator end() const
+		{
+			return pFirst->pData+pFirst->nLength;
+		}
+
 	private:
 		void flatten() const
 		{

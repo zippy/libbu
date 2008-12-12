@@ -93,12 +93,18 @@ void Bu::TafWriter::writeString( const Bu::FString &str )
 	if( str.getStr() == NULL )
 		return;
 	sOut.write("\"", 1 );
-	for( const char *s = str.getStr(); *s; s++ )
+	for( Bu::FString::const_iterator s = str.begin(); s != str.end(); s++ )
 	{
 		if( *s == '\"' )
 			sOut.write("\\\"", 2 );
 		else if( *s == '\\' )
 			sOut.write("\\\\", 2 );
+		else if( *s < 32 || *s > 126 )
+		{
+			char buf[5];
+			sprintf( buf, "\\x%02X", (unsigned char)*s );
+			sOut.write(buf, 4 );
+		}
 		else
 			sOut.write( s, 1 );
 	}
