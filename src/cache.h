@@ -5,6 +5,7 @@
 #include "bu/hash.h"
 #include "bu/list.h"
 #include "bu/cachestore.h"
+#include "bu/cachecalc.h"
 
 #define BU_TRACE
 #include "bu/trace.h"
@@ -20,6 +21,7 @@ namespace Bu
 	private:
 		typedef Bu::CacheStore<obtype, keytype> Store;
 		typedef Bu::List<Store *> StoreList;
+		typedef Bu::CacheCalc<obtype, keytype> Calc;
 		
 		typedef struct CacheEntry
 		{
@@ -30,7 +32,8 @@ namespace Bu
 		typedef Bu::Hash<keytype, CacheEntry> CidHash;
 
 	public:
-		Cache()
+		Cache() :
+			pCalc( NULL )
 		{
 			TRACE();
 		}
@@ -47,6 +50,10 @@ namespace Bu
 					__tracer_format( i.getKey() );
 					printf("!\n");
 				}
+				if( pCalc ) pCalc->onUnload(
+					i.getValue().pData,
+					i.getKey()
+					);
 				lStore.first()->unload(
 					i.getValue().pData,
 					i.getKey()
@@ -71,6 +78,16 @@ namespace Bu
 			lStore.prepend( pHand );
 		}
 
+		void setCalc( Calc *pCalc )
+		{
+			TRACE();
+			if( this->pCalc )
+			{
+				delete this->pCalc;
+			}
+			this->pCalc = pCalc;
+		}
+
 		Ptr insert( obtype *pData )
 		{
 			TRACE( pData );
@@ -78,10 +95,12 @@ namespace Bu
 			keytype k = lStore.first()->create( pData );
 			hEnt.insert( k, e );
 
+			if( pCalc ) pCalc->onLoad( pData, k );
+
 			return Ptr( *this, pData, k );
 		}
 
-		Ptr get( keytype cId )
+		Ptr get( const keytype &cId )
 		{
 			TRACE( cId );
 			try {
@@ -94,7 +113,12 @@ namespace Bu
 			}
 		}
 
-		void erase( keytype cId )
+		int getRefCount( const keytype &cId )
+		{
+			return hEnt.get( cId ).iRefs;
+		}
+
+		void erase( const keytype &cId )
 		{
 			TRACE( cId );
 			try {
@@ -107,6 +131,9 @@ namespace Bu
 			catch( Bu::HashException &e ) {
 				get( cId );
 			}
+			
+			if( pCalc ) pCalc->onUnload( hEnt.get( cId ).pData, cId );
+			
 			lStore.first()->destroy( hEnt.get( cId ).pData, cId );
 			hEnt.erase( cId );
 		}
@@ -134,6 +161,7 @@ namespace Bu
 	private:
 		CidHash hEnt;
 		StoreList lStore;
+		Calc *pCalc;
 	};
 };
 

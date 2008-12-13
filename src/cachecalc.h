@@ -3,7 +3,7 @@
 
 namespace Bu
 {
-	template<class type>
+	template<class obtype, class keytype>
 	class CacheCalc
 	{
 	public:
@@ -14,6 +14,10 @@ namespace Bu
 		virtual ~CacheCalc()
 		{
 		}
+
+		virtual void onLoad( obtype *pSrc, const keytype &key )=0;
+		virtual void onUnload( obtype *pSrc, const keytype &key )=0;
+		virtual void onTick() { };
 
 	private:
 	};
