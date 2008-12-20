@@ -24,6 +24,7 @@ public:
 		addTest( Unit::insert1 );
 		addTest( Unit::insert2 );
 		addTest( Unit::probe1 );
+		addTest( Unit::erase1 );
 	}
 
 	virtual ~Unit()
@@ -65,6 +66,26 @@ public:
 		h3 = h;
 		unitTest( h3["Hi"].getValue() = "Yo" );
 		unitTest( h3["Bye"].getValue() = "Later" );
+	}
+
+	void erase1()
+	{
+		StrIntHash h;
+		h.insert("Number 1", 1 );
+		h.insert("Number 2", 2 );
+		h.insert("Number 3", 3 );
+		h.erase("Number 2");
+		h.get("Number 3");
+		try {
+			h.get("Number 2");
+			unitFailed("h.get(\"Number 2\") should have thrown an exception.");
+		} catch( Bu::HashException &e ) { }
+
+		printf("\n");
+		for( StrIntHash::iterator i = h.begin(); i != h.end(); i++ )
+		{
+			printf(" - \"%s\" = %d\n", i.getKey().getStr(), i.getValue() );
+		}
 	}
 };
 

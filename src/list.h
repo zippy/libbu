@@ -532,6 +532,22 @@ namespace Bu
 		}
 
 		/**
+		 * Erase an item from the list if you already know the item.
+		 *@param ob The item to find and erase.
+		 */
+		void erase( const value &v )
+		{
+			for( iterator i = begin(); i != end(); i++ )
+			{
+				if( (*i) == v )
+				{
+					erase( i );
+					return;
+				}
+			}
+		}
+
+		/**
 		 * Get the current size of the list.
 		 *@returns (int) The current size of the list.
 		 */

@@ -1,4 +1,3 @@
-#define BU_TRACE
 #include "bu/trace.h"
 
 void Bu::__tracer( const char *pf )

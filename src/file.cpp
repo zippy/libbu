@@ -54,7 +54,10 @@ size_t Bu::File::read( void *pBuf, size_t nBytes )
 	if( fd < 0 )
 		throw FileException("File not open.");
 
-	return ::read( fd, pBuf, nBytes );
+	ssize_t iRead = ::read( fd, pBuf, nBytes );
+	if( iRead < 0 )
+		throw FileException( errno, "%s", strerror( errno ) );
+	return iRead;
 }
 
 size_t Bu::File::write( const void *pBuf, size_t nBytes )
@@ -62,7 +65,10 @@ size_t Bu::File::write( const void *pBuf, size_t nBytes )
 	if( fd < 0 )
 		throw FileException("File not open.");
 
-	return ::write( fd, pBuf, nBytes );
+	ssize_t iWrote = ::write( fd, pBuf, nBytes );
+	if( iWrote < 0 )
+		throw FileException( errno, "%s", strerror( errno ) );
+	return iWrote;
 }
 
 long Bu::File::tell()

@@ -7,6 +7,7 @@
 #include "bu/cache.h"
 #include "bu/file.h"
 #include "bu/fstring.h"
+#include "bu/cachecalc.h"
 
 class Bob
 {
@@ -136,6 +137,29 @@ private:
 	long cLastId;
 };
 
+class BobCalc : public Bu::CacheCalc<Bob, long>
+{
+public:
+	BobCalc()
+	{
+	}
+
+	virtual ~BobCalc()
+	{
+	}
+
+	virtual void onLoad( Bob *, const long & )
+	{
+	}
+
+	virtual void onUnload( Bob *, const long & )
+	{
+	}
+
+private:
+
+};
+
 int main( int argc, char *argv[] )
 {
 	TRACE( argc, argv );
@@ -148,7 +172,8 @@ int main( int argc, char *argv[] )
 		return 0;
 	}
 
-	BobCache cBob;
+	BobCalc cc;
+	BobCache cBob( cc );
 	cBob.appendStore( new BobStore() );
 	switch( argv[1][0] )
 	{

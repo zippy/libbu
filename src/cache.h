@@ -7,7 +7,6 @@
 #include "bu/cachestore.h"
 #include "bu/cachecalc.h"
 
-#define BU_TRACE
 #include "bu/trace.h"
 
 namespace Bu
@@ -32,10 +31,11 @@ namespace Bu
 		typedef Bu::Hash<keytype, CacheEntry> CidHash;
 
 	public:
-		Cache() :
-			pCalc( NULL )
+		Cache( Calc &rCalc ) :
+			rCalc( rCalc )
 		{
 			TRACE();
+			rCalc.setCache( this );
 		}
 
 		virtual ~Cache()
@@ -50,7 +50,7 @@ namespace Bu
 					__tracer_format( i.getKey() );
 					printf("!\n");
 				}
-				if( pCalc ) pCalc->onUnload(
+				rCalc.onUnload(
 					i.getValue().pData,
 					i.getKey()
 					);
@@ -78,16 +78,6 @@ namespace Bu
 			lStore.prepend( pHand );
 		}
 
-		void setCalc( Calc *pCalc )
-		{
-			TRACE();
-			if( this->pCalc )
-			{
-				delete this->pCalc;
-			}
-			this->pCalc = pCalc;
-		}
-
 		Ptr insert( obtype *pData )
 		{
 			TRACE( pData );
@@ -95,7 +85,7 @@ namespace Bu
 			keytype k = lStore.first()->create( pData );
 			hEnt.insert( k, e );
 
-			if( pCalc ) pCalc->onLoad( pData, k );
+			rCalc.onLoad( pData, k );
 
 			return Ptr( *this, pData, k );
 		}
@@ -108,6 +98,7 @@ namespace Bu
 			}
 			catch( Bu::HashException &e ) {
 				CacheEntry e = {lStore.first()->load( cId ), 0};
+				rCalc.onLoad( e.pData, cId );
 				hEnt.insert( cId, e );
 				return Ptr( *this, e.pData, cId );
 			}
@@ -115,7 +106,31 @@ namespace Bu
 
 		int getRefCount( const keytype &cId )
 		{
+			TRACE( cId );
 			return hEnt.get( cId ).iRefs;
+		}
+
+		void unload( const keytype &cId )
+		{
+			TRACE( cId );
+			try {
+				if( hEnt.get( cId ).iRefs > 0 )
+				{
+					printf("Shouldn't delete, references still exist!\n");
+					return;
+				}
+			}
+			catch( Bu::HashException &e ) {
+				// It's not here?  Eh, return.
+				return;
+			}
+			obtype *pObj = hEnt.get( cId ).pData;
+			rCalc.onUnload( pObj, cId );
+			hEnt.erase( cId );
+
+			// The unload has to happen last just in case cId is a reference
+			// to data that is about to be deleted from memory by the unload.
+			lStore.first()->unload( pObj, cId );
 		}
 
 		void erase( const keytype &cId )
@@ -132,16 +147,10 @@ namespace Bu
 				get( cId );
 			}
 			
-			if( pCalc ) pCalc->onUnload( hEnt.get( cId ).pData, cId );
+			rCalc.onUnload( hEnt.get( cId ).pData, cId );
 			
 			lStore.first()->destroy( hEnt.get( cId ).pData, cId );
 			hEnt.erase( cId );
-		}
-
-		int getRefCnt( keytype cId )
-		{
-			TRACE( cId );
-			return hEnt.get( cId ).iRefs;
 		}
 
 	private:
@@ -161,7 +170,7 @@ namespace Bu
 	private:
 		CidHash hEnt;
 		StoreList lStore;
-		Calc *pCalc;
+		Calc &rCalc;
 	};
 };
 
