@@ -8,6 +8,8 @@
 #include "bu/fstring.h"
 #include "bu/unitsuite.h"
 
+#include <dirent.h>
+
 class Unit : public Bu::UnitSuite
 {
 public:
@@ -25,6 +27,7 @@ public:
 		addTest( Unit::add3 );
 		addTest( Unit::add4 );
 		addTest( Unit::add5 );
+		addTest( Unit::add6 );
 		addTest( Unit::subStr1 );
 	}
 
@@ -138,6 +141,15 @@ public:
 		b += "hey, " + c;
 		
 		unitTest( b == "hey, sup?" );
+	}
+
+	void add6()
+	{
+		Bu::FString a("Hello");
+		char b[256] = {"Dude"};
+		Bu::FString c = a + "/" + b;
+
+		unitTest( c == "Hello/Dude" );
 	}
 
 	void subStr1()

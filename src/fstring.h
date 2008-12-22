@@ -516,6 +516,13 @@ namespace Bu
 			return ret;
 		}
 
+		MyType operator +( chr *pRight )
+		{
+			MyType ret( *this );
+			ret.append( pRight );
+			return ret;
+		}
+
 		/**
 		 * Reset your FString to this character array.
 		 *@param pData (const chr *) The character array to set your FString to.
