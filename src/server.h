@@ -86,7 +86,8 @@ namespace Bu
 		int nTimeoutSec;
 		int nTimeoutUSec;
 		fd_set fdActive;
-		Hash<int,ServerSocket *> hServers;
+		typedef Hash<int,ServerSocket *> SrvHash;
+		SrvHash hServers;
 		typedef Hash<int,Client *> ClientHash;
 		ClientHash hClients;
 	};

@@ -66,6 +66,7 @@ Bu::ServerSocket::ServerSocket(const FString &sAddr,int nPort, int nPoolSize) :
 
 Bu::ServerSocket::~ServerSocket()
 {
+	::close( nServer );
 }
 
 void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )

@@ -21,6 +21,15 @@ Bu::Server::Server() :
 
 Bu::Server::~Server()
 {
+	for( SrvHash::iterator i = hServers.begin(); i != hServers.end(); i++ )
+	{
+		delete *i;
+	}
+
+	for( ClientHash::iterator i = hClients.begin(); i != hClients.end(); i++ )
+	{
+		delete *i;
+	}
 }
 
 void Bu::Server::addPort( int nPort, int nPoolSize )
