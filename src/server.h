@@ -53,7 +53,7 @@ namespace Bu
 		void addPort( int nPort, int nPoolSize=40 );
 		void addPort( const FString &sAddr, int nPort, int nPoolSize=40 );
 
-		void scan();
+		virtual void scan();
 		void setTimeout( int nTimeoutSec, int nTimeoutUSec=0 );
 
 		void addClient( int nSocket, int nPort );
