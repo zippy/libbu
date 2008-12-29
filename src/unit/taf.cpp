@@ -21,7 +21,8 @@ public:
 	{
 		setName("taf");
 		addTest( Unit::read1 );
-		addTest( Unit::encode );
+		addTest( Unit::encode1 );
+		addTest( Unit::emptyStr1 );
 	}
 
 	virtual ~Unit()
@@ -50,7 +51,7 @@ public:
 #undef FN_TMP
 	}
 
-	void encode()
+	void encode1()
 	{
 		Bu::MemBuf mb;
 		Bu::TafWriter tw( mb );
@@ -92,6 +93,20 @@ public:
 		Bu::TafGroup *rg = tr.readGroup();
 		unitTest( rg->getProperty("Encoded") == sData );
 		delete rg;
+	}
+
+	void emptyStr1()
+	{
+		Bu::MemBuf mb;
+		Bu::TafWriter tw( mb );
+
+		Bu::TafGroup g("Test Group");
+		Bu::FString sVal;
+		g.addChild( new Bu::TafProperty("Lame", sVal) );
+		tw.writeGroup( &g );
+
+		unitTest(
+			mb.getString() == "{\"Test Group\":\n    \"Lame\"=\"\"\n}\n" );
 	}
 };
 

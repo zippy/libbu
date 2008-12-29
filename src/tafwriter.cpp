@@ -58,7 +58,7 @@ void Bu::TafWriter::writeGroup( const Bu::TafGroup *pRoot )
 void Bu::TafWriter::writeProperty( const Bu::TafProperty *pProp )
 {
 	ident();
-	if( pProp->getName().getStr() != NULL && pProp->getName() != "" )
+	if( !pProp->getName().isEmpty() )
 	{
 		writeString( pProp->getName() );
 		sOut.write("=", 1 );
@@ -90,8 +90,6 @@ void Bu::TafWriter::writeComment( const Bu::TafComment *pComment )
 
 void Bu::TafWriter::writeString( const Bu::FString &str )
 {
-	if( str.getStr() == NULL )
-		return;
 	sOut.write("\"", 1 );
 	for( Bu::FString::const_iterator s = str.begin(); s != str.end(); s++ )
 	{

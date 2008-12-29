@@ -928,24 +928,39 @@ namespace Bu
 
 		iterator begin()
 		{
+			if( nLength == 0 )
+				return NULL;
 			flatten();
 			return pFirst->pData;
 		}
 
 		const_iterator begin() const
 		{
+			if( nLength == 0 )
+				return NULL;
 			flatten();
 			return pFirst->pData;
 		}
 
 		iterator end()
 		{
+			if( nLength == 0 )
+				return NULL;
 			return pFirst->pData+pFirst->nLength;
 		}
 
 		const_iterator end() const
 		{
+			if( nLength == 0 )
+				return NULL;
 			return pFirst->pData+pFirst->nLength;
+		}
+
+		bool isEmpty() const
+		{
+			if( nLength == 0 )
+				return true;
+			return false;
 		}
 
 	private:
