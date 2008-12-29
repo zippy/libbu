@@ -35,6 +35,7 @@ namespace Bu
 		bool isws();
 		void next();
 		Bu::FString readStr();
+		void rawread( char *c );
 		char c, la;
 		Bu::Stream &sIn;
 		int iLine, iCol;

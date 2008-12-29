@@ -23,6 +23,7 @@ public:
 		addTest( Unit::read1 );
 		addTest( Unit::encode1 );
 		addTest( Unit::emptyStr1 );
+		addTest( Unit::incomplete1 );
 	}
 
 	virtual ~Unit()
@@ -107,6 +108,21 @@ public:
 
 		unitTest(
 			mb.getString() == "{\"Test Group\":\n    \"Lame\"=\"\"\n}\n" );
+	}
+
+	void incomplete1()
+	{
+		try
+		{
+			Bu::MemBuf mb("{Lame: \"Hello=\"");
+			Bu::TafReader tr( mb );
+			delete tr.readGroup();
+			unitFailed("Should have thrown an exception, didn't.");
+		}
+		catch( Bu::TafException &e )
+		{
+			// Woot
+		}
 	}
 };
 

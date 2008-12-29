@@ -209,15 +209,32 @@ void Bu::TafReader::next()
 		iCol++;
 	if( c == '}' )
 	{
-		sIn.read( &c, 1 );
+		rawread( &c );
 		if( c != '}' )
-			sIn.read( &la, 1 );
+			rawread( &la );
 	}
 	else
 	{
 		c = la;
 		if( c != '}' )
-			sIn.read( &la, 1 );
+			rawread( &la );
+	}
+}
+
+void Bu::TafReader::rawread( char *c )
+{
+	if( sIn.read( c, 1 ) < 1 )
+	{
+		if( sIn.isEOS() )
+		{
+			throw TafException("%d:%d: Premature end of stream.",
+				iLine, iCol, c );
+		}
+		else
+		{
+			throw TafException("%d:%d: No data read, but not end of stream?",
+				iLine, iCol, c );
+		}
 	}
 }
 
