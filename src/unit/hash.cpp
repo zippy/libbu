@@ -16,6 +16,7 @@ class Unit : public Bu::UnitSuite
 private:
 	typedef Bu::Hash<Bu::FString, int> StrIntHash;
 	typedef Bu::Hash<Bu::FString, Bu::FString> StrStrHash;
+	typedef Bu::Hash<int, Bu::FString> IntStrHash;
 
 public:
 	Unit()
@@ -23,6 +24,7 @@ public:
 		setName("Hash");
 		addTest( Unit::insert1 );
 		addTest( Unit::insert2 );
+		addTest( Unit::insert3 );
 		addTest( Unit::probe1 );
 		addTest( Unit::erase1 );
 	}
@@ -66,6 +68,17 @@ public:
 		h3 = h;
 		unitTest( h3["Hi"].getValue() = "Yo" );
 		unitTest( h3["Bye"].getValue() = "Later" );
+	}
+
+	void insert3()
+	{
+		IntStrHash h;
+
+		for( unsigned int i=1; i<50; i++ )
+		{
+			h[i] = "testing";
+			unitTest( h.getSize() == i );
+		}
 	}
 
 	void erase1()
