@@ -94,11 +94,11 @@ public:
 			unitFailed("h.get(\"Number 2\") should have thrown an exception.");
 		} catch( Bu::HashException &e ) { }
 
-		printf("\n");
+	/*	printf("\n");
 		for( StrIntHash::iterator i = h.begin(); i != h.end(); i++ )
 		{
 			printf(" - \"%s\" = %d\n", i.getKey().getStr(), i.getValue() );
-		}
+		} */
 	}
 };
 

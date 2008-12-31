@@ -55,7 +55,7 @@ namespace Bu
 	{
 		friend class Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc>;
 	private:
-		HashProxy( Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc> &h, key *k, uint32_t nPos, uint32_t hash ) :
+		HashProxy( Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc> &h, const key *k, uint32_t nPos, uint32_t hash ) :
 			hsh( h ),
 			pKey( k ),
 			nPos( nPos ),
@@ -73,7 +73,7 @@ namespace Bu
 		}
 
 		Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc> &hsh;
-		key *pKey;
+		const key *pKey;
 		uint32_t nPos;
 		_value *pValue;
 		uint32_t hash;
@@ -151,8 +151,8 @@ namespace Bu
 		{
 			if( bFilled )
 			{
-				hsh.va.destroy( pValue );
-				hsh.va.construct( pValue, nval );
+				hsh.va.destroy( &hsh.aValues[nPos] );
+				hsh.va.construct( &hsh.aValues[nPos], nval );
 				hsh.onUpdate();
 			}
 			else
@@ -380,7 +380,7 @@ namespace Bu
 		 *@param k (key_type) Key of data to be retrieved.
 		 *@returns (HashProxy) Proxy pointing to the data.
 		 */
-		virtual HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc> operator[]( key k )
+		virtual HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc> operator[]( const key &k )
 		{
 			uint32_t hash = __calcHashCode( k );
 			bool bFill;
@@ -401,7 +401,7 @@ namespace Bu
 		 *@param k (key_type) Key to list the value under.
 		 *@param v (value_type) Value to store in the hash table.
 		 */
-		virtual void insert( key k, value v )
+		virtual void insert( const key &k, const value &v )
 		{
 			uint32_t hash = __calcHashCode( k );
 			bool bFill;
@@ -424,7 +424,7 @@ namespace Bu
 		 * Remove a value from the hash table.
 		 *@param k (key_type) The data under this key will be erased.
 		 */
-		virtual void erase( key k )
+		virtual void erase( const key &k )
 		{
 			uint32_t hash = __calcHashCode( k );
 			bool bFill;
@@ -477,7 +477,7 @@ namespace Bu
 		 *@param k (key_type) Key pointing to the data to be retrieved.
 		 *@returns (value_type &) The data pointed to by (k).
 		 */
-		virtual value &get( key k )
+		virtual value &get( const key &k )
 		{
 			uint32_t hash = __calcHashCode( k );
 			bool bFill;
@@ -502,7 +502,7 @@ namespace Bu
 		 *@returns (const value_type &) A const version of the data pointed
 		 *		to by (k).
 		 */
-		virtual const value &get( key k ) const
+		virtual const value &get( const key &k ) const
 		{
 			uint32_t hash = __calcHashCode( k );
 			bool bFill;
@@ -526,7 +526,7 @@ namespace Bu
 		 *@param k (key_type) The key to check.
 		 *@returns (bool) Whether there was an item in the hash under key (k).
 		 */
-		virtual bool has( key k )
+		virtual bool has( const key &k )
 		{
 			bool bFill;
 			probe( __calcHashCode( k ), k, bFill, false );
@@ -534,7 +534,7 @@ namespace Bu
 			return bFill;
 		}
 		
-		virtual bool has( key k ) const
+		virtual bool has( const key &k ) const
 		{
 			bool bFill;
 			probe( __calcHashCode( k ), k, bFill );
@@ -873,7 +873,7 @@ namespace Bu
 			}
 		}
 
-		virtual void fill( uint32_t loc, key &k, value &v, uint32_t hash )
+		virtual void fill( uint32_t loc, const key &k, const value &v, uint32_t hash )
 		{
 			bFilled[loc/32] |= (1<<(loc%32));
 			va.construct( &aValues[loc], v );
@@ -945,7 +945,7 @@ namespace Bu
 			return 0;
 		}
 
-		uint32_t probe( uint32_t hash, key k, bool &bFill, bool rehash=true )
+		uint32_t probe( uint32_t hash, const key &k, bool &bFill, bool rehash=true )
 		{
 			uint32_t nCur = hash%nCapacity;
 
