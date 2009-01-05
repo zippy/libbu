@@ -1,7 +1,7 @@
 #ifndef BU_CACHE_H
 #define BU_CACHE_H
 
-#include "bu/cptr.h"
+// #include "bu/cptr.h"
 #include "bu/hash.h"
 #include "bu/list.h"
 #include "bu/cachestore.h"
@@ -14,9 +14,84 @@ namespace Bu
 	template<class obtype, class keytype>
 	class Cache
 	{
-	friend class Bu::CPtr<obtype, keytype>;
+	//friend class Bu::CPtr<obtype, keytype>;
 	public:
-		typedef Bu::CPtr<obtype, keytype> Ptr;
+		// typedef Bu::CPtr<obtype, keytype> Ptr;
+
+		/**
+		 * Cache Pointer - Provides access to data that is held within the
+		 * cache.  This provides safe, refcounting access to data stored in
+		 * the cache, with support for lazy loading.
+		 */
+		//template<class obtype, class keytype>
+		class Ptr
+		{
+		friend class Bu::Cache<obtype, keytype>;
+		private:
+			Ptr( Cache<obtype, keytype> *pCache, obtype *pData,
+				const keytype &kId ) :
+				pCache( pCache ),
+				pData( pData ),
+				kId( kId )
+			{
+				if( pCache )
+					pCache->incRef( kId );
+			}
+
+		public:
+			Ptr( const Ptr &rSrc ) :
+				pCache( rSrc.pCache ),
+				pData( rSrc.pData ),
+				kId( rSrc.kId )
+			{
+				if( pCache )
+					pCache->incRef( kId );
+			}
+
+			Ptr() :
+				pCache( 0 ),
+				pData( 0 )
+			{
+			}
+
+			virtual ~Ptr()
+			{
+				if( pCache )
+					pCache->decRef( kId );
+			}
+
+			obtype &operator*()
+			{
+				return *pData;
+			}
+
+			obtype *operator->()
+			{
+				return pData;
+			}
+
+			const keytype &getKey()
+			{
+				return kId;
+			}
+
+			Ptr &operator=( const Ptr &rRhs )
+			{
+				if( pCache )
+					pCache->decRef( kId );
+				pCache = rRhs.pCache;
+				pData = rRhs.pData;
+				kId = rRhs.kId;
+				if( pCache )
+					pCache->incRef( kId );
+			}
+
+		private:
+			Bu::Cache<obtype, keytype> *pCache;
+			obtype *pData;
+			keytype kId;
+		};
+
 	private:
 		typedef Bu::CacheStore<obtype, keytype> Store;
 		typedef Bu::List<Store *> StoreList;
@@ -87,20 +162,20 @@ namespace Bu
 
 			rCalc.onLoad( pData, k );
 
-			return Ptr( *this, pData, k );
+			return Ptr( this, pData, k );
 		}
 
 		Ptr get( const keytype &cId )
 		{
 			TRACE( cId );
 			try {
-				return Ptr( *this, hEnt.get( cId ).pData, cId );
+				return Ptr( this, hEnt.get( cId ).pData, cId );
 			}
 			catch( Bu::HashException &e ) {
 				CacheEntry e = {lStore.first()->load( cId ), 0};
 				rCalc.onLoad( e.pData, cId );
 				hEnt.insert( cId, e );
-				return Ptr( *this, e.pData, cId );
+				return Ptr( this, e.pData, cId );
 			}
 		}
 
