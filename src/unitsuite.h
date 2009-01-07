@@ -9,7 +9,7 @@
 #define BU_UNIT_SUITE_H
 
 #include <stdint.h>
-#include <list>
+#include "bu/list.h"
 #include "fstring.h"
 
 namespace Bu
@@ -97,9 +97,10 @@ namespace Bu
 		{
 			FString sName;
 			Test fTest;
+			Expect eExpect;
 		} TestInfo;
 
-		typedef std::list<TestInfo> TestList;
+		typedef Bu::List<TestInfo> TestList;
 		TestList lTests;
 		FString sSuiteName;
 

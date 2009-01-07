@@ -121,13 +121,13 @@ Bu::ParamProc::ParamProc()
 
 Bu::ParamProc::~ParamProc()
 {
-	for( std::list<ArgSpec *>::iterator i = lArg.begin();
+	for( Bu::List<ArgSpec *>::iterator i = lArg.begin();
 		 i != lArg.end(); i++ )
 	{
 		delete *i;
 	}
 
-	for( std::list<Banner *>::iterator i = lBan.begin();
+	for( Bu::List<Banner *>::iterator i = lBan.begin();
 		 i != lBan.end(); i++ )
 	{
 		delete *i;
@@ -160,12 +160,12 @@ void Bu::ParamProc::addParam( const char *lpWord, char cChar, Proc proc,
 	if( lpValue )
 		as->sValue = lpValue;
 
-	lArg.push_back( as );
+	lArg.append( as );
 
-	if( !lBan.empty() )
+	if( !lBan.isEmpty() )
 	{
-		if( lBan.back()->pBefore == NULL )
-			lBan.back()->pBefore = as;
+		if( lBan.last()->pBefore == NULL )
+			lBan.last()->pBefore = as;
 	}
 }
 
@@ -395,8 +395,8 @@ void Bu::ParamProc::process( int argc, char *argv[] )
 Bu::ParamProc::ArgSpec *Bu::ParamProc::checkWord( const char *arg )
 {
 	//printf("Checking \"%s\"...\n", arg );
-	std::list<ArgSpec *>::const_iterator i;
-	for( i = lArg.begin(); i != lArg.end(); i++ )
+	Bu::List<ArgSpec *>::const_iterator i = lArg.begin();
+	for( ; i != lArg.end(); i++ )
 	{
 		if( (*i)->sWord == "" )
 			continue;
@@ -420,8 +420,8 @@ Bu::ParamProc::ArgSpec *Bu::ParamProc::checkWord( const char *arg )
 Bu::ParamProc::ArgSpec *Bu::ParamProc::checkLetr( const char arg )
 {
 	//printf("Checking \'%c\'...\n", arg );
-	std::list<ArgSpec *>::const_iterator i;
-	for( i = lArg.begin(); i != lArg.end(); i++ )
+	Bu::List<ArgSpec *>::const_iterator i = lArg.begin();
+	for( ; i != lArg.end(); i++ )
 	{
 		if( (*i)->cChar == '\0' )
 			continue;
@@ -449,10 +449,10 @@ int Bu::ParamProc::unknownParam( int /*argc*/, char *argv[] )
 
 int Bu::ParamProc::help( int /*argc*/, char * /*argv*/ [] )
 {
-	std::list<Banner *>::const_iterator b = lBan.begin();
-	std::list<ArgSpec *>::const_iterator i;
+	Bu::List<Banner *>::const_iterator b = lBan.begin();
+	Bu::List<ArgSpec *>::const_iterator i = lArg.begin();
 	int len=0;
-	for( i = lArg.begin(); i != lArg.end(); i++ )
+	for( ; i != lArg.end(); i++ )
 	{
 		if( len < (*i)->sWord.getSize() + (*i)->sExtra.getSize() )
 			len = (*i)->sWord.getSize() + (*i)->sExtra.getSize();
@@ -517,6 +517,6 @@ void Bu::ParamProc::addHelpBanner( const char *sHelpBanner )
 	Banner *pBan = new Banner;
 	pBan->sBanner = sHelpBanner;
 	pBan->pBefore = NULL;
-	lBan.push_back( pBan );
+	lBan.append( pBan );
 }
 

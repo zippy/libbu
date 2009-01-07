@@ -9,8 +9,7 @@
 #define BU_PARAM_PROC_H
 
 #include <stdint.h>
-#include <string>
-#include <list>
+#include "bu/list.h"
 #include "bu/fstring.h"
 
 namespace Bu
@@ -153,8 +152,8 @@ namespace Bu
 			Bu::FString sBanner;
 			ArgSpec *pBefore;
 		} Banner;
-		std::list<Banner *> lBan;
-		std::list<ArgSpec *> lArg;
+		Bu::List<Banner *> lBan;
+		Bu::List<ArgSpec *> lArg;
 	};
 }
 

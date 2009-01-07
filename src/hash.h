@@ -894,11 +894,6 @@ namespace Bu
 			//	nFilled, nDeleted, nCapacity );
 		}
 
-		virtual std::pair<key,value> getAtPos( uint32_t nPos )
-		{
-			return std::pair<key,value>(aKeys[nPos],aValues[nPos]);
-		}
-		
 		virtual key &getKeyAtPos( uint32_t nPos )
 		{
 			return aKeys[nPos];
