@@ -81,9 +81,15 @@ namespace Bu
 		{
 			optStopOnError		= 0x000001
 		};
+
+		enum Expect
+		{
+			expectPass,
+			expectFail
+		};
 		
 	protected:
-		void add( Test fTest, Bu::FString sName );
+		void add( Test fTest, const Bu::FString &sName, Expect e=expectPass );
 		void setName( const FString &sName );
 
 	private:

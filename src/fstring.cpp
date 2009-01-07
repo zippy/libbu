@@ -8,8 +8,10 @@
 #define BU_TRACE
 #include "bu/trace.h"
 
-#include "fstring.h"
-#include "hash.h"
+#include "bu/fstring.h"
+#include "bu/hash.h"
+
+template class Bu::FBasicString<char>;
 
 template<> uint32_t Bu::__calcHashCode<Bu::FString>( const Bu::FString &k )
 {
@@ -37,8 +39,8 @@ std::basic_ostream<char>& operator<< (std::basic_ostream<char> &os, const Bu::FS
 	return os;
 }
 
-
 template<> void Bu::__tracer_format<Bu::FString>( const Bu::FString &v )
 {
 	printf("(%ld)\"%s\"", v.getSize(), v.getStr() );
 }
+

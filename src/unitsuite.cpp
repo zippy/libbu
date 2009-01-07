@@ -72,7 +72,7 @@ int Bu::UnitSuite::run( int /*argc*/, char * /*argv */ [] )
 	return 0;
 }
 
-void Bu::UnitSuite::add( Test fTest, Bu::FString sName )
+void Bu::UnitSuite::add( Test fTest, const Bu::FString &sName, Expect e )
 {
 	TestInfo ti;
 	ti.sName = sName;
