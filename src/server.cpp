@@ -59,10 +59,18 @@ void Bu::Server::scan()
 	struct timeval xTimeout = { nTimeoutSec, nTimeoutUSec };
 	
 	fd_set fdRead = fdActive;
-	fd_set fdWrite = fdActive;
+	fd_set fdWrite /* = fdActive*/;
 	fd_set fdException = fdActive;
 
-	if( TEMP_FAILURE_RETRY( select( FD_SETSIZE, &fdRead, NULL, &fdException, &xTimeout ) ) < 0 )
+	FD_ZERO( &fdWrite );
+	for( ClientHash::iterator i = hClients.begin(); i != hClients.end(); i++ )
+	{
+		if( (*i)->hasOutput() )
+			FD_SET( i.getKey(), &fdWrite );
+	}
+
+	if( TEMP_FAILURE_RETRY( select( FD_SETSIZE,
+			&fdRead, &fdWrite, &fdException, &xTimeout ) ) < 0 )
 	{
 		throw ExceptionBase("Error attempting to scan open connections.");
 	}
@@ -88,6 +96,11 @@ void Bu::Server::scan()
 				}
 			}
 		}
+		if( FD_ISSET( j, &fdWrite ) )
+		{
+			Client *pClient = hClients.get( j );
+			pClient->processOutput();
+		}
 	}
 
 	Bu::List<int> lDelete;
@@ -96,8 +109,7 @@ void Bu::Server::scan()
 	// wanting to accept writes (using a select).
 	for( ClientHash::iterator i = hClients.begin(); i != hClients.end(); i++ )
 	{
-		(*i)->processOutput();
-		if( (*i)->wantsDisconnect() )
+		if( (*i)->wantsDisconnect() && !(*i)->hasOutput() )
 		{
 			lDelete.append( i.getKey() );
 		}

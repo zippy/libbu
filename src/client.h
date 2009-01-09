@@ -64,6 +64,8 @@ namespace Bu
 
 		void onMessage( const Bu::FString &sMsg );
 
+		bool hasOutput() { return !sWriteBuf.isEmpty(); }
+
 	private:
 		Bu::Socket *pSocket;
 		Bu::Protocol *pProto;
