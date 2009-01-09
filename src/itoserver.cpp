@@ -148,9 +148,15 @@ void *Bu::ItoServer::ItoClient::run()
 		struct timeval xTimeout = { nTimeoutSec, nTimeoutUSec };
 		
 		fd_set fdRead = fdActive;
+		fd_set fdWrite;
 		fd_set fdException = fdActive;
 
-		if( TEMP_FAILURE_RETRY( select( FD_SETSIZE, &fdRead, NULL, &fdException, &xTimeout ) ) < 0 )
+		FD_ZERO( &fdWrite );
+		if( pClient->hasOutput() )
+			FD_SET( iSocket, &fdWrite );
+
+		if( TEMP_FAILURE_RETRY( select( FD_SETSIZE,
+				&fdRead, &fdWrite, &fdException, &xTimeout ) ) < 0 )
 		{
 			throw ExceptionBase("Error attempting to scan open connections.");
 		}
@@ -182,12 +188,12 @@ void *Bu::ItoServer::ItoClient::run()
 			}
 		}
 
-		// Now we just try to write all the pending data on the socket.
-		// this could be done better eventually, if we care about the socket
-		// wanting to accept writes (using a select).
-		imProto.lock();
-		pClient->processOutput();
-		imProto.unlock();
+		if( FD_ISSET( iSocket, &fdWrite ) )
+		{
+			imProto.lock();
+			pClient->processOutput();
+			imProto.unlock();
+		}
 	}
 
 	return NULL;
