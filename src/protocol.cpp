@@ -17,7 +17,19 @@ Bu::Protocol::~Protocol()
 {
 }
 
+void Bu::Protocol::onNewConnection( Bu::Client * )
+{
+}
+
+void Bu::Protocol::onNewData( Bu::Client * )
+{
+}
+
 void Bu::Protocol::onMessage( Bu::Client *, const Bu::FString & )
+{
+}
+
+void Bu::Protocol::onTick( Bu::Client * )
 {
 }
 

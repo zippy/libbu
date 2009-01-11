@@ -58,6 +58,9 @@ namespace Bu
 
 		void addClient( int nSocket, int nPort );
 
+		void setAutoTick( bool bEnable=true );
+		void tick();
+
 		virtual void onNewConnection( Client *pClient, int nPort )=0;
 		virtual void onClosedConnection( Client *pClient )=0;
 
@@ -90,6 +93,7 @@ namespace Bu
 		SrvHash hServers;
 		typedef Hash<int,Client *> ClientHash;
 		ClientHash hClients;
+		bool bAutoTick;
 	};
 }
 

@@ -14,7 +14,8 @@
 
 Bu::Server::Server() :
 	nTimeoutSec( 0 ),
-	nTimeoutUSec( 0 )
+	nTimeoutUSec( 0 ),
+	bAutoTick( false )
 {
 	FD_ZERO( &fdActive );
 }
@@ -123,6 +124,9 @@ void Bu::Server::scan()
 		hClients.erase( *i );
 		FD_CLR( *i, &fdActive );
 	}
+
+	if( bAutoTick )
+		tick();
 }
 
 void Bu::Server::addClient( int nSocket, int nPort )
@@ -164,5 +168,18 @@ Bu::ClientLink *Bu::Server::SrvClientLinkFactory::createLink(
 		Bu::Client *pClient )
 {
 	return new SrvClientLink( pClient );
+}
+
+void Bu::Server::setAutoTick( bool bEnable )
+{
+	bAutoTick = bEnable;
+}
+
+void Bu::Server::tick()
+{
+	for( ClientHash::iterator i = hClients.begin(); i != hClients.end(); i++ )
+	{
+		(*i)->tick();
+	}
 }
 

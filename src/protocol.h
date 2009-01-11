@@ -26,9 +26,10 @@ namespace Bu
 		Protocol();
 		virtual ~Protocol();
 
-		virtual void onNewConnection( Bu::Client *pClient )=0;
-		virtual void onNewData( Bu::Client *pClient )=0;
+		virtual void onNewConnection( Bu::Client *pClient );
+		virtual void onNewData( Bu::Client *pClient );
 		virtual void onMessage( Bu::Client *pClient, const Bu::FString &sMsg );
+		virtual void onTick( Bu::Client *pClient );
 
 	private:
 

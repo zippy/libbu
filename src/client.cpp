@@ -247,3 +247,9 @@ void Bu::Client::onMessage( const Bu::FString &sMsg )
 		pProto->onMessage( this, sMsg );
 }
 
+void Bu::Client::tick()
+{
+	if( pProto )
+		pProto->onTick( this );
+}
+

@@ -54,6 +54,7 @@ namespace Bu
 
 		bool isOpen();
 		void close();
+		void tick();
 
 		const Bu::Socket *getSocket() const;
 
