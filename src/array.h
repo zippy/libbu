@@ -148,7 +148,7 @@ namespace Bu
 		 */
 		void setCapacity( long iNewLen )
 		{
-			if( iNewLen < iCapacity ) return;
+			if( iNewLen <= iCapacity ) return;
 			value *pNewData = va.allocate( iNewLen );
 			if( pData )
 			{
