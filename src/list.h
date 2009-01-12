@@ -490,9 +490,19 @@ namespace Bu
 		 * 		the list.
 		 *@returns (const Link *)
 		 */
-		const Link *end() const
+		const iterator end()
 		{
-			return NULL;
+			return iterator( NULL, *this );
+		}
+
+		/**
+		 * Get an iterator pointing to a place just past the last item in
+		 * 		the list.
+		 *@returns (const Link *)
+		 */
+		const const_iterator end() const
+		{
+			return const_iterator( NULL, *this );
 		}
 
 		/**
