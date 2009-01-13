@@ -203,6 +203,8 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 #endif
 	if( nRead < 0 )
 	{
+		if( errno == EAGAIN )
+			return 0;
 		throw SocketException( SocketException::cRead, strerror(errno) );
 	}
 	return nRead;
