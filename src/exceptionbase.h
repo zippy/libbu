@@ -181,7 +181,11 @@ name::name( const name &e ) throw() :										\
 namespace Bu
 {
 	// Exceptions that are so general they could be used anywhere go here.
-	subExceptionDecl( UnsupportedException )
+	class UnsupportedException : public Bu::ExceptionBase
+	{
+	public:
+		UnsupportedException() throw ();
+	};
 }
 
 #endif

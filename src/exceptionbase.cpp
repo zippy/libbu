@@ -84,8 +84,9 @@ int Bu::ExceptionBase::getErrorCode()
 	return nErrorCode;
 }
 
-
-namespace Bu
+Bu::UnsupportedException::UnsupportedException() throw() :
+	ExceptionBase( 0 )
 {
-	subExceptionDef( UnsupportedException )
+	setWhat("An unsupperted operation was attempted.");
 }
+
