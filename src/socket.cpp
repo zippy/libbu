@@ -40,7 +40,6 @@ Bu::Socket::Socket( int nSocket ) :
 
 Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 {
-	struct sockaddr_in xServerName;
 	bActive = false;
      
 	/* Create the socket. */
@@ -74,27 +73,33 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 	/* Connect to the server. */
 	//printf("Resolving hostname (%s)...\n", sAddr );
 	{
-		struct hostent *hostinfo;
+		struct addrinfo *pAddr = NULL;
+		struct addrinfo aiHints;
+		memset( &aiHints, 0, sizeof(addrinfo) );
+		aiHints.ai_flags = AI_CANONNAME;
+		aiHints.ai_family = AF_INET;
+		aiHints.ai_socktype = SOCK_STREAM;
+		char ibuf[10]; 
+		sprintf( ibuf, "%d", nPort );
      
-		xServerName.sin_family = AF_INET;
-		xServerName.sin_port = DYNLOAD htons( nPort );
-		hostinfo = DYNLOAD gethostbyname( sAddr.getStr() );
-		if (hostinfo == NULL)
+		if( DYNLOAD getaddrinfo( sAddr.getStr(), ibuf, &aiHints, &pAddr )
+			!= 0 )
 		{
-			throw Bu::SocketException("Couldn't resolve hostname.\n");
+			throw Bu::SocketException("Couldn't resolve hostname %s (%s).\n",
+				sAddr.getStr(), strerror(errno));
 		}
-		xServerName.sin_addr = *(struct in_addr *) hostinfo->h_addr;
+
+		DYNLOAD connect(
+			nSocket,
+			pAddr->ai_addr,
+			pAddr->ai_addrlen
+			);
+
+		sAddress = pAddr->ai_canonname;
+
+		DYNLOAD freeaddrinfo( pAddr );
 	}
 
-	//printf("Making actual connection...");
-	//fflush( stdout );
-	DYNLOAD connect(
-		nSocket,
-		(struct sockaddr *)&xServerName,
-		sizeof(xServerName)
-		);
-	//printf("Connected.\n");
-	
 	bActive = true;
 
 	if( nTimeout > 0 )
