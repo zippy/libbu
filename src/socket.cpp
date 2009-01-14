@@ -97,9 +97,8 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 
 			pCur = pCur->ai_next;
 		}
-			throw Bu::SocketException("%d: Couldn't resolve hostname %s (%s).\n",
-					ret,
-				sAddr.getStr(), strerror(errno));
+			throw Bu::SocketException("Couldn't resolve hostname %s (%s).\n",
+				sAddr.getStr(), gai_strerror(ret));
 		}
 
 		struct addrinfo *pCur = pAddr;
