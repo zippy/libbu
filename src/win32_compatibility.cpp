@@ -2,6 +2,59 @@
 
 #ifdef WIN32
 
+typedef int (__cdecl *FNDEF_DYN_WSAStartup)(WORD,LPWSADATA);
+int DynamicWinsock2::WSAStartup(
+	WORD wVersionRequested,LPWSADATA lpWSAData)
+{
+	int out=0;
+	HINSTANCE Ws2_32 = LoadLibrary(TEXT("WS2_32.DLL"));
+	printf("ws2_32 dll: %08x\n", (int) Ws2_32);
+	if( Ws2_32 != NULL )
+	{
+		FNDEF_DYN_WSAStartup fn = (FNDEF_DYN_WSAStartup)
+			GetProcAddress( Ws2_32, "WSAStartup" );
+		printf("WSAStartup function pointer: %08x\n", (int)fn);
+		if( fn != NULL )
+			out = (fn)(wVersionRequested,lpWSAData);
+	}
+	return out;
+}
+
+typedef int (__cdecl *FNDEF_DYN_WSACleanup)();
+int DynamicWinsock2::WSACleanup()
+{
+	int out=0;
+	HINSTANCE Ws2_32 = LoadLibrary(TEXT("WS2_32.DLL"));
+	printf("ws2_32 dll: %08x\n", (int) Ws2_32);
+	if( Ws2_32 != NULL )
+	{
+		FNDEF_DYN_WSACleanup fn = (FNDEF_DYN_WSACleanup)
+			GetProcAddress( Ws2_32, "WSACleanup" );
+		printf("WSACleanup function pointer: %08x\n", (int)fn);
+		if( fn != NULL )
+			out = (fn)();
+	}
+	return out;
+}
+
+//typedef char * (__cdecl *FNDEF_DYN_gai_strerrorA)( int ecode );
+typedef int (__cdecl *FNDEF_DYN_WSAGetLastError)(void);
+int DynamicWinsock2::WSAGetLastError()
+{
+	int out=0;
+	HINSTANCE Ws2_32 = LoadLibrary(TEXT("WS2_32.DLL"));
+	printf("ws2_32 dll: %08x\n", (int) Ws2_32);
+	if( Ws2_32 != NULL )
+	{
+		FNDEF_DYN_WSAGetLastError fn = (FNDEF_DYN_WSAGetLastError)
+			GetProcAddress( Ws2_32, "WSAGetLastError" );
+		printf("WSAGetLastError function pointer: %08x\n", (int)fn);
+		if( fn != NULL )
+			out = (fn)();
+	}
+	return out;
+}
+
 typedef char * (__cdecl *FNDEF_DYN_inet_ntoa)( struct in_addr );
 void DynamicWinsock2::inet_ntoa( Bu::FString &out, struct in_addr addr_in )
 {

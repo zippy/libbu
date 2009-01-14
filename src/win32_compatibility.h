@@ -16,8 +16,14 @@
 
 #ifdef WIN32
 
+#ifdef __cplusplus
+extern "C" 
+{
 #include <Winsock2.h>
 #include <ws2tcpip.h>
+}
+#endif
+
 #include "fstring.h"
 
 #ifndef TEMP_FAILURE_RETRY
@@ -33,6 +39,9 @@ __extension__ typedef int socklen_t;
 
 namespace DynamicWinsock2
 {
+	int WSAStartup(WORD wVersionRequested,LPWSADATA lpWSAData);
+	int WSACleanup(void);
+	int WSAGetLastError();
 	void inet_ntoa( Bu::FString &out, struct in_addr addr_in );
 	unsigned long inet_addr( const char *s_in );
 	int select(int nfds, fd_set *readfds, fd_set *writefds, 
