@@ -17,6 +17,7 @@
 #ifdef WIN32
 
 #include <Winsock2.h>
+#include <ws2tcpip.h>
 #include "fstring.h"
 
 #ifndef TEMP_FAILURE_RETRY
@@ -41,6 +42,10 @@ namespace DynamicWinsock2
 	u_short htons(u_short in);
 	u_long htonl(u_long in);
 	struct hostent *gethostbyname(const char *name);
+	void freeaddrinfo(struct addrinfo *ai);
+	int getaddrinfo(
+			const char *nodename, const char *servname,
+			const struct addrinfo *hints, struct addrinfo **res );
 	int connect(SOCKET s, const struct sockaddr *serv_addr, int addrlen);
 	int getpeername(SOCKET s, struct sockaddr *name, int *namelen);	
 	int setsockopt(SOCKET s, int level, int optname, 

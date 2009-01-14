@@ -53,15 +53,19 @@ int DynamicWinsock2::select(int nfds, fd_set *readfds, fd_set *writefds,
 typedef SOCKET (__cdecl *FNDEF_DYN_socket)(int,int,int);
 SOCKET DynamicWinsock2::socket(int domain, int type, int protocol)
 {
+	printf("in win32::socket\n");
 	SOCKET out = 0;
 	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
+	printf("ws2_32 dll: %08x\n", (int) Ws2_32);
 	if( Ws2_32 != NULL )
 	{
 		FNDEF_DYN_socket fn = (FNDEF_DYN_socket)
 			GetProcAddress( Ws2_32, "socket" );
+		printf("socket function pointer: %08x\n", (int)fn);
 		if( fn != NULL )
 			out = (fn)( domain, type, protocol );
 	}
+	printf("win32::socket complete.\n");
 	return out;
 }
 
@@ -121,6 +125,37 @@ struct hostent *DynamicWinsock2::gethostbyname(const char *name)
 			GetProcAddress( Ws2_32, "gethostbyname" );
 		if( fn != NULL )
 			out = (fn)( name );
+	}
+	return out;
+}
+
+typedef void (__cdecl *FNDEF_DYN_freeaddrinfo)(struct addrinfo *);
+void DynamicWinsock2::freeaddrinfo(struct addrinfo *ai)
+{
+	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
+	if( Ws2_32 != NULL )
+	{
+		FNDEF_DYN_freeaddrinfo fn = (FNDEF_DYN_freeaddrinfo)
+			GetProcAddress( Ws2_32, "freeaddrinfo" );
+		if( fn != NULL )
+			(fn)( ai );
+	}
+}
+
+typedef int (__cdecl *FNDEF_DYN_getaddrinfo)(
+		const char*,const char*,const struct addrinfo*,struct addrinfo**);
+int DynamicWinsock2::getaddrinfo(
+		const char *nodename, const char *servname,
+		const struct addrinfo *hints, struct addrinfo **res )
+{
+	int out = 0;
+	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
+	if( Ws2_32 != NULL )
+	{
+		FNDEF_DYN_getaddrinfo fn = (FNDEF_DYN_getaddrinfo)
+			GetProcAddress( Ws2_32, "getaddrinfo" );
+		if( fn != NULL )
+			out = (fn)( nodename, servname, hints, res );
 	}
 	return out;
 }
