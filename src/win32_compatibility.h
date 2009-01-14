@@ -24,7 +24,8 @@ extern "C"
 }
 #endif
 
-#include "fstring.h"
+#include "bu/fstring.h"
+#include "bu/singleton.h"
 
 #ifndef TEMP_FAILURE_RETRY
 #define TEMP_FAILURE_RETRY(expression)            \
@@ -65,6 +66,18 @@ namespace DynamicWinsock2
 	int recv( SOCKET s, char *buf, int len, int flags );
 	int send( SOCKET s, const char *buf, int len, int flags );
 	int DYN_FD_ISSET(SOCKET s, fd_set *set);
+
+	class Winsock2 : public Bu::Singleton<Winsock2>
+	{
+	friend class Bu::Singleton<Winsock2>;
+	private:
+		Winsock2();
+		virtual ~Winsock2();
+
+		WSADATA wsaData;
+
+	public:
+	}
 };
 
 #endif /* WIN32 */

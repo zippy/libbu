@@ -35,11 +35,17 @@ Bu::Socket::Socket( int nSocket ) :
 	nSocket( nSocket ),
 	bActive( true )
 {
+#ifdef WIN32
+	DynamicWinsock32::Winsock2::getInstance();
+#endif
 	setAddress();
 }
 
 Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 {
+#ifdef WIN32
+	DynamicWinsock32::Winsock2::getInstance();
+#endif
 	bActive = false;
      
 	/* Create the socket. */

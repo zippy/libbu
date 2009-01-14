@@ -350,5 +350,15 @@ int DynamicWinsock2::DYN_FD_ISSET(SOCKET s, fd_set *set)
 	return out;
 }
 
+DynamicWinsock2::Winsock2::Winsock2()
+{
+	DynamicWinsock2::WSAStartup( MAKEWORD(2, 2), &wsaData );
+}
+
+DynamicWinsock2::Winsock2::~Winsock2()
+{
+	DynamicWinsock2::WSACleanup();
+}
+
 #endif
 
