@@ -219,9 +219,17 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 #endif
 	if( nRead < 0 )
 	{
+#ifdef WIN32
+		int iWSAError = DYNLOAD WSAGetLastError();
+		if( iWSAError == WSAEWOULDBLOCK )
+			return 0;
+		printf( "WSAGetLastError: %d\n", iWSAError );
+		return 0;
+#else
 		if( errno == EAGAIN )
 			return 0;
 		throw SocketException( SocketException::cRead, strerror(errno) );
+#endif
 	}
 	return nRead;
 }
