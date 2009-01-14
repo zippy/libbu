@@ -82,11 +82,36 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 		char ibuf[10]; 
 		sprintf( ibuf, "%d", nPort );
      
-		if( DYNLOAD getaddrinfo( sAddr.getStr(), ibuf, &aiHints, &pAddr )
+		if( int ret = DYNLOAD getaddrinfo( sAddr.getStr(), ibuf, &aiHints, &pAddr )
 			!= 0 )
 		{
-			throw Bu::SocketException("Couldn't resolve hostname %s (%s).\n",
+
+		struct addrinfo *pCur = pAddr;
+		while( pCur )
+		{
+			printf("Name: %s\n", pCur->ai_canonname );
+			printf("  Flags: %d\n", pCur->ai_flags );
+			printf("  Family: %d\n", pCur->ai_family );
+			printf("  Socktype: %d\n", pCur->ai_socktype );
+			printf("  Protocol: %d\n", pCur->ai_protocol );
+
+			pCur = pCur->ai_next;
+		}
+			throw Bu::SocketException("%d: Couldn't resolve hostname %s (%s).\n",
+					ret,
 				sAddr.getStr(), strerror(errno));
+		}
+
+		struct addrinfo *pCur = pAddr;
+		while( pCur )
+		{
+			printf("Name: %s\n", pCur->ai_canonname );
+			printf("  Flags: %d\n", pCur->ai_flags );
+			printf("  Family: %d\n", pCur->ai_family );
+			printf("  Socktype: %d\n", pCur->ai_socktype );
+			printf("  Protocol: %d\n", pCur->ai_protocol );
+
+			pCur = pCur->ai_next;
 		}
 
 		DYNLOAD connect(
