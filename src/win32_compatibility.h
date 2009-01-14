@@ -77,7 +77,7 @@ namespace DynamicWinsock2
 		WSADATA wsaData;
 
 	public:
-	}
+	};
 };
 
 #endif /* WIN32 */

@@ -36,7 +36,7 @@ Bu::Socket::Socket( int nSocket ) :
 	bActive( true )
 {
 #ifdef WIN32
-	DynamicWinsock32::Winsock2::getInstance();
+	DynamicWinsock2::Winsock2::getInstance();
 #endif
 	setAddress();
 }
@@ -44,10 +44,10 @@ Bu::Socket::Socket( int nSocket ) :
 Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 {
 #ifdef WIN32
-	DynamicWinsock32::Winsock2::getInstance();
+	DynamicWinsock2::Winsock2::getInstance();
 #endif
 	bActive = false;
-     
+
 	/* Create the socket. */
 	nSocket = DYNLOAD socket( PF_INET, SOCK_STREAM, 0 );
 	
@@ -88,35 +88,17 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 		char ibuf[10]; 
 		sprintf( ibuf, "%d", nPort );
      
-		if( int ret = DYNLOAD getaddrinfo( sAddr.getStr(), ibuf, &aiHints, &pAddr )
+		int ret;
+		if( ret = DYNLOAD getaddrinfo( sAddr.getStr(), ibuf, &aiHints, &pAddr )
 			!= 0 )
 		{
-
-		struct addrinfo *pCur = pAddr;
-		while( pCur )
-		{
-			printf("Name: %s\n", pCur->ai_canonname );
-			printf("  Flags: %d\n", pCur->ai_flags );
-			printf("  Family: %d\n", pCur->ai_family );
-			printf("  Socktype: %d\n", pCur->ai_socktype );
-			printf("  Protocol: %d\n", pCur->ai_protocol );
-
-			pCur = pCur->ai_next;
-		}
+	#ifdef WIN32
+			throw Bu::SocketException("Couldn't resolve hostname %s (%d).\n",
+				sAddr.getStr(), DYNLOAD WSAGetLastError());
+	#else
 			throw Bu::SocketException("Couldn't resolve hostname %s (%s).\n",
-				sAddr.getStr(), gai_strerror(ret));
-		}
-
-		struct addrinfo *pCur = pAddr;
-		while( pCur )
-		{
-			printf("Name: %s\n", pCur->ai_canonname );
-			printf("  Flags: %d\n", pCur->ai_flags );
-			printf("  Family: %d\n", pCur->ai_family );
-			printf("  Socktype: %d\n", pCur->ai_socktype );
-			printf("  Protocol: %d\n", pCur->ai_protocol );
-
-			pCur = pCur->ai_next;
+				sAddr.getStr(), DYNLOAD gai_strerror(ret));
+	#endif
 		}
 
 		DYNLOAD connect(
@@ -156,7 +138,6 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 			throw ExceptionBase("Connection timeout.\n");
 		}
 	}
-	setAddress();
 }
 
 Bu::Socket::~Socket()

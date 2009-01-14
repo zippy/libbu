@@ -8,12 +8,10 @@ int DynamicWinsock2::WSAStartup(
 {
 	int out=0;
 	HINSTANCE Ws2_32 = LoadLibrary(TEXT("WS2_32.DLL"));
-	printf("ws2_32 dll: %08x\n", (int) Ws2_32);
 	if( Ws2_32 != NULL )
 	{
 		FNDEF_DYN_WSAStartup fn = (FNDEF_DYN_WSAStartup)
 			GetProcAddress( Ws2_32, "WSAStartup" );
-		printf("WSAStartup function pointer: %08x\n", (int)fn);
 		if( fn != NULL )
 			out = (fn)(wVersionRequested,lpWSAData);
 	}
@@ -25,12 +23,10 @@ int DynamicWinsock2::WSACleanup()
 {
 	int out=0;
 	HINSTANCE Ws2_32 = LoadLibrary(TEXT("WS2_32.DLL"));
-	printf("ws2_32 dll: %08x\n", (int) Ws2_32);
 	if( Ws2_32 != NULL )
 	{
 		FNDEF_DYN_WSACleanup fn = (FNDEF_DYN_WSACleanup)
 			GetProcAddress( Ws2_32, "WSACleanup" );
-		printf("WSACleanup function pointer: %08x\n", (int)fn);
 		if( fn != NULL )
 			out = (fn)();
 	}
@@ -43,12 +39,10 @@ int DynamicWinsock2::WSAGetLastError()
 {
 	int out=0;
 	HINSTANCE Ws2_32 = LoadLibrary(TEXT("WS2_32.DLL"));
-	printf("ws2_32 dll: %08x\n", (int) Ws2_32);
 	if( Ws2_32 != NULL )
 	{
 		FNDEF_DYN_WSAGetLastError fn = (FNDEF_DYN_WSAGetLastError)
 			GetProcAddress( Ws2_32, "WSAGetLastError" );
-		printf("WSAGetLastError function pointer: %08x\n", (int)fn);
 		if( fn != NULL )
 			out = (fn)();
 	}
@@ -106,19 +100,15 @@ int DynamicWinsock2::select(int nfds, fd_set *readfds, fd_set *writefds,
 typedef SOCKET (__cdecl *FNDEF_DYN_socket)(int,int,int);
 SOCKET DynamicWinsock2::socket(int domain, int type, int protocol)
 {
-	printf("in win32::socket\n");
 	SOCKET out = 0;
 	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	printf("ws2_32 dll: %08x\n", (int) Ws2_32);
 	if( Ws2_32 != NULL )
 	{
 		FNDEF_DYN_socket fn = (FNDEF_DYN_socket)
 			GetProcAddress( Ws2_32, "socket" );
-		printf("socket function pointer: %08x\n", (int)fn);
 		if( fn != NULL )
 			out = (fn)( domain, type, protocol );
 	}
-	printf("win32::socket complete.\n");
 	return out;
 }
 
