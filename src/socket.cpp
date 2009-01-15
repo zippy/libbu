@@ -89,8 +89,8 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 		sprintf( ibuf, "%d", nPort );
      
 		int ret;
-		if( ret = DYNLOAD getaddrinfo( sAddr.getStr(), ibuf, &aiHints, &pAddr )
-			!= 0 )
+		if( (ret = DYNLOAD getaddrinfo(
+			sAddr.getStr(), ibuf, &aiHints, &pAddr )) != 0 )
 		{
 	#ifdef WIN32
 			throw Bu::SocketException("Couldn't resolve hostname %s (%d).\n",

@@ -111,7 +111,13 @@ bool Bu::TafGroup::hasChild( const Bu::FString &sName ) const
 
 const Bu::TafGroup::GroupList &Bu::TafGroup::getChildren( const Bu::FString &sName ) const
 {
-	return hChildren.get( sName );
+	try {
+		return hChildren.get( sName );
+	} catch( Bu::HashException &e )
+	{
+		throw Bu::TafException("No children of group \"%s\" match \"%s\".",
+			this->sName.getStr(), sName.getStr() );
+	}
 }
 
 const Bu::TafGroup::NodeList &Bu::TafGroup::getChildren() const
@@ -121,7 +127,13 @@ const Bu::TafGroup::NodeList &Bu::TafGroup::getChildren() const
 
 const Bu::TafGroup *Bu::TafGroup::getChild( const Bu::FString &sName ) const
 {
-	return hChildren.get( sName ).first();
+	try {
+		return hChildren.get( sName ).first();
+	} catch( Bu::HashException &e )
+	{
+		throw Bu::TafException("No children of group \"%s\" match \"%s\".",
+			this->sName.getStr(), sName.getStr() );
+	}
 }
 
 bool Bu::TafGroup::hasProperty( const Bu::FString &sName ) const
@@ -131,12 +143,24 @@ bool Bu::TafGroup::hasProperty( const Bu::FString &sName ) const
 
 const Bu::TafGroup::PropList &Bu::TafGroup::getProperties( const Bu::FString &sName ) const
 {
-	return hProp.get( sName );
+	try {
+		return hProp.get( sName );
+	} catch( Bu::HashException &e )
+	{
+		throw Bu::TafException("No properties of group \"%s\" match \"%s\".",
+			this->sName.getStr(), sName.getStr() );
+	}
 }
 
 const Bu::FString &Bu::TafGroup::getProperty( const Bu::FString &sName ) const
 {
-	return hProp.get( sName ).first();
+	try {
+		return hProp.get( sName ).first();
+	} catch( Bu::HashException &e )
+	{
+		throw Bu::TafException("No properties of group \"%s\" match \"%s\".",
+			this->sName.getStr(), sName.getStr() );
+	}	
 }
 
 const Bu::FString &Bu::TafGroup::getProperty( const Bu::FString &sName,
