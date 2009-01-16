@@ -24,6 +24,7 @@
 #include "bu/serversocket.h"
 #include "bu/osx_compatibility.h"
 #include "bu/win32_compatibility.h"
+#include "bu/linux_compatibility.h"
 
 namespace Bu { subExceptionDef( ServerSocketException ) }
 
@@ -35,11 +36,11 @@ Bu::ServerSocket::ServerSocket( int nPort, int nPoolSize ) :
 
 	/* Give the socket a name. */
 	name.sin_family = AF_INET;
-	name.sin_port = DYNLOAD htons( nPort );
+	name.sin_port = bu_htons( nPort );
 
 	// I think this specifies who we will accept connections from,
 	// a good thing to make configurable later on
-	name.sin_addr.s_addr = DYNLOAD htonl( INADDR_ANY );
+	name.sin_addr.s_addr = bu_htonl( INADDR_ANY );
 
 	startServer( name, nPoolSize );
 }
@@ -53,10 +54,10 @@ Bu::ServerSocket::ServerSocket(const FString &sAddr,int nPort, int nPoolSize) :
 	/* Give the socket a name. */
 	name.sin_family = AF_INET;
 
-	name.sin_port = DYNLOAD htons( nPort );
+	name.sin_port = bu_htons( nPort );
 
 #ifdef WIN32
-	name.sin_addr.s_addr = DYNLOAD inet_addr( sAddr.getStr() );
+	name.sin_addr.s_addr = bu_inet_addr( sAddr.getStr() );
 #else
 	inet_aton( sAddr.getStr(), &name.sin_addr );
 #endif
@@ -72,7 +73,7 @@ Bu::ServerSocket::~ServerSocket()
 void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
 {
 	/* Create the socket. */
-	nServer = DYNLOAD socket( PF_INET, SOCK_STREAM, 0 );
+	nServer = bu_socket( PF_INET, SOCK_STREAM, 0 );
 
 	if( nServer < 0 )
 	{
@@ -80,7 +81,7 @@ void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
 	}
 
 	int opt = 1;
-	DYNLOAD setsockopt(
+	bu_setsockopt(
 			nServer,
 			SOL_SOCKET,
 			SO_REUSEADDR,
@@ -88,13 +89,12 @@ void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
 			sizeof( opt )
 			);
 
-	if( DYNLOAD bind(
-				nServer, (struct sockaddr *) &name, sizeof(name) ) < 0 )
+	if( bu_bind( nServer, (struct sockaddr *) &name, sizeof(name) ) < 0 )
 	{
 		throw Bu::ServerSocketException("Couldn't bind to the listen socket.");
 	}
 
-	if( DYNLOAD listen( nServer, nPoolSize ) < 0 )
+	if( bu_listen( nServer, nPoolSize ) < 0 )
 	{
 		throw Bu::ServerSocketException(
 			"Couldn't begin listening to the server socket."
@@ -121,18 +121,14 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 	xT.tv_usec = nTimeoutUSec;	
 
 	if( TEMP_FAILURE_RETRY(
-			DYNLOAD select( nServer+1, &fdRead, NULL, NULL, &xT )) < 0 )
+		bu_select( nServer+1, &fdRead, NULL, NULL, &xT )) < 0 )
 	{
 		throw Bu::ServerSocketException(
 			"Error scanning for new connections: %s", strerror( errno )
 			);
 	}
 
-#ifdef WIN32
-	if( DynamicWinsock2::DYN_FD_ISSET( nServer, &fdRead ) )
-#else
 	if( FD_ISSET( nServer, &fdRead ) )
-#endif
 	{
 		struct sockaddr_in clientname;
 		socklen_t size;
@@ -140,8 +136,7 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 
 		size = sizeof( clientname );
 #ifdef WIN32
-		nClient = DYNLOAD accept( 
-				nServer, (struct sockaddr *)&clientname, (int *)&size);
+		nClient = bu_accept( nServer, (struct sockaddr *)&clientname, &size);
 #else /* not-WIN32 */
 #ifdef __CYGWIN__
 		nClient = ::accept( nServer, (struct sockaddr *)&clientname,
@@ -189,7 +184,7 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 			// If iMode = 0, blocking is enabled; 
 			// If iMode != 0, non-blocking mode is enabled.
 			u_long iMode = 1;
-			DYNLOAD ioctlsocket(nClient, FIONBIO, &iMode);			
+			bu_ioctlsocket(nClient, FIONBIO, &iMode);			
 #endif
 		}
 

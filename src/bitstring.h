@@ -14,7 +14,6 @@ namespace Bu
 	 *
 	 * For more general and mathematical type interaction see BitStringInt.
 	 * 
-	 *@author Mike Buland
 	 */
 	class BitString
 	{

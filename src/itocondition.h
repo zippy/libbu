@@ -34,7 +34,6 @@ namespace Bu
 	 * The usage for the triggering thread is much simpler, when it needs to
 	 * tell the others that it's time to grab some data it calls either signal
 	 * or broadcast.  See both of those functions for the difference.
-	 *@author Mike Buland
 	 *@ingroup Threading
 	 */
 	class ItoCondition : public ItoMutex

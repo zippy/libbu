@@ -45,7 +45,6 @@ namespace Bu
 	 * In order to use a Server you must subclass it and implement the pure
 	 * virtual functions.  These allow you to receive notification of events
 	 * happening within the server itself, and actually makes it useful.
-	 *@author Mike Buland
 	 *@ingroup Threading Serving
 	 */
 	class ItoServer : public Ito

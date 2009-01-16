@@ -17,7 +17,6 @@ namespace Bu
 	 * except keep all of the functionality together in an OO sorta' way and
 	 * keep you from having to worry about cleaning up your mutexes properly,
 	 * or initing them.
-	 *@author Mike Buland
 	 *@ingroup Threading
 	 */
 	class ItoMutex

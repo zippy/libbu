@@ -17,7 +17,6 @@ namespace Bu
 	 * A message to be broadcast accross ProgramLinks in a ProgramChain.  Generally
 	 * one would make a subclass of this in order to transmit more useful
 	 * information, but sometimes it isn't necesarry.
-	 *@author Mike Buland
 	 */
 	class LinkMessage
 	{

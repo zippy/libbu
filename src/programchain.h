@@ -17,7 +17,6 @@ namespace Bu
 	/**
 	 * The Program Chain links together program "chunks" to more easily facilitate
 	 * a generalized program loop with modular extensions.
-	 *@author Mike Buland
 	 */
 	class ProgramChain
 	{
@@ -36,7 +35,6 @@ namespace Bu
 		 * Adds a link to the end of the chain.
 		 *@param pLink A pointer to the link to add to the chain.
 		 *@returns True if adding the link was successful, otherwise false
-		 *@author Mike Buland
 		 */
 		bool addLink( Bu::ProgramLink *pLink );
 
@@ -46,14 +44,12 @@ namespace Bu
 		 * name, apparently.
 		 *@returns A pointer to the specified ProgramLink, or NULL if none were
 		 * found matching your criteria.
-		 *@author Mike Buland
 		 */
 		class ProgramLink *getLink( const char *lpName );
 
 		/**
 		 * Gets the very first link in the chain.
 		 *@returns A pointer to the first link in the chain.
-		 *@author Mike Buland
 		 */
 		class ProgramLink *getBaseLink();
 
@@ -62,7 +58,6 @@ namespace Bu
 		 * over the operation of the chain.
 		 *@returns true if every link returned true.  If at least one link returns
 		 * false, then returns false.
-		 *@author Mike Buland
 		 */
 		bool execChainOnce();
 
@@ -72,7 +67,6 @@ namespace Bu
 		 * a link returns a false value.
 		 *@returns False, always.  It returns true unless a link returned false,
 		 * but loops until a link does return false.
-		 *@author Mike Buland
 		 **/
 		bool enterChainLoop();
 

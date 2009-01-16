@@ -19,7 +19,6 @@ namespace Bu
 	class ClientLinkFactory;
 
 	/**
-	 *@author Mike Buland
 	 *@ingroup Serving
 	 */
 	class Client

@@ -16,7 +16,6 @@ namespace Bu
 	/**
 	 * Program Link is the base class for any object that will be a piece of the
 	 * main program chain loop.
-	 *@author Mike Buland
 	 */
 	class ProgramLink
 	{

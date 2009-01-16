@@ -22,7 +22,6 @@ namespace Bu
 	 * infinite blocking, or with timed blocking, which will return a value if
 	 * something is enqueued within the specified time limit, or NULL if the
 	 * time limit is exceded.
-	 *@author Mike Buland
 	 *@ingroup Threading Containers
 	 */
 	template <class T>

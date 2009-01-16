@@ -33,7 +33,6 @@ namespace Bu
 	 * You can still add public functions and variables to your new Singleton child
 	 * class, but your constructor should be protected (hence the need for the
 	 * friend decleration).
-	 *@author Mike Buland
 	 */
 	template <class T>
 	class Singleton

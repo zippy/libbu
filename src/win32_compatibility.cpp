@@ -2,352 +2,152 @@
 
 #ifdef WIN32
 
-typedef int (__cdecl *FNDEF_DYN_WSAStartup)(WORD,LPWSADATA);
-int DynamicWinsock2::WSAStartup(
-	WORD wVersionRequested,LPWSADATA lpWSAData)
+#define deffunc( name ) \
+	Bu::Winsock2::FNDEF_DYN_ ##name Bu::Winsock2::_fnptr_ ##name = NULL
+
+char Bu::Winsock2::scode[15];
+
+deffunc( WSAStartup );
+deffunc( WSACleanup );
+deffunc( WSAGetLastError );
+deffunc( inet_ntoa );
+deffunc( inet_addr );
+deffunc( select );
+deffunc( socket );
+deffunc( ioctlsocket );
+deffunc( htons );
+deffunc( htonl );
+deffunc( gethostbyname );
+deffunc( freeaddrinfo );
+deffunc( getaddrinfo );
+deffunc( connect );
+deffunc( getpeername );
+deffunc( setsockopt );
+deffunc( bind );
+deffunc( listen );
+deffunc( accept );	
+deffunc( recv );
+deffunc( send );
+deffunc( __WSAFDIsSet );
+
+// Safely get a function from the library
+#define getfunc( name ) \
+	Bu::Winsock2::_fnptr_ ##name = (FNDEF_DYN_ ##name) \
+		GetProcAddress( Ws2_32, #name ); \
+	if( Bu::Winsock2::_fnptr_ ##name == NULL ) { \
+		throw Bu::ExceptionBase("Error loading function " #name " from dll.");\
+	} (void)0
+
+Bu::Winsock2::Winsock2()
 {
-	int out=0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("WS2_32.DLL"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_WSAStartup fn = (FNDEF_DYN_WSAStartup)
-			GetProcAddress( Ws2_32, "WSAStartup" );
-		if( fn != NULL )
-			out = (fn)(wVersionRequested,lpWSAData);
-	}
-	return out;
+	Ws2_32 = LoadLibrary(TEXT("WS2_32.DLL"));
+
+	getfunc( WSAStartup );
+	getfunc( WSACleanup );
+	getfunc( WSAGetLastError );
+	getfunc( inet_ntoa );
+	getfunc( inet_addr );
+	getfunc( select );
+	getfunc( socket );
+	getfunc( ioctlsocket );
+	getfunc( htons );
+	getfunc( htonl );
+	getfunc( gethostbyname );
+	getfunc( freeaddrinfo );
+	getfunc( getaddrinfo );
+	getfunc( connect );
+	getfunc( getpeername );
+	getfunc( setsockopt );
+	getfunc( bind );
+	getfunc( listen );
+	getfunc( accept );	
+	getfunc( recv );
+	getfunc( send );
+	getfunc( __WSAFDIsSet );
+
+	Bu::Winsock2::WSAStartup( MAKEWORD(2, 2), &wsaData );
 }
 
-typedef int (__cdecl *FNDEF_DYN_WSACleanup)();
-int DynamicWinsock2::WSACleanup()
+Bu::Winsock2::~Winsock2()
 {
-	int out=0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("WS2_32.DLL"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_WSACleanup fn = (FNDEF_DYN_WSACleanup)
-			GetProcAddress( Ws2_32, "WSACleanup" );
-		if( fn != NULL )
-			out = (fn)();
-	}
-	return out;
+	Bu::Winsock2::WSACleanup();
+	FreeLibrary( Ws2_32 );
 }
 
-//typedef char * (__cdecl *FNDEF_DYN_gai_strerrorA)( int ecode );
-typedef int (__cdecl *FNDEF_DYN_WSAGetLastError)(void);
-int DynamicWinsock2::WSAGetLastError()
+char *Bu::Winsock2::gai_strerror( int iCode )
 {
-	int out=0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("WS2_32.DLL"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_WSAGetLastError fn = (FNDEF_DYN_WSAGetLastError)
-			GetProcAddress( Ws2_32, "WSAGetLastError" );
-		if( fn != NULL )
-			out = (fn)();
-	}
-	return out;
+	sprintf( scode, "%d", Bu::Winsock2::WSAGetLastError() );
+	return scode;
 }
 
-typedef char * (__cdecl *FNDEF_DYN_inet_ntoa)( struct in_addr );
-void DynamicWinsock2::inet_ntoa( Bu::FString &out, struct in_addr addr_in )
-{
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_inet_ntoa fn = (FNDEF_DYN_inet_ntoa)
-			GetProcAddress( Ws2_32, "inet_ntoa" );
-		if( fn != NULL )
-			out = (fn)( addr_in );
-
-		//We will let windows clean up our dll imports on exit
-		//FreeLibrary( Ws2_32 );
-	}
+int Bu::Winsock2::WSAStartup( WORD a, LPWSADATA b ) {
+	return (*Bu::Winsock2::_fnptr_WSAStartup)( a, b );
 }
-
-typedef unsigned long (__cdecl *FNDEF_DYN_inet_addr)( const char * );
-unsigned long DynamicWinsock2::inet_addr( const char *s_in )
-{
-	unsigned long out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_inet_addr fn = (FNDEF_DYN_inet_addr)
-			GetProcAddress( Ws2_32, "inet_addr" );
-		if( fn != NULL )
-			out = (fn)( s_in );
-	}
-	return out;
+int Bu::Winsock2::WSACleanup( ) {
+	return (*Bu::Winsock2::_fnptr_WSACleanup)();
 }
-
-typedef int (__cdecl *FNDEF_DYN_select)(
-		int nfds,fd_set*,fd_set*,fd_set*,const struct timeval*);
-int DynamicWinsock2::select(int nfds, fd_set *readfds, fd_set *writefds, 
-			fd_set *exceptfds, const struct timeval *timeout)
-{
-	int out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_select fn = (FNDEF_DYN_select)
-			GetProcAddress( Ws2_32, "select" );
-		if( fn != NULL )
-			out = (fn)( nfds, readfds, writefds, exceptfds, timeout );
-	}
-	return out;
+int Bu::Winsock2::WSAGetLastError( ) {
+	return (*Bu::Winsock2::_fnptr_WSAGetLastError)();
 }
-
-typedef SOCKET (__cdecl *FNDEF_DYN_socket)(int,int,int);
-SOCKET DynamicWinsock2::socket(int domain, int type, int protocol)
-{
-	SOCKET out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_socket fn = (FNDEF_DYN_socket)
-			GetProcAddress( Ws2_32, "socket" );
-		if( fn != NULL )
-			out = (fn)( domain, type, protocol );
-	}
-	return out;
+char * Bu::Winsock2::inet_ntoa( struct in_addr a ) {
+	return (*Bu::Winsock2::_fnptr_inet_ntoa)( a );
 }
-
-typedef int (__cdecl *FNDEF_DYN_ioctlsocket)(SOCKET,long,u_long *);
-int DynamicWinsock2::ioctlsocket(SOCKET s, long cmd, u_long *argp)
-{
-	int out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_ioctlsocket fn = (FNDEF_DYN_ioctlsocket)
-			GetProcAddress( Ws2_32, "ioctlsocket" );
-		if( fn != NULL )
-			out = (fn)( s, cmd, argp );
-	}
-	return out;
+unsigned long Bu::Winsock2::inet_addr( const char *s_in ) {
+	return (*Bu::Winsock2::_fnptr_inet_addr)( s_in );
 }
-
-typedef u_short (__cdecl *FNDEF_DYN_htons)(u_short);
-u_short DynamicWinsock2::htons(u_short in)
-{
-	u_short out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_htons fn = (FNDEF_DYN_htons)
-			GetProcAddress( Ws2_32, "htons" );
-		if( fn != NULL )
-			out = (fn)( in );
-	}
-	return out;
+int Bu::Winsock2::select( int a, fd_set *b, fd_set *c, fd_set *d,
+		const struct timeval *e ) {
+	return (*Bu::Winsock2::_fnptr_select)( a, b, c, d, e );
 }
-
-typedef u_long (__cdecl *FNDEF_DYN_htonl)(u_long);
-u_long DynamicWinsock2::htonl(u_long in)
-{
-	u_long out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_htonl fn = (FNDEF_DYN_htonl)
-			GetProcAddress( Ws2_32, "htonl" );
-		if( fn != NULL )
-			out = (fn)( in );
-	}
-	return out;
+SOCKET Bu::Winsock2::socket( int domain, int type, int protocol ) {
+	return (*Bu::Winsock2::_fnptr_socket)( domain, type, protocol );
 }
-
-typedef struct hostent * (__cdecl *FNDEF_DYN_gethostbyname)(const char *);
-struct hostent *DynamicWinsock2::gethostbyname(const char *name)
-{
-	hostent *out = NULL;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_gethostbyname fn = (FNDEF_DYN_gethostbyname)
-			GetProcAddress( Ws2_32, "gethostbyname" );
-		if( fn != NULL )
-			out = (fn)( name );
-	}
-	return out;
+int Bu::Winsock2::ioctlsocket( SOCKET s, long cmd, u_long *argp ) {
+	return (*Bu::Winsock2::_fnptr_ioctlsocket)( s, cmd, argp );
 }
-
-typedef void (__cdecl *FNDEF_DYN_freeaddrinfo)(struct addrinfo *);
-void DynamicWinsock2::freeaddrinfo(struct addrinfo *ai)
-{
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_freeaddrinfo fn = (FNDEF_DYN_freeaddrinfo)
-			GetProcAddress( Ws2_32, "freeaddrinfo" );
-		if( fn != NULL )
-			(fn)( ai );
-	}
+u_short Bu::Winsock2::htons( u_short in ) {
+	return (*Bu::Winsock2::_fnptr_htons)( in );
 }
-
-typedef int (__cdecl *FNDEF_DYN_getaddrinfo)(
-		const char*,const char*,const struct addrinfo*,struct addrinfo**);
-int DynamicWinsock2::getaddrinfo(
-		const char *nodename, const char *servname,
-		const struct addrinfo *hints, struct addrinfo **res )
-{
-	int out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_getaddrinfo fn = (FNDEF_DYN_getaddrinfo)
-			GetProcAddress( Ws2_32, "getaddrinfo" );
-		if( fn != NULL )
-			out = (fn)( nodename, servname, hints, res );
-	}
-	return out;
+u_long Bu::Winsock2::htonl( u_long in ) {
+	return (*Bu::Winsock2::_fnptr_htonl)( in );
 }
-
-typedef int (__cdecl *FNDEF_DYN_connect)(SOCKET,const struct sockaddr*,int);
-int DynamicWinsock2::connect(
-		SOCKET s, const struct sockaddr *serv_addr, int addrlen)
-{
-	int out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_connect fn = (FNDEF_DYN_connect)
-			GetProcAddress( Ws2_32, "connect" );
-		if( fn != NULL )
-			out = (fn)( s, serv_addr, addrlen );
-	}
-	return out;
+struct hostent * Bu::Winsock2::gethostbyname( const char *name ) {
+	return (*Bu::Winsock2::_fnptr_gethostbyname)( name );
 }
-
-typedef int (__cdecl *FNDEF_DYN_getpeername)(SOCKET,struct sockaddr*,int*);
-int DynamicWinsock2::getpeername(SOCKET s, struct sockaddr *name, int *namelen)
-{
-	int out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_getpeername fn = (FNDEF_DYN_getpeername)
-			GetProcAddress( Ws2_32, "getpeername" );
-		if( fn != NULL )
-			out = (fn)( s, name, namelen );
-	}
-	return out;
+void Bu::Winsock2::freeaddrinfo( struct addrinfo *ai ) {
+	return (*Bu::Winsock2::_fnptr_freeaddrinfo)( ai );
 }
-
-typedef int (__cdecl *FNDEF_DYN_setsockopt)(SOCKET,int,int,const char*,int);
-int DynamicWinsock2::setsockopt(SOCKET s, int level, int optname, 
-		const char *optval, int optlen)
-{
-	int out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_setsockopt fn = (FNDEF_DYN_setsockopt)
-			GetProcAddress( Ws2_32, "setsockopt" );
-		if( fn != NULL )
-			out = (fn)( s, level, optname, optval, optlen );
-	}
-	return out;
+int Bu::Winsock2::getaddrinfo( const char *a, const char *b,
+		const struct addrinfo *c, struct addrinfo **d ) {
+	return (*Bu::Winsock2::_fnptr_getaddrinfo)( a, b, c, d );
 }
-
-typedef int (__cdecl *FNDEF_DYN_bind)(SOCKET,const struct sockaddr*,int);
-int DynamicWinsock2::bind(SOCKET s, const struct sockaddr *my_addr, int addrlen)
-{
-	int out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_bind fn = (FNDEF_DYN_bind)
-			GetProcAddress( Ws2_32, "bind" );
-		if( fn != NULL )
-			out = (fn)( s, my_addr, addrlen );
-	}
-	return out;
+int Bu::Winsock2::connect( SOCKET s, const struct sockaddr *a, int b ) {
+	return (*Bu::Winsock2::_fnptr_connect)( s, a, b );
 }
-
-typedef int (__cdecl *FNDEF_DYN_listen)(SOCKET,int);
-int DynamicWinsock2::listen(SOCKET s, int backlog)
-{
-	int out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_listen fn = (FNDEF_DYN_listen)
-			GetProcAddress( Ws2_32, "listen" );
-		if( fn != NULL )
-			out = (fn)( s, backlog );
-	}
-	return out;
+int Bu::Winsock2::getpeername( SOCKET s, struct sockaddr *a, int *b ) {
+	return (*Bu::Winsock2::_fnptr_getpeername)( s, a, b);
 }
-
-typedef SOCKET (__cdecl *FNDEF_DYN_accept)(SOCKET,struct sockaddr*,int*);
-SOCKET DynamicWinsock2::accept(SOCKET s, struct sockaddr *addr, int *addrlen)
-{
-	SOCKET out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_accept fn = (FNDEF_DYN_accept)
-			GetProcAddress( Ws2_32, "accept" );
-		if( fn != NULL )
-			out = (fn)( s, addr, addrlen );
-	}
-	return out;
+int Bu::Winsock2::setsockopt( SOCKET s, int a, int b,
+		const char *c, int d ) {
+	return (*Bu::Winsock2::_fnptr_setsockopt)( s, a, b, c, d );
 }
-
-typedef int (__cdecl *FNDEF_DYN_recv)(SOCKET,char*,int,int);
-int DynamicWinsock2::recv( SOCKET s, char *buf, int len, int flags )
-{
-	int out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_recv fn = (FNDEF_DYN_recv)
-			GetProcAddress( Ws2_32, "recv" );
-		if( fn != NULL )
-			out = (fn)( s, buf, len, flags );
-	}
-	return out;
+int Bu::Winsock2::bind( SOCKET s, const struct sockaddr *a, int b ) {
+	return (*Bu::Winsock2::_fnptr_bind)( s, a, b );
 }
-
-typedef int (__cdecl *FNDEF_DYN_send)(SOCKET,const char*,int,int);
-int DynamicWinsock2::send( SOCKET s, const char *buf, int len, int flags )
-{
-	int out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN_send fn = (FNDEF_DYN_send)
-			GetProcAddress( Ws2_32, "send" );
-		if( fn != NULL )
-			out = (fn)( s, buf, len, flags );
-	}
-	return out;
+int Bu::Winsock2::listen( SOCKET s, int backlog ) {
+	return (*Bu::Winsock2::_fnptr_listen)( s, backlog );
 }
-
-typedef int (__cdecl *FNDEF_DYN__WSAFDIsSet)(SOCKET,fd_set*);
-int DynamicWinsock2::DYN_FD_ISSET(SOCKET s, fd_set *set)
-{
-	int out = 0;
-	HINSTANCE Ws2_32 = LoadLibrary(TEXT("Ws2_32"));
-	if( Ws2_32 != NULL )
-	{
-		FNDEF_DYN__WSAFDIsSet fn = (FNDEF_DYN__WSAFDIsSet)
-			GetProcAddress( Ws2_32, "__WSAFDIsSet" );
-		if( fn != NULL )
-			out = (fn)( s, set );
-	}
-	return out;
+SOCKET Bu::Winsock2::accept( SOCKET s, struct sockaddr *a, int *b ) {	
+	return (*Bu::Winsock2::_fnptr_accept)( s, a, b );
 }
-
-DynamicWinsock2::Winsock2::Winsock2()
-{
-	DynamicWinsock2::WSAStartup( MAKEWORD(2, 2), &wsaData );
+int Bu::Winsock2::recv( SOCKET s, char *buf, int len, int flags ) {
+	return (*Bu::Winsock2::_fnptr_recv)( s, buf, len, flags );
 }
-
-DynamicWinsock2::Winsock2::~Winsock2()
-{
-	DynamicWinsock2::WSACleanup();
+int Bu::Winsock2::send( SOCKET s, const char *buf, int len, int flags ) {
+	return (*Bu::Winsock2::_fnptr_send)( s, buf, len, flags );
+}
+int Bu::Winsock2::__WSAFDIsSet( SOCKET s, fd_set *set ) {
+	return (*Bu::Winsock2::_fnptr___WSAFDIsSet)( s, set );
 }
 
 #endif

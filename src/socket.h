@@ -27,7 +27,32 @@ namespace Bu
 	subExceptionDeclEnd();
 
 	/**
-	 *@author Mike Buland
+	 * Network socket stream class.  This class provides a mechanism for
+	 * communicating over a network using TCP/IP.  It will provide other low
+	 * level protocol and addressing support later on, but for now it's just
+	 * standard STREAM TCP/IP sockets.
+	 *
+	 * Unlike system sockets, these sockets are opened by default in
+	 * non-blocking mode, you can specify your own timeout for opening a socket,
+	 * and a number of non-fatal error messages have been automatically handled
+	 * and treated as standard no-data-available-yet situations on read.
+	 *
+	 * Please note that there is a condition that will occur eventually (at
+	 * least on *nix systems) that will trigger a SIGPIPE condition.  This
+	 * will terminate your program immediately unless handled properly.  Most
+	 * people doing any connections with Socket will want to put this in their
+	 * program somewhere before they use it:
+	 *@code
+	 #include <signal.h>
+	 ...
+	 ...
+	 ...
+	 sigset( SIGPIPE, SIG_IGN ); // do this before you use a Bu::Socket
+	 @endcode
+	 * When this is done, Bu::Socket will simply throw a broken pipe exception
+	 * just like every other error condition, allowing your program to handle
+	 * it sanely.
+	 *
 	 *@ingroup Serving
 	 *@ingroup Streams
 	 */

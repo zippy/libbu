@@ -17,7 +17,6 @@ namespace Bu
 	 * system in an object oriented sort of way.  It allows you to create a
 	 * class with standard member variables and callable functions that can be
 	 * run in it's own thread, one per class instance.
-	 *@author Mike Buland
 	 *@ingroup Threading
 	 */
 	class Ito

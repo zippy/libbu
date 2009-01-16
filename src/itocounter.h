@@ -15,7 +15,6 @@ namespace Bu
 	/**
 	 * A simple thread-safe counter class.  This is handy for assigning unique
 	 * IDs to objects that are being created in different threads.
-	 *@author Mike Buland
 	 *@ingroup Threading Containers
 	 */
 	template <class T>
