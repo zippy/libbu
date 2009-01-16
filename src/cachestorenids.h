@@ -85,7 +85,7 @@ namespace Bu
 			delete pObj;
 		}
 
-		Bu::List<keytype> getKeys()
+		virtual Bu::List<keytype> getKeys()
 		{
 			return hId.getKeys();
 		}

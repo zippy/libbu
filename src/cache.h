@@ -214,6 +214,11 @@ namespace Bu
 			hEnt.erase( cId );
 		}
 
+		Bu::List<keytype> getKeys()
+		{
+			return pStore->getKeys();
+		}
+
 	private:
 		void incRef( keytype cId )
 		{
@@ -230,8 +235,8 @@ namespace Bu
 
 	private:
 		CidHash hEnt;
-		Store *pStore;
 		Calc *pCalc;
+		Store *pStore;
 	};
 };
 

@@ -1,6 +1,8 @@
 #ifndef BU_CACHE_STORE_H
 #define BU_CACHE_STORE_H
 
+#include "bu/list.h"
+
 namespace Bu
 {
 	/**
@@ -23,6 +25,7 @@ namespace Bu
 		virtual void unload( obtype *pObj, const keytype &key )=0;
 		virtual keytype create( obtype *pSrc )=0;
 		virtual void destroy( obtype *pObj, const keytype &key )=0;
+		virtual Bu::List<keytype> getKeys() { return Bu::List<keytype>(); }
 
 	private:
 	};
