@@ -106,11 +106,12 @@ namespace Bu
 		typedef Bu::Hash<keytype, CacheEntry> CidHash;
 
 	public:
-		Cache( Calc &rCalc ) :
-			rCalc( rCalc )
+		Cache( Calc *pCalc, Store *pStore ) :
+			pCalc( pCalc ),
+			pStore( pStore )
 		{
 			TRACE();
-			rCalc.setCache( this );
+			pCalc->setCache( this );
 		}
 
 		virtual ~Cache()
@@ -125,42 +126,27 @@ namespace Bu
 					__tracer_format( i.getKey() );
 					printf("!\n");
 				}
-				rCalc.onUnload(
+				pCalc->onUnload(
 					i.getValue().pData,
 					i.getKey()
 					);
-				lStore.first()->unload(
+				pStore->unload(
 					i.getValue().pData,
 					i.getKey()
 					);
 			}
-			for( typename StoreList::iterator i = lStore.begin();
-				 i != lStore.end(); i++ )
-			{
-				delete *i;
-			}
-		}
-
-		void appendStore( Store *pHand )
-		{
-			TRACE();
-			lStore.append( pHand );
-		}
-
-		void prependStore( Store *pHand )
-		{
-			TRACE();
-			lStore.prepend( pHand );
+			delete pCalc;
+			delete pStore;
 		}
 
 		Ptr insert( obtype *pData )
 		{
 			TRACE( pData );
 			CacheEntry e = {pData, 0};
-			keytype k = lStore.first()->create( pData );
+			keytype k = pStore->create( pData );
 			hEnt.insert( k, e );
 
-			rCalc.onLoad( pData, k );
+			pCalc->onLoad( pData, k );
 
 			return Ptr( this, pData, k );
 		}
@@ -172,8 +158,8 @@ namespace Bu
 				return Ptr( this, hEnt.get( cId ).pData, cId );
 			}
 			catch( Bu::HashException &e ) {
-				CacheEntry e = {lStore.first()->load( cId ), 0};
-				rCalc.onLoad( e.pData, cId );
+				CacheEntry e = {pStore->load( cId ), 0};
+				pCalc->onLoad( e.pData, cId );
 				hEnt.insert( cId, e );
 				return Ptr( this, e.pData, cId );
 			}
@@ -200,12 +186,12 @@ namespace Bu
 				return;
 			}
 			obtype *pObj = hEnt.get( cId ).pData;
-			rCalc.onUnload( pObj, cId );
+			pCalc->onUnload( pObj, cId );
 			hEnt.erase( cId );
 
 			// The unload has to happen last just in case cId is a reference
 			// to data that is about to be deleted from memory by the unload.
-			lStore.first()->unload( pObj, cId );
+			pStore->unload( pObj, cId );
 		}
 
 		void erase( const keytype &cId )
@@ -222,9 +208,9 @@ namespace Bu
 				get( cId );
 			}
 			
-			rCalc.onUnload( hEnt.get( cId ).pData, cId );
+			pCalc->onUnload( hEnt.get( cId ).pData, cId );
 			
-			lStore.first()->destroy( hEnt.get( cId ).pData, cId );
+			pStore->destroy( hEnt.get( cId ).pData, cId );
 			hEnt.erase( cId );
 		}
 
@@ -244,8 +230,8 @@ namespace Bu
 
 	private:
 		CidHash hEnt;
-		StoreList lStore;
-		Calc &rCalc;
+		Store *pStore;
+		Calc *pCalc;
 	};
 };
 

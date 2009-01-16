@@ -172,9 +172,7 @@ int main( int argc, char *argv[] )
 		return 0;
 	}
 
-	BobCalc cc;
-	BobCache cBob( cc );
-	cBob.appendStore( new BobStore() );
+	BobCache cBob( new BobCalc(), new BobStore() );
 	switch( argv[1][0] )
 	{
 		case 'c':
