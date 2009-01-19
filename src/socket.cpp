@@ -121,6 +121,7 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 
 Bu::Socket::~Socket()
 {
+	close();
 }
 
 void Bu::Socket::close()
