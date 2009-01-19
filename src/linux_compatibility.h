@@ -15,6 +15,8 @@
 #define bu_bind bind
 #define bu_listen listen
 #define bu_accept accept
+#define bu_send send
+#define bu_recv recv
 
 #define bu_gai_strerror gai_strerror
 

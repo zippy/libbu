@@ -115,6 +115,7 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
 			close();
 			throw ExceptionBase("Connection timeout.\n");
 		}
+		read( NULL, 0 ); // See if we can get any errors out of the way early.
 	}
 }
 
@@ -129,6 +130,7 @@ void Bu::Socket::close()
 #ifndef WIN32
 		fsync( nSocket );
 #endif
+		shutdown( nSocket, SHUT_RDWR );
 		::close( nSocket );
 	}
 	bActive = false;
@@ -136,25 +138,36 @@ void Bu::Socket::close()
 
 size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 {
-#ifdef WIN32
-	int nRead = TEMP_FAILURE_RETRY( 
-		bu_recv( nSocket, (char *) pBuf, nBytes, 0 ) );
-#else
-	int nRead = TEMP_FAILURE_RETRY( ::read( nSocket, pBuf, nBytes ) );
-#endif
-	if( nRead < 0 )
-	{
-#ifdef WIN32
-		int iWSAError = bu_WSAGetLastError();
-		if( iWSAError == WSAEWOULDBLOCK )
-			return 0;
-#else
-		if( errno == EAGAIN )
-			return 0;
+	fd_set rfds;
+	FD_ZERO(&rfds);
+	FD_SET(nSocket, &rfds);
+	struct timeval tv = {0, 0};
+	if( bu_select( nSocket+1, &rfds, NULL, NULL, &tv ) < 0 )
 		throw SocketException( SocketException::cRead, strerror(errno) );
+	if( FD_ISSET( nSocket, &rfds ) )
+	{
+		int nRead = TEMP_FAILURE_RETRY( 
+			bu_recv( nSocket, (char *) pBuf, nBytes, 0 ) );
+		if( nRead == 0 )
+		{
+			bActive = false;
+			throw SocketException( SocketException::cClosed, "Socket closed.");
+		}
+		if( nRead < 0 )
+		{
+#ifdef WIN32
+			int iWSAError = bu_WSAGetLastError();
+			if( iWSAError == WSAEWOULDBLOCK )
+				return 0;
+#else
+			if( errno == EAGAIN )
+				return 0;
+			throw SocketException( SocketException::cRead, strerror(errno) );
 #endif
+		}
+		return nRead;
 	}
-	return nRead;
+	return 0;
 }
 
 size_t Bu::Socket::read( void *pBuf, size_t nBytes,
@@ -203,12 +216,12 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes,
 
 size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
 {
-#ifdef WIN32
+//#ifdef WIN32
 	int nWrote = TEMP_FAILURE_RETRY( 
 		bu_send( nSocket, (const char *) pBuf, nBytes, 0 ) );
-#else
-	int nWrote = TEMP_FAILURE_RETRY( ::write( nSocket, pBuf, nBytes ) );
-#endif
+//#else
+//	int nWrote = TEMP_FAILURE_RETRY( ::write( nSocket, pBuf, nBytes ) );
+//#endif
 	if( nWrote < 0 )
 	{
 #ifdef WIN32

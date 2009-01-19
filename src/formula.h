@@ -44,8 +44,9 @@ namespace Bu
 		{
 		}
 
-		prec run( const char *sFormula )
+		prec run( const Bu::FString &sFormulaSrc )
 		{
+			const char *sFormula = sFormulaSrc.getStr();
 			for(;;)
 			{
 				uint8_t tNum = nextToken( &sFormula );
