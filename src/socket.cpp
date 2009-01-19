@@ -160,6 +160,12 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 			if( iWSAError == WSAEWOULDBLOCK )
 				return 0;
 #else
+			if( errno == ENETRESET || errno == ECONNRESET )
+			{
+				bActive = false;
+				throw SocketException( SocketException::cClosed,
+					strerror(errno) );
+			}
 			if( errno == EAGAIN )
 				return 0;
 			throw SocketException( SocketException::cRead, strerror(errno) );
@@ -356,7 +362,11 @@ bool Bu::Socket::isSeekable()
 
 bool Bu::Socket::isBlocking()
 {
+#ifndef WIN32
+	return ((fcntl( nSocket, F_GETFL, 0 ) & O_NONBLOCK) == O_NONBLOCK);
+#else
 	return false;
+#endif
 }
 
 void Bu::Socket::setBlocking( bool bBlocking )

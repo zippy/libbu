@@ -27,6 +27,8 @@ Bu::Client::Client( Bu::Socket *pSocket, class Bu::ClientLinkFactory *pfLink ) :
 
 Bu::Client::~Client()
 {
+	delete pSocket;
+	pSocket = NULL;
 }
 
 void Bu::Client::processInput()
