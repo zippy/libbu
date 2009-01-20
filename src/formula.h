@@ -36,12 +36,26 @@ namespace Bu
 	class Formula
 	{
 	public:
+		class Func
+		{
+		public:
+			virtual prec operator()( prec )=0;
+		};
+
+		typedef Hash<Bu::FString, prec> varHash;
+		typedef Hash<Bu::FString, Func *> funcHash;
+
 		Formula()
 		{
 		}
 
 		virtual ~Formula()
 		{
+			for( typename funcHash::iterator i = hFunc.begin();
+				 i != hFunc.end(); i++ )
+			{
+				delete (*i);
+			}
 		}
 
 		prec run( const Bu::FString &sFormulaSrc )
@@ -54,34 +68,28 @@ namespace Bu
 					break;
 				else if( tNum == symSubtract )
 				{
-					tNum = nextToken( &sFormula );
-					if( tNum != symNumber )
-						throw ParseException(
-							"Unary minus must be followed by a number, "
-							"variable, function, or parenthesis.");
-					sValue.top() = -sValue.top();
+					sOper.push( symNegate );
+					continue;
 				}
 				else if( tNum == symNot )
 				{
-					tNum = nextToken( &sFormula );
-					if( tNum != symNumber )
-						throw ParseException(
-							"Unary, binary not must be followed by a number, "
-							"variable, function, or parenthesis.");
-					sValue.top() = static_cast<prec>(
-							~static_cast<bin>(sValue.top())
-						);
+					sOper.push( symNot );
+					continue;
 				}
 				else if( tNum == symOpenParen )
 				{
 					sOper.push( tNum );
 					continue;
 				}
+				else if( tNum == symFunction )
+				{
+					sOper.push( symFunction );
+					continue;
+				}
 
 		oppart:	uint8_t tOpr = nextToken( &sFormula );
 				if( tOpr == symEOS )
 				{
-					//printf("EOS ");
 					reduce();
 					return sValue.top();
 					break;
@@ -103,29 +111,8 @@ namespace Bu
 			return sValue.top();
 		}
 
-
-		typedef Hash<Bu::FString, prec> varHash;
 		varHash hVars;
-
-		typedef struct Func
-		{
-			prec operator()( prec x )
-			{
-				return 0;
-			}
-		} Func;
-
-		typedef Hash<Bu::FString, Func> funcHash;
 		funcHash hFunc;
-/*
-		typedef struct FuncSin : Func
-		{
-			prec operator()( prec x )
-			{
-				return sin( x );
-			}
-		} FuncSin;
-		*/
 
 	private:
 		enum
@@ -139,7 +126,9 @@ namespace Bu
 			symCloseParen,
 			symNumber,
 			symVariable,
+			symFunction,
 			symExponent,
+			symNegate,
 			symModulus,
 
 			symAnd,
@@ -152,6 +141,7 @@ namespace Bu
 
 		Bu::Stack<symType> sOper;
 		Bu::Stack<prec> sValue;
+		Bu::Stack<Bu::FString> sFunc;
 
 	private:
 		symType getPrec( symType nOper )
@@ -180,6 +170,8 @@ namespace Bu
 
 				case symExponent:
 				case symNot:
+				case symNegate:
+				case symFunction:
 					return 3;
 
 				default:
@@ -260,7 +252,8 @@ namespace Bu
 											". in them."
 											);
 								}
-								if( cbuf == '.' || (cbuf >= '0' && cbuf <= '9') )
+								if( cbuf == '.' ||
+									(cbuf >= '0' && cbuf <= '9') )
 								{
 									num[nPos++] = cbuf;
 								}
@@ -297,16 +290,21 @@ namespace Bu
 								else
 								{
 									tok[nPos] = '\0';
-									//printf("Checking variable \"%s\"\n", tok );
-									try
+									if( hVars.has( tok ) )
 									{
 										sValue.push( hVars[tok] );
 										return symNumber;
 									}
-									catch( HashException &e )
+									else if( hFunc.has( tok ) )
+									{
+										sFunc.push( tok );
+										return symFunction;
+									}
+									else
 									{
 										throw ParseException(
-											"No variable named \"%s\" exists.",
+											"No variable or function named "
+											"\"%s\" exists.",
 											tok
 											);
 									}
@@ -326,7 +324,6 @@ namespace Bu
 				uint8_t nOpr = sOper.top();
 				if( nOpr == symOpenParen )
 				{
-					//printf("Found ( stopping reduction.\n");
 					if( bCloseParen == true )
 						sOper.pop();
 					return;
@@ -339,34 +336,28 @@ namespace Bu
 				switch( nOpr )
 				{
 					case symAdd:
-						//printf("%f + %f = %f\n", sValue.top(), dTop, sValue.top()+dTop );
 						sValue.top() += dTop;
 						break;
 
 					case symSubtract:
-						//printf("%f - %f = %f\n", sValue.top(), dTop, sValue.top()-dTop );
 						sValue.top() -= dTop;
 						break;
 
 					case symMultiply:
-						//printf("%f * %f = %f\n", sValue.top(), dTop, sValue.top()*dTop );
 						sValue.top() *= dTop;
 						break;
 
 					case symDivide:
-						//printf("%f / %f = %f\n", sValue.top(), dTop, sValue.top()/dTop );
 						sValue.top() /= dTop;
 						break;
 
 					case symExponent:
-						//printf("%f ^ %f = %f\n", sValue.top(), dTop, pow(sValue.top(),dTop) );
 						sValue.top() = static_cast<prec>(
 								pow( sValue.top(), dTop )
 							);
 						break;
 
 					case symModulus:
-						//printf("%f %% %f = %f\n", sValue.top(), dTop, fmod(sValue.top(),dTop) );
 						sValue.top() = static_cast<prec>(
 								fmod( sValue.top(), dTop )
 							);
@@ -391,6 +382,20 @@ namespace Bu
 								static_cast<bin>(sValue.top()) ^
 								static_cast<bin>(dTop)
 							);
+						break;
+
+					case symFunction:
+						sValue.push( (*hFunc.get( sFunc.pop() ))( dTop ) );
+						break;
+
+					case symNegate:
+						sValue.push( -dTop );
+						break;
+
+					case symNot:
+						sValue.push( static_cast<prec>(
+								~static_cast<bin>(dTop)
+							) );
 						break;
 				}
 			}
