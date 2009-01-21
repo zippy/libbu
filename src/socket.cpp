@@ -131,6 +131,11 @@ void Bu::Socket::close()
 #ifndef WIN32
 		fsync( nSocket );
 #endif
+#ifdef WIN32
+ #ifndef SHUT_RDWR
+  #define SHUT_RDWR (SD_BOTH)
+ #endif
+#endif
 		shutdown( nSocket, SHUT_RDWR );
 		::close( nSocket );
 	}
