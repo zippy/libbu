@@ -63,6 +63,7 @@ namespace Bu
 		decltype( int, select, int nfds, fd_set *readfds, fd_set *writefds, 
 				fd_set *exceptfds, const struct timeval *timeout );
 		decltype( SOCKET, socket, int domain, int type, int protocol );
+		decltype( int, shutdown, SOCKET s, int how );
 		decltype( int, ioctlsocket, SOCKET s, long cmd, u_long *argp );
 		decltype( u_short, htons, u_short in );
 		decltype( u_long, htonl, u_long in );
@@ -101,6 +102,7 @@ namespace Bu
 #define bu_inet_addr (*Bu::Winsock2::inet_addr)
 #define bu_select (*Bu::Winsock2::select)
 #define bu_socket (*Bu::Winsock2::socket)
+#define bu_shutdown (*Bu::Winsock2::shutdown)
 #define bu_ioctlsocket (*Bu::Winsock2::ioctlsocket)
 #define bu_htons (*Bu::Winsock2::htons)
 #define bu_htonl (*Bu::Winsock2::htonl)

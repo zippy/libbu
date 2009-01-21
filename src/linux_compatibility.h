@@ -4,6 +4,7 @@
 #define bu_inet_addr inet_addr
 #define bu_select select
 #define bu_socket socket
+#define bu_shutdown shutdown
 #define bu_htons htons
 #define bu_htonl htonl
 #define bu_gethostbyname gethostbyname

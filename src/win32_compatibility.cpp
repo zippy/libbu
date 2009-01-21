@@ -14,6 +14,7 @@ deffunc( inet_ntoa );
 deffunc( inet_addr );
 deffunc( select );
 deffunc( socket );
+deffunc( shutdown );
 deffunc( ioctlsocket );
 deffunc( htons );
 deffunc( htonl );
@@ -49,6 +50,7 @@ Bu::Winsock2::Winsock2()
 	getfunc( inet_addr );
 	getfunc( select );
 	getfunc( socket );
+	getfunc( shutdown );
 	getfunc( ioctlsocket );
 	getfunc( htons );
 	getfunc( htonl );
@@ -101,6 +103,9 @@ int Bu::Winsock2::select( int a, fd_set *b, fd_set *c, fd_set *d,
 }
 SOCKET Bu::Winsock2::socket( int domain, int type, int protocol ) {
 	return (*Bu::Winsock2::_fnptr_socket)( domain, type, protocol );
+}
+int Bu::Winsock2::shutdown( SOCKET s, int how ) {
+	return (*Bu::Winsock2::_fnptr_shutdown)( s, how );
 }
 int Bu::Winsock2::ioctlsocket( SOCKET s, long cmd, u_long *argp ) {
 	return (*Bu::Winsock2::_fnptr_ioctlsocket)( s, cmd, argp );

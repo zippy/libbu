@@ -136,7 +136,7 @@ void Bu::Socket::close()
   #define SHUT_RDWR (SD_BOTH)
  #endif
 #endif
-		shutdown( nSocket, SHUT_RDWR );
+		bu_shutdown( nSocket, SHUT_RDWR );
 		::close( nSocket );
 	}
 	bActive = false;
