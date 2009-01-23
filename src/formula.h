@@ -59,70 +59,73 @@ namespace Bu
 
 		prec run( const Bu::FString &sFormulaSrc )
 		{
-			/*
-			if( !sOper.isEmpty() )
-				printf("sOper.isEmpty() == false!\n");
-			if( !sValue.isEmpty() )
-				printf("sValue.isEmpty() == false!\n");
-			if( !sFunc.isEmpty() )
-				printf("sFunc.isEmpty() == false!\n");
-			*/
-			const char *sFormula = sFormulaSrc.getStr();
-			for(;;)
+			if( sFormulaSrc.isEmpty() )
+				throw FormulaException("Empty formula, nothing to do.");
+			try
 			{
-				uint8_t tNum = nextToken( &sFormula );
-				if( tNum == symEOS )
-					break;
-				else if( tNum == symSubtract )
+				const char *sFormula = sFormulaSrc.getStr();
+				for(;;)
 				{
-					sOper.push( symNegate );
-					continue;
-				}
-				else if( tNum == symNot )
-				{
-					sOper.push( symNot );
-					continue;
-				}
-				else if( tNum == symOpenParen )
-				{
-					sOper.push( tNum );
-					continue;
-				}
-				else if( tNum == symFunction )
-				{
-					sOper.push( symFunction );
-					continue;
-				}
+					uint8_t tNum = nextToken( &sFormula );
+					if( tNum == symSubtract )
+					{
+						sOper.push( symNegate );
+						continue;
+					}
+					else if( tNum == symNot )
+					{
+						sOper.push( symNot );
+						continue;
+					}
+					else if( tNum == symOpenParen )
+					{
+						sOper.push( tNum );
+						continue;
+					}
+					else if( tNum == symFunction )
+					{
+						sOper.push( symFunction );
+						continue;
+					}
+					else if( tNum == symEOS )
+					{
+						throw Bu::FormulaException(
+							"Cannot end with an operator.");
+					}
 
-		oppart:	uint8_t tOpr = nextToken( &sFormula );
-				if( tOpr == symEOS )
-				{
-					reduce();
-					prec ret = sValue.top();
-					sValue.clear();
-					sFunc.clear();
-					sOper.clear();
-					return ret;
-				}
-				if( !sOper.isEmpty() && getPrec( sOper.top() ) > getPrec( tOpr ) )
-				{
-					reduce();
-				}
-				if( tOpr != symCloseParen )
-				{
-					sOper.push( tOpr );
-				}
-				else
-				{
-					reduce( true );
-					goto oppart;
+			oppart:	uint8_t tOpr = nextToken( &sFormula );
+					if( tOpr == symEOS )
+					{
+						reduce();
+						prec ret = sValue.top();
+						sValue.clear();
+						sFunc.clear();
+						sOper.clear();
+						return ret;
+					}
+					if( !sOper.isEmpty() && getPrec( sOper.top() ) >
+						getPrec( tOpr ) )
+					{
+						reduce();
+					}
+					if( tOpr != symCloseParen )
+					{
+						sOper.push( tOpr );
+					}
+					else
+					{
+						reduce( true );
+						goto oppart;
+					}
 				}
 			}
-			prec ret = sValue.top();
-			sValue.clear();
-			sFunc.clear();
-			sOper.clear();
-			return ret;
+			catch( ... )
+			{
+				sValue.clear();
+				sFunc.clear();
+				sOper.clear();
+				throw;
+			}
 		}
 
 		varHash hVars;
