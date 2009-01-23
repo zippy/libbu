@@ -19,10 +19,9 @@
 #include "bu/hash.h"
 #include "bu/fstring.h"
 
-subExceptionDecl( ParseException );
-
 namespace Bu
 {
+	subExceptionDecl( FormulaException );
 	/**
 	 * Implements a very simple formula parser that allows use of variables and
 	 * custom functions.  This is based on a simple calculator-type parser that
@@ -262,7 +261,7 @@ namespace Bu
 									if( bDot == false )
 										bDot = true;
 									else
-										throw ParseException(
+										throw FormulaException(
 											"Numbers cannot have more than one "
 											". in them."
 											);
@@ -317,7 +316,7 @@ namespace Bu
 									}
 									else
 									{
-										throw ParseException(
+										throw FormulaException(
 											"No variable or function named "
 											"\"%s\" exists.",
 											tok
@@ -417,7 +416,7 @@ namespace Bu
 
 			if( bCloseParen == true )
 			{
-				throw ParseException(
+				throw FormulaException(
 					"Close-paren found without matching open-paren."
 					);
 			}

@@ -7,5 +7,8 @@
 
 #include "formula.h"
 
-subExceptionDef( ParseException );
+namespace Bu
+{
+	subExceptionDef( FormulaException );
+}
 
