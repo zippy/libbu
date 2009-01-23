@@ -60,6 +60,14 @@ namespace Bu
 
 		prec run( const Bu::FString &sFormulaSrc )
 		{
+			/*
+			if( !sOper.isEmpty() )
+				printf("sOper.isEmpty() == false!\n");
+			if( !sValue.isEmpty() )
+				printf("sValue.isEmpty() == false!\n");
+			if( !sFunc.isEmpty() )
+				printf("sFunc.isEmpty() == false!\n");
+			*/
 			const char *sFormula = sFormulaSrc.getStr();
 			for(;;)
 			{
@@ -91,8 +99,11 @@ namespace Bu
 				if( tOpr == symEOS )
 				{
 					reduce();
-					return sValue.top();
-					break;
+					prec ret = sValue.top();
+					sValue.clear();
+					sFunc.clear();
+					sOper.clear();
+					return ret;
 				}
 				if( !sOper.isEmpty() && getPrec( sOper.top() ) > getPrec( tOpr ) )
 				{
@@ -108,7 +119,11 @@ namespace Bu
 					goto oppart;
 				}
 			}
-			return sValue.top();
+			prec ret = sValue.top();
+			sValue.clear();
+			sFunc.clear();
+			sOper.clear();
+			return ret;
 		}
 
 		varHash hVars;

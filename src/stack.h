@@ -64,6 +64,12 @@ namespace Bu
 			return ret;
 		}
 
+		void clear()
+		{
+			while( !isEmpty() )
+				pop();
+		}
+
 		bool isEmpty()
 		{
 			return pTop == NULL;
