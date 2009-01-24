@@ -268,7 +268,7 @@ namespace Bu
 
 			for( uint32_t j = 0; j < src.nCapacity; j++ )
 			{
-				if( src.isFilled( j ) )
+				if( src.isFilled( j ) && !src.isDeleted( j ) )
 				{
 					insert( src.aKeys[j], src.aValues[j] );
 				}
@@ -283,12 +283,11 @@ namespace Bu
 		{
 			for( uint32_t j = 0; j < nCapacity; j++ )
 			{
-				if( isFilled( j ) )
-					if( !isDeleted( j ) )
-					{
-						va.destroy( &aValues[j] );
-						ka.destroy( &aKeys[j] );
-					}
+				if( isFilled( j ) && !isDeleted( j ) )
+				{
+					va.destroy( &aValues[j] );
+					ka.destroy( &aKeys[j] );
+				}
 			}
 			va.deallocate( aValues, nCapacity );
 			ka.deallocate( aKeys, nCapacity );
@@ -310,7 +309,7 @@ namespace Bu
 
 			for( uint32_t j = 0; j < src.nCapacity; j++ )
 			{
-				if( src.isFilled( j ) )
+				if( src.isFilled( j ) && !src.isDeleted( j ) )
 				{
 					insert( src.aKeys[j], src.aValues[j] );
 				}

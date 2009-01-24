@@ -82,6 +82,18 @@ namespace Bu
 			return *this;
 		}
 
+		MyType &operator+=( const value &v )
+		{
+			append( v );
+			return *this;
+		}
+
+		MyType &operator+=( const MyType &src )
+		{
+			append( src );
+			return *this;
+		}
+
 		/**
 		 * Clear the data from the list.
 		 */
@@ -142,6 +154,15 @@ namespace Bu
 			}
 		}
 
+		void append( const MyType &rSrc )
+		{
+			for( typename MyType::const_iterator i = rSrc.begin();
+				 i != rSrc.end(); i++ )
+			{
+				append( *i );
+			}
+		}
+
 		/**
 		 * Prepend a value to the list.
 		 *@param v (const value_type &) The value to prepend.
@@ -164,6 +185,19 @@ namespace Bu
 				pNew->pPrev = NULL;
 				pFirst->pPrev = pNew;
 				pFirst = pNew;
+			}
+		}
+
+		/**
+		 * Prepend another list to the front of this one.  This will prepend
+		 * the rSrc list in reverse order...I may fix that later.
+		 */
+		void prepend( const MyType &rSrc )
+		{
+			for( typename MyType::const_iterator i = rSrc.begin();
+				 i != rSrc.end(); i++ )
+			{
+				prepend( *i );
 			}
 		}
 
