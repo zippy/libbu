@@ -55,7 +55,7 @@ size_t Bu::NidsStream::read( void *pBuf, size_t nBytes )
 		if( iRead > pCurBlock->uBytesUsed-(uPos%uBlockSize) )
 			iRead = pCurBlock->uBytesUsed-(uPos%uBlockSize);
 		memcpy( pBuf, pCurBlock->pData+(uPos%uBlockSize), iRead );
-		//printf("buffill:  %ub, %u-%u/%u -> %d-%d/%d (a:%u)",
+		//printf("read buffill:  %ub, %u-%u/%u -> %d-%d/%d (a:%u)",
 		//	iRead, uPos, uPos+iRead-1, uSize, 0, iRead-1, nBytes, uCurBlock );
 		uPos += iRead;
 		//printf(" -- %u\n", uPos%uBlockSize );
@@ -80,7 +80,7 @@ size_t Bu::NidsStream::read( void *pBuf, size_t nBytes )
 				iRead = pCurBlock->uBytesUsed-(uPos%uBlockSize);
 			memcpy( ((char *)pBuf)+nTotal,
 				pCurBlock->pData+(uPos%uBlockSize), iRead );
-			//printf("buffill:  %ub, %u-%u/%u -> %d-%d/%d (b:%u)\n",
+			//printf(" read buffill:  %ub, %u-%u/%u -> %d-%d/%d (b:%u)\n",
 			//	iRead, uPos, uPos+iRead-1, uSize,
 			//	nTotal, nTotal+nBytes-1, nBytes, uCurBlock );
 			uPos += iRead;
@@ -111,6 +111,10 @@ size_t Bu::NidsStream::write( const void *pBuf, size_t nBytes )
 	{
 		//printf("wa: %u:%u:%u:%u -> ", uPos, uPos%uBlockSize, uSize, pCurBlock->uBytesUsed );
 		memcpy( pCurBlock->pData+(uPos%uBlockSize), pBuf, nBytes );
+		//printf("write buffill:  %ub, %u-%u/%u -> %d-%d/%d (a:%u:%u)\n",
+		//	nBytes, 0, nBytes-1, nBytes,
+		//	uPos, uPos+nBytes-1, uSize, uCurBlock,
+		//	pCurBlock->uBytesUsed );
 		if( (uPos%uBlockSize)+nBytes > pCurBlock->uBytesUsed )
 			pCurBlock->uBytesUsed = (uPos%uBlockSize)+nBytes;
 		rNids.setBlock( uCurBlock, pCurBlock );
@@ -132,6 +136,9 @@ size_t Bu::NidsStream::write( const void *pBuf, size_t nBytes )
 				uNow = nBytes;
 			memcpy( pCurBlock->pData+(uPos%uBlockSize),
 				&((char *)pBuf)[nTotal], uNow );
+			//printf("write buffill:  %ub, %u-%u/%u -> %d-%d/%d (b:%u:%u)\n",
+			//	uNow, nTotal, nTotal+uNow-1, nBytes,
+			//	uPos, uPos+uNow-1, uSize, uCurBlock, pCurBlock->uBytesUsed );
 			if( (uPos%uBlockSize)+uNow > pCurBlock->uBytesUsed )
 				pCurBlock->uBytesUsed = (uPos%uBlockSize)+uNow;
 			rNids.setBlock( uCurBlock, pCurBlock );
@@ -142,7 +149,8 @@ size_t Bu::NidsStream::write( const void *pBuf, size_t nBytes )
 			nBytes -= uNow;
 			//printf("wb: block %u = %ub (%ub total)\n",
 			//	uCurBlock, pCurBlock->uBytesUsed, uSize );
-			if( pCurBlock->uBytesUsed == uBlockSize )
+			//if( pCurBlock->uBytesUsed == uBlockSize )
+			if( uPos%uBlockSize == 0 )
 				uCurBlock = rNids.getNextBlock( uCurBlock, pCurBlock );
 			if( nBytes == 0 )
 				return nTotal;

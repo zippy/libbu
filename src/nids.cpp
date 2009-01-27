@@ -114,8 +114,8 @@ void Bu::Nids::initialize( int iBlockSize, int iPreAllocate )
 
 void Bu::Nids::updateHeader()
 {
-//	if( !sStore.canWrite() )
-//		return;
+	if( !sStore.canWrite() )
+		return;
 	sStore.setPos( 10 ); // Skip the magic number, version, bpi, block size
 	sStore.write( &iBlocks, 4 );
 	sStore.write( &iUsed, 4 );
@@ -222,8 +222,8 @@ void Bu::Nids::setBlock( uint32_t uIndex, Bu::Nids::Block *pBlock )
 
 void Bu::Nids::updateStreamSize( uint32_t uIndex, uint32_t uSize )
 {
-//	if( !sStore.canWrite() )
-//		return;
+	if( !sStore.canWrite() )
+		return;
 	sStore.setPos( iBlockStart + (iBlockSize*uIndex)+4*3 );
 	sStore.write( &uSize, 4 );
 }
@@ -240,8 +240,8 @@ uint32_t Bu::Nids::getNextBlock( uint32_t uIndex,
 			sStore.setPos( iBlockStart + (iBlockSize*uIndex)+1*4 );
 			sStore.write( &uNew, 4 );
 			getBlock( uNew, pBlock );
-			printf("Allocated new block (%u) for stream %u.\n",
-				uNew, pBlock->uFirstBlock );
+			//printf("Allocated new block (%u) for stream %u.\n",
+			//	uNew, pBlock->uFirstBlock );
 		}
 		else
 		{

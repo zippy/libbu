@@ -48,12 +48,6 @@ namespace Bu
 			NidsStream ns = nStore.openStream( 0 );
 			Bu::Archive ar( ns, Bu::Archive::save );
 			ar << hId;
-
-			Bu::FString sName;
-			sName.format("hash-%d.%02d", time( NULL ), iCnt++ );
-			Bu::File sTmp( sName, Bu::File::Write|Bu::File::Create );
-			Bu::Archive artmp( sTmp, Bu::Archive::save );
-			artmp << hId;
 		}
 		
 		virtual obtype *load( const keytype &key )
@@ -80,7 +74,6 @@ namespace Bu
 			keytype key = __cacheGetKey<obtype,keytype>( pSrc );
 			int iStream = nStore.createStream();
 			hId.insert( key, iStream );
-			printf("Creating stream:  %d\n", iStream );
 			NidsStream ns = nStore.openStream( iStream );
 			Bu::Archive ar( ns, Bu::Archive::save );
 			obtype *pOb = new obtype();

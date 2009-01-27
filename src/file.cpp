@@ -113,7 +113,10 @@ bool Bu::File::canRead()
 #ifdef WIN32
 	return true;
 #else
-	return (fcntl( fd, F_GETFL, 0 )&O_RDONLY) == O_RDONLY;
+	int iMode = fcntl( fd, F_GETFL, 0 )&O_ACCMODE;
+	if( iMode == O_RDONLY || iMode == O_RDWR )
+		return true;
+	return false;
 #endif
 }
 
@@ -122,7 +125,10 @@ bool Bu::File::canWrite()
 #ifdef WIN32
 	return true;
 #else
-	return (fcntl( fd, F_GETFL, 0 )&O_WRONLY) == O_WRONLY;
+	int iMode = fcntl( fd, F_GETFL, 0 )&O_ACCMODE;
+	if( iMode == O_WRONLY || iMode == O_RDWR )
+		return true;
+	return false;
 #endif
 }
 
