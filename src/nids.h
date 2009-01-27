@@ -75,9 +75,9 @@ namespace Bu
 		{
 			uint32_t uFirstBlock;
 			uint32_t uNextBlock;
-			uint32_t uPrevBlock;
+			// uint32_t uPrevBlock;
 			uint32_t uBytesUsed;
-			uint32_t uReserved;
+			// uint32_t uReserved;
 			unsigned char pData[0];
 		} Block;
 
@@ -87,8 +87,8 @@ namespace Bu
 		};
 
 		void initBlock( uint32_t uPos, uint32_t uFirstBlock,
-			uint32_t uPrevBlock, bool bNew=false );
-		uint32_t createBlock( uint32_t uFirstBlock, uint32_t uPrevBlock,
+			/*uint32_t uPrevBlock,*/ bool bNew=false );
+		uint32_t createBlock( uint32_t uFirstBlock, /*uint32_t uPrevBlock,*/
 			int iPreAllocate=1 );
 		void getBlock( uint32_t uIndex, struct Nids::Block *pBlock );
 		void setBlock( uint32_t uIndex, struct Nids::Block *pBlock );

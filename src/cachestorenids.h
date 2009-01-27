@@ -9,12 +9,16 @@
 
 #include "bu/file.h"
 
-static int iCnt = 0;
-
 namespace Bu
 {
 	template<class obtype, class keytype>
 	keytype __cacheGetKey( const obtype *pObj );
+
+	template<class obtype, class keytype>
+	obtype *__cacheStoreNidsAlloc( const keytype &key )
+	{
+		return new obtype();
+	}
 
 	template<class obtype, class keytype>
 	class CacheStoreNids : public CacheStore<obtype, keytype>
@@ -55,7 +59,7 @@ namespace Bu
 			int iStream = hId.get( key );
 			NidsStream ns = nStore.openStream( iStream );
 			Bu::Archive ar( ns, Bu::Archive::load );
-			obtype *pOb = new obtype();
+			obtype *pOb = __cacheStoreNidsAlloc<obtype, keytype>( key );
 			ar >> (*pOb);
 			return pOb;
 		}
@@ -76,8 +80,7 @@ namespace Bu
 			hId.insert( key, iStream );
 			NidsStream ns = nStore.openStream( iStream );
 			Bu::Archive ar( ns, Bu::Archive::save );
-			obtype *pOb = new obtype();
-			ar << (*pOb);
+			ar << (*pSrc);
 			return key;
 		}
 

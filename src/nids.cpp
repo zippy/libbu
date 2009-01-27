@@ -104,7 +104,7 @@ void Bu::Nids::initialize( int iBlockSize, int iPreAllocate )
 
 	Block *block = (Block *)new char[iBlockSize];
 	memset( block, 0, iBlockSize );
-	block->uFirstBlock = block->uNextBlock = block->uPrevBlock = blockUnused;
+	block->uFirstBlock = block->uNextBlock /*=block->uPrevBlock*/ = blockUnused;
 	for( int j = 0; j < iPreAllocate; j++ )
 	{
 		sStore.write( block, iBlockSize );
@@ -122,9 +122,9 @@ void Bu::Nids::updateHeader()
 }
 
 void Bu::Nids::initBlock( uint32_t uPos, uint32_t uFirstBlock,
-	uint32_t uPrevBlock, bool bNew )
+	/*uint32_t uPrevBlock,*/ bool bNew )
 {
-	Block b = { uPos, blockUnused, uPrevBlock, 0, 0, { } };
+	Block b = { uPos, blockUnused, /*uPrevBlock, 0,*/ 0, { } };
 	if( uFirstBlock != blockUnused )
 		b.uFirstBlock = uFirstBlock;
 	bsBlockUsed.setBit( uPos );
@@ -142,27 +142,27 @@ void Bu::Nids::initBlock( uint32_t uPos, uint32_t uFirstBlock,
 	iUsed++;
 }
 
-uint32_t Bu::Nids::createBlock( uint32_t uFirstBlock, uint32_t uPrevBlock,
+uint32_t Bu::Nids::createBlock( uint32_t uFirstBlock, /*uint32_t uPrevBlock,*/
 	int /*iPreAllocate*/ )
 {
 	for( int j = 0; j < iBlocks; j++ )
 	{
 		if( !bsBlockUsed.getBit( j ) )
 		{
-			initBlock( j, uFirstBlock, uPrevBlock );
+			initBlock( j, uFirstBlock/*, uPrevBlock*/ );
 			return j;
 		}
 	}
 	// Oh, we don't have any blocks left...allocate a new one.
 	iBlocks++;
 	bsBlockUsed.setSize( iBlocks, false );
-	initBlock( iBlocks-1, uFirstBlock, uPrevBlock, true );
+	initBlock( iBlocks-1, uFirstBlock/*, uPrevBlock*/, true );
 	return iBlocks-1;
 }
 
 int Bu::Nids::createStream( int iPreAllocate )
 {
-	return createBlock( blockUnused, blockUnused, iPreAllocate );
+	return createBlock( blockUnused, /*blockUnused,*/ iPreAllocate );
 }
 
 void Bu::Nids::deleteStream( int /*iID*/ )
@@ -224,7 +224,7 @@ void Bu::Nids::updateStreamSize( uint32_t uIndex, uint32_t uSize )
 {
 	if( !sStore.canWrite() )
 		return;
-	sStore.setPos( iBlockStart + (iBlockSize*uIndex)+4*3 );
+	sStore.setPos( iBlockStart + (iBlockSize*uIndex)+4*2 );
 	sStore.write( &uSize, 4 );
 }
 
