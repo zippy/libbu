@@ -11,19 +11,18 @@
 
 namespace Bu
 {
+//	template<class obtype, class keytype>
+//	keytype __cacheGetKey( obtype *&pObj );
+
 	template<class obtype, class keytype>
 	class Cache
 	{
-	//friend class Bu::CPtr<obtype, keytype>;
 	public:
-		// typedef Bu::CPtr<obtype, keytype> Ptr;
-
 		/**
 		 * Cache Pointer - Provides access to data that is held within the
 		 * cache.  This provides safe, refcounting access to data stored in
 		 * the cache, with support for lazy loading.
 		 */
-		//template<class obtype, class keytype>
 		class Ptr
 		{
 		friend class Bu::Cache<obtype, keytype>;
@@ -37,6 +36,13 @@ namespace Bu
 				if( pCache )
 					pCache->incRef( kId );
 			}
+			
+			Ptr( Cache<obtype, keytype> *pCache, const keytype &kId ) :
+				pCache( pCache ),
+				pData( NULL ),
+				kId( kId )
+			{
+			}
 
 		public:
 			Ptr( const Ptr &rSrc ) :
@@ -44,7 +50,7 @@ namespace Bu
 				pData( rSrc.pData ),
 				kId( rSrc.kId )
 			{
-				if( pCache )
+				if( pCache && pData )
 					pCache->incRef( kId );
 			}
 
@@ -56,40 +62,69 @@ namespace Bu
 
 			virtual ~Ptr()
 			{
-				if( pCache )
+				if( pCache && pData )
 					pCache->decRef( kId );
 			}
 
 			obtype &operator*()
 			{
+				checkPtr();
+				return *pData;
+			}
+
+			const obtype &operator*() const
+			{
+				checkPtr();
 				return *pData;
 			}
 
 			obtype *operator->()
 			{
+				checkPtr();
 				return pData;
 			}
 
-			const keytype &getKey()
+			const obtype *operator->() const
+			{
+				checkPtr();
+				return pData;
+			}
+
+			bool isLoaded() const
+			{
+				return pData != NULL;
+			}
+
+			const keytype &getKey() const
 			{
 				return kId;
 			}
 
 			Ptr &operator=( const Ptr &rRhs )
 			{
-				if( pCache )
+				if( pCache && pData )
 					pCache->decRef( kId );
 				pCache = rRhs.pCache;
 				pData = rRhs.pData;
 				kId = rRhs.kId;
-				if( pCache )
+				if( pCache && pData )
 					pCache->incRef( kId );
 			}
 
 		private:
+			void checkPtr() const
+			{
+				if( pCache && !pData )
+				{
+					pData = pCache->getRaw( kId );
+					pCache->incRef( kId );
+				}
+			}
+
+		private:
 			Bu::Cache<obtype, keytype> *pCache;
-			obtype *pData;
-			keytype kId;
+			mutable obtype *pData;
+			mutable keytype kId;
 		};
 
 	private:
@@ -165,6 +200,12 @@ namespace Bu
 			}
 		}
 
+		Ptr getLazy( const keytype &cId )
+		{
+			TRACE( cId );
+			return Ptr( this, cId );
+		}
+
 		int getRefCount( const keytype &cId )
 		{
 			TRACE( cId );
@@ -220,17 +261,31 @@ namespace Bu
 		}
 
 	private:
-		void incRef( keytype cId )
+		void incRef( const keytype &cId )
 		{
 			TRACE( cId );
 			hEnt.get( cId ).iRefs++;
 		}
 
-		void decRef( keytype cId )
+		void decRef( const keytype &cId )
 		{
 			TRACE( cId );
 			CacheEntry &e = hEnt.get( cId );
 			e.iRefs--;
+		}
+
+		obtype *getRaw( const keytype &cId )
+		{
+			TRACE( cId );
+			try {
+				return hEnt.get( cId ).pData;
+			}
+			catch( Bu::HashException &e ) {
+				CacheEntry e = {pStore->load( cId ), 0};
+				pCalc->onLoad( e.pData, cId );
+				hEnt.insert( cId, e );
+				return e.pData;
+			}
 		}
 
 	private:

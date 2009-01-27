@@ -1,7 +1,9 @@
-#include "bitstring.h"
+#include "bu/bitstring.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "bu/exceptionbase.h"
 
 #ifdef _WIN32
 #define random() rand()
@@ -187,6 +189,8 @@ void Bu::BitString::fixup()
 
 void Bu::BitString::setBit( long iBit, bool bBitState )
 {
+	if( iBit < 0 || iBit >= iBits )
+		throw Bu::ExceptionBase("bit out of range: %d in (0-%d)", iBit, iBits );
 	if( bBitState )
 	{
 		caData[iBit/8] |= (1<<(iBit%8));
@@ -342,7 +346,7 @@ bool Bu::BitString::setSize( long iLength, bool bClear )
 		{
 			// Ok, reallocate and copy...
 			iBits = iLength;
-			long iNewBytes = bitsToBytes( iLength );
+//			long iNewBytes = bitsToBytes( iLength );
 			if( bClear )
 			{
 				delete[] caData;
@@ -352,7 +356,7 @@ bool Bu::BitString::setSize( long iLength, bool bClear )
 			else
 			{
 				unsigned char *tmp = caData;
-				caData = new unsigned char[iBytes];
+				caData = new unsigned char[iNewBytes];
 				if( iNewBytes < iBytes )
 				{
 					memcpy( caData, tmp, iNewBytes );

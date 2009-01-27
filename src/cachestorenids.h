@@ -10,6 +10,9 @@
 namespace Bu
 {
 	template<class obtype, class keytype>
+	keytype __cacheGetKey( const obtype *pObj );
+
+	template<class obtype, class keytype>
 	class CacheStoreNids : public CacheStore<obtype, keytype>
 	{
 	public:
@@ -62,11 +65,9 @@ namespace Bu
 			delete pObj;
 		}
 
-		virtual keytype getKey( obtype *pSrc )=0;
-
 		virtual keytype create( obtype *pSrc )
 		{
-			keytype key = getKey( pSrc );
+			keytype key = __cacheGetKey<obtype,keytype>( pSrc );
 			int iStream = nStore.createStream();
 			hId.insert( key, iStream );
 			printf("Creating stream:  %d\n", iStream );

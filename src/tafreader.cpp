@@ -14,6 +14,7 @@ using namespace Bu;
 
 Bu::TafReader::TafReader( Bu::Stream &sIn ) :
 	c( 0 ),
+	la( 0 ),
 	sIn( sIn ),
 	iLine( 1 ), iCol( -1 )
 {

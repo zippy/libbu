@@ -168,7 +168,7 @@ int main( int argc, char *argv[] )
 
 	if( argc < 3 )
 	{
-		printf("Try: %s [crud] [<id/value>]\n\n", argv[0] );
+		printf("Try: %s [crudl] [<id/value>]\n\n", argv[0] );
 		return 0;
 	}
 
@@ -201,6 +201,15 @@ int main( int argc, char *argv[] )
 		case 'd':
 			{
 				cBob.erase( strtol( argv[2], NULL, 0 ) );
+			}
+			return 0;
+
+		case 'l':
+			{
+				BobCache::Ptr pBob = cBob.getLazy( strtol( argv[2], NULL, 0 ) );
+				printf("isLoaded:  %s\n", pBob.isLoaded()?"yes":"no");
+				printf("Value = %d\n", pBob->getInt() );
+				printf("isLoaded:  %s\n", pBob.isLoaded()?"yes":"no");
 			}
 			return 0;
 	}
