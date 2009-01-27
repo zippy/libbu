@@ -21,18 +21,19 @@ Bu::Nids::Nids( Bu::Stream &sStore ) :
 	sStore( sStore ),
 	iBlockSize( 0 ),
 	iBlocks( 0 ),
-	iBlockStart( -1 )
+	iBlockStart( -1 ),
+	iUsed( 0 )
 {
 }
 
 Bu::Nids::~Nids()
 {
+	updateHeader();
 }
 
 void Bu::Nids::initialize()
 {
 	unsigned char buf[4];
-	int iUsed;
 	if( sStore.read( buf, 4 ) < 4 )
 		throw NidsException("Input stream appears to be empty.");
 	if( memcmp( buf, NIDS_MAGIC_CODE, 4 ) )
@@ -111,6 +112,15 @@ void Bu::Nids::initialize( int iBlockSize, int iPreAllocate )
 	delete[] (char *)block;
 }
 
+void Bu::Nids::updateHeader()
+{
+//	if( !sStore.canWrite() )
+//		return;
+	sStore.setPos( 10 ); // Skip the magic number, version, bpi, block size
+	sStore.write( &iBlocks, 4 );
+	sStore.write( &iUsed, 4 );
+}
+
 void Bu::Nids::initBlock( uint32_t uPos, uint32_t uFirstBlock,
 	uint32_t uPrevBlock, bool bNew )
 {
@@ -129,6 +139,7 @@ void Bu::Nids::initBlock( uint32_t uPos, uint32_t uFirstBlock,
 		sStore.write( buf, iSize );
 		delete[] buf;
 	}
+	iUsed++;
 }
 
 uint32_t Bu::Nids::createBlock( uint32_t uFirstBlock, uint32_t uPrevBlock,
@@ -171,6 +182,27 @@ int Bu::Nids::getBlockSize()
 {
 	return iBlockSize;
 }
+
+int Bu::Nids::getNumBlocks()
+{
+	return iBlocks;
+}
+
+int Bu::Nids::getNumUsedBlocks()
+{
+	return iUsed;
+}
+
+int Bu::Nids::getBlockStart()
+{
+	return iBlockStart;
+}
+
+int Bu::Nids::getBlockOverhead()
+{
+	return sizeof(Block);
+}
+
 /*
 void Bu::Nids::extendStream( int iID, int iBlockCount )
 {
@@ -190,6 +222,8 @@ void Bu::Nids::setBlock( uint32_t uIndex, Bu::Nids::Block *pBlock )
 
 void Bu::Nids::updateStreamSize( uint32_t uIndex, uint32_t uSize )
 {
+//	if( !sStore.canWrite() )
+//		return;
 	sStore.setPos( iBlockStart + (iBlockSize*uIndex)+4*3 );
 	sStore.write( &uSize, 4 );
 }
@@ -206,6 +240,8 @@ uint32_t Bu::Nids::getNextBlock( uint32_t uIndex,
 			sStore.setPos( iBlockStart + (iBlockSize*uIndex)+1*4 );
 			sStore.write( &uNew, 4 );
 			getBlock( uNew, pBlock );
+			printf("Allocated new block (%u) for stream %u.\n",
+				uNew, pBlock->uFirstBlock );
 		}
 		else
 		{

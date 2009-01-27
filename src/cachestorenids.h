@@ -7,6 +7,10 @@
 #include "bu/nidsstream.h"
 #include "bu/cachestore.h"
 
+#include "bu/file.h"
+
+static int iCnt = 0;
+
 namespace Bu
 {
 	template<class obtype, class keytype>
@@ -44,6 +48,12 @@ namespace Bu
 			NidsStream ns = nStore.openStream( 0 );
 			Bu::Archive ar( ns, Bu::Archive::save );
 			ar << hId;
+
+			Bu::FString sName;
+			sName.format("hash-%d.%02d", time( NULL ), iCnt++ );
+			Bu::File sTmp( sName, Bu::File::Write|Bu::File::Create );
+			Bu::Archive artmp( sTmp, Bu::Archive::save );
+			artmp << hId;
 		}
 		
 		virtual obtype *load( const keytype &key )

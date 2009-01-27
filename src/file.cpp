@@ -110,12 +110,20 @@ bool Bu::File::isEOS()
 
 bool Bu::File::canRead()
 {
+#ifdef WIN32
 	return true;
+#else
+	return (fcntl( fd, F_GETFL, 0 )&O_RDONLY) == O_RDONLY;
+#endif
 }
 
 bool Bu::File::canWrite()
 {
+#ifdef WIN32
 	return true;
+#else
+	return (fcntl( fd, F_GETFL, 0 )&O_WRONLY) == O_WRONLY;
+#endif
 }
 
 bool Bu::File::isReadable()

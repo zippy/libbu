@@ -65,6 +65,10 @@ namespace Bu
 		NidsStream openStream( int iID );
 
 		int getBlockSize();
+		int getNumBlocks();
+		int getNumUsedBlocks();
+		int getBlockStart();
+		int getBlockOverhead();
 
 	private:
 		typedef struct Block
@@ -92,6 +96,8 @@ namespace Bu
 		uint32_t getNextBlock( uint32_t uIndex, struct Nids::Block *pBlock,
 			bool bCreate=true);
 
+		void updateHeader();
+
 		// Block allocation routines
 		Block *newBlock();
 		void deleteBlock( Block *pBlock );
@@ -101,6 +107,7 @@ namespace Bu
 		int iBlockSize;
 		int iBlocks;
 		int iBlockStart;
+		int iUsed;
 		Bu::BitString bsBlockUsed;
 	};
 };

@@ -45,15 +45,27 @@ void Bu::NidsStream::close()
 
 size_t Bu::NidsStream::read( void *pBuf, size_t nBytes )
 {
-	if( uPos%uBlockSize+nBytes < uBlockSize )
+	if( nBytes == 0 )
+		return 0;
+	if( nBytes + uPos > uSize )
+		nBytes = uSize - uPos;
+	if( (uPos%uBlockSize)+nBytes < uBlockSize )
 	{
 		size_t iRead = nBytes;
 		if( iRead > pCurBlock->uBytesUsed-(uPos%uBlockSize) )
 			iRead = pCurBlock->uBytesUsed-(uPos%uBlockSize);
 		memcpy( pBuf, pCurBlock->pData+(uPos%uBlockSize), iRead );
+		//printf("buffill:  %ub, %u-%u/%u -> %d-%d/%d (a:%u)",
+		//	iRead, uPos, uPos+iRead-1, uSize, 0, iRead-1, nBytes, uCurBlock );
 		uPos += iRead;
-		//printf("a: block %u = %ub (%ub total)\n",
-		//	uCurBlock, pCurBlock->uBytesUsed, uSize );
+		//printf(" -- %u\n", uPos%uBlockSize );
+		//printf("ra: block %u = %ub:%u (%ub total)\n",
+		//	uCurBlock, uPos, nBytes, uSize );
+
+		// This can't happen, if we're right on a boundery, it goes to the
+		// other case
+		//if( uPos%uBlockSize == 0 )
+		//	uCurBlock = rNids.getNextBlock( uCurBlock, pCurBlock, false );
 		return iRead;
 	}
 	else
@@ -68,15 +80,18 @@ size_t Bu::NidsStream::read( void *pBuf, size_t nBytes )
 				iRead = pCurBlock->uBytesUsed-(uPos%uBlockSize);
 			memcpy( ((char *)pBuf)+nTotal,
 				pCurBlock->pData+(uPos%uBlockSize), iRead );
+			//printf("buffill:  %ub, %u-%u/%u -> %d-%d/%d (b:%u)\n",
+			//	iRead, uPos, uPos+iRead-1, uSize,
+			//	nTotal, nTotal+nBytes-1, nBytes, uCurBlock );
 			uPos += iRead;
 			nBytes -= iRead;
 			nTotal += iRead;
-			//printf("r: block %u = %ub/%ub (%ub total)\n",
-			//	uCurBlock, iRead, pCurBlock->uBytesUsed, uSize );
-			if( nBytes == 0 || uPos == uSize )
-				return nTotal;
-			if( nTotal%uBlockSize == 0 )
+			//printf("rb: block %u = %ub:%u (%ub total)\n",
+			//	uCurBlock, uPos, iRead, uSize );
+			if( uPos%uBlockSize == 0 )
 				uCurBlock = rNids.getNextBlock( uCurBlock, pCurBlock, false );
+			if( nBytes == 0 || uPos >= uSize )
+				return nTotal;
 		}
 	}
 	return 0;
@@ -84,15 +99,26 @@ size_t Bu::NidsStream::read( void *pBuf, size_t nBytes )
 
 size_t Bu::NidsStream::write( const void *pBuf, size_t nBytes )
 {
-	if( uPos%uBlockSize+nBytes < uBlockSize )
+	if( nBytes == 0 )
+		return 0;
+/*	if( pCurBlock->uBytesUsed >= uBlockSize )
 	{
+		// We're at the end of our current block, allocate another before we do
+		// anything.
+		uCurBlock = rNids.getNextBlock( uCurBlock, pCurBlock );
+	} */
+	if( (uPos%uBlockSize)+nBytes < uBlockSize )
+	{
+		//printf("wa: %u:%u:%u:%u -> ", uPos, uPos%uBlockSize, uSize, pCurBlock->uBytesUsed );
 		memcpy( pCurBlock->pData+(uPos%uBlockSize), pBuf, nBytes );
-		pCurBlock->uBytesUsed += nBytes;
+		if( (uPos%uBlockSize)+nBytes > pCurBlock->uBytesUsed )
+			pCurBlock->uBytesUsed = (uPos%uBlockSize)+nBytes;
 		rNids.setBlock( uCurBlock, pCurBlock );
 		uPos += nBytes;
-		uSize += nBytes;
-		//printf("a: block %u = %ub (%ub total)\n",
-		//	uCurBlock, pCurBlock->uBytesUsed, uSize );
+		if( uPos > uSize )
+			uSize = uPos;
+		//printf("block %u = %ub (%ub total) %d:%u\n",
+		//	uCurBlock, pCurBlock->uBytesUsed, uSize, nBytes, uPos );
 		return nBytes;
 	}
 	else
@@ -101,22 +127,25 @@ size_t Bu::NidsStream::write( const void *pBuf, size_t nBytes )
 		for(;;)
 		{
 			uint32_t uNow = uBlockSize-(uPos%uBlockSize);
+			//printf("uNow:  %u (%u-(%u%%%u)) %d req\n", uNow, uBlockSize, uPos, uBlockSize, nBytes );
 			if( nBytes < uNow )
 				uNow = nBytes;
 			memcpy( pCurBlock->pData+(uPos%uBlockSize),
 				&((char *)pBuf)[nTotal], uNow );
-			pCurBlock->uBytesUsed += uNow;
+			if( (uPos%uBlockSize)+uNow > pCurBlock->uBytesUsed )
+				pCurBlock->uBytesUsed = (uPos%uBlockSize)+uNow;
 			rNids.setBlock( uCurBlock, pCurBlock );
-			uSize += uNow;
 			uPos += uNow;
+			if( uPos > uSize )
+				uSize = uPos;
 			nTotal += uNow;
 			nBytes -= uNow;
-			//printf("b: block %u = %ub (%ub total)\n",
+			//printf("wb: block %u = %ub (%ub total)\n",
 			//	uCurBlock, pCurBlock->uBytesUsed, uSize );
-			if( nBytes == 0 )
-				return nTotal;
 			if( pCurBlock->uBytesUsed == uBlockSize )
 				uCurBlock = rNids.getNextBlock( uCurBlock, pCurBlock );
+			if( nBytes == 0 )
+				return nTotal;
 		}
 	}
 }
