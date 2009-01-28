@@ -24,6 +24,8 @@ public:
 			"Dump a stream to a file.");
 		addParam("analyze", 'a', mkproc(Param::procAnalyze),
 			"Analyze a nids file.");
+		addParam("copy", 'c', mkproc(Param::procCopy),
+			"Copy a nids file, changing settings.");
 		addParam("help", 'h', mkproc(Bu::ParamProc::help), "This help.");
 		process( argc, argv );
 	}
@@ -184,6 +186,48 @@ public:
 			(float)n.getNumBlocks()/(float)iStreamCnt );
 
 		return 1;
+	}
+
+	int procCopy( int argc, char *argv[] )
+	{
+		if( argc < 3 )
+		{
+			printf("You must provide source stream, blocksize, destination.\n");
+			exit( 1 );
+		}
+
+		Bu::File fIn( argv[0], Bu::File::Read );
+		Bu::Nids nIn( fIn );
+		nIn.initialize();
+
+		Bu::File fOut( argv[2], Bu::File::Read|Bu::File::Write|Bu::File::Create|
+				Bu::File::Truncate );
+		Bu::Nids nOut( fOut );
+		nOut.initialize( strtol( argv[1], 0, NULL ) );
+
+		Block b;
+		for( int j = 0; j < nIn.getNumBlocks(); j++ )
+		{
+			fIn.setPos( nIn.getBlockStart()+nIn.getBlockSize()*j );
+			fIn.read( &b, sizeof(Block) );
+			if( b.uFirstBlock != (uint32_t)j )
+				continue;
+
+			Bu::NidsStream sIn = nIn.openStream( j );
+			int iNew = nOut.createStream();
+			Bu::NidsStream sOut = nOut.openStream( iNew );
+
+			char buf[1024];
+			for(;;)
+			{
+				int iRead = sIn.read( buf, 1024 );
+				sOut.write( buf, iRead );
+				if( iRead < 1024 )
+					break;
+			}
+		}
+
+		return 3;
 	}
 };
 
