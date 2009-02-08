@@ -21,6 +21,23 @@ namespace Bu
 	}
 
 	template<class obtype, class keytype>
+	void __cacheStoreNidsStore( Bu::Stream &s, obtype &rObj,
+			const keytype & )
+	{
+		Bu::Archive ar( s, Bu::Archive::save );
+		ar << rObj;
+	}
+
+	template<class obtype, class keytype>
+	obtype *__cacheStoreNidsLoad( Bu::Stream &s, const keytype &key )
+	{
+		obtype *pObj = __cacheStoreNidsAlloc<obtype, keytype>( key );
+		Bu::Archive ar( s, Bu::Archive::load );
+		ar >> (*pObj);
+		return pObj;
+	}
+
+	template<class obtype, class keytype>
 	class CacheStoreNids : public CacheStore<obtype, keytype>
 	{
 	public:
@@ -58,9 +75,7 @@ namespace Bu
 		{
 			int iStream = hId.get( key );
 			NidsStream ns = nStore.openStream( iStream );
-			Bu::Archive ar( ns, Bu::Archive::load );
-			obtype *pOb = __cacheStoreNidsAlloc<obtype, keytype>( key );
-			ar >> (*pOb);
+			obtype *pOb = __cacheStoreNidsLoad<obtype, keytype>( ns, key );
 			return pOb;
 		}
 
@@ -68,8 +83,7 @@ namespace Bu
 		{
 			int iStream = hId.get( key );
 			NidsStream ns = nStore.openStream( iStream );
-			Bu::Archive ar( ns, Bu::Archive::save );
-			ar << (*pObj);
+			__cacheStoreNidsStore<obtype, keytype>( ns, *pObj, key );
 			delete pObj;
 		}
 
@@ -79,8 +93,7 @@ namespace Bu
 			int iStream = nStore.createStream();
 			hId.insert( key, iStream );
 			NidsStream ns = nStore.openStream( iStream );
-			Bu::Archive ar( ns, Bu::Archive::save );
-			ar << (*pSrc);
+			__cacheStoreNidsStore<obtype, keytype>( ns, *pSrc, key );
 			return key;
 		}
 
