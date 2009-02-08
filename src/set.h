@@ -322,7 +322,7 @@ namespace Bu
 			/**
 			 * Iterator equality comparison operator. Iterators the same?
 			 */
-			bool operator==( const iterator &oth )
+			bool operator==( const iterator &oth ) const
 			{
 				if( bFinished != oth.bFinished )
 					return false;
@@ -341,7 +341,7 @@ namespace Bu
 			/**
 			 * Iterator not equality comparison operator. Not the same?
 			 */
-			bool operator!=( const iterator &oth )
+			bool operator!=( const iterator &oth ) const
 			{
 				return !(*this == oth );
 			}
@@ -365,6 +365,21 @@ namespace Bu
 			key &operator *()
 			{
 				return hsh.getKeyAtPos( nPos );
+			}
+
+			const key &operator *() const
+			{
+				return hsh.getKeyAtPos( nPos );
+			}
+
+			bool isValid() const
+			{
+				return !bFinished;
+			}
+
+			operator bool() const
+			{
+				return !bFinished;
 			}
 		} iterator;
 		
@@ -420,7 +435,7 @@ namespace Bu
 			/**
 			 * Iterator equality comparison operator. Iterators the same?
 			 */
-			bool operator==( const const_iterator &oth )
+			bool operator==( const const_iterator &oth ) const
 			{
 				if( bFinished != oth.bFinished )
 					return false;
@@ -439,7 +454,7 @@ namespace Bu
 			/**
 			 * Iterator not equality comparison operator. Not the same?
 			 */
-			bool operator!=( const const_iterator &oth )
+			bool operator!=( const const_iterator &oth ) const
 			{
 				return !(*this == oth );
 			}
@@ -463,6 +478,16 @@ namespace Bu
 			const key &operator *() const
 			{
 				return hsh.getKeyAtPos( nPos );
+			}
+
+			bool isValid() const
+			{
+				return !bFinished;
+			}
+
+			operator bool() const
+			{
+				return !bFinished;
 			}
 		} const_iterator;
 

@@ -141,7 +141,7 @@ Bu::FString Bu::MiniMacro::parseCmd()
 Bu::FString Bu::MiniMacro::callFunc(
 	const Bu::FString &sIn, const Bu::FString &sFunc )
 {
-	int i = sFunc.find('(');
+	int i = sFunc.findIdx('(');
 	if( i < 0 )
 		throw Bu::ExceptionBase("That doesn't look like a function call");
 	Bu::FString sName( sFunc.getStr(), i );

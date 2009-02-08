@@ -377,6 +377,16 @@ namespace Bu
 				return *this;
 			}
 
+			operator bool()
+			{
+				return pLink != NULL;
+			}
+
+			bool isValid()
+			{
+				return pLink != NULL;
+			}
+
 			/**
 			 * Assignment operator.
 			 *@param oth (const iterator &) The other iterator to set this
@@ -498,6 +508,16 @@ namespace Bu
 			{
 				pLink = oth.pLink;
 				return *this;
+			}
+
+			operator bool()
+			{
+				return pLink != NULL;
+			}
+
+			bool isValid()
+			{
+				return pLink != NULL;
 			}
 		} const_iterator;
 

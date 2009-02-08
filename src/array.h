@@ -219,12 +219,12 @@ namespace Bu
 				return *this;
 			}
 
-			bool operator==( const iterator &oth )
+			bool operator==( const iterator &oth ) const
 			{
 				return iPos == oth.iPos;
 			}
 
-			bool operator!=( const iterator &oth )
+			bool operator!=( const iterator &oth ) const
 			{
 				return iPos != oth.iPos;
 			}
@@ -243,6 +243,16 @@ namespace Bu
 					throw ArrayException(
 						"Cannot dereference finished iterator.");
 				return src[iPos];
+			}
+
+			operator bool() const
+			{
+				return iPos < 0;
+			}
+
+			bool isValid() const
+			{
+				return iPos < 0;
 			}
 		} iterator;
 		
@@ -302,12 +312,12 @@ namespace Bu
 				return *this;
 			}
 
-			bool operator==( const const_iterator &oth )
+			bool operator==( const const_iterator &oth ) const
 			{
 				return iPos == oth.iPos;
 			}
 
-			bool operator!=( const const_iterator &oth )
+			bool operator!=( const const_iterator &oth ) const
 			{
 				return iPos != oth.iPos;
 			}
@@ -326,6 +336,16 @@ namespace Bu
 					throw ArrayException(
 						"Cannot dereference finished iterator.");
 				return src[iPos];
+			}
+			
+			operator bool() const
+			{
+				return iPos < 0;
+			}
+
+			bool isValid() const
+			{
+				return iPos < 0;
 			}
 		} const_iterator;
 

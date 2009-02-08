@@ -122,15 +122,486 @@ namespace Bu
 		{
 			pFirst = pLast = newChunk( nSize );
 		}
+		
+		struct iterator;
+		typedef struct const_iterator
+		{
+			friend class FBasicString<chr, nMinSize, chralloc, chunkalloc>;
+		private:
+			const_iterator( Chunk *pChunk, int iPos ) :
+				pChunk( pChunk ),
+				iPos( iPos )
+			{
+			}
+
+			Chunk *pChunk;
+			int iPos;
+
+		public:
+			const_iterator( const const_iterator &i ) :
+				pChunk( i.pChunk ),
+				iPos( i.iPos )
+			{
+			}
+			
+			const_iterator( const iterator &i ) :
+				pChunk( i.pChunk ),
+				iPos( i.iPos )
+			{
+			}
+
+			bool operator==( const const_iterator &i ) const
+			{
+				return pChunk == i.pChunk && iPos == i.iPos;
+			}
+
+			bool operator!=( const const_iterator &i ) const
+			{
+				return !(*this == i);
+			}
+
+			const_iterator &operator=( const const_iterator &i )
+			{
+				pChunk = i.pChunk;
+				iPos = i.iPos;
+				return *this;
+			}
+
+			const_iterator &operator++()
+			{
+				if( !pChunk ) return *this;
+				iPos++;
+				if( iPos >= pChunk->nLength )
+				{
+					iPos = 0;
+					pChunk = pChunk->pNext;
+				}
+				return *this;
+			}
+
+			const_iterator &operator++( int )
+			{
+				if( !pChunk ) return *this;
+				iPos++;
+				if( iPos >= pChunk->nLength )
+				{
+					iPos = 0;
+					pChunk = pChunk->pNext;
+				}
+				return *this;
+			}
+
+			const_iterator &operator+=( int iAmnt )
+			{
+				if( !pChunk ) return *this;
+				iPos += iAmnt;
+				while( iPos >= pChunk->nLength )
+				{
+					iPos -= pChunk->nLength;
+					pChunk = pChunk->pNext;
+					if( pChunk == NULL )
+						break;
+				}
+				return *this;
+			}
+
+			const_iterator operator+( int iAmnt ) const
+			{
+				if( !pChunk ) return *this;
+				const_iterator ret( *this );
+				ret += iAmnt;
+				return ret;
+			}
+
+			const chr &operator *() const
+			{
+				if( !pChunk ) throw Bu::ExceptionBase("Not a valid const_iterator.");
+				return pChunk->pData[iPos];
+			}
+
+			bool operator==( const chr &c ) const
+			{
+				if( !pChunk ) return false;
+				return pChunk->pData[iPos] == c;
+			}
+
+			operator bool() const
+			{
+				return pChunk != NULL;
+			}
+
+			bool isValid() const
+			{
+				return pChunk != NULL;
+			}
+
+			bool compare( const const_iterator &c ) const
+			{
+				const_iterator a = *this;
+				const_iterator b = c;
+				if( a == b )
+					return true;
+				for(; a && b; a++, b++ )
+				{
+					if( *a != *b )
+						return false;
+				}
+				return true;
+			}
+
+			bool compare( const const_iterator &c, int nLen ) const
+			{
+				const_iterator a = *this;
+				const_iterator b = c;
+				if( a == b )
+					return true;
+				for(int j = 0; a && b && j < nLen; a++, b++, j++ )
+				{
+					if( *a != *b )
+						return false;
+				}
+				return true;
+			}
+
+			bool compare( const chr *c ) const
+			{
+				if( !pChunk ) return false;
+				const_iterator a = *this;
+				for(; a && *c; a++, c++ )
+				{
+					if( *a != *c )
+						return false;
+				}
+				if( a.isValid() != (*c!=(chr)0) )
+					return false;
+				return true;
+			}
+
+			bool compare( const chr *c, int nLen ) const
+			{
+				if( !pChunk ) return false;
+				const_iterator a = *this;
+				int j = 0;
+				for(; a && j < nLen; a++, c++, j++ )
+				{
+					if( *a != *c )
+						return false;
+				}
+				if( j < nLen )
+					return false;
+				return true;
+			}
+
+			bool compare( const MyType &s ) const
+			{
+				if( !pChunk ) return false;
+				return compare( s.begin() );
+			}
+
+			bool compare( const MyType &s, int nLen ) const
+			{
+				if( !pChunk ) return false;
+				return compare( s.begin(), nLen );
+			}
+
+			const_iterator find( const chr c ) const
+			{
+				for( const_iterator i = *this; i; i++ )
+				{
+					if( *i == c )
+						return i;
+				}
+				return const_iterator( NULL, 0 );
+			}
+
+			const_iterator find( const chr *pStr, int nLen ) const
+			{
+				for( const_iterator i = *this; i; i++ )
+				{
+					if( i.compare( pStr, nLen ) )
+						return i;
+				}
+				return const_iterator( NULL, 0 );
+			}
+
+			const_iterator find( const MyType &s ) const
+			{
+				for( const_iterator i = *this; i; i++ )
+				{
+					if( i.compare( s ) )
+						return i;
+				}
+				return const_iterator( NULL, 0 );
+			}
+
+			const_iterator find( const MyType &s, int nLen ) const
+			{
+				for( const_iterator i = *this; i; i++ )
+				{
+					if( i.compare( s, nLen ) )
+						return i;
+				}
+				return const_iterator( NULL, 0 );
+			}
+		} const_iterator;
+		
+		typedef struct iterator
+		{
+			friend class FBasicString<chr, nMinSize, chralloc, chunkalloc>;
+		private:
+			iterator( Chunk *pChunk, int iPos ) :
+				pChunk( pChunk ),
+				iPos( iPos )
+			{
+			}
+
+			Chunk *pChunk;
+			int iPos;
+
+		public:
+			iterator( const iterator &i ) :
+				pChunk( i.pChunk ),
+				iPos( i.iPos )
+			{
+			}
+
+			operator const_iterator() const
+			{
+				return const_iterator( pChunk, iPos );
+			}
+
+			bool operator==( const iterator &i ) const
+			{
+				return pChunk == i.pChunk && iPos == i.iPos;
+			}
+
+			bool operator!=( const iterator &i ) const
+			{
+				return !(*this == i);
+			}
+
+			iterator &operator=( const iterator &i )
+			{
+				pChunk = i.pChunk;
+				iPos = i.iPos;
+				return *this;
+			}
+
+			iterator &operator++()
+			{
+				if( !pChunk ) return *this;
+				iPos++;
+				if( iPos >= pChunk->nLength )
+				{
+					iPos = 0;
+					pChunk = pChunk->pNext;
+				}
+				return *this;
+			}
+
+			iterator &operator++( int )
+			{
+				if( !pChunk ) return *this;
+				iPos++;
+				if( iPos >= pChunk->nLength )
+				{
+					iPos = 0;
+					pChunk = pChunk->pNext;
+				}
+				return *this;
+			}
+
+			iterator &operator+=( int iAmnt )
+			{
+				if( !pChunk ) return *this;
+				iPos += iAmnt;
+				while( iPos >= pChunk->nLength )
+				{
+					iPos -= pChunk->nLength;
+					pChunk = pChunk->pNext;
+					if( pChunk == NULL )
+						break;
+				}
+				return *this;
+			}
+
+			iterator operator+( int iAmnt ) const
+			{
+				if( !pChunk ) return *this;
+				iterator ret( *this );
+				ret += iAmnt;
+				return ret;
+			}
+
+			chr &operator*()
+			{
+				if( !pChunk ) throw Bu::ExceptionBase("Not a valid iterator.");
+				return pChunk->pData[iPos];
+			}
+
+			const chr &operator*() const
+			{
+				if( !pChunk ) throw Bu::ExceptionBase("Not a valid iterator.");
+				return pChunk->pData[iPos];
+			}
+
+			bool operator==( const chr &c ) const
+			{
+				if( !pChunk ) return false;
+				return pChunk->pData[iPos] == c;
+			}
+
+			iterator &operator=( const chr &c )
+			{
+				if( !pChunk ) throw Bu::ExceptionBase("Not a valid iterator.");
+				pChunk->pData[iPos] = c;
+				return *this;
+			}
+
+			operator bool() const
+			{
+				return pChunk != NULL;
+			}
+
+			bool isValid() const
+			{
+				return pChunk != NULL;
+			}
+
+			bool compare( const iterator &c ) const
+			{
+				iterator a = *this;
+				iterator b = c;
+				if( a == b )
+					return true;
+				for(; a && b; a++, b++ )
+				{
+					if( *a != *b )
+						return false;
+				}
+				return true;
+			}
+
+			bool compare( const iterator &c, int nLen ) const
+			{
+				iterator a = *this;
+				iterator b = c;
+				if( a == b )
+					return true;
+				for(int j = 0; a && b && j < nLen; a++, b++, j++ )
+				{
+					if( *a != *b )
+						return false;
+				}
+				return true;
+			}
+
+			bool compare( const chr *c ) const
+			{
+				if( !pChunk ) return false;
+				iterator a = *this;
+				for(; a && *c; a++, c++ )
+				{
+					if( *a != *c )
+						return false;
+				}
+				if( a.isValid() != (*c!=(chr)0) )
+					return false;
+				return true;
+			}
+
+			bool compare( const chr *c, int nLen ) const
+			{
+				if( !pChunk ) return false;
+				iterator a = *this;
+				int j = 0;
+				for(; a && j < nLen; a++, c++, j++ )
+				{
+					if( *a != *c )
+						return false;
+				}
+				if( j < nLen )
+					return false;
+				return true;
+			}
+
+			bool compare( const MyType &s ) const
+			{
+				if( !pChunk ) return false;
+				return compare( s.begin() );
+			}
+
+			bool compare( const MyType &s, int nLen ) const
+			{
+				if( !pChunk ) return false;
+				return compare( s.begin(), nLen );
+			}
+
+			iterator find( const chr c ) const
+			{
+				for( iterator i = *this; i; i++ )
+				{
+					if( *i == c )
+						return i;
+				}
+				return iterator( NULL, 0 );
+			}
+
+			iterator find( const chr *pStr, int nLen ) const
+			{
+				for( iterator i = *this; i; i++ )
+				{
+					if( i.compare( pStr, nLen ) )
+						return i;
+				}
+				return iterator( NULL, 0 );
+			}
+
+			iterator find( const MyType &s ) const
+			{
+				for( iterator i = *this; i; i++ )
+				{
+					if( i.compare( s ) )
+						return i;
+				}
+				return iterator( NULL, 0 );
+			}
+
+			iterator find( const MyType &s, int nLen ) const
+			{
+				for( iterator i = *this; i; i++ )
+				{
+					if( i.compare( s, nLen ) )
+						return i;
+				}
+				return iterator( NULL, 0 );
+			}
+		} iterator;
+
+		//typedef chr *iterator;
+//		typedef const chr *const_iterator;
+		// typedef iterator const_iterator;
+
+		FBasicString( const const_iterator &s ) :
+			nLength( 0 ),
+			pFirst( NULL ),
+			pLast( NULL )
+		{
+			append( s );
+		}
+
+		FBasicString( const const_iterator &s, const const_iterator &e ) :
+			nLength( 0 ),
+			pFirst( NULL ),
+			pLast( NULL )
+		{
+			append( s, e );
+		}
 
 		virtual ~FBasicString()
 		{
 			clear();
 		}
-
-		/**
-		 *@todo void append( const MyType & sData )
-		 */
 
 		/**
 		 * Append data to your string.
@@ -202,6 +673,74 @@ namespace Bu
 		void append( const MyType & sData, long nLen )
 		{
 			append( sData.getStr(), nLen );
+		}
+		
+		/**
+		 * Append another FString to this one.
+		 *@param sData (MyType &) The FString to append.
+		 *@param nLen How much data to append.
+		 */
+		void append( const MyType & sData, long nStart, long nLen )
+		{
+			if( nLen < 0 )
+				nLen = sData.getSize() - nStart;
+			append( sData.getStr(), nStart, nLen );
+		}
+		
+		void append( const const_iterator &s )
+		{
+			if( !s.isValid() )
+				return;
+			Chunk *pSrc = s.pChunk;
+
+			Chunk *pNew = newChunk( pSrc->nLength-s.iPos );
+			cpy( pNew->pData, pSrc->pData+s.iPos, pSrc->nLength-s.iPos );
+			appendChunk( pNew );
+
+			while( (pSrc = pSrc->pNext) )
+			{
+				appendChunk( copyChunk( pSrc ) );
+			}
+		}
+
+		void append( const iterator &s ) // I get complainst without this one
+		{
+			append( const_iterator( s ) );
+		}
+
+		void append( const const_iterator &s, const const_iterator &e )
+		{
+			if( !s.isValid() )
+				return;
+			if( !e.isValid() )
+			{
+				append( s );
+				return;
+			}
+			if( s.pChunk == e.pChunk )
+			{
+				// Simple case, they're the same chunk
+				Chunk *pNew = newChunk( e.iPos-s.iPos );
+				cpy( pNew->pData, s.pChunk->pData+s.iPos, e.iPos-s.iPos );
+				appendChunk( pNew );
+			}
+			else
+			{
+				// A little trickier, scan the blocks...
+				Chunk *pSrc = s.pChunk;
+				Chunk *pNew = newChunk( pSrc->nLength-s.iPos );
+				cpy( pNew->pData, pSrc->pData+s.iPos, pSrc->nLength-s.iPos );
+				appendChunk( pNew );
+
+				while( (pSrc = pSrc->pNext) != e.pChunk )
+				{
+					appendChunk( copyChunk( pSrc ) );
+				}
+
+				pNew = newChunk( e.iPos );
+				cpy( pNew->pData, pSrc->pData, e.iPos );
+				appendChunk( pNew );
+			}
 		}
 		
 		/**
@@ -549,6 +1088,42 @@ namespace Bu
 			append( pData, nSize );
 		}
 
+		void set( const chr *pData, long nStart, long nSize )
+		{
+			clear();
+			append( pData, nStart, nSize );
+		}
+		
+		void set( const MyType &rData )
+		{
+			clear();
+			append( rData );
+		}
+
+		void set( const MyType &rData, long nSize )
+		{
+			clear();
+			append( rData, nSize );
+		}
+
+		void set( const MyType &rData, long nStart, long nSize )
+		{
+			clear();
+			append( rData, nStart, nSize );
+		}
+
+		void set( const_iterator s )
+		{
+			clear();
+			append( s );
+		}
+
+		void set( const_iterator s, const_iterator e )
+		{
+			clear();
+			append( s, e );
+		}
+
 		void expand()
 		{
 			flatten();
@@ -704,6 +1279,55 @@ namespace Bu
 			return (pFirst != NULL);
 		}
 
+		bool compareSub( const chr *pData, long nIndex, long nLen )
+		{
+			if( pFirst == NULL ) {
+				if( pData == NULL )
+					return true;
+				if( pData[0] == (chr)0 )
+					return true;
+				return false;
+			}
+			if( nIndex+nLen > nLength )
+				return false;
+
+			flatten();
+			pFirst->pData[nLength] = (chr)0;
+			const chr *a = pData;
+			chr *b = pFirst->pData+nIndex;
+			for( long j = 0; j < nLen; j++, a++, b++ )
+			{
+				if( *a != *b )
+					return false;
+				if( *a == (chr)0 && j < nLength )
+					return false;
+			}
+
+			return true;
+		}
+
+		bool compareSub( const MyType &rData, long nIndex, long nLen )
+		{
+			if( pFirst == NULL || rData.pFirst == NULL ) 
+				return false;
+			if( nLen < 0 )
+				nLen = rData.nLength;
+			if( nIndex+nLen > nLength )
+				return false;
+
+			flatten();
+			rData.flatten();
+			const chr *a = rData.pFirst->pData;
+			chr *b = pFirst->pData + nIndex;
+			for( long j = 0; j < nLen; j++, a++, b++ )
+			{
+				if( *a != *b )
+					return false;
+			}
+
+			return true;
+		}
+		
 		/**
 		 * Is the character at index (nIndex) white space?
 		 *@param nIndex (long) The index of the character you want to check.
@@ -758,45 +1382,56 @@ namespace Bu
 			}
 		}
 
+		const_iterator find( const chr cChar,
+				const_iterator iStart=begin() ) const
+		{
+			for( ; iStart; iStart++ )
+			{
+				if( cChar == *iStart )
+					return iStart;
+			}
+			return end();
+		}
+
+		const_iterator find( const chr *sText, int nLen,
+				const_iterator iStart=begin() ) const
+		{
+			for( ; iStart; iStart++ )
+			{
+				if( iStart.compare( sText, nLen ) )
+					return iStart;
+			}
+			return end();
+		}
+
+		const_iterator find( const MyType &rStr,
+				const_iterator iStart=begin() ) const
+		{
+			for( ; iStart; iStart++ )
+			{
+				if( iStart.compare( rStr ) )
+					return iStart;
+			}
+			return end();
+		}
+
+		const_iterator find( const MyType &rStr, int nLen,
+				const_iterator iStart=begin() ) const
+		{
+			for( ; iStart; iStart++ )
+			{
+				if( iStart.compare( rStr, nLen ) )
+					return iStart;
+			}
+			return end();
+		}
+
 		/**
-		 * Find the index of the first occurrance of (sText)
+		 * Find the index of the first occurrance of cChar
 		 *@param sText (const chr *) The string to search for.
 		 *@returns (long) The index of the first occurrance. -1 for not found.
 		 */
-		long find( const chr cChar ) const
-		{
-			flatten();
-			for( long j = 0; j < pFirst->nLength; j++ )
-			{
-				if( pFirst->pData[j] == cChar )
-					return j;
-			}
-			return -1;
-		}
-		
-		/**
-		 * Find the index of the first occurrance of cChar
-		 *@param cChar (const chr) The character to search for.
-		 *@returns (long) The index of the first occurrance. -1 for not found.
-		 */
-		long find( const chr *sText ) const
-		{
-			long nTLen = strlen( sText );
-			flatten();
-			for( long j = 0; j < pFirst->nLength-nTLen; j++ )
-			{
-				if( !strncmp( sText, pFirst->pData+j, nTLen ) )
-					return j;
-			}
-			return -1;
-		}
-		
-		/**
-		 * Find the index of the first occurrance of cChar
-		 *@param sText (const chr *) The string to search for.
-		 *@returns (long) The index of the first occurrance. -1 for not found.
-		 */
-		long find( long iStart, const chr cChar ) const
+		long findIdx( const chr cChar, long iStart=0 ) const
 		{
 			flatten();
 			for( long j = iStart; j < pFirst->nLength; j++ )
@@ -812,7 +1447,7 @@ namespace Bu
 		 *@param cChar (const chr) The character to search for.
 		 *@returns (long) The index of the first occurrance. -1 for not found.
 		 */
-		long find( long iStart, const chr *sText ) const
+		long findIdx( const chr *sText, long iStart=0 ) const
 		{
 			long nTLen = strlen( sText );
 			flatten();
@@ -829,7 +1464,7 @@ namespace Bu
 		 *@param sText (const chr *) The string to search for.
 		 *@returns (long) The index of the last occurrance. -1 for not found.
 		 */
-		long rfind( const chr *sText ) const
+		long rfindIdx( const chr *sText ) const
 		{
 			long nTLen = strlen( sText );
 			flatten();
@@ -928,37 +1563,28 @@ namespace Bu
 			}
 		}
 
-		typedef chr *iterator;
-		typedef const chr *const_iterator;
-
 		iterator begin()
 		{
 			if( nLength == 0 )
-				return NULL;
-			flatten();
-			return pFirst->pData;
+				return iterator( NULL, 0 );
+			return iterator( pFirst, 0 );
 		}
 
 		const_iterator begin() const
 		{
 			if( nLength == 0 )
-				return NULL;
-			flatten();
-			return pFirst->pData;
+				return const_iterator( NULL, 0 );
+			return iterator( pFirst, 0 );
 		}
 
 		iterator end()
 		{
-			if( nLength == 0 )
-				return NULL;
-			return pFirst->pData+pFirst->nLength;
+			return iterator( NULL, 0 );
 		}
 
 		const_iterator end() const
 		{
-			if( nLength == 0 )
-				return NULL;
-			return pFirst->pData+pFirst->nLength;
+			return const_iterator( NULL, 0 );
 		}
 
 		bool isEmpty() const

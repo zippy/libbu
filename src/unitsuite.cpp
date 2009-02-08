@@ -110,7 +110,7 @@ void Bu::UnitSuite::add( Test fTest, const Bu::FString &sName, Expect e )
 	TestInfo ti;
 	ti.sName = sName;
 	ti.eExpect = e;
-	long index = ti.sName.rfind("::");
+	long index = ti.sName.rfindIdx("::");
 	if( index != -1 )
 	{
 		FString tmp = sSuiteName;

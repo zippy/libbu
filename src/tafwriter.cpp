@@ -104,7 +104,10 @@ void Bu::TafWriter::writeString( const Bu::FString &str )
 			sOut.write(buf, 4 );
 		}
 		else
-			sOut.write( s, 1 );
+		{
+			const char buf = *s;
+			sOut.write( &buf, 1 );
+		}
 	}
 	sOut.write("\"", 1 );
 }
