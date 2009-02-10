@@ -1,0 +1,197 @@
+#include "formatter.h"
+
+Bu::Formatter::Formatter( Stream &rOut ) :
+	rOut( rOut )
+{
+}
+
+Bu::Formatter::~Formatter()
+{
+}
+
+void Bu::Formatter::write( const Bu::FString &sStr )
+{
+	rOut.write( sStr );
+}
+
+void Bu::Formatter::write( const char *sStr, int iLen )
+{
+	rOut.write( sStr, iLen );
+}
+
+void Bu::Formatter::writeAligned( const Bu::FString &sStr )
+{
+	int iLen = sStr.getSize();
+	if( iLen > fLast.uMinWidth )
+	{
+		write( sStr );
+	}
+	else
+	{
+		int iRem = fLast.uMinWidth - iLen;
+		switch( fLast.uAlign )
+		{
+			case Fmt::Right:
+				for( int k = 0; k < iRem; k++ )
+					write(" ", 1 );
+				write( sStr );
+				break;
+			
+			case Fmt::Center:
+				{
+					int iHlf = iRem/2;
+					for( int k = 0; k < iHlf; k++ )
+						write(" ", 1 );
+					write( sStr );
+					iHlf = iRem-iHlf;;
+					for( int k = 0; k < iHlf; k++ )
+						write(" ", 1 );
+				}
+				break;
+			
+			case Fmt::Left:
+				write( sStr );
+				for( int k = 0; k < iRem; k++ )
+					write(" ", 1 );
+				break;
+		}
+	}
+
+	usedFormat();
+}
+
+void Bu::Formatter::writeAligned( const char *sStr, int iLen )
+{
+	if( iLen > fLast.uMinWidth )
+	{
+		write( sStr, iLen );
+	}
+	else
+	{
+		int iRem = fLast.uMinWidth - iLen;
+		switch( fLast.uAlign )
+		{
+			case Fmt::Right:
+				for( int k = 0; k < iRem; k++ )
+					write(" ", 1 );
+				write( sStr, iLen );
+				break;
+			
+			case Fmt::Center:
+				{
+					int iHlf = iRem/2;
+					for( int k = 0; k < iHlf; k++ )
+						write(" ", 1 );
+					write( sStr, iLen );
+					iHlf = iRem-iHlf;;
+					for( int k = 0; k < iHlf; k++ )
+						write(" ", 1 );
+				}
+				break;
+			
+			case Fmt::Left:
+				write( sStr, iLen );
+				for( int k = 0; k < iRem; k++ )
+					write(" ", 1 );
+				break;
+		}
+	}
+
+	usedFormat();
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, const Bu::Formatter::Fmt &f )
+{
+	rOut.setTempFormat( f );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, Bu::Formatter::Special s )
+{
+	switch( s )
+	{
+		case Formatter::nl:
+			rOut.write("\n", 1 );
+			break;
+	}
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, const char *sStr )
+{
+	rOut.writeAligned( sStr, strlen( sStr ) );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, const Bu::FString &sStr )
+{
+	rOut.writeAligned( sStr );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, signed char c )
+{
+	rOut.write( (char *)&c, 1 );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, char c )
+{
+	rOut.write( (char *)&c, 1 );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, unsigned char c )
+{
+	rOut.write( (char *)&c, 1 );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, signed short i )
+{
+	rOut.ifmt<signed short>( i );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, unsigned short i )
+{
+	rOut.ufmt<unsigned short>( i );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, signed int i )
+{
+	rOut.ifmt<signed int>( i );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, unsigned int i )
+{
+	rOut.ufmt<unsigned int>( i );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, signed long i )
+{
+	rOut.ifmt<signed long>( i );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, unsigned long i )
+{
+	rOut.ufmt<unsigned long>( i );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, signed long long i )
+{
+	rOut.ifmt<signed long long>( i );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, unsigned long long i )
+{
+	rOut.ufmt<unsigned long long>( i );
+	return rOut;
+}
+
