@@ -33,7 +33,7 @@ void Bu::Formatter::writeAligned( const Bu::FString &sStr )
 		{
 			case Fmt::Right:
 				for( int k = 0; k < iRem; k++ )
-					write(" ", 1 );
+					write( &fLast.cFillChar, 1 );
 				write( sStr );
 				break;
 			
@@ -41,18 +41,18 @@ void Bu::Formatter::writeAligned( const Bu::FString &sStr )
 				{
 					int iHlf = iRem/2;
 					for( int k = 0; k < iHlf; k++ )
-						write(" ", 1 );
+						write( &fLast.cFillChar, 1 );
 					write( sStr );
 					iHlf = iRem-iHlf;;
 					for( int k = 0; k < iHlf; k++ )
-						write(" ", 1 );
+						write( &fLast.cFillChar, 1 );
 				}
 				break;
 			
 			case Fmt::Left:
 				write( sStr );
 				for( int k = 0; k < iRem; k++ )
-					write(" ", 1 );
+					write( &fLast.cFillChar, 1 );
 				break;
 		}
 	}
@@ -73,7 +73,7 @@ void Bu::Formatter::writeAligned( const char *sStr, int iLen )
 		{
 			case Fmt::Right:
 				for( int k = 0; k < iRem; k++ )
-					write(" ", 1 );
+					write( &fLast.cFillChar, 1 );
 				write( sStr, iLen );
 				break;
 			
@@ -81,23 +81,59 @@ void Bu::Formatter::writeAligned( const char *sStr, int iLen )
 				{
 					int iHlf = iRem/2;
 					for( int k = 0; k < iHlf; k++ )
-						write(" ", 1 );
+						write( &fLast.cFillChar, 1 );
 					write( sStr, iLen );
 					iHlf = iRem-iHlf;;
 					for( int k = 0; k < iHlf; k++ )
-						write(" ", 1 );
+						write( &fLast.cFillChar, 1 );
 				}
 				break;
 			
 			case Fmt::Left:
 				write( sStr, iLen );
 				for( int k = 0; k < iRem; k++ )
-					write(" ", 1 );
+					write( &fLast.cFillChar, 1 );
 				break;
 		}
 	}
 
 	usedFormat();
+}
+
+Bu::Formatter::Fmt &Bu::Formatter::Fmt::width( unsigned int uWidth )
+{
+	this->uMinWidth = uWidth;
+	return *this;
+}
+
+Bu::Formatter::Fmt &Bu::Formatter::Fmt::fill( char cFill )
+{
+	this->cFillChar = (unsigned char)cFill;
+	return *this;
+}
+
+Bu::Formatter::Fmt &Bu::Formatter::Fmt::radix( unsigned int uRadix )
+{
+	this->uRadix = uRadix;
+	return *this;
+}
+
+Bu::Formatter::Fmt &Bu::Formatter::Fmt::align( Alignment eAlign )
+{
+	this->uAlign = eAlign;
+	return *this;
+}
+
+Bu::Formatter::Fmt &Bu::Formatter::Fmt::plus( bool bPlus )
+{
+	this->bPlus = bPlus;
+	return *this;
+}
+
+Bu::Formatter::Fmt &Bu::Formatter::Fmt::caps( bool bCaps )
+{
+	this->bCaps = bCaps;
+	return *this;
 }
 
 Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, const Bu::Formatter::Fmt &f )
@@ -192,6 +228,30 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, signed long long i )
 Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, unsigned long long i )
 {
 	rOut.ufmt<unsigned long long>( i );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, float f )
+{
+	rOut.ffmt<float>( f );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, double f )
+{
+	rOut.ffmt<double>( f );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, long double f )
+{
+	rOut.ffmt<long double>( f );
+	return rOut;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, bool b )
+{
+	rOut.writeAligned( b?("true"):("false") );
 	return rOut;
 }
 

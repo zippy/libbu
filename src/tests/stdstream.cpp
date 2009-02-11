@@ -1,20 +1,31 @@
 #include "bu/sio.h"
 
+using Bu::sio;
+using Bu::Fmt;
+
 int main()
 {
-	Bu::sio << "Hello there" << Bu::sio.nl;
+	sio << "Hello there" << sio.nl;
 
-	Bu::sio << "sizeof(Fmt) = " << sizeof(Bu::Fmt) << Bu::sio.nl;
+	sio << "sizeof(Fmt) = " << sizeof(Fmt) << sio.nl;
 
-	Bu::sio << -123 << ", " << 0 << ", " << 123 << Bu::sio.nl;
+	sio << -123 << ", " << 0 << ", " << 123 << sio.nl;
 
-	Bu::sio << "+----------+" << Bu::sio.nl;
-	Bu::sio << "|" << Bu::Fmt( 10, 10, Bu::Fmt::Center ) << "Test" << "|" << Bu::sio.nl;
-	Bu::sio << "+----------+" << Bu::sio.nl;
-	Bu::sio << "|" << Bu::Fmt( 10, 10, Bu::Fmt::Left ) << 123 << "|" << Bu::sio.nl;
-	Bu::sio << "|" << Bu::Fmt( 10, 10, Bu::Fmt::Center ) << 123 << "|" << Bu::sio.nl;
-	Bu::sio << "|" << Bu::Fmt( 10, 10, Bu::Fmt::Right ) << 123 << "|" << Bu::sio.nl;
-	Bu::sio << "+----------+" << Bu::sio.nl;
+	sio << "+----------+" << sio.nl;
+	sio << "|" << Fmt( 10, 10, Fmt::Center ) << "Test" << "|" << sio.nl;
+	sio << "+----------+" << sio.nl;
+	sio << "|" << Fmt( 10, 10, Fmt::Left ) << 123 << "|" << sio.nl;
+	sio << "|" << Fmt( 10, 10, Fmt::Center ) << 123 << "|" << sio.nl;
+	sio << "|" << Fmt( 10, 10, Fmt::Right ) << 123 << "|" << sio.nl;
+	sio << "+----------+" << sio.nl;
+
+	sio << Fmt(10,Fmt::Left) << "Hexcode:" << Fmt::ptr() << (&sio) << sio.nl;
+
+	sio << 0.123 << sio.nl;
+	sio << true << " and then " << false << sio.nl;
+
+	//for( int j = 2; j <= 36; j++ )
+	//	sio << "radix(" << j << ") = " << Fmt().radix( j ) << 255 << sio.nl;
 
 	return 0;
 }

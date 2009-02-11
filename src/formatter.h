@@ -21,28 +21,65 @@ namespace Bu
 			};
 			Fmt() :
 				uMinWidth( 0 ),
+				cFillChar(' '),
 				uRadix( 10 ),
 				uAlign( Right ),
 				bPlus( false ),
-				bCaps( false )
+				bCaps( true )
 			{
 			}
 
 			Fmt( unsigned int uMinWidth, unsigned int uRadix=10,
-					Alignment a=Right, bool bPlus=false ) :
+					Alignment a=Right, bool bPlus=false, bool bCaps=true,
+					char cFill=' ') :
 				uMinWidth( uMinWidth ),
+				cFillChar(cFill),
 				uRadix( uRadix ),
 				uAlign( a ),
 				bPlus( bPlus ),
-				bCaps( false )
+				bCaps( bCaps )
+			{
+			}
+			Fmt( unsigned int uMinWidth, Alignment a=Right,
+					unsigned int uRadix=10, bool bPlus=false, bool bCaps=true,
+					char cFill=' ') :
+				uMinWidth( uMinWidth ),
+				cFillChar(cFill),
+				uRadix( uRadix ),
+				uAlign( a ),
+				bPlus( bPlus ),
+				bCaps( bCaps )
 			{
 			}
 
-			unsigned int uMinWidth : 8;
-			unsigned int uRadix : 6;
-			unsigned int uAlign : 2;
-			unsigned int bPlus : 1;
-			unsigned int bCaps : 1;
+			static Fmt hex( unsigned int uWidth=0, bool bCaps=true )
+			{
+				return Fmt( uWidth, 16, Right, false, bCaps, '0' );
+			}
+			
+			static Fmt oct( unsigned int uWidth=0, bool bCaps=true )
+			{
+				return Fmt( uWidth, 8, Right, false, bCaps, '0' );
+			}
+
+			static Fmt ptr( bool bCaps=true )
+			{
+				return Fmt( sizeof(ptrdiff_t)*2, 16, Right, false, bCaps, '0' );
+			}
+
+			Fmt &width( unsigned int uWidth );
+			Fmt &fill( char cFill='0' );
+			Fmt &radix( unsigned int uRadix );
+			Fmt &align( Alignment eAlign );
+			Fmt &plus( bool bPlus=true );
+			Fmt &caps( bool bCaps=true );
+
+			unsigned char uMinWidth;
+			char cFillChar;
+			unsigned short uRadix : 6;
+			unsigned short uAlign : 2;
+			unsigned short bPlus : 1;
+			unsigned short bCaps : 1;
 		} Fmt;
 
 		void write( const Bu::FString &sStr );
@@ -125,6 +162,13 @@ namespace Bu
 			usedFormat();
 		}
 
+		template<typename type>
+		void ffmt( type /*f*/ )
+		{
+			writeAligned("**make floats work**");
+			usedFormat();
+		}
+
 		enum Special
 		{
 			nl
@@ -153,6 +197,17 @@ namespace Bu
 	Formatter &operator<<( Formatter &rOut, unsigned long i );
 	Formatter &operator<<( Formatter &rOut, signed long long i );
 	Formatter &operator<<( Formatter &rOut, unsigned long long i );
+	Formatter &operator<<( Formatter &rOut, float f );
+	Formatter &operator<<( Formatter &rOut, double f );
+	Formatter &operator<<( Formatter &rOut, long double f );
+	Formatter &operator<<( Formatter &rOut, bool b );
+
+	template<typename type>
+	Formatter &operator<<( Formatter &rOut, type *p )
+	{
+		rOut << (ptrdiff_t)(p);
+		return rOut;
+	}
 };
 
 #endif
