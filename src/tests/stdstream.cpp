@@ -24,8 +24,8 @@ int main()
 	sio << 0.123 << sio.nl;
 	sio << true << " and then " << false << sio.nl;
 
-	//for( int j = 2; j <= 36; j++ )
-	//	sio << "radix(" << j << ") = " << Fmt().radix( j ) << 255 << sio.nl;
+	for( int j = 2; j <= 36; j++ )
+		sio << "radix(" << j << ") = " << Fmt().radix( j ).width( 8 ).align( Fmt::Right ) << 255 << sio.nl;
 
 	return 0;
 }

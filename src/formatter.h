@@ -185,6 +185,7 @@ namespace Bu
 	Formatter &operator<<( Formatter &rOut, const Formatter::Fmt &f );
 	Formatter &operator<<( Formatter &rOut, Formatter::Special s );
 	Formatter &operator<<( Formatter &rOut, const char *sStr );
+	Formatter &operator<<( Formatter &rOut, char *sStr );
 	Formatter &operator<<( Formatter &rOut, const Bu::FString &sStr );
 	Formatter &operator<<( Formatter &rOut, signed char c );
 	Formatter &operator<<( Formatter &rOut, char c );

@@ -159,6 +159,12 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, const char *sStr )
 	return rOut;
 }
 
+Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, char *sStr )
+{
+	rOut.writeAligned( sStr, strlen( sStr ) );
+	return rOut;
+}
+
 Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, const Bu::FString &sStr )
 {
 	rOut.writeAligned( sStr );
