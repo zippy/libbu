@@ -3,6 +3,8 @@
 
 #include "bu/trace.h"
 
+#include <time.h>
+
 namespace Bu
 {
 	template<class obtype, class keytype> class Cache;
@@ -27,6 +29,8 @@ namespace Bu
 
 		virtual void onLoad( obtype *pSrc, const keytype &key )=0;
 		virtual void onUnload( obtype *pSrc, const keytype &key )=0;
+		virtual bool shouldSync( obtype *pSrc, const keytype &key,
+			time_t tLastSync )=0;
 		virtual void onTick() { };
 
 	protected:

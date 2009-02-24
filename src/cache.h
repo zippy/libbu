@@ -143,6 +143,7 @@ namespace Bu
 		{
 			obtype *pData;
 			int iRefs;
+			time_t tLastSync;
 		} CacheEntry;
 
 		typedef Bu::Hash<keytype, CacheEntry> CidHash;
@@ -184,7 +185,7 @@ namespace Bu
 		Ptr insert( obtype *pData )
 		{
 			TRACE( pData );
-			CacheEntry e = {pData, 0};
+			CacheEntry e = {pData, 0, 0};
 			keytype k = pStore->create( pData );
 			hEnt.insert( k, e );
 
@@ -205,7 +206,7 @@ namespace Bu
 				return Ptr( this, hEnt.get( cId ).pData, cId );
 			}
 			catch( Bu::HashException &e ) {
-				CacheEntry e = {pStore->load( cId ), 0};
+				CacheEntry e = {pStore->load( cId ), 0, time( NULL )};
 				pCalc->onLoad( e.pData, cId );
 				hEnt.insert( cId, e );
 				return Ptr( this, e.pData, cId );
@@ -285,11 +286,19 @@ namespace Bu
 			{
 				if( i.getValue().iRefs == 0 )
 				{
-					pStore->sync(
-						i.getValue().pData,
-						i.getKey()
-						);
-					iSynced++;
+					if( pCalc->shouldSync(
+							i.getValue().pData,
+							i.getKey(),
+							i.getValue().tLastSync
+							) )
+					{
+						pStore->sync(
+							i.getValue().pData,
+							i.getKey()
+							);
+						iSynced++;
+						i.getValue().tLastSync = time( NULL );
+					}
 				}
 			}
 			if( iSynced > 0 )
@@ -319,7 +328,7 @@ namespace Bu
 				return hEnt.get( cId ).pData;
 			}
 			catch( Bu::HashException &e ) {
-				CacheEntry e = {pStore->load( cId ), 0};
+				CacheEntry e = {pStore->load( cId ), 0, time( NULL )};
 				pCalc->onLoad( e.pData, cId );
 				hEnt.insert( cId, e );
 				return e.pData;

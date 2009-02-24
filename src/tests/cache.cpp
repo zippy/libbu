@@ -96,6 +96,19 @@ public:
 		f.write( s );
 	}
 
+	virtual void sync( Bob *, const long & )
+	{
+	}
+
+	virtual void sync()
+	{
+	}
+
+	virtual bool has( const long & )
+	{
+		return true;
+	}
+
 	virtual Bob *load( const long &key )
 	{
 		TRACE( key );
@@ -153,6 +166,10 @@ public:
 	}
 
 	virtual void onUnload( Bob *, const long & )
+	{
+	}
+
+	virtual bool shouldSync( Bob *, const long &, time_t )
 	{
 	}
 
