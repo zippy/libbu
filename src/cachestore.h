@@ -24,7 +24,10 @@ namespace Bu
 		virtual obtype *load( const keytype &key )=0;
 		virtual void unload( obtype *pObj, const keytype &key )=0;
 		virtual keytype create( obtype *pSrc )=0;
+		virtual void sync()=0;
+		virtual void sync( obtype *pObj, const keytype &key )=0;
 		virtual void destroy( obtype *pObj, const keytype &key )=0;
+		virtual bool has( const keytype &key )=0;
 		virtual Bu::List<keytype> getKeys() { return Bu::List<keytype>(); }
 
 	private:

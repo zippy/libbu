@@ -13,7 +13,7 @@ namespace Bu
 
 		virtual void reset() = 0;
 		virtual void setSalt( const Bu::FString &sSalt ) = 0;
-		virtual void addData( const char *sData, int iSize ) = 0;
+		virtual void addData( const void *sData, int iSize ) = 0;
 		virtual void addData( const Bu::FString &sData );
 		virtual FString getResult() = 0;
 	};

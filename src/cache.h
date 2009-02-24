@@ -100,6 +100,13 @@ namespace Bu
 				return kId;
 			}
 
+			void unbind()
+			{
+				if( pCache && pData )
+					pCache->decRef( kId );
+				pData = NULL;
+			}
+
 			Ptr &operator=( const Ptr &rRhs )
 			{
 				if( pCache && pData )
@@ -186,6 +193,11 @@ namespace Bu
 			return Ptr( this, pData, k );
 		}
 
+		bool has( const keytype &cId )
+		{
+			return hEnt.has( cId ) || pStore->has( cId );
+		}
+
 		Ptr get( const keytype &cId )
 		{
 			TRACE( cId );
@@ -258,6 +270,32 @@ namespace Bu
 		Bu::List<keytype> getKeys()
 		{
 			return pStore->getKeys();
+		}
+
+		/**
+		 * Make sure all currently loaded but not-in-use objects are synced to
+		 * the store.
+		 */
+		void sync()
+		{
+			TRACE();
+			int iSynced = 0;
+			for( typename CidHash::iterator i = hEnt.begin();
+				 i != hEnt.end(); i++ )
+			{
+				if( i.getValue().iRefs == 0 )
+				{
+					pStore->sync(
+						i.getValue().pData,
+						i.getKey()
+						);
+					iSynced++;
+				}
+			}
+			if( iSynced > 0 )
+			{
+				pStore->sync();
+			}
 		}
 
 	private:

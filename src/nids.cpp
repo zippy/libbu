@@ -31,6 +31,13 @@ Bu::Nids::~Nids()
 	updateHeader();
 }
 
+void Bu::Nids::sync()
+{
+	updateHeader();
+
+	// Later, also flush all caches.
+}
+
 void Bu::Nids::initialize()
 {
 	unsigned char buf[4];

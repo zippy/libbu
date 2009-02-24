@@ -70,6 +70,12 @@ namespace Bu
 		int getBlockStart();
 		int getBlockOverhead();
 
+		/**
+		 * Syncronize the header data, etc. with the storage stream.  It's not
+		 * a bad idea to call this periodically.
+		 */
+		void sync();
+
 	private:
 		typedef struct Block
 		{

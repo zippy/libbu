@@ -29,15 +29,17 @@ namespace Bu
 		void parseParams( Bu::FString::const_iterator &i );
 		void clear();
 
-		Bu::FString getUrl();
+		Bu::FString getUrl() const;
+		Bu::FString getFullPath() const;
 
-		const Bu::FString &getProtocol() { return sProtocol; }
-		const Bu::FString &getUser() { return sUser; }
-		const Bu::FString &getPass() { return sPass; }
-		const Bu::FString &getHost() { return sHost; }
-		const Bu::FString &getPath() { return sPath; }
-		int getPort() { return iPort; }
-		ParamList::const_iterator getParamBegin() { return lParam.begin(); }
+		const Bu::FString &getProtocol() const { return sProtocol; }
+		const Bu::FString &getUser() const { return sUser; }
+		const Bu::FString &getPass() const { return sPass; }
+		const Bu::FString &getHost() const { return sHost; }
+		const Bu::FString &getPath() const { return sPath; }
+		int getPort() const { return iPort; }
+		ParamList::const_iterator getParamBegin() const
+			{ return lParam.begin(); }
 
 		void setProtocol( const Bu::FString &sNewHost, bool bAutoSetPort=true );
 		void setUser( const Bu::FString &s ) { sUser = s; }
@@ -47,7 +49,7 @@ namespace Bu
 		void setPort( int i ) { iPort = i; }
 		void addParam( const Bu::FString &n, const Bu::FString &v );
 
-		bool hasPort() { return iPort.has(); }
+		bool hasPort() const { return iPort.has(); }
 
 		static Bu::FString decode( const Bu::FString &sStr );
 		static Bu::FString encode( const Bu::FString &sStr );

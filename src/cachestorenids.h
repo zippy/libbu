@@ -97,12 +97,33 @@ namespace Bu
 			return key;
 		}
 
+		virtual void sync()
+		{
+			NidsStream ns = nStore.openStream( 0 );
+			Bu::Archive ar( ns, Bu::Archive::save );
+			ar << hId;
+
+			nStore.sync();
+		}
+
+		virtual void sync( obtype *pSrc, const keytype &key )
+		{
+			int iStream = hId.get( key );
+			NidsStream ns = nStore.openStream( iStream );
+			__cacheStoreNidsStore<obtype, keytype>( ns, *pSrc, key );
+		}
+
 		virtual void destroy( obtype *pObj, const keytype &key )
 		{
 			int iStream = hId.get( key );
 			nStore.deleteStream( iStream );
 			hId.erase( key );
 			delete pObj;
+		}
+
+		virtual bool has( const keytype &key )
+		{
+			return hId.has( key );
 		}
 
 		virtual Bu::List<keytype> getKeys()

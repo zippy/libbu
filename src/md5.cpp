@@ -55,8 +55,10 @@ void Bu::Md5::setSalt( const Bu::FString & /*sSalt*/ )
 {
 }
 
-void Bu::Md5::addData( const char *sData, int iSize )
+void Bu::Md5::addData( const void *sVData, int iSize )
 {
+	const char *sData = (const char *)sVData;
+
 	int iInPos = 0;
 	for(;;)
 	{

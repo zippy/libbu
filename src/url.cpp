@@ -235,3 +235,32 @@ void Bu::Url::clear()
 	iPort.clear();
 }
 
+Bu::FString Bu::Url::getFullPath() const
+{
+	Bu::FString sBuf = sPath;
+	if( !lParam.isEmpty() )
+	{
+		for( ParamList::const_iterator i = lParam.begin(); i; i++ )
+		{
+			if( i == lParam.begin() )
+				sBuf += "?";
+			else
+				sBuf += "&";
+
+			sBuf += encode( (*i).sName );
+			if( !(*i).sValue.isEmpty() )
+			{
+				sBuf += "=" + encode( (*i).sValue );
+			}
+		}
+	}
+
+	return sBuf;
+}
+
+Bu::FString Bu::Url::getUrl() const
+{
+	Bu::FString sBuf = sProtocol + "://" + sHost + getFullPath();
+	return sBuf;
+}
+
