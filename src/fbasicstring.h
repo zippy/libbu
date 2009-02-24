@@ -124,9 +124,10 @@ namespace Bu
 		}
 		
 		struct iterator;
-		typedef struct const_iterator
+		struct const_iterator
 		{
 			friend class FBasicString<chr, nMinSize, chralloc, chunkalloc>;
+			friend struct iterator;
 		private:
 			const_iterator( Chunk *pChunk, int iPos ) :
 				pChunk( pChunk ),
@@ -349,11 +350,12 @@ namespace Bu
 				}
 				return const_iterator( NULL, 0 );
 			}
-		} const_iterator;
+		};
 		
 		typedef struct iterator
 		{
 			friend class FBasicString<chr, nMinSize, chralloc, chunkalloc>;
+			friend struct const_iterator;
 		private:
 			iterator( Chunk *pChunk, int iPos ) :
 				pChunk( pChunk ),
@@ -589,6 +591,8 @@ namespace Bu
 				return iterator( NULL, 0 );
 			}
 		} iterator;
+
+		typedef struct const_iterator const_iterator;
 
 		//typedef chr *iterator;
 //		typedef const chr *const_iterator;
