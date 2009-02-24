@@ -121,6 +121,8 @@ namespace Bu
 		void write( const char *pData, int iSize );
 		void write( char cData );
 
+		const Bu::FString &getBuffer() { return sDataBuf; }
+
 	public:
 		/**
 		 * If you wish to know the current dimensions of the client window,

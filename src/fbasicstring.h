@@ -150,6 +150,12 @@ namespace Bu
 			{
 			}
 
+			const_iterator() :
+				pChunk( NULL ),
+				iPos( 0 )
+			{
+			}
+
 			bool operator==( const const_iterator &i ) const
 			{
 				return pChunk == i.pChunk && iPos == i.iPos;
@@ -362,6 +368,12 @@ namespace Bu
 			iterator( const iterator &i ) :
 				pChunk( i.pChunk ),
 				iPos( i.iPos )
+			{
+			}
+
+			iterator() :
+				pChunk( NULL ),
+				iPos( 0 )
 			{
 			}
 
@@ -1383,7 +1395,7 @@ namespace Bu
 		}
 
 		const_iterator find( const chr cChar,
-				const_iterator iStart=begin() ) const
+				const_iterator iStart=typename MyType::const_iterator() ) const
 		{
 			for( ; iStart; iStart++ )
 			{
@@ -1394,7 +1406,7 @@ namespace Bu
 		}
 
 		const_iterator find( const chr *sText, int nLen,
-				const_iterator iStart=begin() ) const
+				const_iterator iStart=typename MyType::const_iterator() ) const
 		{
 			for( ; iStart; iStart++ )
 			{
@@ -1405,7 +1417,7 @@ namespace Bu
 		}
 
 		const_iterator find( const MyType &rStr,
-				const_iterator iStart=begin() ) const
+				const_iterator iStart=typename MyType::const_iterator() ) const
 		{
 			for( ; iStart; iStart++ )
 			{
@@ -1416,7 +1428,7 @@ namespace Bu
 		}
 
 		const_iterator find( const MyType &rStr, int nLen,
-				const_iterator iStart=begin() ) const
+				const_iterator iStart=typename MyType::const_iterator() ) const
 		{
 			for( ; iStart; iStart++ )
 			{
