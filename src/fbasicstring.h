@@ -999,7 +999,7 @@ namespace Bu
 		 * Plus equals operator for FString.
 		 *@param pData (const chr *) The data to append to your FString.
 		 */
-		MyType &operator +=( const chr *pData )
+		MyType &operator+=( const chr *pData )
 		{
 			append( pData );
 
@@ -1010,7 +1010,7 @@ namespace Bu
 		 * Plus equals operator for FString.
 		 *@param pData (const MyType &) The FString to append to your FString.
 		 */
-		MyType &operator +=( const MyType &rSrc )
+		MyType &operator+=( const MyType &rSrc )
 		{
 			if( rSrc.nLength == 0 )
 				return (*this);
@@ -1024,7 +1024,7 @@ namespace Bu
 		 * Plus equals operator for FString.
 		 *@param pData (const chr) The character to append to your FString.
 		 */
-		MyType &operator +=( const chr cData )
+		MyType &operator+=( const chr cData )
 		{
 			if( pLast && pLast->nLength < nMinSize )
 			{
@@ -1046,7 +1046,7 @@ namespace Bu
 		 *@param pData (const chr *) The character array to append to your
 		 *		FString.
 		 */
-		MyType &operator =( const chr *pData )
+		MyType &operator=( const chr *pData )
 		{
 			clear();
 			append( pData );
@@ -1054,7 +1054,7 @@ namespace Bu
 			return (*this);
 		}
 
-		MyType &operator =( const std::basic_string<chr> &rData )
+		MyType &operator=( const std::basic_string<chr> &rData )
 		{
 			clear();
 			append( rData.c_str(), rData.size() );
@@ -1062,21 +1062,21 @@ namespace Bu
 			return (*this);
 		}
 
-		MyType operator +( const MyType &rRight )
+		MyType operator+( const MyType &rRight ) const
 		{
 			MyType ret( *this );
 			ret.append( rRight );
 			return ret;
 		}
 
-		MyType operator +( const chr *pRight )
+		MyType operator+( const chr *pRight ) const
 		{
 			MyType ret( *this );
 			ret.append( pRight );
 			return ret;
 		}
 
-		MyType operator +( chr *pRight )
+		MyType operator+( chr *pRight ) const
 		{
 			MyType ret( *this );
 			ret.append( pRight );
@@ -1171,7 +1171,7 @@ namespace Bu
 		 * Assignment operator.
 		 *@param rSrc (const MyType &) The FString to set your FString to.
 		 */
-		MyType &operator =( const MyType &rSrc )
+		MyType &operator=( const MyType &rSrc )
 		{
 			copyFrom( rSrc );
 
@@ -1183,7 +1183,7 @@ namespace Bu
 		 *@param pData (const chr *) The character array to compare your FString
 		 *		to.
 		 */
-		bool operator ==( const chr *pData ) const
+		bool operator==( const chr *pData ) const
 		{
 			if( pFirst == NULL ) {
 				if( pData == NULL )
@@ -1212,7 +1212,7 @@ namespace Bu
 		 * Equals comparison operator.
 		 *@param pData (const MyType &) The FString to compare your FString to.
 		 */
-		bool operator ==( const MyType &pData ) const
+		bool operator==( const MyType &pData ) const
 		{
 			if( pFirst == pData.pFirst )
 				return true;
@@ -1239,7 +1239,7 @@ namespace Bu
 		 *@param pData (const chr *) The character array to compare your FString
 		 *		to.
 		 */
-		bool operator !=(const chr *pData ) const
+		bool operator!=(const chr *pData ) const
 		{
 			return !(*this == pData);
 		}
@@ -1248,7 +1248,7 @@ namespace Bu
 		 * Not equals comparison operator.
 		 *@param pData (const MyType &) The FString to compare your FString to.
 		 */
-		bool operator !=(const MyType &pData ) const
+		bool operator!=(const MyType &pData ) const
 		{
 			return !(*this == pData);
 		}
@@ -1759,7 +1759,7 @@ namespace Bu
 		mutable chunkalloc aChunk;
 	};
 	
-	template<class T> FBasicString<T> operator +( const T *pLeft, const FBasicString<T> &rRight )
+	template<class T> FBasicString<T> operator+( const T *pLeft, const FBasicString<T> &rRight )
 	{
 		Bu::FBasicString<T> ret( pLeft );
 		ret.append( rRight );

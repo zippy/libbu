@@ -669,6 +669,24 @@ namespace Bu
 		long nSize;
 		cmpfunc cmp;
 	};
+
+	class Formatter;
+	Formatter &operator<<( Formatter &rOut, char *sStr );
+	Formatter &operator<<( Formatter &rOut, signed char c );
+	template<typename value>
+	Formatter &operator<<( Formatter &f, const Bu::List<value> &l )
+	{
+		f << '[';
+		for( typename Bu::List<value>::const_iterator i = l.begin(); i; i++ )
+		{
+			if( i != l.begin() )
+				f << ", ";
+			f << *i;
+		}
+		f << ']';
+
+		return f;
+	}
 }
 
 #endif

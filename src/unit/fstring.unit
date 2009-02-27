@@ -129,6 +129,15 @@
 	unitTest( c == "Hello/Dude" );
 }
 
+{%add7}
+{
+	const Bu::FString a("hello ");
+	Bu::FString b(" how ");
+	unitTest( a == "hello " );
+	unitTest( a + "dude" == "hello dude" );
+	unitTest( a + "dude" + b + "are you?" == "hello dude how are you?" );
+}
+
 {%subStr1}
 {
 	Bu::FString a("abcdefghijklmnop");
