@@ -87,6 +87,14 @@ namespace Bu
 		void writeAligned( const Bu::FString &sStr );
 		void writeAligned( const char *sStr, int iLen );
 
+		void incIndent();
+		void decIndent();
+		void setIndent( uint8_t uLevel );
+		void clearIndent();
+		uint8_t getIndent() const { return uIndent; }
+		void setIndentChar( char cIndent );
+		char getIndentChar() const { return cIndent; }
+
 		void setFormat( const Fmt &f )
 		{
 			fLast = f;
@@ -178,6 +186,8 @@ namespace Bu
 		Stream &rOut;
 		Fmt fLast;
 		bool bTempFmt;
+		uint8_t uIndent;
+		char cIndent;
 	};
 
 	typedef Formatter::Fmt Fmt;

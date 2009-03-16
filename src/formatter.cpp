@@ -1,7 +1,9 @@
 #include "formatter.h"
 
 Bu::Formatter::Formatter( Stream &rOut ) :
-	rOut( rOut )
+	rOut( rOut ),
+	uIndent( 0 ),
+	cIndent( '\t' )
 {
 }
 
@@ -100,6 +102,33 @@ void Bu::Formatter::writeAligned( const char *sStr, int iLen )
 	usedFormat();
 }
 
+void Bu::Formatter::incIndent()
+{
+	if( uIndent < 0xFFU )
+		uIndent++;
+}
+
+void Bu::Formatter::decIndent()
+{
+	if( uIndent > 0 )
+		uIndent--;
+}
+
+void Bu::Formatter::setIndent( uint8_t uLevel )
+{
+	uIndent = uLevel;
+}
+
+void Bu::Formatter::clearIndent()
+{
+	uIndent = 0;
+}
+
+void Bu::Formatter::setIndentChar( char cIndent )
+{
+	this->cIndent = cIndent;
+}
+
 Bu::Formatter::Fmt &Bu::Formatter::Fmt::width( unsigned int uWidth )
 {
 	this->uMinWidth = uWidth;
@@ -148,6 +177,9 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, Bu::Formatter::Special s )
 	{
 		case Formatter::nl:
 			rOut.write("\n", 1 );
+			char ci = rOut.getIndentChar();
+			for( int j = 0; j < rOut.getIndent(); j++ )
+				rOut.write( &ci, 1 );
 			break;
 	}
 	return rOut;
