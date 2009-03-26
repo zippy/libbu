@@ -39,6 +39,8 @@ namespace Bu
 	public:
 		ServerSocket( int nPort, int nPoolSize=40 );
 		ServerSocket( const FString &sAddr, int nPort, int nPoolSize=40 );
+		ServerSocket( int nSocket, bool bInit, int nPoolSize=40 );
+		ServerSocket( const ServerSocket &rSrc );
 		virtual ~ServerSocket();
 
 		int accept( int nTimeoutSec=0, int nTimeoutUSec=0 );
@@ -47,6 +49,7 @@ namespace Bu
 
 	private:
 		void startServer( struct sockaddr_in &name, int nPoolSize );
+		void initServer( struct sockaddr_in &name, int nPoolSize );
 
 		fd_set fdActive;
 #ifdef WIN32

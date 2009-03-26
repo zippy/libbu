@@ -16,7 +16,7 @@ void Bu::Formatter::write( const Bu::FString &sStr )
 	rOut.write( sStr );
 }
 
-void Bu::Formatter::write( const char *sStr, int iLen )
+void Bu::Formatter::write( const void *sStr, int iLen )
 {
 	rOut.write( sStr, iLen );
 }

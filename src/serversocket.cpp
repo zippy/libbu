@@ -65,9 +65,37 @@ Bu::ServerSocket::ServerSocket(const FString &sAddr,int nPort, int nPoolSize) :
 	startServer( name, nPoolSize );
 }
 
+Bu::ServerSocket::ServerSocket( int nServer, bool bInit, int nPoolSize ) :
+	nServer( nServer ),
+	nPort( 0 )
+{
+	if( bInit )
+	{
+		struct sockaddr name;
+		socklen_t namelen = sizeof(name);
+		getpeername( nServer, &name, &namelen );
+
+		initServer( *((sockaddr_in *)&name), nPoolSize );
+	}
+	else
+	{
+		FD_ZERO( &fdActive );
+		FD_SET( nServer, &fdActive );
+	}
+}
+
+Bu::ServerSocket::ServerSocket( const ServerSocket &rSrc )
+{
+	nServer = dup( rSrc.nServer );
+	nPort = rSrc.nPort;
+	FD_ZERO( &fdActive );
+	FD_SET( nServer, &fdActive );
+}
+
 Bu::ServerSocket::~ServerSocket()
 {
-	::close( nServer );
+	if( nServer > -1 )
+		::close( nServer );
 }
 
 void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
@@ -79,7 +107,7 @@ void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
 	{
 		throw Bu::ServerSocketException("Couldn't create a listen socket.");
 	}
-
+	
 	int opt = 1;
 	bu_setsockopt(
 			nServer,
@@ -89,6 +117,11 @@ void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
 			sizeof( opt )
 			);
 
+	initServer( name, nPoolSize );
+}
+
+void Bu::ServerSocket::initServer( struct sockaddr_in &name, int nPoolSize )
+{
 	if( bu_bind( nServer, (struct sockaddr *) &name, sizeof(name) ) < 0 )
 	{
 		throw Bu::ServerSocketException("Couldn't bind to the listen socket.");

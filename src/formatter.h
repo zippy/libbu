@@ -83,7 +83,7 @@ namespace Bu
 		} Fmt;
 
 		void write( const Bu::FString &sStr );
-		void write( const char *sStr, int iLen );
+		void write( const void *sStr, int iLen );
 		void writeAligned( const Bu::FString &sStr );
 		void writeAligned( const char *sStr, int iLen );
 
