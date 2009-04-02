@@ -165,9 +165,9 @@ namespace Bu
 			{
 				if( i.getValue().iRefs > 0 )
 				{
-					printf("Error?  iRefs=%d for key ", i.getValue().iRefs );
-					__tracer_format( i.getKey() );
-					printf("!\n");
+					// TODO: Throw an error in this case? iRefs != 0 for an
+					// object when the Cache is destroyed.
+					throw Bu::ExceptionBase("iRefs not zero.");
 				}
 				pCalc->onUnload(
 					i.getValue().pData,

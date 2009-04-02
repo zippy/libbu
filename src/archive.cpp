@@ -459,14 +459,12 @@ Bu::Archive &Bu::operator>>(Bu::Archive &s, Bu::Archival &p)
 
 Bu::Archive &Bu::operator<<(Bu::Archive &ar, class Bu::Archival *p )
 {
-	printf("Writing a pointer to an archive...\n");
 	ar << *p;
 	return ar;
 }
 
 Bu::Archive &Bu::operator>>(Bu::Archive &ar, class Bu::Archival *p )
 {
-	printf("Reading a pointer to an archive...\n");
 	ar >> *p;
 	return ar;
 }

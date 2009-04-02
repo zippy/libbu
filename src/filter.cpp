@@ -14,17 +14,7 @@ Bu::Filter::Filter( Bu::Stream &rNext ) :
 
 Bu::Filter::~Filter()
 {
-	//printf("-> Bu::Filter::~Filter()\n");		
 }
-/*
-void Bu::Filter::start()
-{
-	printf("-> Bu::Filter::start()\n");
-}
-
-void Bu::Filter::stop()
-{
-}*/
 
 void Bu::Filter::close()
 {

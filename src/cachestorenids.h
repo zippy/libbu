@@ -57,7 +57,7 @@ namespace Bu
 				nStore.initialize( iBlockSize, iPreAllocate );
 				int iStream = nStore.createStream();
 				if( iStream != 0 )
-					printf("That's...horrible...id = %d.\n\n", iStream );
+					throw Bu::ExceptionBase("That's...horrible...id = %d.\n\n", iStream );
 				NidsStream ns = nStore.openStream( 0 );
 				Bu::Archive ar( ns, Bu::Archive::save );
 				ar << hId;

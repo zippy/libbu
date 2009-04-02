@@ -179,8 +179,14 @@ namespace Bu
 
 		enum Special
 		{
-			nl
+			nl,
+			flush
 		};
+
+		void doFlush()
+		{
+			rOut.flush();
+		}
 
 	private:
 		Stream &rOut;

@@ -176,10 +176,16 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, Bu::Formatter::Special s )
 	switch( s )
 	{
 		case Formatter::nl:
-			rOut.write("\n", 1 );
-			char ci = rOut.getIndentChar();
-			for( int j = 0; j < rOut.getIndent(); j++ )
-				rOut.write( &ci, 1 );
+			{
+				rOut.write("\n", 1 );
+				char ci = rOut.getIndentChar();
+				for( int j = 0; j < rOut.getIndent(); j++ )
+					rOut.write( &ci, 1 );
+			}
+			break;
+
+		case Formatter::flush:
+			rOut.doFlush();
 			break;
 	}
 	return rOut;
