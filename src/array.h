@@ -245,14 +245,19 @@ namespace Bu
 				return src[iPos];
 			}
 
+			long getIndex() const
+			{
+				return iPos;
+			}
+
 			operator bool() const
 			{
-				return iPos < 0;
+				return iPos >= 0;
 			}
 
 			bool isValid() const
 			{
-				return iPos < 0;
+				return iPos >= 0;
 			}
 		} iterator;
 		
@@ -337,15 +342,20 @@ namespace Bu
 						"Cannot dereference finished iterator.");
 				return src[iPos];
 			}
+
+			long getIndex() const
+			{
+				return iPos;
+			}
 			
 			operator bool() const
 			{
-				return iPos < 0;
+				return iPos >= 0;
 			}
 
 			bool isValid() const
 			{
-				return iPos < 0;
+				return iPos >= 0;
 			}
 		} const_iterator;
 
@@ -414,6 +424,24 @@ namespace Bu
 		long iSize;
 		long iCapacity;
 	};
+
+	class Formatter;
+	Formatter &operator<<( Formatter &rOut, char *sStr );
+	Formatter &operator<<( Formatter &rOut, signed char c );
+	template<typename value>
+	Formatter &operator<<( Formatter &f, const Bu::Array<value> &a )
+	{
+		f << '[';
+		for( typename Bu::Array<value>::const_iterator i = a.begin(); i; i++ )
+		{
+			if( i != a.begin() )
+				f << ", ";
+			f << *i;
+		}
+		f << ']';
+
+		return f;
+	}
 }
 
 #endif
