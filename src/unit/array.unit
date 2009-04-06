@@ -36,7 +36,7 @@
 	
 	const Bu::Array<int> &ci = ai;
 	j = 0;
-	for( Bu::Array<int>::const_iterator i = ci.begin(); i != ci.end(); i++ )
+	for( Bu::Array<int>::const_iterator i = ci.begin(); i; i++ )
 		unitTest( (*i) == j++ );
 	unitTest( j == 10 );
 }
@@ -45,6 +45,8 @@
 {
 	Bu::Array<int> ai;
 	for( Bu::Array<int>::iterator i = ai.begin(); i != ai.end(); i++ )
+		unitFailed("Empty lists shouldn't be iterated through.");
+	for( Bu::Array<int>::iterator i = ai.begin(); i; i++ )
 		unitFailed("Empty lists shouldn't be iterated through.");
 }
 
