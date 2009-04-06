@@ -250,11 +250,13 @@ namespace Bu
 			}
 		}
 
+		struct const_iterator;
 		/**
 		 * An iterator to iterate through your list.
 		 */
 		typedef struct iterator
 		{
+			friend struct const_iterator;
 			friend class List<value, cmpfunc, valuealloc, linkalloc>;
 		private:
 			Link *pLink;
