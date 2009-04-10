@@ -90,7 +90,12 @@ namespace Bu
 				return pData;
 			}
 
-			bool isLoaded() const
+			bool isValid() const
+			{
+				return pCache != NULL;
+			}
+
+			bool isBound() const
 			{
 				return pData != NULL;
 			}

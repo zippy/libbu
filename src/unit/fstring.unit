@@ -141,11 +141,10 @@
 {%subStr1}
 {
 	Bu::FString a("abcdefghijklmnop");
-	unitTest( a.getSubStr( 5, 3 ) == "fgh" );
-	unitTest( a.getSubStr( 10 ) == "klmnop" );
-	unitTest( a.getSubStr( 40 ) == "" );
-	unitTest( a.getSubStr( -10 ) == "abcdefghijklmnop" );
-	unitTest( a.getSubStr( -15, 4 ) == "abcd" );
+	Bu::FString::iterator i = a.find('f');
+	unitTest( a.getSubStr( i, Bu::FString::iterator() ) == "fghijklmnop" );
+	Bu::FString::iterator j = i.find('l');
+	unitTest( a.getSubStr( i, j ) == "fghijk" );
 }
 
 {%compareSub1}

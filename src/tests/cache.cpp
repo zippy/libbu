@@ -171,6 +171,7 @@ public:
 
 	virtual bool shouldSync( Bob *, const long &, time_t )
 	{
+		return false;
 	}
 
 private:
@@ -224,9 +225,9 @@ int main( int argc, char *argv[] )
 		case 'l':
 			{
 				BobCache::Ptr pBob = cBob.getLazy( strtol( argv[2], NULL, 0 ) );
-				printf("isLoaded:  %s\n", pBob.isLoaded()?"yes":"no");
+				printf("isBound:  %s\n", pBob.isBound()?"yes":"no");
 				printf("Value = %d\n", pBob->getInt() );
-				printf("isLoaded:  %s\n", pBob.isLoaded()?"yes":"no");
+				printf("isBound:  %s\n", pBob.isBound()?"yes":"no");
 			}
 			return 0;
 	}

@@ -947,7 +947,7 @@ namespace Bu
 			return pFirst->pData;
 		}
 
-		MyType getSubStr( long iStart, long iSize=-1 ) const
+		MyType getSubStrIdx( long iStart, long iSize=-1 ) const
 		{
 			if( iStart < 0 )
 				iStart = 0;
@@ -963,6 +963,50 @@ namespace Bu
 			flatten();
 			MyType ret( pFirst->pData+iStart, iSize );
 			return ret;
+		}
+
+		MyType getSubStr( const_iterator iBegin,
+				const_iterator iEnd=typename MyType::const_iterator() ) const
+		{
+			if( !iBegin.isValid() )
+				return MyType();
+			if( iBegin.pChunk == iEnd.pChunk )
+			{
+				return MyType( iBegin.pChunk->pData+iBegin.iPos,
+					iEnd.iPos-iBegin.iPos );
+			}
+			else if( !iEnd.isValid() )
+			{
+				MyType ret;
+				ret.append(
+					iBegin.pChunk->pData+iBegin.iPos,
+					iBegin.pChunk->nLength-iBegin.iPos
+					);
+				for( Chunk *pCur = iBegin.pChunk->pNext;
+					 pCur; pCur = pCur->pNext )
+				{
+					ret.append( pCur->pData, pCur->nLength );
+				}
+				return ret;
+			}
+			else
+			{
+				MyType ret;
+				ret.append(
+					iBegin.pChunk->pData+iBegin.iPos,
+					iBegin.pChunk->nLength-iBegin.iPos
+					);
+				for( Chunk *pCur = iBegin.pChunk->pNext;
+					 pCur != iEnd.pChunk; pCur = pCur->pNext )
+				{
+					ret.append( pCur->pData, pCur->nLength );
+				}
+				ret.append(
+					iEnd.pChunk->pData,
+					iEnd.iPos
+					);
+				return ret;
+			}
 		}
 
 		/**
@@ -1401,6 +1445,7 @@ namespace Bu
 		const_iterator find( const chr cChar,
 				const_iterator iStart=typename MyType::const_iterator() ) const
 		{
+			if( !iStart ) iStart = begin();
 			for( ; iStart; iStart++ )
 			{
 				if( cChar == *iStart )
@@ -1412,6 +1457,7 @@ namespace Bu
 		const_iterator find( const chr *sText, int nLen,
 				const_iterator iStart=typename MyType::const_iterator() ) const
 		{
+			if( !iStart ) iStart = begin();
 			for( ; iStart; iStart++ )
 			{
 				if( iStart.compare( sText, nLen ) )
@@ -1423,6 +1469,7 @@ namespace Bu
 		const_iterator find( const MyType &rStr,
 				const_iterator iStart=typename MyType::const_iterator() ) const
 		{
+			if( !iStart ) iStart = begin();
 			for( ; iStart; iStart++ )
 			{
 				if( iStart.compare( rStr ) )
@@ -1434,10 +1481,59 @@ namespace Bu
 		const_iterator find( const MyType &rStr, int nLen,
 				const_iterator iStart=typename MyType::const_iterator() ) const
 		{
+			if( !iStart ) iStart = begin();
 			for( ; iStart; iStart++ )
 			{
 				if( iStart.compare( rStr, nLen ) )
 					return iStart;
+			}
+			return end();
+		}
+
+		iterator find( const chr cChar,
+				const_iterator iStart=typename MyType::const_iterator() )
+		{
+			if( !iStart ) iStart = begin();
+			for( ; iStart; iStart++ )
+			{
+				if( cChar == *iStart )
+					return iterator( iStart.pChunk, iStart.iPos );
+			}
+			return end();
+		}
+
+		iterator find( const chr *sText, int nLen,
+				const_iterator iStart=typename MyType::const_iterator() )
+		{
+			if( !iStart ) iStart = begin();
+			for( ; iStart; iStart++ )
+			{
+				if( iStart.compare( sText, nLen ) )
+					return iterator( iStart.pChunk, iStart.iPos );
+			}
+			return end();
+		}
+
+		iterator find( const MyType &rStr,
+				const_iterator iStart=typename MyType::const_iterator() )
+		{
+			if( !iStart ) iStart = begin();
+			for( ; iStart; iStart++ )
+			{
+				if( iStart.compare( rStr ) )
+					return iterator( iStart.pChunk, iStart.iPos );
+			}
+			return end();
+		}
+
+		iterator find( const MyType &rStr, int nLen,
+				const_iterator iStart=typename MyType::const_iterator() )
+		{
+			if( !iStart ) iStart = begin();
+			for( ; iStart; iStart++ )
+			{
+				if( iStart.compare( rStr, nLen ) )
+					return iterator( iStart.pChunk, iStart.iPos );
 			}
 			return end();
 		}
