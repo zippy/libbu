@@ -106,6 +106,21 @@ Bu::Archive &Bu::Archive::operator<<(unsigned long long p)
 	write( &p, sizeof(p) );
 	return *this;
 }
+Bu::Archive &Bu::Archive::operator<<(float p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(double p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator<<(long double p)
+{
+	write( &p, sizeof(p) );
+	return *this;
+}
 
 Bu::Archive &Bu::Archive::operator>>(bool &p)
 {
@@ -167,6 +182,22 @@ Bu::Archive &Bu::Archive::operator>>(unsigned long long &p)
 	read( &p, sizeof(p) );
 	return *this;
 }
+Bu::Archive &Bu::Archive::operator>>(float &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(double &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+Bu::Archive &Bu::Archive::operator>>(long double &p)
+{
+	read( &p, sizeof(p) );
+	return *this;
+}
+
 /*
 Bu::Archive &Bu::Archive::operator<<(bool p)
 {

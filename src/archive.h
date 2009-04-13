@@ -100,6 +100,9 @@ namespace Bu
 		virtual Archive &operator<<(unsigned long p);
 		virtual Archive &operator<<(signed long long p);
 		virtual Archive &operator<<(unsigned long long p);
+		virtual Archive &operator<<(float p);
+		virtual Archive &operator<<(double p);
+		virtual Archive &operator<<(long double p);
 		
 		virtual Archive &operator>>(bool &p);
 		virtual Archive &operator>>(char &p);
@@ -113,6 +116,9 @@ namespace Bu
 		virtual Archive &operator>>(unsigned long &p);
 		virtual Archive &operator>>(signed long long &p);
 		virtual Archive &operator>>(unsigned long long &p);
+		virtual Archive &operator>>(float &p);
+		virtual Archive &operator>>(double &p);
+		virtual Archive &operator>>(long double &p);
 
 		/*
 		virtual Archive &operator<<(bool);
