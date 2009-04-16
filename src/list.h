@@ -45,6 +45,9 @@ namespace Bu
 		typedef class List<value, cmpfunc, valuealloc, linkalloc> MyType;
 
 	public:
+		struct const_iterator;
+		struct iterator;
+
 		List() :
 			pFirst( NULL ),
 			pLast( NULL ),
@@ -201,6 +204,32 @@ namespace Bu
 			}
 		}
 
+		void insert( MyType::iterator &i, const value &v )
+		{
+			Link *pAfter = i.pLink;
+			if( pAfter == NULL )
+			{
+				append( v );
+				return;
+			}
+			Link *pPrev = pAfter->pPrev;
+			if( pPrev == NULL )
+			{
+				prepend( v );
+				return;
+			}
+
+			Link *pNew = la.allocate( 1 );
+			pNew->pValue = va.allocate( 1 );
+			va.construct( pNew->pValue, v );
+			nSize++;
+		
+			pNew->pNext = pAfter;
+			pNew->pPrev = pPrev;
+			pAfter->pPrev = pNew;
+			pPrev->pNext = pNew;
+		}
+
 		/**
 		 * Insert a new item in sort order by searching for the first item that
 		 * is larger and inserting this before it, or at the end if none are
@@ -250,7 +279,6 @@ namespace Bu
 			}
 		}
 
-		struct const_iterator;
 		/**
 		 * An iterator to iterate through your list.
 		 */
@@ -260,24 +288,30 @@ namespace Bu
 			friend class List<value, cmpfunc, valuealloc, linkalloc>;
 		private:
 			Link *pLink;
-			MyType &rList;
+			MyType *pList;
 			bool bOffFront;
-			iterator( MyType &rList ) :
+			iterator( MyType *pList ) :
 				pLink( NULL ),
-				rList( rList )
+				pList( pList )
 			{
 			}
 
-			iterator( Link *pLink, MyType &rList ) :
+			iterator( Link *pLink, MyType *pList ) :
 				pLink( pLink ),
-				rList( rList )
+				pList( pList )
 			{
 			}
 
 		public:
+			iterator() :
+				pLink( NULL ),
+				pList( NULL )
+			{
+			}
+
 			iterator( const iterator &i ) :
 				pLink( i.pLink ),
-				rList( i.rList )
+				pList( i.pList )
 			{
 			}
 
@@ -342,7 +376,7 @@ namespace Bu
 			iterator &operator++()
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(rList.pFirst):(NULL);
+					pLink = (bOffFront)?(pList->pFirst):(NULL);
 				else
 					pLink = pLink->pNext;
 				bOffFront = false;
@@ -352,7 +386,7 @@ namespace Bu
 			iterator &operator--()
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(NULL):(rList.pLast);
+					pLink = (bOffFront)?(NULL):(pList->pLast);
 				else
 					pLink = pLink->pPrev;
 				bOffFront = true;
@@ -362,7 +396,7 @@ namespace Bu
 			iterator &operator++( int )
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(rList.pFirst):(NULL);
+					pLink = (bOffFront)?(pList->pFirst):(NULL);
 				else
 					pLink = pLink->pNext;
 				bOffFront = false;
@@ -372,7 +406,7 @@ namespace Bu
 			iterator &operator--( int )
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(NULL):(rList.pLast);
+					pLink = (bOffFront)?(NULL):(pList->pLast);
 				else
 					pLink = pLink->pPrev;
 				bOffFront = true;
@@ -409,24 +443,30 @@ namespace Bu
 			friend class List<value, cmpfunc, valuealloc, linkalloc>;
 		private:
 			Link *pLink;
-			const MyType &rList;
+			const MyType *pList;
 			bool bOffFront;
-			const_iterator( const MyType &rList ) :
+			const_iterator( const MyType *pList ) :
 				pLink( NULL ),
-				rList( rList )
+				pList( pList )
 			{
 			}
 
-			const_iterator( Link *pLink, const MyType &rList ) :
+			const_iterator( Link *pLink, const MyType *pList ) :
 				pLink( pLink ),
-				rList( rList )
+				pList( pList )
 			{
 			}
 
 		public:
+			const_iterator() :
+				pLink( NULL ),
+				pList( NULL )
+			{
+			}
+
 			const_iterator( const iterator &i ) :
 				pLink( i.pLink ),
-				rList( i.rList )
+				pList( i.pList )
 			{
 			}
 
@@ -463,7 +503,7 @@ namespace Bu
 			const_iterator &operator++()
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(rList.pFirst):(NULL);
+					pLink = (bOffFront)?(pList->pFirst):(NULL);
 				else
 					pLink = pLink->pNext;
 				bOffFront = false;
@@ -473,7 +513,7 @@ namespace Bu
 			const_iterator &operator--()
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(NULL):(rList.pLast);
+					pLink = (bOffFront)?(NULL):(pList->pLast);
 				else
 					pLink = pLink->pPrev;
 				bOffFront = true;
@@ -483,7 +523,7 @@ namespace Bu
 			const_iterator &operator++( int )
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(rList.pFirst):(NULL);
+					pLink = (bOffFront)?(pList->pFirst):(NULL);
 				else
 					pLink = pLink->pNext;
 				bOffFront = false;
@@ -493,7 +533,7 @@ namespace Bu
 			const_iterator &operator--( int )
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(NULL):(rList.pLast);
+					pLink = (bOffFront)?(NULL):(pList->pLast);
 				else
 					pLink = pLink->pPrev;
 				bOffFront = true;
@@ -529,7 +569,7 @@ namespace Bu
 		 */
 		iterator begin()
 		{
-			return iterator( pFirst, *this );
+			return iterator( pFirst, this );
 		}
 
 		/**
@@ -538,7 +578,7 @@ namespace Bu
 		 */
 		const_iterator begin() const
 		{
-			return const_iterator( pFirst, *this );
+			return const_iterator( pFirst, this );
 		}
 
 		/**
@@ -548,7 +588,7 @@ namespace Bu
 		 */
 		const iterator end()
 		{
-			return iterator( NULL, *this );
+			return iterator( NULL, this );
 		}
 
 		/**
@@ -558,7 +598,7 @@ namespace Bu
 		 */
 		const const_iterator end() const
 		{
-			return const_iterator( NULL, *this );
+			return const_iterator( NULL, this );
 		}
 
 		/**

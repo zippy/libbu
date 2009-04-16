@@ -1297,6 +1297,38 @@ namespace Bu
 			return !(*this == pData);
 		}
 
+		bool operator<(const MyType &pData ) const
+		{
+			flatten();
+			pData.flatten();
+
+			const chr *a = pData.pFirst->pData;
+			chr *b = pFirst->pData;
+			for( long j = 0; j < nLength; j++, a++, b++ )
+			{
+				if( *a != *b )
+					return *a < *b;
+			}
+
+			return false;
+		}
+
+		bool operator>(const MyType &pData ) const
+		{
+			flatten();
+			pData.flatten();
+
+			const chr *a = pData.pFirst->pData;
+			chr *b = pFirst->pData;
+			for( long j = 0; j < nLength; j++, a++, b++ )
+			{
+				if( *a != *b )
+					return *a > *b;
+			}
+
+			return false;
+		}
+
 		/**
 		 * Indexing operator
 		 *@param nIndex (long) The index of the character you want.

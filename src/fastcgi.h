@@ -110,11 +110,15 @@ namespace Bu
 		void write( Bu::Socket &s, Record r );
 		void write( Bu::Socket &s, EndRequestBody b );
 
+		bool hasChannel( int iChan );
+
 	private:
 		Bu::ServerSocket *pSrv;
 		bool bRunning;
 		Bu::Array<Channel *> aChannel;
 	};
+
+	Bu::Formatter &operator<<( Bu::Formatter &f, const Bu::FastCgi::Record &r );
 };
 
 #endif

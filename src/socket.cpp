@@ -369,7 +369,7 @@ bool Bu::Socket::isSeekable()
 bool Bu::Socket::isBlocking()
 {
 #ifndef WIN32
-	return ((fcntl( nSocket, F_GETFL, 0 ) & O_NONBLOCK) == O_NONBLOCK);
+	return ((fcntl( nSocket, F_GETFL, 0 ) & O_NONBLOCK) != O_NONBLOCK);
 #else
 	return false;
 #endif
@@ -380,7 +380,7 @@ void Bu::Socket::setBlocking( bool bBlocking )
 #ifndef WIN32
 	if( bBlocking )
 	{
-		fcntl( nSocket, F_SETFL, fcntl( nSocket, F_GETFL, 0 ) & ~O_NONBLOCK );
+		fcntl( nSocket, F_SETFL, fcntl( nSocket, F_GETFL, 0 ) & (~O_NONBLOCK) );
 	}
 	else
 	{

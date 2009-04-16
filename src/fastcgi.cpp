@@ -50,13 +50,17 @@ bool Bu::FastCgi::isEmbedded()
 
 void Bu::FastCgi::read( Bu::Socket &s, Bu::FastCgi::Record &r )
 {
-	s.read( &r, sizeof(Record) );
+	int iRead = s.read( &r, sizeof(Record) );
+	if( iRead != sizeof(Record) )
+		throw Bu::SocketException("Hey, the size %d is wrong for Record. (%s)",
+			iRead, strerror( errno ) );
 	r.uRequestId = ntohs( r.uRequestId );
 	r.uContentLength = ntohs( r.uContentLength );
 }
 
 void Bu::FastCgi::write( Bu::Socket &s, Bu::FastCgi::Record r )
 {
+	sio << "Out -> " << r << sio.nl;
 	r.uRequestId = htons( r.uRequestId );
 	r.uContentLength = htons( r.uContentLength );
 	s.write( &r, sizeof(Record) );
@@ -111,8 +115,30 @@ void Bu::FastCgi::readPair( Bu::Socket &s, StrHash &hParams, uint16_t &uRead )
 	}
 }
 
+bool Bu::FastCgi::hasChannel( int iChan )
+{
+	if( aChannel.getSize() < iChan )
+		return false;
+	if( aChannel[iChan-1] == NULL )
+		return false;
+	return true;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::FastCgi::Record &r )
+{
+	f << "[Ver=" << (uint32_t)r.uVersion <<
+		", Type=" << (uint32_t)r.uType <<
+		", Req=" << (uint32_t)r.uRequestId <<
+		", clen=" << (uint32_t)r.uContentLength <<
+		", plen=" << (uint32_t)r.uPaddingLength <<
+		", resv=" << (uint32_t)r.uReserved <<
+		"]";
+	return f;
+}
+
 void Bu::FastCgi::run()
 {
+	sio << "sizeof(Bu::FastCgi::Record) = " << sizeof(Record) << sio.nl;
 	bRunning = true;
 	while( bRunning )
 	{
@@ -122,21 +148,49 @@ void Bu::FastCgi::run()
 
 		Bu::Socket s( iSock );
 		s.setBlocking( true );
+		sio << "Got connection, blocking?  " << s.isBlocking() << sio.nl;
 		try
 		{
 			for(;;)
 			{
 				Record r;
-				read( s, r );
-				while( aChannel.getSize() < r.uRequestId )
-					aChannel.append( NULL );
+				memset( &r, 0, sizeof(r) );
+//				try
+//				{
+					read( s, r );
+//				}
+//				catch( Bu::ExceptionBase &e )
+//				{
+//					sio << "Error: " << e.what() << ", " << s.isOpen() <<
+//						sio.nl;
+//					continue;
+//				}
 				Channel *pChan = NULL;
 				if( r.uRequestId > 0 )
-					pChan = aChannel[r.uRequestId-1];
+				{
+					if( !hasChannel( r.uRequestId ) &&
+						r.uType != typeBeginRequest )
+					{
+						sio << "Error, stream data without stream." << sio.nl;
+						sio << r << sio.nl;
+						if( r.uContentLength > 0 )
+						{
+							char *buf = new char[r.uContentLength];
+							sio << " (read " << s.read( buf, r.uContentLength )
+								<< "/" << r.uContentLength << "):" << sio.nl;
+							sio.write( buf, r.uContentLength );
+							sio << sio.nl << sio.nl;
+						}
+					}
+					while( aChannel.getSize() < r.uRequestId )
+						aChannel.append( NULL );
+					if( r.uRequestId > 0 )
+						pChan = aChannel[r.uRequestId-1];
+				}
 
 				sio << "Record (id=" << r.uRequestId << ", len=" << 
 					r.uContentLength << ", pad=" << 
-					(int)r.uPaddingLength << "):  ";
+					(unsigned int)r.uPaddingLength << "):  ";
 				fflush( stdout );
 				
 				switch( (RequestType)r.uType )
@@ -180,9 +234,16 @@ void Bu::FastCgi::run()
 						else
 						{
 							char *buf = new char[r.uContentLength];
-							sio << " (read " << s.read( buf, r.uContentLength )
-								<< ")";
-							pChan->sStdIn.append( buf, r.uContentLength );
+							int iTotal = 0;
+							do
+							{
+								size_t iRead = s.read(
+									buf, r.uContentLength-iTotal );
+								iTotal += iRead;
+								sio << " (read " << iRead << " " << iTotal
+									<< "/" << r.uContentLength << ")";
+								pChan->sStdIn.append( buf, iRead );
+							} while( iTotal < r.uContentLength );
 							delete[] buf;
 						}
 						break;
@@ -219,6 +280,7 @@ void Bu::FastCgi::run()
 				{
 					if( pChan->uFlags == chflgAllDone )
 					{
+						sio << "All done, generating output." << sio.nl;
 						Bu::MemBuf mStdOut, mStdErr;
 						int iRet = request(
 							pChan->hParams, pChan->sStdIn,
@@ -229,27 +291,47 @@ void Bu::FastCgi::run()
 						Bu::FString &sStdErr = mStdErr.getString();
 
 						Record rOut;
+						memset( &rOut, 0, sizeof(rOut) );
 						rOut.uVersion = 1;
 						rOut.uRequestId = r.uRequestId;
 						rOut.uPaddingLength = 0;
+						rOut.uType = typeStdOut;
 						if( sStdOut.getSize() > 0 )
 						{
-							rOut.uType = typeStdOut;
-							rOut.uContentLength = sStdOut.getSize();
-							write( s, rOut );
-							s.write( sStdOut );
+							for( int iPos = 0; iPos < sStdOut.getSize();
+								 iPos += 65528 )
+							{
+								int iSize = sStdOut.getSize()-iPos;
+								if( iSize > 65528 )
+									iSize = 65528;
+								rOut.uContentLength = iSize;
+								write( s, rOut );
+								int iAmnt = s.write(
+									sStdOut.getStr()+iPos, iSize );
+								sio << "Wrote " << iAmnt <<
+									" of " << iSize << sio.nl;
+							}
 						}
-						rOut.uType = typeStdOut;
 						rOut.uContentLength = 0;
 						write( s, rOut );
+
+						rOut.uType = typeStdErr;
 						if( sStdErr.getSize() > 0 )
 						{
-							rOut.uType = typeStdErr;
-							rOut.uContentLength = sStdErr.getSize();
-							write( s, rOut );
-							s.write( sStdOut );
+							for( int iPos = 0; iPos < sStdErr.getSize();
+								 iPos += 65528 )
+							{
+								int iSize = sStdErr.getSize()-iPos;
+								if( iSize > 65528 )
+									iSize = 65528;
+								rOut.uContentLength = iSize;
+								write( s, rOut );
+								int iAmnt = s.write(
+									sStdErr.getStr()+iPos, iSize );
+								sio << "Wrote " << iAmnt <<
+									" of " << iSize << sio.nl;
+							}
 						}
-						rOut.uType = typeStdErr;
 						rOut.uContentLength = 0;
 						write( s, rOut );
 
@@ -270,7 +352,8 @@ void Bu::FastCgi::run()
 		}
 		catch( Bu::SocketException &e )
 		{
-			//sio << "Bu::SocketException: " << e.what() << sio.nl;
+			sio << "Bu::SocketException: " << e.what() << sio.nl <<
+				"\tSocket open:  " << s.isOpen() << sio.nl;
 		}
 	}
 }
