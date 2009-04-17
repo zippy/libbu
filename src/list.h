@@ -288,30 +288,20 @@ namespace Bu
 			friend class List<value, cmpfunc, valuealloc, linkalloc>;
 		private:
 			Link *pLink;
-			MyType *pList;
-			bool bOffFront;
-			iterator( MyType *pList ) :
-				pLink( NULL ),
-				pList( pList )
-			{
-			}
 
-			iterator( Link *pLink, MyType *pList ) :
-				pLink( pLink ),
-				pList( pList )
+			iterator( Link *pLink ) :
+				pLink( pLink )
 			{
 			}
 
 		public:
 			iterator() :
-				pLink( NULL ),
-				pList( NULL )
+				pLink( NULL )
 			{
 			}
 
 			iterator( const iterator &i ) :
-				pLink( i.pLink ),
-				pList( i.pList )
+				pLink( i.pLink )
 			{
 			}
 
@@ -376,40 +366,36 @@ namespace Bu
 			iterator &operator++()
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(pList->pFirst):(NULL);
-				else
-					pLink = pLink->pNext;
-				bOffFront = false;
+					throw Bu::ExceptionBase(
+						"Attempt to iterate past end of list.");
+				pLink = pLink->pNext;
 				return *this;
 			}
 
 			iterator &operator--()
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(NULL):(pList->pLast);
-				else
-					pLink = pLink->pPrev;
-				bOffFront = true;
+					throw Bu::ExceptionBase(
+						"Attempt to iterate past begining of list.");
+				pLink = pLink->pPrev;
 				return *this;
 			}
 			
 			iterator &operator++( int )
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(pList->pFirst):(NULL);
-				else
-					pLink = pLink->pNext;
-				bOffFront = false;
+					throw Bu::ExceptionBase(
+						"Attempt to iterate past end of list.");
+				pLink = pLink->pNext;
 				return *this;
 			}
 
 			iterator &operator--( int )
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(NULL):(pList->pLast);
-				else
-					pLink = pLink->pPrev;
-				bOffFront = true;
+					throw Bu::ExceptionBase(
+						"Attempt to iterate past begining of list.");
+				pLink = pLink->pPrev;
 				return *this;
 			}
 
@@ -443,30 +429,20 @@ namespace Bu
 			friend class List<value, cmpfunc, valuealloc, linkalloc>;
 		private:
 			Link *pLink;
-			const MyType *pList;
-			bool bOffFront;
-			const_iterator( const MyType *pList ) :
-				pLink( NULL ),
-				pList( pList )
-			{
-			}
 
-			const_iterator( Link *pLink, const MyType *pList ) :
-				pLink( pLink ),
-				pList( pList )
+			const_iterator( Link *pLink ) :
+				pLink( pLink )
 			{
 			}
 
 		public:
 			const_iterator() :
-				pLink( NULL ),
-				pList( NULL )
+				pLink( NULL )
 			{
 			}
 
 			const_iterator( const iterator &i ) :
-				pLink( i.pLink ),
-				pList( i.pList )
+				pLink( i.pLink )
 			{
 			}
 
@@ -503,40 +479,36 @@ namespace Bu
 			const_iterator &operator++()
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(pList->pFirst):(NULL);
-				else
-					pLink = pLink->pNext;
-				bOffFront = false;
+					throw Bu::ExceptionBase(
+						"Attempt to iterate past end of list.");
+				pLink = pLink->pNext;
 				return *this;
 			}
 
 			const_iterator &operator--()
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(NULL):(pList->pLast);
-				else
-					pLink = pLink->pPrev;
-				bOffFront = true;
+					throw Bu::ExceptionBase(
+						"Attempt to iterate past begining of list.");
+				pLink = pLink->pPrev;
 				return *this;
 			}
 			
 			const_iterator &operator++( int )
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(pList->pFirst):(NULL);
-				else
-					pLink = pLink->pNext;
-				bOffFront = false;
+					throw Bu::ExceptionBase(
+						"Attempt to iterate past end of list.");
+				pLink = pLink->pNext;
 				return *this;
 			}
 
 			const_iterator &operator--( int )
 			{
 				if( pLink == NULL )
-					pLink = (bOffFront)?(NULL):(pList->pLast);
-				else
-					pLink = pLink->pPrev;
-				bOffFront = true;
+					throw Bu::ExceptionBase(
+						"Attempt to iterate past begining of list.");
+				pLink = pLink->pPrev;
 				return *this;
 			}
 
@@ -569,7 +541,7 @@ namespace Bu
 		 */
 		iterator begin()
 		{
-			return iterator( pFirst, this );
+			return iterator( pFirst );
 		}
 
 		/**
@@ -578,7 +550,7 @@ namespace Bu
 		 */
 		const_iterator begin() const
 		{
-			return const_iterator( pFirst, this );
+			return const_iterator( pFirst );
 		}
 
 		/**
@@ -588,7 +560,7 @@ namespace Bu
 		 */
 		const iterator end()
 		{
-			return iterator( NULL, this );
+			return iterator( NULL );
 		}
 
 		/**
@@ -598,7 +570,7 @@ namespace Bu
 		 */
 		const const_iterator end() const
 		{
-			return const_iterator( NULL, this );
+			return const_iterator( NULL );
 		}
 
 		/**
