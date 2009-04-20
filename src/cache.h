@@ -121,6 +121,7 @@ namespace Bu
 				kId = rRhs.kId;
 				if( pCache && pData )
 					pCache->incRef( kId );
+				return *this;
 			}
 
 		private:
