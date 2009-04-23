@@ -171,9 +171,12 @@ namespace Bu
 		}
 
 		template<typename type>
-		void ffmt( type /*f*/ )
+		void ffmt( type f )
 		{
-			writeAligned("**make floats work**");
+			Bu::FString fTmp;
+			fTmp.format("%f {~!~}", f );
+//			writeAligned("**make floats work**");
+			writeAligned( fTmp );
 			usedFormat();
 		}
 
