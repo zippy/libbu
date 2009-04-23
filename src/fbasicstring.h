@@ -1336,6 +1336,8 @@ namespace Bu
 		 */
 		chr &operator[]( long nIndex )
 		{
+			if( nIndex < 0 || nIndex >= nLength )
+				throw Bu::ExceptionBase("Index out of range.");
 			flatten();
 
 			return pFirst->pData[nIndex];
@@ -1348,6 +1350,8 @@ namespace Bu
 		 */
 		const chr &operator[]( long nIndex ) const
 		{
+			if( nIndex < 0 || nIndex >= nLength )
+				throw Bu::ExceptionBase("Index out of range.");
 			flatten();
 
 			return pFirst->pData[nIndex];
