@@ -227,7 +227,9 @@ int Bu::File::getPosixFlags( int iFlags )
 	if( (iFlags&Exclusive) == Exclusive )
 		iRet |= O_EXCL;
 
+#ifdef O_BINARY
 	iRet |= O_BINARY;
+#endif
 
 	return iRet;
 }
