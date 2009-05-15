@@ -201,6 +201,11 @@ namespace Bu
 			hPlugin.clear();
 		}
 
+		Bu::List<Bu::FString> getPluginList()
+		{
+			return hPlugin.getKeys();
+		}
+
 	private:
 		PluginHash hPlugin;
 		InstHash hObj;
