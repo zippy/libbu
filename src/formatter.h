@@ -40,7 +40,7 @@ namespace Bu
 				bCaps( bCaps )
 			{
 			}
-			Fmt( unsigned int uMinWidth, Alignment a=Right,
+			Fmt( unsigned int uMinWidth, Alignment a,
 					unsigned int uRadix=10, bool bPlus=false, bool bCaps=true,
 					char cFill=' ') :
 				uMinWidth( uMinWidth ),
@@ -73,6 +73,10 @@ namespace Bu
 			Fmt &align( Alignment eAlign );
 			Fmt &plus( bool bPlus=true );
 			Fmt &caps( bool bCaps=true );
+
+			Fmt &left();
+			Fmt &right();
+			Fmt &center();
 
 			unsigned char uMinWidth;
 			char cFillChar;

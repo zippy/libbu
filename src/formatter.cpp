@@ -153,6 +153,24 @@ Bu::Formatter::Fmt &Bu::Formatter::Fmt::align( Alignment eAlign )
 	return *this;
 }
 
+Bu::Formatter::Fmt &Bu::Formatter::Fmt::left()
+{
+	this->uAlign = Fmt::Left;
+	return *this;
+}
+
+Bu::Formatter::Fmt &Bu::Formatter::Fmt::center()
+{
+	this->uAlign = Fmt::Center;
+	return *this;
+}
+
+Bu::Formatter::Fmt &Bu::Formatter::Fmt::right()
+{
+	this->uAlign = Fmt::Right;
+	return *this;
+}
+
 Bu::Formatter::Fmt &Bu::Formatter::Fmt::plus( bool bPlus )
 {
 	this->bPlus = bPlus;
