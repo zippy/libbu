@@ -34,7 +34,8 @@ namespace Bu { subExceptionDef( SocketException ) }
 
 Bu::Socket::Socket( int nSocket ) :
 	nSocket( nSocket ),
-	bActive( true )
+	bActive( true ),
+	bBlocking( true )
 {
 #ifdef WIN32
 	Bu::Winsock2::getInstance();
@@ -42,12 +43,14 @@ Bu::Socket::Socket( int nSocket ) :
 	setAddress();
 }
 
-Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout )
+Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout ) :
+	nSocket( 0 ),
+	bActive( false ),
+	bBlocking( true )
 {
 #ifdef WIN32
 	Bu::Winsock2::getInstance();
 #endif
-	bActive = false;
 
 	/* Create the socket. */
 	nSocket = bu_socket( PF_INET, SOCK_STREAM, 0 );
@@ -150,7 +153,7 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 	struct timeval tv = {0, 0};
 	if( bu_select( nSocket+1, &rfds, NULL, NULL, &tv ) < 0 )
 		throw SocketException( SocketException::cRead, strerror(errno) );
-	if( FD_ISSET( nSocket, &rfds ) )
+	if( FD_ISSET( nSocket, &rfds ) || bBlocking )
 	{
 		int nRead = TEMP_FAILURE_RETRY( 
 			bu_recv( nSocket, (char *) pBuf, nBytes, 0 ) );
@@ -377,6 +380,7 @@ bool Bu::Socket::isBlocking()
 
 void Bu::Socket::setBlocking( bool bBlocking )
 {
+	this->bBlocking = bBlocking;
 #ifndef WIN32
 	if( bBlocking )
 	{

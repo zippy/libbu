@@ -104,6 +104,7 @@ namespace Bu
 		int nSocket;
 #endif
 		bool bActive;
+		bool bBlocking;
 		FString sReadBuf;
 		FString sAddress;
 	};

@@ -100,6 +100,11 @@ namespace Bu
 				return pData != NULL;
 			}
 
+			operator bool() const
+			{
+				return isBound() && isValid();
+			}
+
 			const keytype &getKey() const
 			{
 				return kId;
@@ -110,6 +115,17 @@ namespace Bu
 				if( pCache && pData )
 					pCache->decRef( kId );
 				pData = NULL;
+			}
+
+			void clear()
+			{
+				unbind();
+				pCache = NULL;
+			}
+
+			void unset()
+			{
+				clear();
 			}
 
 			Ptr &operator=( const Ptr &rRhs )
