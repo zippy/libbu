@@ -29,6 +29,7 @@ namespace Bu
 		virtual void destroy( obtype *pObj, const keytype &key )=0;
 		virtual bool has( const keytype &key )=0;
 		virtual Bu::List<keytype> getKeys() { return Bu::List<keytype>(); }
+		virtual int getSize() { return -1; }
 
 	private:
 	};

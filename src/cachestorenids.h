@@ -131,6 +131,11 @@ namespace Bu
 			return hId.getKeys();
 		}
 
+		virtual int getSize()
+		{
+			return hId.getSize();
+		}
+
 	private:
 		Nids nStore;
 		typedef Bu::Hash<keytype, long> NidHash;

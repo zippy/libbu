@@ -295,6 +295,11 @@ namespace Bu
 			return pStore->getKeys();
 		}
 
+		int getSize()
+		{
+			return pStore->getSize();
+		}
+
 		/**
 		 * Make sure all currently loaded but not-in-use objects are synced to
 		 * the store.
