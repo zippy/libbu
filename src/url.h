@@ -26,6 +26,7 @@ namespace Bu
 		virtual ~Url();
 
 		void parseUrl( const Bu::FString &sUrl );
+		void parseParams( const Bu::FString &sQuery );
 		void parseParams( Bu::FString::const_iterator &i );
 		void clear();
 

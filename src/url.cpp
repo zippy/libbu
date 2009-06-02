@@ -172,6 +172,12 @@ void Bu::Url::parsePath( Bu::FString::const_iterator &i )
 	}
 }
 
+void Bu::Url::parseParams( const Bu::FString &sQuery )
+{
+	Bu::FString::const_iterator i = sQuery.begin();
+	parseParams( i );
+}
+
 void Bu::Url::parseParams( Bu::FString::const_iterator &i )
 {
 	bool bName = true;
