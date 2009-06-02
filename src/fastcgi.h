@@ -95,11 +95,11 @@ namespace Bu
 
 		virtual void run();
 
-		virtual void init() { };
-		virtual int request( const StrHash &hParams,
+		virtual void onInit() { };
+		virtual int onRequest( const StrHash &hParams,
 			const Bu::FString &sStdIn, Bu::Stream &sStdOut,
 			Bu::Stream &sStdErr )=0;
-		virtual void deinit() { };
+		virtual void onUninit() { };
 
 	private:
 		void read( Bu::Socket &s, Record &r );

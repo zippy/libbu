@@ -17,9 +17,9 @@ public:
 	{
 	}
 
-	virtual int request( const StrHash &hParams,
+	virtual int onRequest( const StrHash &hParams,
 		const Bu::FString &sStdIn, Bu::Stream &sStdOut,
-		Bu::Stream &sStdErr )
+		Bu::Stream &/*sStdErr*/ )
 	{
 		Bu::FString sOut("Content-Type: text/html\r\n\r\n");
 		sOut += "<html><body><h1>Environment:</h1><ul>";

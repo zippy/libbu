@@ -282,7 +282,7 @@ void Bu::FastCgi::run()
 					{
 						sio << "All done, generating output." << sio.nl;
 						Bu::MemBuf mStdOut, mStdErr;
-						int iRet = request(
+						int iRet = onRequest(
 							pChan->hParams, pChan->sStdIn,
 							mStdOut, mStdErr
 							);
