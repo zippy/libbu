@@ -60,7 +60,7 @@ void Bu::FastCgi::read( Bu::Socket &s, Bu::FastCgi::Record &r )
 
 void Bu::FastCgi::write( Bu::Socket &s, Bu::FastCgi::Record r )
 {
-	sio << "Out -> " << r << sio.nl;
+//	sio << "Out -> " << r << sio.nl;
 	r.uRequestId = htons( r.uRequestId );
 	r.uContentLength = htons( r.uContentLength );
 	s.write( &r, sizeof(Record) );
@@ -138,7 +138,7 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::FastCgi::Record &r )
 
 void Bu::FastCgi::run()
 {
-	sio << "sizeof(Bu::FastCgi::Record) = " << sizeof(Record) << sio.nl;
+//	sio << "sizeof(Bu::FastCgi::Record) = " << sizeof(Record) << sio.nl;
 	bRunning = true;
 	while( bRunning )
 	{
@@ -148,7 +148,7 @@ void Bu::FastCgi::run()
 
 		Bu::Socket s( iSock );
 		s.setBlocking( true );
-		sio << "Got connection, blocking?  " << s.isBlocking() << sio.nl;
+//		sio << "Got connection, blocking?  " << s.isBlocking() << sio.nl;
 		try
 		{
 			for(;;)
@@ -188,15 +188,15 @@ void Bu::FastCgi::run()
 						pChan = aChannel[r.uRequestId-1];
 				}
 
-				sio << "Record (id=" << r.uRequestId << ", len=" << 
-					r.uContentLength << ", pad=" << 
-					(unsigned int)r.uPaddingLength << "):  ";
-				fflush( stdout );
+//				sio << "Record (id=" << r.uRequestId << ", len=" << 
+//					r.uContentLength << ", pad=" << 
+//					(unsigned int)r.uPaddingLength << "):  ";
+//				fflush( stdout );
 				
 				switch( (RequestType)r.uType )
 				{
 					case typeBeginRequest:
-						sio << "Begin Request.";
+//						sio << "Begin Request.";
 						{
 							BeginRequestBody b;
 							read( s, b );
@@ -210,7 +210,7 @@ void Bu::FastCgi::run()
 						break;
 
 					case typeParams:
-						sio << "Params.";
+//						sio << "Params.";
 						if( r.uContentLength == 0 )
 						{
 							pChan->uFlags |= chflgParamsDone;
@@ -226,7 +226,7 @@ void Bu::FastCgi::run()
 						break;
 
 					case typeStdIn:
-						sio << "StdIn.";
+//						sio << "StdIn.";
 						if( r.uContentLength == 0 )
 						{
 							pChan->uFlags |= chflgStdInDone;
@@ -240,8 +240,8 @@ void Bu::FastCgi::run()
 								size_t iRead = s.read(
 									buf, r.uContentLength-iTotal );
 								iTotal += iRead;
-								sio << " (read " << iRead << " " << iTotal
-									<< "/" << r.uContentLength << ")";
+//								sio << " (read " << iRead << " " << iTotal
+//									<< "/" << r.uContentLength << ")";
 								pChan->sStdIn.append( buf, iRead );
 							} while( iTotal < r.uContentLength );
 							delete[] buf;
@@ -249,7 +249,7 @@ void Bu::FastCgi::run()
 						break;
 
 					case typeData:
-						sio << "Data.";
+//						sio << "Data.";
 						if( r.uContentLength == 0 )
 						{
 							pChan->uFlags |= chflgDataDone;
@@ -268,19 +268,19 @@ void Bu::FastCgi::run()
 					case typeEndRequest:
 					case typeAbortRequest:
 					case typeGetValuesResult:
-						sio << "Scary.";
+//						sio << "Scary.";
 						// ??? we shouldn't get these.
 						break;
 					
 				}
 
-				sio << sio.nl;
+//				sio << sio.nl;
 
 				if( pChan )
 				{
 					if( pChan->uFlags == chflgAllDone )
 					{
-						sio << "All done, generating output." << sio.nl;
+//						sio << "All done, generating output." << sio.nl;
 						Bu::MemBuf mStdOut, mStdErr;
 						int iRet = onRequest(
 							pChan->hParams, pChan->sStdIn,
@@ -308,8 +308,8 @@ void Bu::FastCgi::run()
 								write( s, rOut );
 								int iAmnt = s.write(
 									sStdOut.getStr()+iPos, iSize );
-								sio << "Wrote " << iAmnt <<
-									" of " << iSize << sio.nl;
+//								sio << "Wrote " << iAmnt <<
+//									" of " << iSize << sio.nl;
 							}
 						}
 						rOut.uContentLength = 0;
@@ -328,8 +328,8 @@ void Bu::FastCgi::run()
 								write( s, rOut );
 								int iAmnt = s.write(
 									sStdErr.getStr()+iPos, iSize );
-								sio << "Wrote " << iAmnt <<
-									" of " << iSize << sio.nl;
+//								sio << "Wrote " << iAmnt <<
+//									" of " << iSize << sio.nl;
 							}
 						}
 						rOut.uContentLength = 0;
@@ -352,8 +352,8 @@ void Bu::FastCgi::run()
 		}
 		catch( Bu::SocketException &e )
 		{
-			sio << "Bu::SocketException: " << e.what() << sio.nl <<
-				"\tSocket open:  " << s.isOpen() << sio.nl;
+//			sio << "Bu::SocketException: " << e.what() << sio.nl <<
+//				"\tSocket open:  " << s.isOpen() << sio.nl;
 		}
 	}
 }
