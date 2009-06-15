@@ -1375,7 +1375,7 @@ namespace Bu
 			return (pFirst != NULL);
 		}
 
-		bool compareSub( const chr *pData, long nIndex, long nLen )
+		bool compareSub( const chr *pData, long nIndex, long nLen ) const
 		{
 			if( pFirst == NULL ) {
 				if( pData == NULL )
@@ -1402,7 +1402,7 @@ namespace Bu
 			return true;
 		}
 
-		bool compareSub( const MyType &rData, long nIndex, long nLen )
+		bool compareSub( const MyType &rData, long nIndex, long nLen ) const
 		{
 			if( pFirst == NULL || rData.pFirst == NULL ) 
 				return false;
