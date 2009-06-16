@@ -232,6 +232,12 @@ namespace Bu
 				return pChunk->pData[iPos] == c;
 			}
 
+			bool operator!=( const chr &c ) const
+			{
+				if( !pChunk ) return false;
+				return pChunk->pData[iPos] != c;
+			}
+
 			operator bool() const
 			{
 				return pChunk != NULL;
@@ -463,6 +469,12 @@ namespace Bu
 			{
 				if( !pChunk ) return false;
 				return pChunk->pData[iPos] == c;
+			}
+
+			bool operator!=( const chr &c ) const
+			{
+				if( !pChunk ) return false;
+				return pChunk->pData[iPos] != c;
 			}
 
 			iterator &operator=( const chr &c )
