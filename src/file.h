@@ -65,7 +65,9 @@ namespace Bu
 			Exclusive	= 0x44, ///< Create file, if it exists then fail
 
 			// Helpful mixes
-			ReadWrite	= 0x03 ///< Open for reading and writing
+			ReadWrite	= 0x03, ///< Open for reading and writing
+			WriteNew	= 0x0E	///< Create a file (or truncate) for writing.
+								/// Same as Write|Create|Truncate
 		};
 		/**
 		 * Create a temp file and return its handle.  The file is opened 
