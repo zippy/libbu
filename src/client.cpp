@@ -17,18 +17,23 @@
 #define RBS		(1024*2)
 
 Bu::Client::Client( Bu::Socket *pSocket, class Bu::ClientLinkFactory *pfLink ) :
+	pTopStream( pSocket ),
 	pSocket( pSocket ),
 	pProto( NULL ),
 	nRBOffset( 0 ),
 	bWantsDisconnect( false ),
 	pfLink( pfLink )
 {
+	lFilts.prepend( pSocket );
 }
 
 Bu::Client::~Client()
 {
-	delete pSocket;
-	pSocket = NULL;
+	for( FilterList::iterator i = lFilts.begin(); i; i++ )
+	{
+		delete *i;
+	}
+	pTopStream = pSocket = NULL;
 }
 
 void Bu::Client::processInput()
@@ -40,7 +45,7 @@ void Bu::Client::processInput()
 	{
 		try
 		{
-			nRead = pSocket->read( buf, RBS );
+			nRead = pTopStream->read( buf, RBS );
 
 			if( nRead == 0 )
 			{
@@ -50,13 +55,13 @@ void Bu::Client::processInput()
 			{
 				nTotal += nRead;
 				sReadBuf.append( buf, nRead );
-				if( !pSocket->canRead() )
+				if( !pTopStream->canRead() )
 					break;
 			}
 		}
 		catch( Bu::SocketException &e )
 		{
-			pSocket->close();
+			pTopStream->close();
 			bWantsDisconnect = true;
 			break;
 		}
@@ -64,7 +69,7 @@ void Bu::Client::processInput()
 
 	if( nTotal == 0 )
 	{
-		pSocket->close();
+		pTopStream->close();
 		bWantsDisconnect = true;
 	}
 
@@ -79,7 +84,7 @@ void Bu::Client::processOutput()
 	if( sWriteBuf.getSize() > 0 )
 	{
 		int nAmnt = (sWriteBuf.getSize()<2048)?(sWriteBuf.getSize()):(2048);
-		int nReal = pSocket->write( sWriteBuf.getStr(), nAmnt );
+		int nReal = pTopStream->write( sWriteBuf.getStr(), nAmnt );
 		sWriteBuf.trimFront( nReal );
 		//sWriteBuf.clear();
 	}
@@ -113,8 +118,8 @@ Bu::FString &Bu::Client::getOutput()
 
 bool Bu::Client::isOpen()
 {
-	if( !pSocket ) return false;
-	return pSocket->isOpen();
+	if( !pTopStream ) return false;
+	return pTopStream->isOpen();
 }
 
 void Bu::Client::write( const Bu::FString &sData )
@@ -235,7 +240,7 @@ bool Bu::Client::wantsDisconnect()
 
 void Bu::Client::close()
 {
-	pSocket->close();
+	pTopStream->close();
 }
 
 Bu::ClientLink *Bu::Client::getLink()

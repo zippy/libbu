@@ -66,7 +66,18 @@ namespace Bu
 
 		bool hasOutput() { return !sWriteBuf.isEmpty(); }
 
+		template<typename filter>
+		void pushFilter()
+		{
+			filter *pFlt = new filter( *pTopStream );
+			pTopStream = pFlt;
+			lFilts.prepend( pFlt );
+		}
+
 	private:
+		typedef Bu::List<Bu::Stream *> FilterList;
+		FilterList lFilts;
+		Bu::Stream *pTopStream;
 		Bu::Socket *pSocket;
 		Bu::Protocol *pProto;
 		Bu::FString sReadBuf;
