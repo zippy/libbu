@@ -85,6 +85,7 @@ void Bu::Client::processOutput()
 	{
 		int nAmnt = (sWriteBuf.getSize()<2048)?(sWriteBuf.getSize()):(2048);
 		int nReal = pTopStream->write( sWriteBuf.getStr(), nAmnt );
+		pTopStream->flush();
 		sWriteBuf.trimFront( nReal );
 		//sWriteBuf.clear();
 	}

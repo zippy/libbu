@@ -73,6 +73,22 @@ namespace Bu
 			pTopStream = pFlt;
 			lFilts.prepend( pFlt );
 		}
+		
+		template<typename filter, typename p1t>
+		void pushFilter( p1t p1 )
+		{
+			filter *pFlt = new filter( *pTopStream, p1 );
+			pTopStream = pFlt;
+			lFilts.prepend( pFlt );
+		}
+		
+		template<typename filter, typename p1t, typename p2t>
+		void pushFilter( p1t p1, p2t p2 )
+		{
+			filter *pFlt = new filter( *pTopStream, p1, p2 );
+			pTopStream = pFlt;
+			lFilts.prepend( pFlt );
+		}
 
 	private:
 		typedef Bu::List<Bu::Stream *> FilterList;
