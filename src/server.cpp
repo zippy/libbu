@@ -92,6 +92,7 @@ void Bu::Server::scan()
 				if( !pClient->isOpen() )
 				{
 					onClosedConnection( pClient );
+					pClient->close();
 					hClients.erase( j );
 					FD_CLR( j, &fdActive );
 				}

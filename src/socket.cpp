@@ -159,7 +159,7 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 			bu_recv( nSocket, (char *) pBuf, nBytes, 0 ) );
 		if( nRead == 0 )
 		{
-			bActive = false;
+			close();
 			throw SocketException( SocketException::cClosed, "Socket closed.");
 		}
 		if( nRead < 0 )
@@ -171,7 +171,7 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 #else
 			if( errno == ENETRESET || errno == ECONNRESET )
 			{
-				bActive = false;
+				close();
 				throw SocketException( SocketException::cClosed,
 					strerror(errno) );
 			}
