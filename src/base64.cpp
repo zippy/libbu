@@ -83,8 +83,18 @@ size_t Bu::Base64::read( void *pBuf, size_t nBytes )
 	char buf[4];
 	while( sIn < nBytes )
 	{
-		if( rNext.read( buf, 4 ) == 0 )
-			return sIn;
+		//if( rNext.read( buf, 4 ) == 0 )
+		//	return sIn;
+		for( int j = 0; j < 4; j++ )
+		{
+			if( rNext.read( &buf[j], 1 ) == 0 )
+				return sIn;
+			if( buf[j] == ' ' || buf[j] == '\t' ||
+				buf[j] == '\n' || buf[j] == '\r' )
+			{
+				j--;
+			}
+		}
 		int iChars = 3;
 		for( int j = 0; j < 4; j++ )
 		{
