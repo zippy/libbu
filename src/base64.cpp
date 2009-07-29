@@ -4,13 +4,13 @@ const char Bu::Base64::tblEnc[65] = {
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 };
 
-Bu::Base64::Base64( Bu::Stream &rNext, Mode eMode ) :
+Bu::Base64::Base64( Bu::Stream &rNext ) :
 	Bu::Filter( rNext ),
 	iBPos( 0 ),
 	iBuf( 0 ),
 	iTotalIn( 0 ),
 	iTotalOut( 0 ),
-	eMode( eMode )
+	eMode( Nothing )
 {
 	start();
 
@@ -54,7 +54,7 @@ void Bu::Base64::start()
 
 size_t Bu::Base64::stop()
 {
-	if( eMode == Write )
+//	if( eMode |= Encode )
 	{
 		char outBuf[4];
 		int iBUsed = 4-(3-iBPos);
@@ -71,10 +71,10 @@ size_t Bu::Base64::stop()
 		iTotalOut += rNext.write( outBuf, 4 );
 		return iTotalOut;
 	}
-	else
-	{
+//	else
+//	{
 		return iTotalIn;
-	}
+//	}
 }
 
 size_t Bu::Base64::read( void *pBuf, size_t nBytes )

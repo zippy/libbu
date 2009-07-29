@@ -13,7 +13,7 @@ int main( int argc, char *argv[] )
 		argv++;
 		Bu::File fIn( argv[0], Bu::File::Read );
 		Bu::File fOut( argv[1], Bu::File::WriteNew );
-		Bu::Base64 bOut( fOut, Bu::Base64::Write );
+		Bu::Base64 bOut( fOut );
 
 		char buf[900];
 		for(;;)
@@ -29,7 +29,7 @@ int main( int argc, char *argv[] )
 		argv++;
 		Bu::File fIn( argv[0], Bu::File::Read );
 		Bu::File fOut( argv[1], Bu::File::WriteNew );
-		Bu::Base64 bIn( fIn, Bu::Base64::Read );
+		Bu::Base64 bIn( fIn );
 
 		char buf[900];
 		for(;;)

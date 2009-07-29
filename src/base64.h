@@ -12,16 +12,7 @@ namespace Bu
 	class Base64 : public Bu::Filter
 	{
 	public:
-		enum Mode
-		{
-			Encode		= 0x01,
-			Read		= 0x01,
-			Decode		= 0x02,
-			Write		= 0x02
-		};
-
-	public:
-		Base64( Bu::Stream &rNext, Mode eMode );
+		Base64( Bu::Stream &rNext );
 		virtual ~Base64();
 
 		virtual void start();
@@ -38,6 +29,12 @@ namespace Bu
 		size_t iTotalOut;
 		static const char tblEnc[65];
 		char tblDec[80];
+		enum Mode
+		{
+			Nothing		= 0x00,
+			Encode		= 0x01,
+			Decode		= 0x02,
+		};
 		Mode eMode;
 	};
 };
