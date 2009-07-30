@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2008 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #ifndef BU_BUFFER_H
 #define BU_BUFFER_H
 
@@ -18,7 +25,13 @@ namespace Bu
 		virtual size_t write( const void *pBuf, size_t nBytes );
 		using Stream::write;
 
+		size_t getReadFill() { return iReadBufFill; }
+		bool isWritePending() { return iWriteBufFill > 0; }
+
 		virtual void flush();
+
+	private:
+		void fillReadBuf();
 
 	private:
 		size_t sSoFar;
@@ -26,7 +39,9 @@ namespace Bu
 		char *sReadBuf;
 		char *sWriteBuf;
 		int iReadBufFill;
+		int iReadPos;
 		int iWriteBufFill;
+		int iWritePos;
 	};
 };
 

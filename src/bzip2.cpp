@@ -200,7 +200,7 @@ size_t Bu::BZip2::write( const void *pData, size_t nBytes )
 			break;
 	}
 
-	return sTotalOut;
+	return nBytes;
 }
 
 bool Bu::BZip2::isOpen()
