@@ -31,12 +31,12 @@ int main( int argc, char *argv[] )
 		Bu::File fOut( argv[1], Bu::File::WriteNew );
 		Bu::Base64 bIn( fIn );
 
-		char buf[900];
+		char buf[16];
 		for(;;)
 		{
-			int iRead = bIn.read( buf, 900 );
+			int iRead = bIn.read( buf, 16 );
 			fOut.write( buf, iRead );
-			if( iRead < 900 )
+			if( iRead < 16 )
 				break;
 		}
 	}

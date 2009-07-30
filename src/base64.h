@@ -25,6 +25,9 @@ namespace Bu
 	private:
 		int iBPos;
 		int iBuf;
+		int iRPos;
+		int iChars;
+		bool bEosIn;
 		size_t iTotalIn;
 		size_t iTotalOut;
 		static const char tblEnc[65];

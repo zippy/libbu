@@ -8,6 +8,9 @@ Bu::Base64::Base64( Bu::Stream &rNext ) :
 	Bu::Filter( rNext ),
 	iBPos( 0 ),
 	iBuf( 0 ),
+	iRPos( 0 ),
+	iChars( 0 ),
+	bEosIn( false ),
 	iTotalIn( 0 ),
 	iTotalOut( 0 ),
 	eMode( Nothing )
@@ -79,10 +82,25 @@ size_t Bu::Base64::stop()
 
 size_t Bu::Base64::read( void *pBuf, size_t nBytes )
 {
+	if( bEosIn == true && iRPos == iChars )
+		return 0;
 	size_t sIn = 0;
 	char buf[4];
 	while( sIn < nBytes )
 	{
+		for(; iRPos < iChars && sIn < nBytes; iRPos++, sIn++ )
+		{
+			((unsigned char *)pBuf)[sIn] = (iBuf>>(8*(2-iRPos)))&0xFF;
+		}
+		if( iRPos == iChars )
+		{
+			if( bEosIn == true )
+				return sIn;
+			else
+				iRPos = 0;
+		}
+		else if( sIn == nBytes )
+			return sIn;
 		//if( rNext.read( buf, 4 ) == 0 )
 		//	return sIn;
 		for( int j = 0; j < 4; j++ )
@@ -95,20 +113,19 @@ size_t Bu::Base64::read( void *pBuf, size_t nBytes )
 				j--;
 			}
 		}
-		int iChars = 3;
+		iChars = 3;
+		iBuf = 0;
 		for( int j = 0; j < 4; j++ )
 		{
 			if( buf[j] == '=' )
+			{
 				iChars--;
+				bEosIn = true;
+			}
 			else
 				iBuf |= (tblDec[buf[j]-'+']&0x3f)<<((3-j)*6);
-			printf("%d:  %06X (%02X)\n", j, iBuf, (tblDec[buf[j]-'+']&0x3f) );
+			//printf("%d:  %06X (%02X)\n", j, iBuf, (tblDec[buf[j]-'+']&0x3f) );
 		}
-		for( int j = 0; j < iChars; j++ )
-		{
-			((unsigned char *)pBuf)[sIn++] = (iBuf>>(8*(2-j)))&0xFF;
-		}
-		iBuf = 0;
 	}
 
 	return sIn;
