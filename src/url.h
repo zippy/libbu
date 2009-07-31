@@ -28,6 +28,8 @@ namespace Bu
 		void parseUrl( const Bu::FString &sUrl );
 		void parseParams( const Bu::FString &sQuery );
 		void parseParams( Bu::FString::const_iterator &i );
+		void parsePath( const Bu::FString &sPath );
+		void parsePath( Bu::FString::const_iterator &i );
 		void clear();
 
 		Bu::FString getUrl() const;
@@ -59,7 +61,6 @@ namespace Bu
 		void parseProtocol( Bu::FString::const_iterator &i );
 		void parseUserPass( Bu::FString::const_iterator &i );
 		void parseHost( Bu::FString::const_iterator &i );
-		void parsePath( Bu::FString::const_iterator &i );
 
 	private:
 		Bu::FString sProtocol;

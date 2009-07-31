@@ -1051,6 +1051,21 @@ namespace Bu
 			return pFirst->pData;
 		}
 
+		Bu::List<MyType> split( const chr c ) const
+		{
+			Bu::List<MyType> ret;
+			const_iterator l, r;
+			l = begin();
+			for(r=l; l;)
+			{
+				for( r = l; r && r != c; r++ );
+				ret.append( MyType( l, r ) );
+				l = r;
+				l++;
+			}
+			return ret;
+		}
+
 		/**
 		 * Plus equals operator for FString.
 		 *@param pData (const chr *) The data to append to your FString.

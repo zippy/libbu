@@ -154,6 +154,12 @@ void Bu::Url::parseHost( Bu::FString::const_iterator &i )
 	i = s;
 }
 
+void Bu::Url::parsePath( const Bu::FString &sPath )
+{
+	Bu::FString::const_iterator i = sPath.begin();
+	parsePath( i );
+}
+
 void Bu::Url::parsePath( Bu::FString::const_iterator &i )
 {
 	if( i )
