@@ -2,9 +2,12 @@
 #define BU_BASE64_H
 
 #include "bu/filter.h"
+#include "bu/exceptionbase.h"
 
 namespace Bu
 {
+	subExceptionDecl( Base64Exception );
+	
 	/**
 	 *
 	 *@ingroup Streams

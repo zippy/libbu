@@ -1,5 +1,7 @@
 #include "bu/base64.h"
 
+namespace Bu { subExceptionDef( Base64Exception ) }
+
 const char Bu::Base64::tblEnc[65] = {
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 };
@@ -106,7 +108,15 @@ size_t Bu::Base64::read( void *pBuf, size_t nBytes )
 		for( int j = 0; j < 4; j++ )
 		{
 			if( rNext.read( &buf[j], 1 ) == 0 )
+			{
+				if( rNext.isEOS() )
+				{
+					iChars = 0;
+					bEosIn = true;
+					throw Base64Exception("Premature end of stream detected while decoding Base64 data.");
+				}
 				return sIn;
+			}
 			if( buf[j] == ' ' || buf[j] == '\t' ||
 				buf[j] == '\n' || buf[j] == '\r' )
 			{

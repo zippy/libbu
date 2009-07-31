@@ -16,7 +16,8 @@
 namespace Bu { subExceptionDef( FileException ) }
 
 Bu::File::File( const Bu::FString &sName, int iFlags ) :
-	fd( -1 )
+	fd( -1 ),
+	bEos( true )
 {
 	fd = ::open( sName.getStr(), getPosixFlags( iFlags ), 0666 );
 	if( fd < 0 )
@@ -24,11 +25,13 @@ Bu::File::File( const Bu::FString &sName, int iFlags ) :
 		throw Bu::FileException( errno, "%s: %s",
 			strerror(errno), sName.getStr() );
 	}
+	bEos = false;
 }
 
 Bu::File::File( int fd ) :
 	fd( fd )
 {
+	bEos = false;
 }
 
 Bu::File::~File()
@@ -46,6 +49,7 @@ void Bu::File::close()
 				strerror(errno) );
 		}
 		fd = -1;
+		bEos = true;
 	}
 }
 
@@ -55,7 +59,11 @@ size_t Bu::File::read( void *pBuf, size_t nBytes )
 		throw FileException("File not open.");
 
 	ssize_t iRead = ::read( fd, pBuf, nBytes );
-	if( iRead < 0 )
+	if( iRead == 0 )
+		bEos = true;
+	else if( iRead == -1 && errno == EAGAIN )
+		return 0;
+	else if( iRead < 0 )
 		throw FileException( errno, "%s", strerror( errno ) );
 	return iRead;
 }
@@ -105,7 +113,7 @@ void Bu::File::setPosEnd( long pos )
 
 bool Bu::File::isEOS()
 {
-	return false;
+	return bEos;
 }
 
 bool Bu::File::canRead()

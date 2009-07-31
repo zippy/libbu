@@ -99,6 +99,7 @@ namespace Bu
 
 	private:
 		int fd;
+		bool bEos;
 	};
 }
 
