@@ -1058,7 +1058,7 @@ namespace Bu
 			l = begin();
 			for(r=l; l;)
 			{
-				for( r = l; r && r != c; r++ );
+				for( r = l; r && r != c; r++ ) { }
 				ret.append( MyType( l, r ) );
 				l = r;
 				l++;
