@@ -14,12 +14,14 @@
 #include <fcntl.h>
 #include <errno.h>
 
-Bu::Process::Process( const char *sName, char *const argv[] )
+Bu::Process::Process( const char *sName, char *const argv[] ) :
+	iPid( 0 )
 {
 	gexec( sName, argv );
 }
 
-Bu::Process::Process( const char *sName, const char *argv, ...)
+Bu::Process::Process( const char *sName, const char *argv, ...) :
+	iPid( 0 )
 {
 	int iCnt = 0;
 	va_list ap;
@@ -43,6 +45,7 @@ Bu::Process::Process( const char *sName, const char *argv, ...)
 
 Bu::Process::~Process()
 {
+	close();
 }
 
 void Bu::Process::gexec( const char *sName, char *const argv[] )
@@ -79,6 +82,14 @@ void Bu::Process::gexec( const char *sName, char *const argv[] )
 
 void Bu::Process::close()
 {
+	if( iPid )
+	{
+		::close( iStdIn );
+		::close( iStdOut );
+		int status;
+		waitpid( iPid, &status, 0 );
+		iPid = 0;
+	}
 }
 
 size_t Bu::Process::read( void *pBuf, size_t nBytes )
