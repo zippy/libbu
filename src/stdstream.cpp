@@ -46,7 +46,7 @@ void Bu::StdStream::setPosEnd( long )
 {
 }
 
-bool Bu::StdStream::isEOS()
+bool Bu::StdStream::isEos()
 {
 	return false;
 }

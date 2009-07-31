@@ -93,7 +93,7 @@ void Bu::Fifo::setPosEnd( long )
 {
 }
 
-bool Bu::Fifo::isEOS()
+bool Bu::Fifo::isEos()
 {
 	return false;
 }

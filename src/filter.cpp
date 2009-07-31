@@ -42,9 +42,9 @@ void Bu::Filter::setPosEnd( long pos )
 	rNext.setPosEnd( pos );
 }
 
-bool Bu::Filter::isEOS()
+bool Bu::Filter::isEos()
 {
-	return rNext.isEOS();
+	return rNext.isEos();
 }
 
 bool Bu::Filter::isOpen()

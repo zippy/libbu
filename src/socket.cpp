@@ -314,7 +314,7 @@ void Bu::Socket::setPosEnd( long )
 	throw UnsupportedException();
 }
 
-bool Bu::Socket::isEOS()
+bool Bu::Socket::isEos()
 {
 	return !bActive;
 }

@@ -92,7 +92,7 @@ void Bu::MemBuf::setPosEnd( long pos )
 	else if( nPos > sBuf.getSize() ) nPos = sBuf.getSize();
 }
 
-bool Bu::MemBuf::isEOS()
+bool Bu::MemBuf::isEos()
 {
 	return (nPos == sBuf.getSize());
 }
@@ -108,12 +108,12 @@ void Bu::MemBuf::flush()
 
 bool Bu::MemBuf::canRead()
 {
-	return !isEOS();
+	return !isEos();
 }
 
 bool Bu::MemBuf::canWrite()
 {
-	return isEOS();
+	return isEos();
 }
 
 bool Bu::MemBuf::isReadable()

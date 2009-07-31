@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2008 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #include "bu/base64.h"
 
 namespace Bu { subExceptionDef( Base64Exception ) }
@@ -109,7 +116,7 @@ size_t Bu::Base64::read( void *pBuf, size_t nBytes )
 		{
 			if( rNext.read( &buf[j], 1 ) == 0 )
 			{
-				if( rNext.isEOS() )
+				if( rNext.isEos() )
 				{
 					iChars = 0;
 					bEosIn = true;

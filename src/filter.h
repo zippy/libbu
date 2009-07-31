@@ -47,7 +47,7 @@ namespace Bu
 		virtual void seek( long offset );
 		virtual void setPos( long pos );
 		virtual void setPosEnd( long pos );
-		virtual bool isEOS();
+		virtual bool isEos();
 		virtual bool isOpen();
 
 		virtual void flush();

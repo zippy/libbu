@@ -160,7 +160,7 @@ void Bu::Process::setPosEnd( long )
 {
 }
 
-bool Bu::Process::isEOS()
+bool Bu::Process::isEos()
 {
 	return false;
 }

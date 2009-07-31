@@ -83,7 +83,7 @@ namespace Bu
 		 * Are we at the end of the stream?
 		 *@returns (bool) Are we at the end of the stream?
 		 */
-		virtual bool isEOS() = 0;
+		virtual bool isEos() = 0;
 
 		/**
 		 * Is the stream open?
@@ -99,7 +99,7 @@ namespace Bu
 		/**
 		 * In non-blocking streams this indicates if a read operation will
 		 * return data at the moment or not.  In blocking streams this should
-		 * return the same value as isEOS().
+		 * return the same value as isEos().
 		 */
 		virtual bool canRead() = 0;
 

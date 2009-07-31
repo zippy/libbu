@@ -48,7 +48,7 @@
 		if( s < 50 )
 		{
 			unitTest( total == 256 );
-			unitTest( sf.isEOS() == true );
+			unitTest( sf.isEos() == true );
 			break;
 		}
 	}
@@ -75,7 +75,7 @@
 	int r = sf.read( buf, 256 );
 	unitTest( r == 256 );
 	// You have to read past the end to set the EOS flag.
-	unitTest( sf.isEOS() == false );
+	unitTest( sf.isEos() == false );
 	try
 	{
 		if( sf.read( buf, 5 ) > 0 )

@@ -226,7 +226,7 @@ void Bu::TafReader::rawread( char *c )
 {
 	if( sIn.read( c, 1 ) < 1 )
 	{
-		if( sIn.isEOS() )
+		if( sIn.isEos() )
 		{
 			throw TafException("%d:%d: Premature end of stream.",
 				iLine, iCol, c );

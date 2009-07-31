@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2008 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #include "bu/xmlreader.h"
 #include "bu/stream.h"
 
@@ -19,7 +26,7 @@ Bu::XmlReader::~XmlReader()
 
 void Bu::XmlReader::fillBuffer()
 {
-	if( rInput.isEOS() )
+	if( rInput.isEos() )
 		return;
 	char buf[1024];
 	int iSize = rInput.read( buf, 1024 );
@@ -88,7 +95,7 @@ int Bu::XmlReader::nextToken()
 			{
 				if( j == sBuf.getSize() )
 				{
-					if( rInput.isEOS() )
+					if( rInput.isEos() )
 						error("Reached end of input while waiting for whitespace to end.");
 
 					fillBuffer();
@@ -116,7 +123,7 @@ int Bu::XmlReader::nextToken()
 				{
 					if( j == sBuf.getSize() )
 					{
-						if( rInput.isEOS() )
+						if( rInput.isEos() )
 							error("Reached end of input while waiting for a string to end.");
 
 						fillBuffer();

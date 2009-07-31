@@ -111,7 +111,7 @@ void Bu::File::setPosEnd( long pos )
 	lseek( fd, pos, SEEK_END );
 }
 
-bool Bu::File::isEOS()
+bool Bu::File::isEos()
 {
 	return bEos;
 }

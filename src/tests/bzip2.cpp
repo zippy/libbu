@@ -29,7 +29,7 @@ int main( int argc, char *argv[] )
 		nRead = fin.read( buf, 1024 );
 		if( nRead > 0 )
 			bz2.write( buf, nRead );
-		if( fin.isEOS() )
+		if( fin.isEos() )
 			break;
 	}
 }
