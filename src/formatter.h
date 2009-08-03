@@ -64,9 +64,14 @@ namespace Bu
 				return Fmt( uWidth, 16, Right, false, bCaps, '0' );
 			}
 			
-			static Fmt oct( unsigned int uWidth=0, bool bCaps=true )
+			static Fmt oct( unsigned int uWidth=0 )
 			{
-				return Fmt( uWidth, 8, Right, false, bCaps, '0' );
+				return Fmt( uWidth, 8, Right, false, false, '0' );
+			}
+
+			static Fmt bin( unsigned int uWidth=0 )
+			{
+				return Fmt( uWidth, 1, Right, false, false, '0' );
 			}
 
 			static Fmt ptr( bool bCaps=true )

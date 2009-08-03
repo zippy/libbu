@@ -40,12 +40,12 @@ void Bu::Buffer::fillReadBuf()
 {
 	if( iReadBufFill+iReadPos < iBufSize )
 	{
-		printf("Buffer: Attempting to read %db.\n", iBufSize-iReadBufFill-iReadPos );
+		//printf("Buffer: Attempting to read %db.\n", iBufSize-iReadBufFill-iReadPos );
 		iReadBufFill += rNext.read(
 			sReadBuf+iReadPos+iReadBufFill,
 			iBufSize-iReadBufFill-iReadPos
 			);
-		printf("Buffer: Read from stream, %db now in buffer.\n", iReadBufFill );
+		//printf("Buffer: Read from stream, %db now in buffer.\n", iReadBufFill );
 	}
 }
 
@@ -82,7 +82,7 @@ size_t Bu::Buffer::read( void *pBuf, size_t nBytes )
 	}
 	while( nTotRead < nBytes && iReadBufFill > 0 );
 
-	printf("Buffer:  %db returned, %db remain in buffer.\n", nTotRead, iReadBufFill );
+	//printf("Buffer:  %db returned, %db remain in buffer.\n", nTotRead, iReadBufFill );
 
 	return nTotRead;
 }
@@ -107,14 +107,14 @@ size_t Bu::Buffer::write( const void *pBuf, size_t nBytes )
 				);
 			nTotWrote += iAmnt;
 			iWriteBufFill += iAmnt;
-			printf("Buffer: Moved %db to write buffer, %db filled now.\n",
-					iAmnt, iWriteBufFill );
+			//printf("Buffer: Moved %db to write buffer, %db filled now.\n",
+					//iAmnt, iWriteBufFill );
 		}
 		while( iWritePos+iWriteBufFill == iBufSize )
 		{
-			printf("iWritePos = %d\n", iWritePos );
+			//printf("iWritePos = %d\n", iWritePos );
 			int iWr = rNext.write( sWriteBuf+iWritePos, iWriteBufFill );
-			printf("Buffer: Wrote %db from buffer to stream, %db filled now.\n", iWr, iWriteBufFill-iWr );
+			//printf("Buffer: Wrote %db from buffer to stream, %db filled now.\n", iWr, iWriteBufFill-iWr );
 			if( iWr == 0 )
 			{
 				return nTotWrote;
@@ -139,12 +139,12 @@ void Bu::Buffer::flush()
 {
 	if( iWriteBufFill > 0 )
 	{
-		printf("Buffer: Flushing remaining data, %db.\n", iWriteBufFill );
+		//printf("Buffer: Flushing remaining data, %db.\n", iWriteBufFill );
 		int iWr = 0;
 		do
 		{
 			iWr = rNext.write( sWriteBuf+iWritePos, iWriteBufFill );
-			printf("Buffer: %db written to stream.\n", iWr );
+			//printf("Buffer: %db written to stream.\n", iWr );
 			iWritePos += iWr;
 			iWriteBufFill -= iWr;
 		} while( iWriteBufFill > 0 && iWr > 0 );

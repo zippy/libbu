@@ -118,9 +118,14 @@ size_t Bu::Base64::read( void *pBuf, size_t nBytes )
 			{
 				if( rNext.isEos() )
 				{
-					iChars = 0;
 					bEosIn = true;
-					throw Base64Exception("Premature end of stream detected while decoding Base64 data.");
+					if( j != 0 )
+					{
+						throw Base64Exception(
+							"Premature end of stream detected while "
+							"decoding Base64 data."
+							);
+					}
 				}
 				return sIn;
 			}
