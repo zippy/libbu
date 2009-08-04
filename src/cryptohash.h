@@ -12,6 +12,8 @@
 
 namespace Bu
 {
+	class Stream;
+
 	class CryptoHash
 	{
 	public:
@@ -23,6 +25,7 @@ namespace Bu
 		virtual void addData( const void *sData, int iSize ) = 0;
 		virtual void addData( const Bu::FString &sData );
 		virtual FString getResult() = 0;
+		virtual void writeResult( Stream &sOut ) = 0;
 	};
 };
 

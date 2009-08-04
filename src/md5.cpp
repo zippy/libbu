@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "md5.h"
+#include "bu/stream.h"
+
 
 // This performs a wrapping bitwise shift, kinda' fun!
 
@@ -84,28 +86,25 @@ void Bu::Md5::addData( const void *sVData, int iSize )
 
 Bu::FString Bu::Md5::getResult()
 {
+	long lsum[4];
+	compCap( lsum );
+	return Bu::FString( (const char *)lsum, 4*4 );
+}
+
+void Bu::Md5::writeResult( Bu::Stream &sOut )
+{
+	long lsum[4];
+	compCap( lsum );
+	sOut.write( lsum, 4*4 );
+}
+
+Bu::FString Bu::Md5::getHexResult()
+{
 	static const char hex_tab[] = {"0123456789abcdef"};
 	char str[33];
 
 	long lsum[4];
-	memcpy( lsum, sum, 4*4 );
-	long lbuf[16];
-	memcpy( lbuf, inbuf, 4*16 );
-
-	lbuf[iFill>>2] |= 0x80 << ((iFill*8)%32);
-	uint64_t iBits = iBytes*8;
-	if( iBytes > 0 && iFill>>2 >= 14 )
-	{
-		compBlock( lbuf, lsum );
-		memset( lbuf, 0, 4*16 );
-		memcpy( lbuf+14, &iBits, 8 );
-		compBlock( lbuf, lsum );
-	}
-	else
-	{
-		memcpy( lbuf+14, &iBits, 8 );
-		compBlock( lbuf, lsum );
-	}
+	compCap( lsum );
 	
 	int k = 0;
 	for( int i = 0; i < 16; i++ )
@@ -115,6 +114,28 @@ Bu::FString Bu::Md5::getResult()
 	}
 
 	return Bu::FString( str, 32 );
+}
+
+void Bu::Md5::compCap( long *sumout )
+{
+	memcpy( sumout, sum, 4*4 );
+	long lbuf[16];
+	memcpy( lbuf, inbuf, 4*16 );
+
+	lbuf[iFill>>2] |= 0x80 << ((iFill*8)%32);
+	uint64_t iBits = iBytes*8;
+	if( iBytes > 0 && iFill>>2 >= 14 )
+	{
+		compBlock( lbuf, sumout );
+		memset( lbuf, 0, 4*16 );
+		memcpy( lbuf+14, &iBits, 8 );
+		compBlock( lbuf, sumout );
+	}
+	else
+	{
+		memcpy( lbuf+14, &iBits, 8 );
+		compBlock( lbuf, sumout );
+	}
 }
 
 void Bu::Md5::compBlock( long *x, long *lsum )

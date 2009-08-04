@@ -30,12 +30,15 @@ namespace Bu
 		virtual void addData( const void *sData, int iSize );
 		using Bu::CryptoHash::addData;
 		virtual FString getResult();
+		virtual void writeResult( Bu::Stream &sOut );
+		virtual FString getHexResult();
 
 	private:
 		/**
 		 * Compute one block of input data.
 		 */
 		void compBlock( long *x, long *lsum );
+		void compCap( long *sumout );
 		
 		long inbuf[16];
 		long iFill;

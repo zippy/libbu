@@ -134,6 +134,7 @@ namespace Bu
 		{
 			// This code is taken from Nango, hopefully we can make it better.
 			bool bNeg = i<0;
+			char cBase = fLast.bCaps?'A':'a';
 			char buf[sizeof(type)*8+1];
 			if( bNeg ) i = -i;
 			if( fLast.uRadix < 2 || fLast.uRadix > 36 )
@@ -146,7 +147,7 @@ namespace Bu
 			{
 				int c = i%fLast.uRadix;
 				i /= fLast.uRadix;
-				buf[j] = (char)((c<10)?('0'+c):('A'+c-10));
+				buf[j] = (char)((c<10)?('0'+c):(cBase+c-10));
 				if( i == 0 )
 				{
 					if( bNeg ) buf[--j] = '-';
@@ -164,6 +165,7 @@ namespace Bu
 		{
 			// This code is taken from Nango, hopefully we can make it better.
 			char buf[sizeof(type)*8+1];
+			char cBase = fLast.bCaps?'A':'a';
 			if( fLast.uRadix < 2 || fLast.uRadix > 36 )
 			{
 				usedFormat();
@@ -174,7 +176,7 @@ namespace Bu
 			{
 				int c = i%fLast.uRadix;
 				i /= fLast.uRadix;
-				buf[j] = (char)((c<10)?('0'+c):('A'+c-10));
+				buf[j] = (char)((c<10)?('0'+c):(cBase+c-10));
 				if( i == 0 )
 				{
 					if( fLast.bPlus ) buf[--j] = '+';

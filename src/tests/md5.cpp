@@ -28,7 +28,7 @@ int main( int argc, char *argv[] )
 				break;
 		}
 
-		sio << m.getResult() << " *" << *argv << sio.nl;
+		sio << m.getHexResult() << " *" << *argv << sio.nl;
 	}
 }
 
