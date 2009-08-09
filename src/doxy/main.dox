@@ -18,6 +18,7 @@
  * comprehensive guides and API reference, but doesn't yet.  For now check out
  * these sections:
  * - @ref howto_streams
+ * - @ref howto_formatting
  * - @ref howto_archives
  * - @ref howto_threading
  * - @ref howto_servers

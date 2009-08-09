@@ -611,7 +611,7 @@ namespace Bu
 
 		/**
 		 * Erase an item from the list if you already know the item.
-		 *@param ob The item to find and erase.
+		 *@param v The item to find and erase.
 		 */
 		void erase( const value &v )
 		{

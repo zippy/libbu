@@ -44,11 +44,10 @@
  * data.
  *
  *@section difference How are libbu++ streams different form stl streams?
- * While not globally true, many stl streams are designed for formatting the
- * data that flows through the stream, that means that when you attempt to
- * write a uint32_t into a standard stream it can be difficult to predict what
- * the result will be, will it be the binary representation or a textual
- * conversion?
+ * The most basic difference is that libbu++ streams are geared more towards a
+ * lower level feel, giving you easy and more direct access to many features,
+ * while seperating all of the formatting code used for console I/O and number
+ * to text conversion, etc, in a seperate place.
  *
  * Libbu++ streams are very direct about how the data is handled.  All end-point
  * streams will always handle the data that you provide or request without any
@@ -59,8 +58,8 @@
  * easy as possible to write general code that was as easy as possible to
  * extend, and as clear as possible.  We have accomplished this by making
  * streams simple, yet flexible, with a clear API and a flexible filter system
- * that something geared towards more general formatting, conversion, and
- * operator-only access can't touch.
+ * that something geared towards more general formatting, conversion can't
+ * touch.
  *
  *@section usage Using streams directly
  * To create a stream depends on the type of stream that you're interested in,

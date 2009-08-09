@@ -706,6 +706,7 @@ namespace Bu
 		/**
 		 * Append another FString to this one.
 		 *@param sData (MyType &) The FString to append.
+		 *@param nStart Start position in sData to start copying from.
 		 *@param nLen How much data to append.
 		 */
 		void append( const MyType & sData, long nStart, long nLen )
@@ -715,6 +716,11 @@ namespace Bu
 			append( sData.getStr(), nStart, nLen );
 		}
 		
+		/**
+		 * Append data to this FString using the passed in iterator as a base.
+		 * The iterator is const, it is not changed.
+		 *@param s Iterator from any compatible FBasicString to copy data from.
+		 */
 		void append( const const_iterator &s )
 		{
 			if( !s.isValid() )
@@ -731,11 +737,24 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Append data to this FString using the passed in iterator as a base.
+		 * The iterator is const, it is not changed.
+		 *@param s Iterator from any compatible FBasicString to copy data from.
+		 */
 		void append( const iterator &s ) // I get complainst without this one
 		{
 			append( const_iterator( s ) );
 		}
 
+		/**
+		 * Append data to this FString using the passed in iterator as a base,
+		 * and copy data until the ending iterator is reached.  The character
+		 * at the ending iterator is not copied.
+		 * The iterators are const, they are not changed.
+		 *@param s Iterator from any compatible FBasicString to copy data from.
+		 *@param e Iterator to stop copying at.
+		 */
 		void append( const const_iterator &s, const const_iterator &e )
 		{
 			if( !s.isValid() )
@@ -883,10 +902,6 @@ namespace Bu
 			nLength -= nLen;
 			pFirst->nLength -= nLen;
 		}
-
-		/**
-		 *@todo void prepend( const chr &cData )
-		 */
 
 		/**
 		 * Clear all data from the string.
@@ -1079,7 +1094,7 @@ namespace Bu
 		
 		/**
 		 * Plus equals operator for FString.
-		 *@param pData (const MyType &) The FString to append to your FString.
+		 *@param rSrc (const MyType &) The FString to append to your FString.
 		 */
 		MyType &operator+=( const MyType &rSrc )
 		{
@@ -1093,7 +1108,7 @@ namespace Bu
 
 		/**
 		 * Plus equals operator for FString.
-		 *@param pData (const chr) The character to append to your FString.
+		 *@param cData (const chr) The character to append to your FString.
 		 */
 		MyType &operator+=( const chr cData )
 		{
@@ -1603,7 +1618,8 @@ namespace Bu
 
 		/**
 		 * Find the index of the first occurrance of cChar
-		 *@param sText (const chr *) The string to search for.
+		 *@param cChar The character to search for.
+		 *@param iStart The position in the string to start searching from.
 		 *@returns (long) The index of the first occurrance. -1 for not found.
 		 */
 		long findIdx( const chr cChar, long iStart=0 ) const
@@ -1619,8 +1635,9 @@ namespace Bu
 		
 		/**
 		 * Find the index of the first occurrance of sText
-		 *@param cChar (const chr) The character to search for.
-		 *@returns (long) The index of the first occurrance. -1 for not found.
+		 *@param sText The null-terminated string to search for.
+		 *@param iStart The position in the string to start searching from.
+		 *@returns The index of the first occurrance. -1 for not found.
 		 */
 		long findIdx( const chr *sText, long iStart=0 ) const
 		{

@@ -6,26 +6,26 @@
  */
 
 /**
- *@defgroup Threading
+ *@defgroup Threading Threading
  * Threads are awesome.
  */
 
 /**
- *@defgroup Serving
+ *@defgroup Serving Serving
  * Serving data is pretty cool too.
  */
 
 /**
- *@defgroup Containers
+ *@defgroup Containers Containers
  * Containers for data.
  */
 
 /**
- *@defgroup Taf
+ *@defgroup Taf Taf
  * Taf is the best!
  */
 
 /**
- *@defgroup Streams
+ *@defgroup Streams Streams
  * Streams are for data.
  */

@@ -19,6 +19,12 @@
 
 namespace Bu
 {
+	/**
+	 * Swap the value of two variables, uses references, so it's pretty safe.
+	 * Objects passed in must support a basic assignemnt operator (=);
+	 *@param a Variable to recieve the value of parameter b
+	 *@param b Variable to recieve the value of parameter a
+	 */
 	template<typename item>
 	void swap( item &a, item &b )
 	{
@@ -27,36 +33,78 @@ namespace Bu
 		b = tmp;
 	}
 
+	/**
+	 * Finds the lesser of the two objects, objects passed in must be
+	 * less-than-comparable.
+	 *@param a A value to test.
+	 *@param b Another value to test.
+	 *@returns A reference to the lesser of a or b.
+	 */
 	template<typename item>
 	const item &min( const item &a, const item &b )
 	{
 		return a<b?a:b;
 	}
 	
+	/**
+	 * Finds the lesser of the two objects, objects passed in must be
+	 * less-than-comparable.
+	 *@param a A value to test.
+	 *@param b Another value to test.
+	 *@returns A reference to the lesser of a or b.
+	 */
 	template<typename item>
 	item &min( item &a, item &b )
 	{
 		return a<b?a:b;
 	}
 	
+	/**
+	 * Finds the greater of the two objects, objects passed in must be
+	 * less-than-comparable.
+	 *@param a A value to test.
+	 *@param b Another value to test.
+	 *@returns A reference to the greater of a or b.
+	 */
 	template<typename item>
 	const item &max( const item &a, const item &b )
 	{
-		return a>b?a:b;
+		return b<a?a:b;
 	}
 	
+	/**
+	 * Finds the greater of the two objects, objects passed in must be
+	 * less-than-comparable.
+	 *@param a A value to test.
+	 *@param b Another value to test.
+	 *@returns A reference to the greater of a or b.
+	 */
 	template<typename item>
 	item &max( item &a, item &b )
 	{
-		return a>b?a:b;
+		return b<a?a:b;
 	}
 	
+	/**
+	 * Given three objects this finds the one between the other two.
+	 *@param a A value to test.
+	 *@param b Another value to test.
+	 *@param c Yet another value to test.
+	 *@returns A reference to the mid-value of a, b, and c.
+	 */
 	template<typename item>
 	const item &mid( const item &a, const item &b, const item &c )
 	{
 		return min( max( a, b ), c );
 	}
-	
+		
+	/**
+	 * Given three objects this finds the one between the other two.
+	 *@param a A value to test.
+	 *@param b Another value to test.
+	 *@param c Yet another value to test.
+	 *@returns A reference to the mid-value of a, b, and c.
+	 */
 	template<typename item>
 	item &mid( item &a, item &b, item &c )
 	{
@@ -66,6 +114,10 @@ namespace Bu
 	//
 	//  Basic comparison functors
 	//
+	/**
+	 * Simple less-than comparison functor.  Objects being used should be
+	 * less-than-comparable.
+	 */
 	template<typename item>
 	struct __basicLTCmp
 	{
@@ -75,6 +127,10 @@ namespace Bu
 		}
 	};
 	
+	/**
+	 * Simple greater-than comparison functor.  Objects being used should be
+	 * greater-than-comparable.
+	 */
 	template<typename item>
 	struct __basicGTCmp
 	{
@@ -84,6 +140,9 @@ namespace Bu
 		}
 	};
 
+	/**
+	 * As __basicLTCmp but dereferences the passed in pointers before comparing.
+	 */
 	template<typename item>
 	struct __basicPtrLTCmp
 	{
@@ -93,6 +152,9 @@ namespace Bu
 		}
 	};
 	
+	/**
+	 * As __basicGTCmp but dereferences the passed in pointers before comparing.
+	 */
 	template<typename item>
 	struct __basicPtrGTCmp
 	{

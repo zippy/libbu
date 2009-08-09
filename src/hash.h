@@ -17,8 +17,8 @@
 #include "bu/exceptionbase.h"
 #include "bu/list.h"
 #include "bu/util.h"
-///#include "archival.h"
-///#include "archive.h"
+//#include "archival.h"
+//#include "archive.h"
 
 #define bitsToBytes( n ) (n/32+(n%32>0 ? 1 : 0))
 
@@ -37,6 +37,14 @@ namespace Bu
 	template<typename T>
 	bool __cmpHashKeys( const T &a, const T &b );
 
+	/**
+	 * Default functor used to compute the size of hash tables.  This version
+	 * effectively doubles the size of the table when space is low, ensuring
+	 * that you always wind up with an odd number for the table size.  A
+	 * better but slower option is to always find the next prime number that's
+	 * above double your current table size, but that has the potential to be
+	 * slower.
+	 */
 	struct __calcNextTSize_fast
 	{
 		uint32_t operator()( uint32_t nCapacity, uint32_t, uint32_t nDeleted ) const
@@ -677,7 +685,7 @@ namespace Bu
 
 			/**
 			 * Get the value behind this iterator.
-			 *@returs (value_type &) The value behind this iterator.
+			 *@returns (value_type &) The value behind this iterator.
 			 */
 			value &getValue()
 			{
@@ -804,7 +812,7 @@ namespace Bu
 
 			/**
 			 * Get the value behind this iterator.
-			 *@returs (value_type &) The value behind this iterator.
+			 *@returns (value_type &) The value behind this iterator.
 			 */
 			const value &getValue() const
 			{

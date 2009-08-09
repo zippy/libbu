@@ -184,9 +184,8 @@ namespace Bu
 		}
 
 		/**
-		 * Insert a value (v) under key (k) into the hash table
+		 * Insert key (k) into the set
 		 *@param k (key_type) Key to list the value under.
-		 *@param v (value_type) Value to store in the hash table.
 		 */
 		virtual void insert( key k )
 		{

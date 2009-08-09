@@ -94,7 +94,7 @@ namespace Bu
 		 * the function that actually makes up the thread, it simply calls the
 		 * run member function in an OO-friendly way.  This is what allows us to
 		 * use member variables from within the thread itself.
-		 *@param Should always be this.
+		 *@param pThread Should always be this.
 		 *@returns This is specified by posix, I'm not sure yet.
 		 */
 		static void *threadRunner( void *pThread );

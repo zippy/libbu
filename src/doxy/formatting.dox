@@ -1,0 +1,35 @@
+/*
+ * Copyright (C) 2007-2008 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
+/**
+ *@page howto_formatting Formatting data for streams and the console.
+ *
+ * Libbu++ provides a powerful and flexible interface for writing formatted
+ * data easily to any Stream.  This is implemented as a seperate set of
+ * classes from the basic Stream system in order to simplify both systems and
+ * provide additional flexibility and organization.
+ *
+ *@section secBasics The Basics:  Writing to the console (standard i/o)
+ * Libbu++ provides the global variable Bu::sio already instantiated and ready
+ * to be used to access the standard input and output via the Bu::Formatter
+ * class.  If you are familiar with the STL cout then you're practically done.
+ * A quick example may be best.
+ *@code
+#include <bu/sio.h>
+using namespace Bu;
+
+int main()
+{
+	int i = 47;
+
+	sio << "Hello, world." << sio.nl
+		<< "Here is a number: " << i << sio.nl;
+
+	return 0;
+}
+@endcode
+ */

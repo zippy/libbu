@@ -202,57 +202,6 @@ namespace Bu
 		 */
 		long toLong( long iStart = 0, long iSize = 32 );
 
-		/**
-		 * Converts the data into a human-readable SString object.  SString is
-		 * used to make transport of the string and management very simple.
-		 * Since BitStrings will generally be longer than your average strip of
-		 * ints a faculty is included and turned on by default that will insert
-		 * spacers into the output text every 8 places.  For debugging work,
-		 * this is definately reccomended.
-		 *@param bAddSpacers Leave set to true in order to have the output
-		 * broken into logical groupings of 8 bits per block.  Set to off to
-		 * have a harder
-		 * to read solid block of bits.
-		 *@returns A SString object containing the produced string.
-		 */
-		//std::string toString( bool bAddSpacers = true );
-
-		// Utility
-		/**
-		 * Converts the given number of bits into the smallest allocatable unit,
-		 * which is bytes in C and on most systems nowadays.  This is the
-		 * minimum number of bytes needed to contain the given number of bits,
-		 * so there is generally some slop if they are not evenly divisible.
-		 *@param iBits The number of bits you wish to use.
-		 *@returns The number of bytes you will need to contain the given number
-		 * of bits.
-		 */
-		//static long bitsToBytes( long iBits );
-
-		/**
-		 * Writes all data in the BitString, including a small header block
-		 * describing the number of bits in the BitString to the file described
-		 * by the given file descriptor.  The data writen is purely sequential
-		 * and probably not too easy to read by other mechanisms, although the
-		 * readFromFile function should always be able to do it.  This function
-		 * does not open nor close the file pointed to by fh.
-		 *@param fh The file descriptor of the file to write the data to.
-		 *@returns true if the operation completed without error, false
-		 * otherwise.
-		 */
-		//bool writeToFile( FILE *fh );
-
-		/**
-		 * Reads data formatted by writeToFile and clears out any data that may
-		 * have been in the BitString.  This function preserves nothing in the
-		 * original BitString that it may be replacing.  This function does not
-		 * open nor close the file pointed to by fh.
-		 *@param fh The file descriptor to try to read the data from.
-		 *@returns true if the operation completed without error, false
-		 * otherwise.
-		 */
-		//bool readFromFile( FILE *fh );
-
 		//operators
 		BitString &operator=( const BitString &xSrc );
 		BitString operator~();
