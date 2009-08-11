@@ -1226,6 +1226,19 @@ namespace Bu
 			append( s, e );
 		}
 
+		/**
+		 * Resize the string, possibly to make room for a copy.  At the moment
+		 * this operation *is* destructive.  What was in the string will in no
+		 * way be preserved.
+		 *@param iSize the new size in bytes.  The string is guranteed to have
+		 * at least this much contiguous space available when done.
+		 */
+		void setSize( long iSize )
+		{
+			clear();
+			appendChunk( newChunk( iSize ) );
+		}
+
 		void expand()
 		{
 			flatten();
@@ -1519,6 +1532,14 @@ namespace Bu
 					pFirst->pData[j] += 'A'-'a';
 			}
 		}
+
+//		template<typename out>
+//		void to( out &dst );
+/*		{
+			flatten();
+
+			dst = strtol( pFirst->pData, NULL, 0 );
+		} */
 
 		const_iterator find( const chr cChar,
 				const_iterator iStart=typename MyType::const_iterator() ) const

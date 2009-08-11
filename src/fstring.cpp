@@ -44,3 +44,93 @@ template<> void Bu::__tracer_format<Bu::FString>( const Bu::FString &v )
 	printf("(%ld)\"%s\"", v.getSize(), v.getStr() );
 }
 
+bool &Bu::operator<<( bool &dst, const Bu::FString &sIn )
+{
+	if( sIn == "true" || sIn == "yes" || sIn == "t" )
+		dst = true;
+	else
+		dst = false;
+
+	return dst;
+}
+
+uint8_t &Bu::operator<<( uint8_t &dst, const Bu::FString &sIn )
+{
+	sscanf( sIn.getStr(), "%hhu", &dst );
+	return dst;
+}
+
+int8_t &operator<<( int8_t &dst, const Bu::FString &sIn )
+{
+	sscanf( sIn.getStr(), "%hhd", &dst );
+	return dst;
+}
+
+char &operator<<( char &dst, const Bu::FString &sIn )
+{
+	sscanf( sIn.getStr(), "%hhd", &dst );
+	return dst;
+}
+
+uint16_t &operator<<( uint16_t &dst, const Bu::FString &sIn )
+{
+	sscanf( sIn.getStr(), "%hu", &dst );
+	return dst;
+}
+
+int16_t &operator<<( int16_t &dst, const Bu::FString &sIn )
+{
+	sscanf( sIn.getStr(), "%hd", &dst );
+	return dst;
+}
+
+uint32_t &operator<<( uint32_t &dst, const Bu::FString &sIn )
+{
+	sscanf( sIn.getStr(), "%u", &dst );
+	return dst;
+}
+
+int32_t &operator<<( int32_t &dst, const Bu::FString &sIn )
+{
+	sscanf( sIn.getStr(), "%d", &dst );
+	return dst;
+}
+
+uint64_t &operator<<( uint64_t &dst, const Bu::FString &sIn )
+{
+	sscanf( sIn.getStr(), "%llu", &dst );
+	return dst;
+}
+
+int64_t &operator<<( int64_t &dst, const Bu::FString &sIn )
+{
+	sscanf( sIn.getStr(), "%lld", &dst );
+	return dst;
+}
+
+float &operator<<( float &dst, const Bu::FString &sIn )
+{
+	double tmp;
+	sscanf( sIn.getStr(), "%f", &tmp );
+	dst = tmp;
+	return dst;
+}
+
+double &operator<<( double &dst, const Bu::FString &sIn )
+{
+	sscanf( sIn.getStr(), "%f", &dst );
+	return dst;
+}
+
+long double &operator<<( long double &dst, const Bu::FString &sIn )
+{
+	sscanf( sIn.getStr(), "%Lf", &dst );
+	return dst;
+}
+
+Bu::FString &operator<<( Bu::FString &dst, const Bu::FString &sIn )
+{
+	dst = sIn;
+	return dst;
+}
+

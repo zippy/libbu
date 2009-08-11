@@ -20,6 +20,22 @@ namespace Bu
 	
 	template<typename t> void __tracer_format( const t &v );
 	template<> void __tracer_format<FString>( const FString &v );
+
+	bool &operator<<( bool &dst, const FString &sIn );
+	uint8_t &operator<<( uint8_t &dst, const FString &sIn );
+	int8_t &operator<<( int8_t &dst, const FString &sIn );
+	char &operator<<( char &dst, const FString &sIn );
+	uint16_t &operator<<( uint16_t &dst, const FString &sIn );
+	int16_t &operator<<( int16_t &dst, const FString &sIn );
+	uint32_t &operator<<( uint32_t &dst, const FString &sIn );
+	int32_t &operator<<( int32_t &dst, const FString &sIn );
+	uint64_t &operator<<( uint64_t &dst, const FString &sIn );
+	int64_t &operator<<( int64_t &dst, const FString &sIn );
+	float &operator<<( float &dst, const FString &sIn );
+	double &operator<<( double &dst, const FString &sIn );
+	long double &operator<<( long double &dst, const FString &sIn );
+	Bu::FString &operator<<( Bu::FString &dst, const FString &sIn );
+
 }
 
 /***** I dunno about this block, I don't really want to have it... *****
