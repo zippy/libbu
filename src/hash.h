@@ -1149,6 +1149,24 @@ namespace Bu
 	template<> uint32_t __calcHashCode<std::string>( const std::string &k );
 	template<> bool __cmpHashKeys<std::string>( const std::string &a, const std::string &b );
 
+	class Formatter;
+	Formatter &operator<<( Formatter &rOut, char *sStr );
+	Formatter &operator<<( Formatter &rOut, signed char c );
+	template<typename key, typename value>
+	Formatter &operator<<( Formatter &f, const Bu::Hash<key, value> &l )
+	{
+		f << '{';
+		for( typename Bu::Hash<key,value>::const_iterator i = l.begin(); i; i++ )
+		{
+			if( i != l.begin() )
+				f << ", ";
+			f << i.getKey() << ": " << i.getValue();
+		}
+		f << '}';
+
+		return f;
+	}	
+
 	/*
 	template<typename key, typename value>
 	Archive &operator<<( Archive &ar, Hash<key,value> &h )
