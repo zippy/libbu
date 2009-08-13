@@ -34,6 +34,7 @@ void Bu::Buffer::start()
 
 size_t Bu::Buffer::stop()
 {
+	return 0;
 }
 
 void Bu::Buffer::fillReadBuf()

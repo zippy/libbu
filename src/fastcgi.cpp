@@ -278,7 +278,9 @@ void Bu::FastCgi::run()
 //						sio << "Scary.";
 						// ??? we shouldn't get these.
 						break;
-					
+
+					case typeGetValues:
+						break;
 				}
 
 //				sio << sio.nl;
@@ -313,10 +315,7 @@ void Bu::FastCgi::run()
 									iSize = 65528;
 								rOut.uContentLength = iSize;
 								write( s, rOut );
-								int iAmnt = s.write(
-									sStdOut.getStr()+iPos, iSize );
-//								sio << "Wrote " << iAmnt <<
-//									" of " << iSize << sio.nl;
+								s.write( sStdOut.getStr()+iPos, iSize );
 							}
 						}
 						rOut.uContentLength = 0;
@@ -333,10 +332,7 @@ void Bu::FastCgi::run()
 									iSize = 65528;
 								rOut.uContentLength = iSize;
 								write( s, rOut );
-								int iAmnt = s.write(
-									sStdErr.getStr()+iPos, iSize );
-//								sio << "Wrote " << iAmnt <<
-//									" of " << iSize << sio.nl;
+								s.write( sStdErr.getStr()+iPos, iSize );
 							}
 						}
 						rOut.uContentLength = 0;

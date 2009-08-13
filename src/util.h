@@ -8,6 +8,10 @@
 #ifndef BU_UTIL_H
 #define BU_UTIL_H
 
+#ifndef NULL
+#define NULL 0
+#endif
+
 /* I borrowed this from someone who borrowed it from glib who borrowed it
  * from...
  */

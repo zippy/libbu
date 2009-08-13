@@ -1,0 +1,68 @@
+// vim: syntax=cpp
+/*
+ * Copyright (C) 2007-2008 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
+#include "bu/fstring.h"
+#include "bu/list.h"
+
+typedef Bu::List<int> IntList;
+
+{=Init}
+
+{%append}
+{
+	IntList lst;
+	for( int j = 0; j < 50; j++ )
+	{
+		lst.append( j );
+	}
+	int j = 0;
+	for( IntList::iterator i = lst.begin(); i; i++, j++ )
+	{
+		unitTest( *i == j );
+	}
+}
+
+{%prepend}
+{
+	IntList lst;
+	for( int j = 0; j < 50; j++ )
+	{
+		lst.prepend( j );
+	}
+	int j = 49;
+	for( IntList::iterator i = lst.begin(); i; i++, j-- )
+	{
+		unitTest( *i == j );
+	}
+}
+
+{%copy}
+{
+	IntList lst;
+	int j;
+	for( j = 0; j < 50; j++ )
+	{
+		lst.append( j );
+	}
+	IntList lst2 = lst;
+
+	j = 0;
+	for( IntList::iterator i = lst2.begin(); i; i++, j++ )
+	{
+		unitTest( *i == j );
+	}
+	lst2.clear();
+	lst2 = lst;
+
+	j = 0;
+	for( IntList::iterator i = lst2.begin(); i; i++, j++ )
+	{
+		unitTest( *i == j );
+	}
+}
+

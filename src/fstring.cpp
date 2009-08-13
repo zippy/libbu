@@ -110,15 +110,13 @@ int64_t &Bu::operator<<( int64_t &dst, const Bu::FString &sIn )
 
 float &Bu::operator<<( float &dst, const Bu::FString &sIn )
 {
-	double tmp;
-	sscanf( sIn.getStr(), "%f", &tmp );
-	dst = tmp;
+	sscanf( sIn.getStr(), "%f", &dst );
 	return dst;
 }
 
 double &Bu::operator<<( double &dst, const Bu::FString &sIn )
 {
-	sscanf( sIn.getStr(), "%f", &dst );
+	sscanf( sIn.getStr(), "%lf", &dst );
 	return dst;
 }
 

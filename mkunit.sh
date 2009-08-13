@@ -1,7 +1,11 @@
 #!/bin/bash
 
+inputfile="$1"
+
 function mkfunc()
 {
+	line=$(grep -nh "{%$1" "$inputfile")
+	echo "#line ${line%%:*} \"$inputfile\" \\"
 	echo "void $1() /**< expect ${2:-pass} */"
 }
 

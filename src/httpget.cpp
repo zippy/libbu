@@ -34,11 +34,12 @@ void Bu::HttpGet::get()
 //	sSrv.read(
 }
 
-size_t Bu::HttpGet::read( void *pBuf, size_t nBytes )
+size_t Bu::HttpGet::read( void * /*pBuf*/, size_t /*nBytes*/ )
 {
+	return 0;
 }
 
-size_t Bu::HttpGet::write( const void *pBuf, size_t nBytes )
+size_t Bu::HttpGet::write( const void * /*pBuf*/, size_t /*nBytes*/ )
 {
 	return 0;
 }
