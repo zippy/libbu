@@ -18,6 +18,7 @@
 #include "bu/archival.h"
 #include "bu/archive.h"
 #include "bu/util.h"
+#include "bu/sharedcore.h"
 
 namespace Bu
 {
@@ -28,6 +29,140 @@ namespace Bu
 		chr *pData;
 		FStringChunk *pNext;
 	};
+
+#ifndef VALTEST
+#define cpy( dest, src, size ) memcpy( dest, src, size*sizeof(chr) )
+#endif
+
+#ifdef VALTEST
+		void cpy( chr *dest, const chr *src, long count ) const
+		{
+			for( int j = 0; j < count; j++ )
+			{
+				*dest = *src;
+				dest++;
+				src++;
+			}
+		}
+#endif
+	template<typename chr, int nMinSize, typename chralloc, typename chunkalloc>
+	struct FStringCore
+	{
+		typedef struct FStringCore<chr, nMinSize, chralloc, chunkalloc> MyType;
+		typedef struct FStringChunk<chr> Chunk;
+		FStringCore() :
+			nLength( 0 ),
+			pFirst( NULL ),
+			pLast( NULL )
+		{
+		}
+
+		FStringCore( const MyType &rSrc ) :
+			nLength( rSrc.nLength ),
+			pFirst( NULL ),
+			pLast( NULL ),
+			aChr( rSrc.aChr ),
+			aChunk( rSrc.aChunk )
+		{
+			if( rSrc.pFirst == NULL || rSrc.nLength == 0 )
+			{
+				pFirst = pLast = NULL;
+			}
+			else
+			{
+				pFirst = pLast = newChunk( nLength );
+				Chunk *pLink = rSrc.pFirst;
+				int iPos = 0;
+				while( pLink != NULL )
+				{
+					cpy( pFirst->pData+iPos, pLink->pData, pLink->nLength );
+					iPos += pLink->nLength;
+					pLink = pLink->pNext;
+				}
+			}
+		}
+
+		mutable long nLength;
+		mutable Chunk *pFirst;
+		mutable Chunk *pLast;
+
+		mutable chralloc aChr;
+		mutable chunkalloc aChunk;
+		
+		void clear() const
+		{
+			if( pFirst == NULL )
+				return;
+
+			Chunk *i = pFirst;
+			for(;;)
+			{
+				Chunk *n = i->pNext;
+				aChr.deallocate( i->pData, i->nLength+1 );
+				aChunk.deallocate( i, 1 );
+				if( n == NULL )
+					break;
+				i = n;
+			}
+			pFirst = pLast = NULL;
+			nLength = 0;
+		}	
+		
+		Chunk *newChunk() const
+		{
+			Chunk *pNew = aChunk.allocate( 1 );
+			pNew->pNext = NULL;
+			return pNew;
+		}
+		
+		Chunk *newChunk( long nLen ) const
+		{
+			Chunk *pNew = aChunk.allocate( 1 );
+			pNew->pNext = NULL;
+			pNew->nLength = nLen;
+			pNew->pData = aChr.allocate( (nLen<nMinSize)?(nMinSize):(nLen)+1 );
+			pNew->pData[nLen] = (chr)0;
+			return pNew;
+		}
+
+		Chunk *copyChunk( Chunk *pSrc ) const
+		{
+			Chunk *pNew = aChunk.allocate( 1 );
+			pNew->pNext = pSrc->pNext;
+			pNew->nLength = pSrc->nLength;
+			pNew->pData = aChr.allocate( pSrc->nLength+1 );
+			cpy( pNew->pData, pSrc->pData, pSrc->nLength );
+			pNew->pData[pNew->nLength] = (chr)0;
+			return pNew;
+		}
+
+		void appendChunk( Chunk *pNewChunk )
+		{
+			if( pFirst == NULL )
+				pLast = pFirst = pNewChunk;
+			else
+			{
+				pLast->pNext = pNewChunk;
+				pLast = pNewChunk;
+			}
+
+			nLength += pNewChunk->nLength;
+		}
+		
+		void prependChunk( Chunk *pNewChunk )
+		{
+			if( pFirst == NULL )
+				pLast = pFirst = pNewChunk;
+			else
+			{
+				pNewChunk->pNext = pFirst;
+				pFirst = pNewChunk;
+			}
+
+			nLength += pNewChunk->nLength;
+		}
+	};
+
 	/**
 	 * Flexible String class.  This class was designed with string passing and
 	 * generation in mind.  Like the standard string class you can specify what
@@ -45,82 +180,51 @@ namespace Bu
 	 *@param chunkalloc (typename) Memory Allocator for chr chunks
 	 */
 	template< typename chr, int nMinSize=256, typename chralloc=std::allocator<chr>, typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
-	class FBasicString : public Archival
+	class FBasicString : public SharedCore< FStringCore<chr, nMinSize, chralloc, chunkalloc> >, public Archival
 	{
-#ifndef VALTEST
-#define cpy( dest, src, size ) memcpy( dest, src, size*sizeof(chr) )
-#endif
-	private:
-		//template< typename chr >
-	/*	struct Chunk
-		{
-			long nLength;
-			chr *pData;
-			FChunk *pNext;
-		}; */
-
+	protected:
 		typedef struct FStringChunk<chr> Chunk;
 		typedef struct FBasicString<chr, nMinSize, chralloc, chunkalloc> MyType;
+		typedef struct FStringCore<chr, nMinSize, chralloc, chunkalloc> Core;
+
+		using SharedCore< Core >::core;
+		using SharedCore< Core >::_hardCopy;
 
 	public:
-		FBasicString() :
-			nLength( 0 ),
-			pFirst( NULL ),
-			pLast( NULL )
+		FBasicString()
 		{
 		}
 
-		FBasicString( const chr *pData ) :
-			nLength( 0 ),
-			pFirst( NULL ),
-			pLast( NULL )
+		FBasicString( const chr *pData )
 		{
 			append( pData );
 		}
 
-		FBasicString( const chr *pData, long nLength ) :
-			nLength( 0 ),
-			pFirst( NULL ),
-			pLast( NULL )
+		FBasicString( const chr *pData, long nLength )
 		{
 			append( pData, nLength );
 		}
 
 		FBasicString( const MyType &rSrc ) :
-			Archival(),
-			nLength( 0 ),
-			pFirst( NULL ),
-			pLast( NULL )
+			SharedCore<Core>( rSrc ),
+			Archival()
 		{
-			if( rSrc.nLength > 0 )
-			{
-				rSrc.flatten();
-				append( rSrc.pFirst->pData, rSrc.nLength );
-			}
 		}
 
-		FBasicString( const MyType &rSrc, long nLength ) :
-			nLength( 0 ),
-			pFirst( NULL ),
-			pLast( NULL )
+		FBasicString( const MyType &rSrc, long nLength )
 		{
-			append( rSrc.pFirst->pData, nLength );
+			append( rSrc, nLength );
 		}
 		
-		FBasicString( const MyType &rSrc, long nStart, long nLength ) :
-			nLength( 0 ),
-			pFirst( NULL ),
-			pLast( NULL )
+		FBasicString( const MyType &rSrc, long nStart, long nLength )
 		{
-			append( rSrc.pFirst->pData+nStart, nLength );
+			append( rSrc, nStart, nLength );
 		}
 
-		FBasicString( long nSize ) :
-			nLength( nSize ),
-			pFirst( NULL ),
-			pLast( NULL )
+		FBasicString( long nSize )
 		{
-			pFirst = pLast = newChunk( nSize );
+			core->pFirst = core->pLast = core->newChunk( nSize );
+			core->nLength = nSize;
 		}
 		
 		struct iterator;
@@ -610,25 +714,18 @@ namespace Bu
 //		typedef const chr *const_iterator;
 		// typedef iterator const_iterator;
 
-		FBasicString( const const_iterator &s ) :
-			nLength( 0 ),
-			pFirst( NULL ),
-			pLast( NULL )
+		FBasicString( const const_iterator &s )
 		{
 			append( s );
 		}
 
-		FBasicString( const const_iterator &s, const const_iterator &e ) :
-			nLength( 0 ),
-			pFirst( NULL ),
-			pLast( NULL )
+		FBasicString( const const_iterator &s, const const_iterator &e )
 		{
 			append( s, e );
 		}
 
 		virtual ~FBasicString()
 		{
-			clear();
 		}
 
 		/**
@@ -643,10 +740,11 @@ namespace Bu
 			if( nLen == 0 )
 				return;
 		
-			Chunk *pNew = newChunk( nLen );
+			Chunk *pNew = core->newChunk( nLen );
 			cpy( pNew->pData, pData, nLen );
 
-			appendChunk( pNew );
+			_hardCopy();
+			core->appendChunk( pNew );
 		}
 
 		/**
@@ -659,11 +757,12 @@ namespace Bu
 			if( nLen == 0 )
 				return;
 
-			Chunk *pNew = newChunk( nLen );
+			Chunk *pNew = core->newChunk( nLen );
 			
 			cpy( pNew->pData, pData, nLen );
 
-			appendChunk( pNew );
+			_hardCopy();
+			core->appendChunk( pNew );
 		}
 
 		/**
@@ -672,10 +771,11 @@ namespace Bu
 		 */
 		void append( const chr &cData )
 		{
-			if( pLast && pLast->nLength < nMinSize )
+			if( core->pLast && core->pLast->nLength < nMinSize )
 			{
-				pLast->pData[pLast->nLength] = cData;
-				++pLast->nLength; ++nLength;
+				_hardCopy();
+				core->pLast->pData[core->pLast->nLength] = cData;
+				++core->pLast->nLength; ++core->nLength;
 		//		pLast->pData[pLast->nLength] = (chr)0;
 			}
 			else
@@ -687,6 +787,7 @@ namespace Bu
 		/**
 		 * Append another FString to this one.
 		 *@param sData (MyType &) The FString to append.
+		 *@todo This function can be made much faster by not using getStr()
 		 */
 		void append( const MyType & sData )
 		{
@@ -697,6 +798,7 @@ namespace Bu
 		 * Append another FString to this one.
 		 *@param sData (MyType &) The FString to append.
 		 *@param nLen How much data to append.
+		 *@todo This function can be made much faster by not using getStr()
 		 */
 		void append( const MyType & sData, long nLen )
 		{
@@ -708,6 +810,7 @@ namespace Bu
 		 *@param sData (MyType &) The FString to append.
 		 *@param nStart Start position in sData to start copying from.
 		 *@param nLen How much data to append.
+		 *@todo This function can be made much faster by not using getStr()
 		 */
 		void append( const MyType & sData, long nStart, long nLen )
 		{
@@ -727,13 +830,15 @@ namespace Bu
 				return;
 			Chunk *pSrc = s.pChunk;
 
-			Chunk *pNew = newChunk( pSrc->nLength-s.iPos );
+			Chunk *pNew = core->newChunk( pSrc->nLength-s.iPos );
 			cpy( pNew->pData, pSrc->pData+s.iPos, pSrc->nLength-s.iPos );
-			appendChunk( pNew );
+
+			_hardCopy();
+			core->appendChunk( pNew );
 
 			while( (pSrc = pSrc->pNext) )
 			{
-				appendChunk( copyChunk( pSrc ) );
+				core->appendChunk( core->copyChunk( pSrc ) );
 			}
 		}
 
@@ -742,7 +847,7 @@ namespace Bu
 		 * The iterator is const, it is not changed.
 		 *@param s Iterator from any compatible FBasicString to copy data from.
 		 */
-		void append( const iterator &s ) // I get complainst without this one
+		void append( const iterator &s ) // I get complaints without this one
 		{
 			append( const_iterator( s ) );
 		}
@@ -764,35 +869,37 @@ namespace Bu
 				append( s );
 				return;
 			}
+			_hardCopy();
 			if( s.pChunk == e.pChunk )
 			{
 				// Simple case, they're the same chunk
-				Chunk *pNew = newChunk( e.iPos-s.iPos );
+				Chunk *pNew = core->newChunk( e.iPos-s.iPos );
 				cpy( pNew->pData, s.pChunk->pData+s.iPos, e.iPos-s.iPos );
-				appendChunk( pNew );
+				core->appendChunk( pNew );
 			}
 			else
 			{
 				// A little trickier, scan the blocks...
 				Chunk *pSrc = s.pChunk;
-				Chunk *pNew = newChunk( pSrc->nLength-s.iPos );
+				Chunk *pNew = core->newChunk( pSrc->nLength-s.iPos );
 				cpy( pNew->pData, pSrc->pData+s.iPos, pSrc->nLength-s.iPos );
-				appendChunk( pNew );
+				core->appendChunk( pNew );
 
 				while( (pSrc = pSrc->pNext) != e.pChunk )
 				{
-					appendChunk( copyChunk( pSrc ) );
+					core->appendChunk( core->copyChunk( pSrc ) );
 				}
 
-				pNew = newChunk( e.iPos );
+				pNew = core->newChunk( e.iPos );
 				cpy( pNew->pData, pSrc->pData, e.iPos );
-				appendChunk( pNew );
+				core->appendChunk( pNew );
 			}
 		}
 		
 		/**
 		 * Prepend another FString to this one.
 		 *@param sData (MyType &) The FString to prepend.
+		 *@todo This function can be made much faster by not using getStr()
 		 */
 		void prepend( const MyType & sData )
 		{
@@ -810,10 +917,10 @@ namespace Bu
 			long nLen;
 			for( nLen = 0; pData[nLen] != (chr)0; nLen++ ) { }
 			
-			Chunk *pNew = newChunk( nLen );
+			Chunk *pNew = core->newChunk( nLen );
 			cpy( pNew->pData, pData, nLen );
 
-			prependChunk( pNew );
+			core->prependChunk( pNew );
 		}
 
 		/**
@@ -823,13 +930,18 @@ namespace Bu
 		 */
 		void prepend( const chr *pData, long nLen )
 		{
-			Chunk *pNew = newChunk( nLen );
+			Chunk *pNew = core->newChunk( nLen );
 			
 			cpy( pNew->pData, pData, nLen );
 
-			prependChunk( pNew );
+			core->prependChunk( pNew );
 		}
 
+		/**
+		 * Insert pData before byte nPos, that is, the first byte of pData will
+		 * start at nPos.  This could probably be made faster by avoiding
+		 * flattening.
+		 */
 		void insert( long nPos, const chr *pData, long nLen )
 		{
 			if( nLen <= 0 )
@@ -838,23 +950,25 @@ namespace Bu
 			{
 				prepend( pData, nLen );
 			}
-			else if( nPos >= nLength )
+			else if( nPos >= core->nLength )
 			{
 				append( pData, nLen );
 			}
 			else
 			{
+				// If we're going to flatten anyway, might as well for everyone
 				flatten();
-				Chunk *p1 = newChunk( nPos );
-				Chunk *p2 = newChunk( nLen );
-				Chunk *p3 = newChunk( nLength-nPos );
-				cpy( p1->pData, pFirst->pData, nPos );
+				_hardCopy();
+				Chunk *p1 = core->newChunk( nPos );
+				Chunk *p2 = core->newChunk( nLen );
+				Chunk *p3 = core->newChunk( core->nLength-nPos );
+				cpy( p1->pData, core->pFirst->pData, nPos );
 				cpy( p2->pData, pData, nLen );
-				cpy( p3->pData, pFirst->pData+nPos, nLength-nPos );
-				clear();
-				appendChunk( p1 );
-				appendChunk( p2 );
-				appendChunk( p3 );
+				cpy( p3->pData, core->pFirst->pData+nPos, core->nLength-nPos );
+				core->clear();
+				core->appendChunk( p1 );
+				core->appendChunk( p2 );
+				core->appendChunk( p3 );
 			}
 		}
 
@@ -864,28 +978,34 @@ namespace Bu
 			{
 				prepend( str );
 			}
-			else if( nPos >= nLength )
+			else if( nPos >= core->nLength )
 			{
 				append( str );
 			}
 			else
 			{
 				flatten();
-				Chunk *p1 = newChunk( nPos );
-				Chunk *p3 = newChunk( nLength-nPos );
-				cpy( p1->pData, pFirst->pData, nPos );
-				cpy( p3->pData, pFirst->pData+nPos, nLength-nPos );
-				clear();
-				appendChunk( p1 );
-				for( Chunk *pChnk = str.pFirst; pChnk; pChnk = pChnk->pNext )
+				_hardCopy();
+				Chunk *p1 = core->newChunk( nPos );
+				Chunk *p3 = core->newChunk( core->nLength-nPos );
+				cpy( p1->pData, core->pFirst->pData, nPos );
+				cpy( p3->pData, core->pFirst->pData+nPos, core->nLength-nPos );
+				core->clear();
+				core->appendChunk( p1 );
+				for( Chunk *pChnk = str.core->pFirst; pChnk;
+					 pChnk = pChnk->pNext )
 				{
-					appendChunk( copyChunk( pChnk ) );
+					core->appendChunk( core->copyChunk( pChnk ) );
 				}
 
-				appendChunk( p3 );
+				core->appendChunk( p3 );
 			}
 		}
 
+		/**
+		 *@todo This function shouldn't use strlen, we should add our own to
+		 * this class, one that can be overridden in a specific implementation.
+		 */
 		void insert( long nPos, const chr *pData )
 		{
 			insert( nPos, pData, strlen( pData ) );
@@ -893,14 +1013,15 @@ namespace Bu
 
 		void remove( long nPos, long nLen )
 		{
-			if( nLen <= 0 || nPos < 0 || nPos >= nLength )
+			if( nLen <= 0 || nPos < 0 || nPos >= core->nLength )
 				return;
-			if( nLen > nLength-nPos )
-				nLen = nLength-nPos;
+			if( nLen > core->nLength-nPos )
+				nLen = core->nLength-nPos;
 			flatten();
-			cpy( pFirst->pData+nPos, pFirst->pData+nPos+nLen, nLength-nPos-nLen+1 );
-			nLength -= nLen;
-			pFirst->nLength -= nLen;
+			_hardCopy();
+			cpy( core->pFirst->pData+nPos, core->pFirst->pData+nPos+nLen, core->nLength-nPos-nLen+1 );
+			core->nLength -= nLen;
+			core->pFirst->nLength -= nLen;
 		}
 
 		/**
@@ -908,7 +1029,8 @@ namespace Bu
 		 */
 		void clear()
 		{
-			realClear();
+			_hardCopy();
+			core->clear();
 		}
 
 		/**
@@ -917,24 +1039,25 @@ namespace Bu
 		 */
 		void resize( long nNewSize )
 		{
-			if( nLength == nNewSize )
+			if( core->nLength == nNewSize )
 				return;
 			if( nNewSize < 0 )
 				nNewSize = 0;
 
 			flatten();
+			_hardCopy();
 
-			Chunk *pNew = newChunk( nNewSize );
-			long nNewLen = (nNewSize<nLength)?(nNewSize):(nLength);
-			if( nLength > 0 )
+			Chunk *pNew = core->newChunk( nNewSize );
+			long nNewLen = (nNewSize<core->nLength)?(nNewSize):(core->nLength);
+			if( core->nLength > 0 )
 			{
-				cpy( pNew->pData, pFirst->pData, nNewLen );
-				aChr.deallocate( pFirst->pData, pFirst->nLength+1 );
-				aChunk.deallocate( pFirst, 1 );
+				cpy( pNew->pData, core->pFirst->pData, nNewLen );
+				core->aChr.deallocate( core->pFirst->pData, core->pFirst->nLength+1 );
+				core->aChunk.deallocate( core->pFirst, 1 );
 			}
 			pNew->pData[nNewLen] = (chr)0;
-			pFirst = pLast = pNew;
-			nLength = nNewSize;
+			core->pFirst = core->pLast = pNew;
+			core->nLength = nNewSize;
 		}
 
 		/**
@@ -943,7 +1066,7 @@ namespace Bu
 		 */
 		long getSize() const
 		{
-			return nLength;
+			return core->nLength;
 		}
 		
 		/**
@@ -952,12 +1075,13 @@ namespace Bu
 		 */
 		chr *getStr()
 		{
-			if( pFirst == NULL )
+			if( core->pFirst == NULL )
 				return (chr *)"";
 
 			flatten();
-			pFirst->pData[nLength] = (chr)0;
-			return pFirst->pData;
+			_hardCopy();
+			core->pFirst->pData[core->nLength] = (chr)0;
+			return core->pFirst->pData;
 		}
 		
 		/**
@@ -966,29 +1090,38 @@ namespace Bu
 		 */
 		const chr *getStr() const
 		{
-			if( pFirst == NULL )
+			if( core->pFirst == NULL )
 				return (chr *)"";
 
 			flatten();
-			pFirst->pData[nLength] = (chr)0;
-			return pFirst->pData;
+			core->pFirst->pData[core->nLength] = (chr)0;
+			return core->pFirst->pData;
+		}
+
+		/**
+		 * A convinience function, this one won't cause as much work as the
+		 * non-const getStr, so if you're not changing the data, consider it.
+		 */
+		const chr *getConstStr() const
+		{
+			return getStr();
 		}
 
 		MyType getSubStrIdx( long iStart, long iSize=-1 ) const
 		{
 			if( iStart < 0 )
 				iStart = 0;
-			if( iStart >= nLength )
+			if( iStart >= core->nLength )
 				return "";
 			if( iSize < 0 )
-				iSize = nLength;
-			if( iStart+iSize > nLength )
-				iSize = nLength-iStart;
+				iSize = core->nLength;
+			if( iStart+iSize > core->nLength )
+				iSize = core->nLength-iStart;
 			if( iSize == 0 )
 				return "";
 
 			flatten();
-			MyType ret( pFirst->pData+iStart, iSize );
+			MyType ret( core->pFirst->pData+iStart, iSize );
 			return ret;
 		}
 
@@ -1043,12 +1176,13 @@ namespace Bu
 		DEPRECATED
 		chr *c_str()
 		{
-			if( pFirst == NULL )
+			if( core->pFirst == NULL )
 				return NULL;
 
 			flatten();
-			pFirst->pData[nLength] = (chr)0;
-			return pFirst->pData;
+			_hardCopy();
+			core->pFirst->pData[core->nLength] = (chr)0;
+			return core->pFirst->pData;
 		}
 		
 		/**
@@ -1058,12 +1192,12 @@ namespace Bu
 		DEPRECATED
 		const chr *c_str() const
 		{
-			if( pFirst == NULL )
+			if( core->pFirst == NULL )
 				return NULL;
 
 			flatten();
-			pFirst->pData[nLength] = (chr)0;
-			return pFirst->pData;
+			core->pFirst->pData[core->nLength] = (chr)0;
+			return core->pFirst->pData;
 		}
 
 		Bu::List<MyType> split( const chr c ) const
@@ -1098,10 +1232,7 @@ namespace Bu
 		 */
 		MyType &operator+=( const MyType &rSrc )
 		{
-			if( rSrc.nLength == 0 )
-				return (*this);
-			rSrc.flatten();
-			append( rSrc.pFirst->pData, rSrc.nLength );
+			append( rSrc );
 
 			return (*this);
 		}
@@ -1112,10 +1243,11 @@ namespace Bu
 		 */
 		MyType &operator+=( const chr cData )
 		{
-			if( pLast && pLast->nLength < nMinSize )
+			if( core->pLast && core->pLast->nLength < nMinSize )
 			{
-				pLast->pData[pLast->nLength] = cData;
-				++pLast->nLength; ++nLength;
+				_hardCopy();
+				core->pLast->pData[core->pLast->nLength] = cData;
+				++core->pLast->nLength; ++core->nLength;
 		//		pLast->pData[pLast->nLength] = (chr)0;
 			}
 			else
@@ -1134,16 +1266,14 @@ namespace Bu
 		 */
 		MyType &operator=( const chr *pData )
 		{
-			clear();
-			append( pData );
+			set( pData );
 
 			return (*this);
 		}
 
 		MyType &operator=( const std::basic_string<chr> &rData )
 		{
-			clear();
-			append( rData.c_str(), rData.size() );
+			set( rData.c_str(), rData.size() );
 
 			return (*this);
 		}
@@ -1229,25 +1359,28 @@ namespace Bu
 		/**
 		 * Resize the string, possibly to make room for a copy.  At the moment
 		 * this operation *is* destructive.  What was in the string will in no
-		 * way be preserved.
+		 * way be preserved.  This is, however, very fast.  If you want to
+		 * keep your data check out resize.
 		 *@param iSize the new size in bytes.  The string is guranteed to have
 		 * at least this much contiguous space available when done.
 		 */
 		void setSize( long iSize )
 		{
-			clear();
-			appendChunk( newChunk( iSize ) );
+			_hardCopy();
+			core->clear();
+			core->appendChunk( core->newChunk( iSize ) );
 		}
 
 		void expand()
 		{
-			flatten();
-
 #ifndef WIN32
+			flatten();
+			_hardCopy();
+
 			wordexp_t result;
 
 			/* Expand the string for the program to run.  */
-			switch (wordexp (pFirst->pData, &result, 0))
+			switch (wordexp (core->pFirst->pData, &result, 0))
 			{
 				case 0:                       /* Successful.  */
 					{
@@ -1272,7 +1405,7 @@ namespace Bu
 		 */
 		MyType &operator=( const MyType &rSrc )
 		{
-			copyFrom( rSrc );
+			set( rSrc );
 
 			return (*this);
 		}
@@ -1284,7 +1417,7 @@ namespace Bu
 		 */
 		bool operator==( const chr *pData ) const
 		{
-			if( pFirst == NULL ) {
+			if( core->pFirst == NULL ) {
 				if( pData == NULL )
 					return true;
 				if( pData[0] == (chr)0 )
@@ -1293,14 +1426,14 @@ namespace Bu
 			}
 
 			flatten();
-			pFirst->pData[nLength] = (chr)0;
+			core->pFirst->pData[core->nLength] = (chr)0;
 			const chr *a = pData;
-			chr *b = pFirst->pData;
+			chr *b = core->pFirst->pData;
 			for( long j = 0; *a!=(chr)0 || *b!=(chr)0; j++, a++, b++ )
 			{
 				if( *a != *b )
 					return false;
-				if( *a == (chr)0 && j < nLength )
+				if( *a == (chr)0 && j < core->nLength )
 					return false;
 			}
 
@@ -1313,18 +1446,20 @@ namespace Bu
 		 */
 		bool operator==( const MyType &pData ) const
 		{
-			if( pFirst == pData.pFirst )
+			if( core == pData.core )
 				return true;
-			if( pFirst == NULL ) 
+			if( core->pFirst == pData.core->pFirst )
+				return true;
+			if( core->pFirst == NULL ) 
 				return false;
-			if( nLength != pData.nLength )
+			if( core->nLength != pData.core->nLength )
 				return false;
 
 			flatten();
 			pData.flatten();
-			const chr *a = pData.pFirst->pData;
-			chr *b = pFirst->pData;
-			for( long j = 0; j < nLength; j++, a++, b++ )
+			const chr *a = pData.core->pFirst->pData;
+			chr *b = core->pFirst->pData;
+			for( long j = 0; j < core->nLength; j++, a++, b++ )
 			{
 				if( *a != *b )
 					return false;
@@ -1357,9 +1492,9 @@ namespace Bu
 			flatten();
 			pData.flatten();
 
-			const chr *a = pData.pFirst->pData;
-			chr *b = pFirst->pData;
-			for( long j = 0; j < nLength; j++, a++, b++ )
+			const chr *a = pData.core->pFirst->pData;
+			chr *b = core->pFirst->pData;
+			for( long j = 0; j < core->nLength; j++, a++, b++ )
 			{
 				if( *a != *b )
 					return *a < *b;
@@ -1373,9 +1508,9 @@ namespace Bu
 			flatten();
 			pData.flatten();
 
-			const chr *a = pData.pFirst->pData;
-			chr *b = pFirst->pData;
-			for( long j = 0; j < nLength; j++, a++, b++ )
+			const chr *a = pData.core->pFirst->pData;
+			chr *b = core->pFirst->pData;
+			for( long j = 0; j < core->nLength; j++, a++, b++ )
 			{
 				if( *a != *b )
 					return *a > *b;
@@ -1391,11 +1526,12 @@ namespace Bu
 		 */
 		chr &operator[]( long nIndex )
 		{
-			if( nIndex < 0 || nIndex >= nLength )
+			if( nIndex < 0 || nIndex >= core->nLength )
 				throw Bu::ExceptionBase("Index out of range.");
 			flatten();
+			_hardCopy();
 
-			return pFirst->pData[nIndex];
+			return core->pFirst->pData[nIndex];
 		}
 		
 		/**
@@ -1405,11 +1541,11 @@ namespace Bu
 		 */
 		const chr &operator[]( long nIndex ) const
 		{
-			if( nIndex < 0 || nIndex >= nLength )
+			if( nIndex < 0 || nIndex >= core->nLength )
 				throw Bu::ExceptionBase("Index out of range.");
 			flatten();
 
-			return pFirst->pData[nIndex];
+			return core->pFirst->pData[nIndex];
 		}
 /*
 		operator const chr *() const
@@ -1422,35 +1558,35 @@ namespace Bu
 
 		operator bool() const
 		{
-			return (pFirst != NULL);
+			return (core->pFirst != NULL);
 		}
 
 		bool isSet() const
 		{
-			return (pFirst != NULL);
+			return (core->pFirst != NULL);
 		}
 
 		bool compareSub( const chr *pData, long nIndex, long nLen ) const
 		{
-			if( pFirst == NULL ) {
+			if( core->pFirst == NULL ) {
 				if( pData == NULL )
 					return true;
 				if( pData[0] == (chr)0 )
 					return true;
 				return false;
 			}
-			if( nIndex+nLen > nLength )
+			if( nIndex+nLen > core->nLength )
 				return false;
 
 			flatten();
-			pFirst->pData[nLength] = (chr)0;
+			core->pFirst->pData[core->nLength] = (chr)0;
 			const chr *a = pData;
-			chr *b = pFirst->pData+nIndex;
+			chr *b = core->pFirst->pData+nIndex;
 			for( long j = 0; j < nLen; j++, a++, b++ )
 			{
 				if( *a != *b )
 					return false;
-				if( *a == (chr)0 && j < nLength )
+				if( *a == (chr)0 && j < core->nLength )
 					return false;
 			}
 
@@ -1459,17 +1595,17 @@ namespace Bu
 
 		bool compareSub( const MyType &rData, long nIndex, long nLen ) const
 		{
-			if( pFirst == NULL || rData.pFirst == NULL ) 
+			if( core->pFirst == NULL || rData.core->pFirst == NULL ) 
 				return false;
 			if( nLen < 0 )
-				nLen = rData.nLength;
-			if( nIndex+nLen > nLength )
+				nLen = rData.core->nLength;
+			if( nIndex+nLen > core->nLength )
 				return false;
 
 			flatten();
 			rData.flatten();
-			const chr *a = rData.pFirst->pData;
-			chr *b = pFirst->pData + nIndex;
+			const chr *a = rData.core->pFirst->pData;
+			chr *b = core->pFirst->pData + nIndex;
 			for( long j = 0; j < nLen; j++, a++, b++ )
 			{
 				if( *a != *b )
@@ -1488,8 +1624,8 @@ namespace Bu
 		{
 			flatten();
 
-			return pFirst->pData[nIndex]==' ' || pFirst->pData[nIndex]=='\t'
-				|| pFirst->pData[nIndex]=='\r' || pFirst->pData[nIndex]=='\n';
+			return core->pFirst->pData[nIndex]==' ' || core->pFirst->pData[nIndex]=='\t'
+				|| core->pFirst->pData[nIndex]=='\r' || core->pFirst->pData[nIndex]=='\n';
 		}
 
 		/**
@@ -1501,8 +1637,8 @@ namespace Bu
 		{
 			flatten();
 
-			return (pFirst->pData[nIndex] >= 'a' && pFirst->pData[nIndex] <= 'z')
-				|| (pFirst->pData[nIndex] >= 'A' && pFirst->pData[nIndex] <= 'Z');
+			return (core->pFirst->pData[nIndex] >= 'a' && core->pFirst->pData[nIndex] <= 'z')
+				|| (core->pFirst->pData[nIndex] >= 'A' && core->pFirst->pData[nIndex] <= 'Z');
 		}
 
 		/**
@@ -1511,11 +1647,12 @@ namespace Bu
 		void toLower()
 		{
 			flatten();
+			_hardCopy();
 
-			for( long j = 0; j < nLength; j++ )
+			for( long j = 0; j < core->nLength; j++ )
 			{
-				if( pFirst->pData[j] >= 'A' && pFirst->pData[j] <= 'Z' )
-					pFirst->pData[j] -= 'A'-'a';
+				if( core->pFirst->pData[j] >= 'A' && core->pFirst->pData[j] <= 'Z' )
+					core->pFirst->pData[j] -= 'A'-'a';
 			}
 		}
 
@@ -1525,11 +1662,12 @@ namespace Bu
 		void toUpper()
 		{
 			flatten();
+			_hardCopy();
 
-			for( long j = 0; j < nLength; j++ )
+			for( long j = 0; j < core->nLength; j++ )
 			{
-				if( pFirst->pData[j] >= 'a' && pFirst->pData[j] <= 'z' )
-					pFirst->pData[j] += 'A'-'a';
+				if( core->pFirst->pData[j] >= 'a' && core->pFirst->pData[j] <= 'z' )
+					core->pFirst->pData[j] += 'A'-'a';
 			}
 		}
 
@@ -1646,9 +1784,9 @@ namespace Bu
 		long findIdx( const chr cChar, long iStart=0 ) const
 		{
 			flatten();
-			for( long j = iStart; j < pFirst->nLength; j++ )
+			for( long j = iStart; j < core->pFirst->nLength; j++ )
 			{
-				if( pFirst->pData[j] == cChar )
+				if( core->pFirst->pData[j] == cChar )
 					return j;
 			}
 			return -1;
@@ -1664,9 +1802,9 @@ namespace Bu
 		{
 			long nTLen = strlen( sText );
 			flatten();
-			for( long j = iStart; j < pFirst->nLength-nTLen; j++ )
+			for( long j = iStart; j < core->pFirst->nLength-nTLen; j++ )
 			{
-				if( !strncmp( sText, pFirst->pData+j, nTLen ) )
+				if( !strncmp( sText, core->pFirst->pData+j, nTLen ) )
 					return j;
 			}
 			return -1;
@@ -1681,9 +1819,9 @@ namespace Bu
 		{
 			long nTLen = strlen( sText );
 			flatten();
-			for( long j = pFirst->nLength-nTLen-1; j >= 0; j-- )
+			for( long j = core->pFirst->nLength-nTLen-1; j >= 0; j-- )
 			{
-				if( !strncmp( sText, pFirst->pData+j, nTLen ) )
+				if( !strncmp( sText, core->pFirst->pData+j, nTLen ) )
 					return j;
 			}
 			return -1;
@@ -1695,16 +1833,18 @@ namespace Bu
 		 */
 		void trimFront( long nAmnt )
 		{
-			long nNewLen = nLength - nAmnt;
+			long nNewLen = core->nLength - nAmnt;
 			flatten();
-			Chunk *pNew = newChunk( nNewLen );
-			cpy( pNew->pData, pFirst->pData+nAmnt, nNewLen );
-			clear();
-			appendChunk( pNew );
+			Chunk *pNew = core->newChunk( nNewLen );
+			cpy( pNew->pData, core->pFirst->pData+nAmnt, nNewLen );
+			_hardCopy();
+			core->clear();
+			core->appendChunk( pNew );
 		}
 
 		void format( const char *sFrmt, ...)
 		{
+			_hardCopy();
 			clear();
 
 			va_list ap;
@@ -1712,37 +1852,39 @@ namespace Bu
 
 			long iLen = vsnprintf( NULL, 0, sFrmt, ap );
 			
-			Chunk *pNew = newChunk( iLen );
+			Chunk *pNew = core->newChunk( iLen );
 			vsnprintf( pNew->pData, iLen+1, sFrmt, ap );
-			appendChunk( pNew );
+			core->appendChunk( pNew );
 
 			va_end( ap );
 		}
 
 		void formatAppend( const char *sFrmt, ...)
 		{
+			_hardCopy();
 			va_list ap;
 			va_start( ap, sFrmt );
 
 			long iLen = vsnprintf( NULL, 0, sFrmt, ap );
-			
-			Chunk *pNew = newChunk( iLen );
+
+			Chunk *pNew = core->newChunk( iLen );
 			vsnprintf( pNew->pData, iLen+1, sFrmt, ap );
-			appendChunk( pNew );
+			core->appendChunk( pNew );
 
 			va_end( ap );
 		}
 
 		void formatPrepend( const char *sFrmt, ...)
 		{
+			_hardCopy();
 			va_list ap;
 			va_start( ap, sFrmt );
 
 			long iLen = vsnprintf( NULL, 0, sFrmt, ap );
 			
-			Chunk *pNew = newChunk( iLen );
+			Chunk *pNew = core->newChunk( iLen );
 			vsnprintf( pNew->pData, iLen+1, sFrmt, ap );
-			prependChunk( pNew );
+			core->prependChunk( pNew );
 
 			va_end( ap );
 		}
@@ -1755,39 +1897,40 @@ namespace Bu
 		{
 			if( ar.isLoading() )
 			{
-				clear();
+				_hardCopy();
+				core->clear();
 				long nLen;
 				ar >> nLen;
 
 				if( nLen > 0 )
 				{
-					Chunk *pNew = newChunk( nLen );
+					Chunk *pNew = core->newChunk( nLen );
 					ar.read( pNew->pData, nLen*sizeof(chr) );
-					appendChunk( pNew );
+					core->appendChunk( pNew );
 				}
 			}
 			else
 			{
 				flatten();
 				
-				ar << nLength;
-				if( nLength )
-					ar.write( pFirst->pData, nLength*sizeof(chr) );
+				ar << core->nLength;
+				if( core->nLength )
+					ar.write( core->pFirst->pData, core->nLength*sizeof(chr) );
 			}
 		}
 
 		iterator begin()
 		{
-			if( nLength == 0 )
+			if( core->nLength == 0 )
 				return iterator( NULL, 0 );
-			return iterator( pFirst, 0 );
+			return iterator( core->pFirst, 0 );
 		}
 
 		const_iterator begin() const
 		{
-			if( nLength == 0 )
+			if( core->nLength == 0 )
 				return const_iterator( NULL, 0 );
-			return iterator( pFirst, 0 );
+			return iterator( core->pFirst, 0 );
 		}
 
 		iterator end()
@@ -1802,7 +1945,7 @@ namespace Bu
 
 		bool isEmpty() const
 		{
-			if( nLength == 0 )
+			if( core->nLength == 0 )
 				return true;
 			return false;
 		}
@@ -1813,12 +1956,12 @@ namespace Bu
 			if( isFlat() )
 				return;
 
-			if( pFirst == NULL )
+			if( core->pFirst == NULL )
 				return;
 
-			Chunk *pNew = newChunk( nLength );
+			Chunk *pNew = core->newChunk( core->nLength );
 			chr *pos = pNew->pData;
-			Chunk *i = pFirst;
+			Chunk *i = core->pFirst;
 			for(;;)
 			{
 				cpy( pos, i->pData, i->nLength );
@@ -1827,133 +1970,16 @@ namespace Bu
 				if( i == NULL )
 					break;
 			}
-			realClear();
+			core->clear();
 
-			pLast = pFirst = pNew;
-			nLength = pNew->nLength;
-		}
-		
-		void realClear() const
-		{
-			if( pFirst == NULL )
-				return;
-
-			Chunk *i = pFirst;
-			for(;;)
-			{
-				Chunk *n = i->pNext;
-				aChr.deallocate( i->pData, i->nLength+1 );
-				aChunk.deallocate( i, 1 );
-				if( n == NULL )
-					break;
-				i = n;
-			}
-			pFirst = pLast = NULL;
-			nLength = 0;
-		}
-		
-		void copyFrom( const FBasicString<chr, nMinSize, chralloc, chunkalloc> &rSrc )
-		{
-			if( rSrc.pFirst == NULL )
-			{
-				clear();
-				return;
-			}
-			
-			Chunk *pNew = newChunk( rSrc.nLength );
-			chr *pos = pNew->pData;
-			Chunk *i = rSrc.pFirst;
-			for(;;)
-			{
-				cpy( pos, i->pData, i->nLength );
-				pos += i->nLength;
-				i = i->pNext;
-				if( i == NULL )
-					break;
-			}
-			clear();
-
-			appendChunk( pNew );
+			core->pLast = core->pFirst = pNew;
+			core->nLength = pNew->nLength;
 		}
 		
 		bool isFlat() const
 		{
-			return (pFirst == pLast);
+			return (core->pFirst == core->pLast);
 		}
-
-		Chunk *newChunk() const
-		{
-			Chunk *pNew = aChunk.allocate( 1 );
-			pNew->pNext = NULL;
-			return pNew;
-		}
-		
-		Chunk *newChunk( long nLen ) const
-		{
-			Chunk *pNew = aChunk.allocate( 1 );
-			pNew->pNext = NULL;
-			pNew->nLength = nLen;
-			pNew->pData = aChr.allocate( (nLen<nMinSize)?(nMinSize):(nLen)+1 );
-			pNew->pData[nLen] = (chr)0;
-			return pNew;
-		}
-
-		Chunk *copyChunk( Chunk *pSrc ) const
-		{
-			Chunk *pNew = aChunk.allocate( 1 );
-			pNew->pNext = pSrc->pNext;
-			pNew->nLength = pSrc->nLength;
-			pNew->pData = aChr.allocate( pSrc->nLength+1 );
-			cpy( pNew->pData, pSrc->pData, pSrc->nLength );
-			pNew->pData[pNew->nLength] = (chr)0;
-			return pNew;
-		}
-
-		void appendChunk( Chunk *pNewChunk )
-		{
-			if( pFirst == NULL )
-				pLast = pFirst = pNewChunk;
-			else
-			{
-				pLast->pNext = pNewChunk;
-				pLast = pNewChunk;
-			}
-
-			nLength += pNewChunk->nLength;
-		}
-		
-		void prependChunk( Chunk *pNewChunk )
-		{
-			if( pFirst == NULL )
-				pLast = pFirst = pNewChunk;
-			else
-			{
-				pNewChunk->pNext = pFirst;
-				pFirst = pNewChunk;
-			}
-
-			nLength += pNewChunk->nLength;
-		}
-
-#ifdef VALTEST
-		void cpy( chr *dest, const chr *src, long count ) const
-		{
-			for( int j = 0; j < count; j++ )
-			{
-				*dest = *src;
-				dest++;
-				src++;
-			}
-		}
-#endif
-
-	private:
-		mutable long nLength;
-		mutable Chunk *pFirst;
-		mutable Chunk *pLast;
-
-		mutable chralloc aChr;
-		mutable chunkalloc aChunk;
 	};
 	
 	template<class T> FBasicString<T> operator+( const T *pLeft, const FBasicString<T> &rRight )

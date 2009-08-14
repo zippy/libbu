@@ -9,7 +9,6 @@
 #define BU_SHARED_CORE_H
 
 #include "bu/util.h"
-#include "bu/sio.h"
 
 namespace Bu
 {
@@ -19,13 +18,13 @@ namespace Bu
 		typedef class SharedCore<Core> _SharedType;
 	public:
 		SharedCore() :
-			data( new Core ),
+			core( _allocateCore() ),
 			iRefCount( new int(1) )
 		{
 		}
 
 		SharedCore( const _SharedType &rSrc ) :
-			data( NULL ),
+			core( NULL ),
 			iRefCount( NULL )
 		{
 			_softCopy( rSrc );
@@ -48,48 +47,57 @@ namespace Bu
 		}
 
 	protected:
-		Core *data;
+		Core *core;
 		void _hardCopy()
 		{
-			if( !data || !iRefCount )
+			if( !core || !iRefCount )
 				return;
-			sio << "_hardCopy()" << sio.nl;
-			Core *copy = new Core( *data );
+			if( (*iRefCount) == 1 )
+				return;
+			Core *copy = _copyCore( core );
 			_deref();
-			data = copy;
+			core = copy;
 			iRefCount = new int( 1 );
+		}
+
+		virtual Core *_allocateCore()
+		{
+			return new Core();
+		}
+
+		virtual Core *_copyCore( Core *pSrc )
+		{
+			return new Core( *pSrc );
+		}
+
+		virtual void _deallocateCore( Core *pSrc )
+		{
+			delete pSrc;
 		}
 
 	private:
 		void _deref()
 		{
-			sio << "_deref()" << sio.nl;
 			if( (--(*iRefCount)) == 0 )
 			{
-				sio << " --> iRefCount == 0, cleaning up." << sio.nl;
-				delete data;
+				_deallocateCore( core );
 				delete iRefCount;
 			}
-			else
-				sio << " --> iRefCount == " << *iRefCount << sio.nl;
-			data = NULL;
+			core = NULL;
 			iRefCount = NULL;
 		}
 
 		void _incRefCount()
 		{
-			sio << "_incRefCount()" << sio.nl;
-			if( iRefCount && data )
+			if( iRefCount && core )
 				++(*iRefCount);
-			sio << " --> iRefCount == " << *iRefCount << sio.nl;
 		}
 
 		void _softCopy( const _SharedType &rSrc )
 		{
-			sio << "_softCopy()" << sio.nl;
-			if( data )
+			if( core )
 				_deref();
-			data = rSrc.data;
+			core = rSrc.core;
 			iRefCount = rSrc.iRefCount;
 			_incRefCount();
 		}

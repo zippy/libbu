@@ -39,11 +39,11 @@
 {
 	Bu::FString a("Hey there");
 	Bu::FString b( a );
-	unitTest( a.getStr() == b.getStr() );
+	unitTest( a.getConstStr() == b.getConstStr() );
 	b += " guy";
-	unitTest( a.getStr() != b.getStr() );
+	unitTest( a.getConstStr() != b.getConstStr() );
 	a = b;
-	unitTest( a.getStr() == b.getStr() );
+	unitTest( a.getConstStr() == b.getConstStr() );
 }
 
 {%insert}

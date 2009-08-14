@@ -12,42 +12,42 @@ class Shint : public Bu::SharedCore<struct ShintCore>
 public:
 	Shint()
 	{
-		data->val = 0;
+		core->val = 0;
 	}
 
 	Shint( int val )
 	{
-		data->val = val;
+		core->val = val;
 	}
 
-	int getVal()
+	int getVal() const
 	{
-		return data->val;
+		return core->val;
 	}
 
 	void setValBad( int val )
 	{
-		data->val = val;
+		core->val = val;
 	}
 	
 	void setVal( int val )
 	{
 		_hardCopy();
-		data->val = val;
+		core->val = val;
 	}
 
 	bool operator==( const Shint &rhs )
 	{
-		if( data == rhs.data )
+		if( core == rhs.core )
 		{
-			sio << "Same pointer (" << Fmt::ptr() << data << ")" << sio.nl;
+			sio << "Same pointer (" << Fmt::ptr() << core << ")" << sio.nl;
 			return true;
 		}
-		if( data->val == rhs.data->val )
+		if( core->val == rhs.core->val )
 		{
-			sio << "Same value " << data->val << " ("
-				<< Fmt::ptr() << data << " vs "
-				<< Fmt::ptr() << rhs.data << ")"
+			sio << "Same value " << core->val << " ("
+				<< Fmt::ptr() << core << " vs "
+				<< Fmt::ptr() << rhs.core << ")"
 				<< sio.nl;
 			return true;
 		}

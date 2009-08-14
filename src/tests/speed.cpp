@@ -43,6 +43,9 @@ void fullTest( tst t )
 
 int main()
 {
-	fullTest( tstCopy<Bu::FString>("This is a test string.") );
+	Bu::FString str;
+	for( int j = 0; j < 500; j++ )
+		str.append("Hey, this is a test string.  It will be reapeated many, many times.  How's that?");
+	fullTest( tstCopy<Bu::FString>( str ) );
 }
 

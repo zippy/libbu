@@ -10,7 +10,8 @@
 
 #include <memory>
 #include "bu/exceptionbase.h"
-#include "bu/util.h"
+#include "bu/sharedcore.h"
+//#include "bu/util.h"
 
 namespace Bu
 {
@@ -22,116 +23,23 @@ namespace Bu
 		ListLink *pPrev;
 	};
 
-	/**
-	 * Linked list template container.  This class is similar to the stl list
-	 * class except for a few minor changes.  First, it doesn't mimic a stack or
-	 * queue, use the Stack or Queue clasess for that.  Second, when const, all
-	 * members are only accessable const.  Third, erasing a location does not
-	 * invalidate the iterator, it simply points to the next valid location, or
-	 * end() if there are no more.
-	 *
-	 *@param value (typename) The type of data to store in your list
-	 *@param valuealloc (typename) Memory Allocator for your value type
-	 *@param linkalloc (typename) Memory Allocator for the list links.
-	 *@ingroup Containers
-	 */
-	template<typename value, typename cmpfunc=__basicGTCmp<value>,
-		typename valuealloc=std::allocator<value>,
-		typename linkalloc=std::allocator<struct ListLink<value> > >
-	class List
+	template<typename value, typename cmpfunc, typename valuealloc,
+		typename linkalloc>
+	struct ListCore
 	{
-	private:
 		typedef struct ListLink<value> Link;
-		typedef class List<value, cmpfunc, valuealloc, linkalloc> MyType;
-
-	public:
-		struct const_iterator;
-		struct iterator;
-
-		List() :
+		ListCore() :
 			pFirst( NULL ),
 			pLast( NULL ),
 			nSize( 0 )
-		{
-		}
-
-		List( const MyType &src ) :
-			pFirst( NULL ),
-			pLast( NULL ),
-			nSize( 0 )
-		{
-			for( Link *pCur = src.pFirst; pCur; pCur = pCur->pNext )
-			{
-				append( *pCur->pValue );
-			}
-		}
-
-		~List()
-		{
-			clear();
-		}
-
-		/**
-		 * Assignment operator.
-		 *@param src (const MyType &) The list to assign to your list.
-		 */
-		MyType &operator=( const MyType &src )
-		{
-			clear();
-			for( Link *pCur = src.pFirst; pCur; pCur = pCur->pNext )
-			{
-				append( *pCur->pValue );
-			}
-			return *this;
-		}
-
-		MyType &operator+=( const value &v )
-		{
-			append( v );
-			return *this;
-		}
-
-		MyType &operator+=( const MyType &src )
-		{
-			append( src );
-			return *this;
-		}
-
-		/**
-		 * Clear the data from the list.
-		 */
-		void clear()
-		{
-			Link *pCur = pFirst;
-			for(;;)
-			{
-				if( pCur == NULL ) break;
-				va.destroy( pCur->pValue );
-				va.deallocate( pCur->pValue, 1 );
-				Link *pTmp = pCur->pNext;
-				la.destroy( pCur );
-				la.deallocate( pCur, 1 );
-				pCur = pTmp;
-			}
-			pFirst = pLast = NULL;
-			nSize = 0;
-		}
-
-		void enqueue( const value &v )
-		{
-			append( v );
-		}
-
-		value dequeue()
-		{
-			value v = *pFirst->pValue;
-
-			erase( begin() );
-
-			return v;
-		}
-
-
+		{ }
+		Link *pFirst;
+		Link *pLast;
+		long nSize;
+		cmpfunc cmp;
+		linkalloc la;
+		valuealloc va;
+		
 		/**
 		 * Append a value to the list.
 		 *@param v (const value_type &) The value to append.
@@ -156,16 +64,7 @@ namespace Bu
 				pLast = pNew;
 			}
 		}
-
-		void append( const MyType &rSrc )
-		{
-			for( typename MyType::const_iterator i = rSrc.begin();
-				 i != rSrc.end(); i++ )
-			{
-				append( *i );
-			}
-		}
-
+		
 		/**
 		 * Prepend a value to the list.
 		 *@param v (const value_type &) The value to prepend.
@@ -190,23 +89,27 @@ namespace Bu
 				pFirst = pNew;
 			}
 		}
-
-		/**
-		 * Prepend another list to the front of this one.  This will prepend
-		 * the rSrc list in reverse order...I may fix that later.
-		 */
-		void prepend( const MyType &rSrc )
+		
+		void clear()
 		{
-			for( typename MyType::const_iterator i = rSrc.begin();
-				 i != rSrc.end(); i++ )
+			Link *pCur = pFirst;
+			for(;;)
 			{
-				prepend( *i );
+				if( pCur == NULL ) break;
+				va.destroy( pCur->pValue );
+				va.deallocate( pCur->pValue, 1 );
+				Link *pTmp = pCur->pNext;
+				la.destroy( pCur );
+				la.deallocate( pCur, 1 );
+				pCur = pTmp;
 			}
+			pFirst = pLast = NULL;
+			nSize = 0;
 		}
-
-		void insert( MyType::iterator &i, const value &v )
+		
+		void insert( Link *pLink, const value &v )
 		{
-			Link *pAfter = i.pLink;
+			Link *pAfter = pLink;
 			if( pAfter == NULL )
 			{
 				append( v );
@@ -231,6 +134,179 @@ namespace Bu
 		}
 
 		/**
+		 * Erase an item from the list.
+		 *@param i (iterator) The item to erase.
+		 */
+		void erase( Link *pLink )
+		{
+			Link *pCur = pLink;
+			if( pCur == NULL ) return;
+			Link *pPrev = pCur->pPrev;
+			if( pPrev == NULL )
+			{
+				va.destroy( pCur->pValue );
+				va.deallocate( pCur->pValue, 1 );
+				pFirst = pCur->pNext;
+				la.destroy( pCur );
+				la.deallocate( pCur, 1 );
+				if( pFirst == NULL )
+					pLast = NULL;
+				else
+					pFirst->pPrev = NULL;
+				nSize--;
+			}
+			else
+			{
+				va.destroy( pCur->pValue );
+				va.deallocate( pCur->pValue, 1 );
+				Link *pTmp = pCur->pNext;
+				la.destroy( pCur );
+				la.deallocate( pCur, 1 );
+				pPrev->pNext = pTmp;
+				if( pTmp != NULL )
+					pTmp->pPrev = pPrev;
+				nSize--;
+			}
+		}
+	};
+
+	/**
+	 * Linked list template container.  This class is similar to the stl list
+	 * class except for a few minor changes.  First, it doesn't mimic a stack or
+	 * queue, use the Stack or Queue clasess for that.  Second, when const, all
+	 * members are only accessable const.  Third, erasing a location does not
+	 * invalidate the iterator, it simply points to the next valid location, or
+	 * end() if there are no more.
+	 *
+	 *@param value (typename) The type of data to store in your list
+	 *@param valuealloc (typename) Memory Allocator for your value type
+	 *@param linkalloc (typename) Memory Allocator for the list links.
+	 *@ingroup Containers
+	 */
+	template<typename value, typename cmpfunc=__basicGTCmp<value>,
+		typename valuealloc=std::allocator<value>,
+		typename linkalloc=std::allocator<struct ListLink<value> > >
+	class List : public SharedCore< struct ListCore<value, cmpfunc, valuealloc,
+		linkalloc> >
+	{
+	private:
+		typedef struct ListLink<value> Link;
+		typedef class List<value, cmpfunc, valuealloc, linkalloc> MyType;
+		typedef struct ListCore<value, cmpfunc, valuealloc, linkalloc> Core;
+
+	protected:
+		using SharedCore< Core >::core;
+		using SharedCore< Core >::_hardCopy;
+		using SharedCore< Core >::_allocateCore;
+
+	public:
+		struct const_iterator;
+		struct iterator;
+
+		List()
+		{
+		}
+
+		List( const MyType &src ) :
+			SharedCore< Core >( src )
+		{
+		}
+
+		~List()
+		{
+		}
+
+		MyType &operator+=( const value &v )
+		{
+			_hardCopy();
+			append( v );
+			return *this;
+		}
+
+		MyType &operator+=( const MyType &src )
+		{
+			_hardCopy();
+			append( src );
+			return *this;
+		}
+
+		/**
+		 * Clear the data from the list.
+		 */
+		void clear()
+		{
+			_hardCopy();
+			core->clear();
+		}
+
+		void enqueue( const value &v )
+		{
+			_hardCopy();
+			append( v );
+		}
+
+		value dequeue()
+		{
+			// _hardCopy();  erase will call this for me
+			value v = *core->pFirst->pValue;
+
+			erase( begin() );
+
+			return v;
+		}
+
+		/**
+		 * Append a value to the list.
+		 *@param v (const value_type &) The value to append.
+		 */
+		void append( const value &v )
+		{
+			_hardCopy();
+			core->append( v );
+		}
+
+		void append( const MyType &rSrc )
+		{
+			_hardCopy();
+			for( typename MyType::const_iterator i = rSrc.begin();
+				 i != rSrc.end(); i++ )
+			{
+				core->append( *i );
+			}
+		}
+
+		/**
+		 * Prepend a value to the list.
+		 *@param v (const value_type &) The value to prepend.
+		 */
+		void prepend( const value &v )
+		{
+			_hardCopy();
+			core->prepend( v );
+		}
+
+		/**
+		 * Prepend another list to the front of this one.  This will prepend
+		 * the rSrc list in reverse order...I may fix that later.
+		 */
+		void prepend( const MyType &rSrc )
+		{
+			_hardCopy();
+			for( typename MyType::const_iterator i = rSrc.begin();
+				 i != rSrc.end(); i++ )
+			{
+				core->prepend( *i );
+			}
+		}
+
+		void insert( MyType::iterator &i, const value &v )
+		{
+			_hardCopy();
+
+			core->insert( i.pLink, v );
+		}
+
+		/**
 		 * Insert a new item in sort order by searching for the first item that
 		 * is larger and inserting this before it, or at the end if none are
 		 * larger.  If this is the only function used to insert data in the
@@ -239,40 +315,27 @@ namespace Bu
 		 */
 		void insertSorted( const value &v )
 		{
-			Link *pNew = la.allocate( 1 );
-			pNew->pValue = va.allocate( 1 );
-			va.construct( pNew->pValue, v );
-			nSize++;
-			if( pFirst == NULL )
+			_hardCopy();
+			if( core->pFirst == NULL )
 			{
 				// Empty list
-				pFirst = pLast = pNew;
-				pNew->pNext = pNew->pPrev = NULL;
+				core->append( v );
 				return;
 			}
 			else
 			{
-				Link *pCur = pFirst;
+				Link *pCur = core->pFirst;
 				for(;;)
 				{
-					if( !cmp( v, *(pCur->pValue)) )
+					if( !core->cmp( v, *(pCur->pValue)) )
 					{
-						pNew->pNext = pCur;
-						pNew->pPrev = pCur->pPrev;
-						pCur->pPrev = pNew;
-						if( pNew->pPrev == NULL )
-							pFirst = pNew;
-						else
-							pNew->pPrev->pNext = pNew;
+						core->insert( pCur, v );
 						return;
 					}
 					pCur = pCur->pNext;
 					if( pCur == NULL )
 					{
-						pNew->pNext = NULL;
-						pNew->pPrev = pLast;
-						pLast->pNext = pNew;
-						pLast = pNew;
+						core->append( v );
 						return;
 					}
 				}
@@ -541,7 +604,8 @@ namespace Bu
 		 */
 		iterator begin()
 		{
-			return iterator( pFirst );
+			_hardCopy();
+			return iterator( core->pFirst );
 		}
 
 		/**
@@ -550,7 +614,7 @@ namespace Bu
 		 */
 		const_iterator begin() const
 		{
-			return const_iterator( pFirst );
+			return const_iterator( core->pFirst );
 		}
 
 		/**
@@ -579,34 +643,8 @@ namespace Bu
 		 */
 		void erase( iterator i )
 		{
-			Link *pCur = i.pLink;
-			if( pCur == NULL ) return;
-			Link *pPrev = pCur->pPrev;
-			if( pPrev == NULL )
-			{
-				va.destroy( pCur->pValue );
-				va.deallocate( pCur->pValue, 1 );
-				pFirst = pCur->pNext;
-				la.destroy( pCur );
-				la.deallocate( pCur, 1 );
-				if( pFirst == NULL )
-					pLast = NULL;
-				else
-					pFirst->pPrev = NULL;
-				nSize--;
-			}
-			else
-			{
-				va.destroy( pCur->pValue );
-				va.deallocate( pCur->pValue, 1 );
-				Link *pTmp = pCur->pNext;
-				la.destroy( pCur );
-				la.deallocate( pCur, 1 );
-				pPrev->pNext = pTmp;
-				if( pTmp != NULL )
-					pTmp->pPrev = pPrev;
-				nSize--;
-			}
+			_hardCopy();
+			core->erase( i.pLink );
 		}
 
 		/**
@@ -615,7 +653,7 @@ namespace Bu
 		 */
 		void erase( const value &v )
 		{
-			for( iterator i = begin(); i != end(); i++ )
+			for( const_iterator i = begin(); i != end(); i++ )
 			{
 				if( (*i) == v )
 				{
@@ -631,7 +669,7 @@ namespace Bu
 		 */
 		long getSize() const
 		{
-			return nSize;
+			return core->nSize;
 		}
 
 		/**
@@ -640,7 +678,8 @@ namespace Bu
 		 */
 		value &first()
 		{
-			return *pFirst->pValue;
+			_hardCopy();
+			return *core->pFirst->pValue;
 		}
 		
 		/**
@@ -649,7 +688,7 @@ namespace Bu
 		 */
 		const value &first() const
 		{
-			return *pFirst->pValue;
+			return *core->pFirst->pValue;
 		}
 		
 		/**
@@ -658,7 +697,8 @@ namespace Bu
 		 */
 		value &last()
 		{
-			return *pLast->pValue;
+			_hardCopy();
+			return *core->pLast->pValue;
 		}
 		
 		/**
@@ -667,21 +707,26 @@ namespace Bu
 		 */
 		const value &last() const
 		{
-			return *pLast->pValue;
+			return *core->pLast->pValue;
 		}
 
 		bool isEmpty() const
 		{
-			return (nSize == 0);
+			return (core->nSize == 0);
 		}
-		
+	
+	protected:
+		virtual Core *_copyCore( Core *src )
+		{
+			Core *pRet = _allocateCore();
+			for( Link *pCur = src->pFirst; pCur; pCur = pCur->pNext )
+			{
+				pRet->append( *pCur->pValue );
+			}
+			return pRet;
+		}
+
 	private:
-		Link *pFirst;
-		Link *pLast;
-		linkalloc la;
-		valuealloc va;
-		long nSize;
-		cmpfunc cmp;
 	};
 
 	class Formatter;
