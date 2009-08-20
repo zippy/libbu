@@ -228,6 +228,13 @@ namespace Bu
 			return hEnt.has( cId ) || pStore->has( cId );
 		}
 
+		/**
+		 * Retrieve an object from the cache and return a pointer to it.
+		 * The object returned may be loaded from backend storage if needed,
+		 * or the currently live object will be returned.
+		 *@param cId The id of the object to load.
+		 *@returns A pointer to the object.
+		 */
 		Ptr get( const keytype &cId )
 		{
 			TRACE( cId );
@@ -242,6 +249,16 @@ namespace Bu
 			}
 		}
 
+		/**
+		 * Retrieve a handle to an object without loading it now.  This function
+		 * will return a pointer that has not yet been "realized" but can be
+		 * used normally.  Upon initial use in any way the object will be
+		 * loaded from the cache, either linking against the already loaded
+		 * object or loading it fresh from the backend storage.  The advantage
+		 * of this is that you recieve a usable handle to the data, but it
+		 * does not count as a reference yet, meaning that the data is loaded
+		 * when you need it, not before.
+		 */
 		Ptr getLazy( const keytype &cId )
 		{
 			TRACE( cId );
@@ -297,7 +314,8 @@ namespace Bu
 			hEnt.erase( cId );
 		}
 
-		Bu::List<keytype> getKeys()
+		typedef Bu::List<keytype> KeyList;
+		KeyList getKeys()
 		{
 			return pStore->getKeys();
 		}

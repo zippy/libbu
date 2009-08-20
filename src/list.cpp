@@ -7,4 +7,3 @@
 
 #include "bu/list.h"
 
-template class Bu::List<int>;

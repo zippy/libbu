@@ -239,10 +239,12 @@ namespace Bu
 			core->clear();
 		}
 
-		void enqueue( const value &v )
+		MyType &enqueue( const value &v )
 		{
 			_hardCopy();
 			append( v );
+
+			return *this;
 		}
 
 		value dequeue()
@@ -259,13 +261,15 @@ namespace Bu
 		 * Append a value to the list.
 		 *@param v (const value_type &) The value to append.
 		 */
-		void append( const value &v )
+		MyType &append( const value &v )
 		{
 			_hardCopy();
 			core->append( v );
+
+			return *this;
 		}
 
-		void append( const MyType &rSrc )
+		MyType &append( const MyType &rSrc )
 		{
 			_hardCopy();
 			for( typename MyType::const_iterator i = rSrc.begin();
@@ -273,23 +277,27 @@ namespace Bu
 			{
 				core->append( *i );
 			}
+
+			return *this;
 		}
 
 		/**
 		 * Prepend a value to the list.
 		 *@param v (const value_type &) The value to prepend.
 		 */
-		void prepend( const value &v )
+		MyType &prepend( const value &v )
 		{
 			_hardCopy();
 			core->prepend( v );
+
+			return *this;
 		}
 
 		/**
 		 * Prepend another list to the front of this one.  This will prepend
 		 * the rSrc list in reverse order...I may fix that later.
 		 */
-		void prepend( const MyType &rSrc )
+		MyType &prepend( const MyType &rSrc )
 		{
 			_hardCopy();
 			for( typename MyType::const_iterator i = rSrc.begin();
@@ -297,13 +305,17 @@ namespace Bu
 			{
 				core->prepend( *i );
 			}
+
+			return *this;
 		}
 
-		void insert( MyType::iterator &i, const value &v )
+		MyType &insert( MyType::iterator &i, const value &v )
 		{
 			_hardCopy();
 
 			core->insert( i.pLink, v );
+
+			return *this;
 		}
 
 		/**
@@ -313,14 +325,14 @@ namespace Bu
 		 * List all items will be sorted.  To use this, the value type must
 		 * support the > operator.
 		 */
-		void insertSorted( const value &v )
+		MyType &insertSorted( const value &v )
 		{
 			_hardCopy();
 			if( core->pFirst == NULL )
 			{
 				// Empty list
 				core->append( v );
-				return;
+				return *this;
 			}
 			else
 			{
@@ -330,13 +342,13 @@ namespace Bu
 					if( !core->cmp( v, *(pCur->pValue)) )
 					{
 						core->insert( pCur, v );
-						return;
+						return *this;
 					}
 					pCur = pCur->pNext;
 					if( pCur == NULL )
 					{
 						core->append( v );
-						return;
+						return *this;
 					}
 				}
 			}
@@ -641,26 +653,30 @@ namespace Bu
 		 * Erase an item from the list.
 		 *@param i (iterator) The item to erase.
 		 */
-		void erase( iterator i )
+		MyType &erase( iterator i )
 		{
 			_hardCopy();
 			core->erase( i.pLink );
+
+			return *this;
 		}
 
 		/**
 		 * Erase an item from the list if you already know the item.
 		 *@param v The item to find and erase.
 		 */
-		void erase( const value &v )
+		MyType &erase( const value &v )
 		{
 			for( const_iterator i = begin(); i != end(); i++ )
 			{
 				if( (*i) == v )
 				{
 					erase( i );
-					return;
+					return *this;
 				}
 			}
+
+			return *this;
 		}
 
 		/**
