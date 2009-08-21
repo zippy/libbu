@@ -82,6 +82,11 @@ namespace Bu
 			}
 		}
 
+		virtual ~FStringCore()
+		{
+			clear();
+		}
+
 		mutable long nLength;
 		mutable Chunk *pFirst;
 		mutable Chunk *pLast;

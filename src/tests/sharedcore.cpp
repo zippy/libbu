@@ -78,5 +78,14 @@ int main()
 
 	line( a.setVal( b.getVal() ); )
 	line( a == b; )
+
+	{
+		Shint c( b );
+		Shint d( c );
+		sio << c.getVal();
+		d.setVal( 43 );
+	}
+
+	sio << b.getVal();
 }
 

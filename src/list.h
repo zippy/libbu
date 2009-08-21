@@ -33,6 +33,12 @@ namespace Bu
 			pLast( NULL ),
 			nSize( 0 )
 		{ }
+
+		virtual ~ListCore()
+		{
+			clear();
+		}
+
 		Link *pFirst;
 		Link *pLast;
 		long nSize;
