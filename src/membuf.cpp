@@ -113,7 +113,7 @@ bool Bu::MemBuf::canRead()
 
 bool Bu::MemBuf::canWrite()
 {
-	return isEos();
+	return true;
 }
 
 bool Bu::MemBuf::isReadable()

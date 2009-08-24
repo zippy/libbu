@@ -105,9 +105,9 @@ namespace Bu
 
 		/**
 		 * In non-blocking streams this indicates if a write operation will
-		 * succeed or fail.  In some cases writing is not allowed (e.g. 
-		 * internal buffers are full) temporarilly.  In blocking streams this
-		 * should return the same value as isWritable.
+		 * actually write one or more bytes.  In some cases writing is not
+		 * allowed (e.g. internal buffers are full) temporarilly.  In blocking
+		 * streams this should return the same value as isWritable.
 		 */
 		virtual bool canWrite() = 0;
 
