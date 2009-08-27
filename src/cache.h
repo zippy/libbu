@@ -147,6 +147,16 @@ namespace Bu
 				return *this;
 			}
 
+			bool operator==( const Ptr &rRhs ) const
+			{
+				return pData == rRhs.pData;
+			}
+
+			bool operator!=( const Ptr &rRhs ) const
+			{
+				return pData != rRhs.pData;
+			}
+
 		private:
 			void checkPtr() const
 			{
