@@ -668,6 +668,18 @@ namespace Bu
 		}
 
 		/**
+		 * Erase an item from the list.
+		 *@param i (iterator) The item to erase.
+		 */
+		MyType &erase( const_iterator i )
+		{
+			_hardCopy();
+			core->erase( i.pLink );
+
+			return *this;
+		}
+
+		/**
 		 * Erase an item from the list if you already know the item.
 		 *@param v The item to find and erase.
 		 */

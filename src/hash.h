@@ -234,6 +234,7 @@ namespace Bu
 	class Hash
 	{
 		friend struct HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc>;
+		typedef class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> MyType;
 	public:
 		Hash() :
 			nCapacity( 11 ),
@@ -452,7 +453,7 @@ namespace Bu
 		 */
 		virtual void erase( struct iterator &i )
 		{
-			if( this != &i.hsh )
+			if( this != i.hsh )
 				throw HashException("This iterator didn't come from this Hash.");
 			if( isFilled( i.nPos ) && !isDeleted( i.nPos ) )
 			{
@@ -556,22 +557,22 @@ namespace Bu
 		{
 			friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
 		private:
-			iterator( Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh ) :
+			iterator( MyType *hsh ) :
 				hsh( hsh ),
 				nPos( 0 ),
 				bFinished( false )
 			{
-				nPos = hsh.getFirstPos( bFinished );
+				nPos = hsh->getFirstPos( bFinished );
 			}
 			
-			iterator( Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh, bool bDone ) :
+			iterator( MyType *hsh, bool bDone ) :
 				hsh( hsh ),
 				nPos( 0 ),
 				bFinished( bDone )
 			{
 			}
 
-			Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh;
+			MyType *hsh;
 			uint32_t nPos;
 			bool bFinished;
 
@@ -580,6 +581,13 @@ namespace Bu
 				hsh( i.hsh ),
 				nPos( i.nPos ),
 				bFinished( i.bFinished )
+			{
+			}
+
+			iterator() :
+				hsh( NULL ),
+				nPos( NULL ),
+				bFinished( true )
 			{
 			}
 
@@ -604,7 +612,7 @@ namespace Bu
 			iterator operator++( int )
 			{
 				if( bFinished == false )
-					nPos = hsh.getNextPos( nPos, bFinished );
+					nPos = hsh->getNextPos( nPos, bFinished );
 
 				return *this;
 			}
@@ -615,7 +623,7 @@ namespace Bu
 			iterator operator++()
 			{
 				if( bFinished == false )
-					nPos = hsh.getNextPos( nPos, bFinished );
+					nPos = hsh->getNextPos( nPos, bFinished );
 
 				return *this;
 			}
@@ -652,9 +660,7 @@ namespace Bu
 			 */
 			iterator operator=( const iterator &oth )
 			{
-				if( &hsh != &oth.hsh )
-					throw HashException(
-						"Cannot mix iterators from different hash objects.");
+				hsh = oth.hsh;
 				nPos = oth.nPos;
 				bFinished = oth.bFinished;
 				return *this;
@@ -666,12 +672,12 @@ namespace Bu
 			 */
 			value &operator *()
 			{
-				return hsh.getValueAtPos( nPos );
+				return hsh->getValueAtPos( nPos );
 			}
 
 			const value &operator *() const
 			{
-				return hsh.getValueAtPos( nPos );
+				return hsh->getValueAtPos( nPos );
 			}
 			
 			/**
@@ -680,7 +686,7 @@ namespace Bu
 			 */
 			key &getKey()
 			{
-				return hsh.getKeyAtPos( nPos );
+				return hsh->getKeyAtPos( nPos );
 			}
 
 			/**
@@ -689,7 +695,7 @@ namespace Bu
 			 */
 			value &getValue()
 			{
-				return hsh.getValueAtPos( nPos );
+				return hsh->getValueAtPos( nPos );
 			}
 		} iterator;
 		
@@ -700,26 +706,47 @@ namespace Bu
 		{
 			friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
 		private:
-			const_iterator( const Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh ) :
+			const_iterator( const MyType *hsh ) :
 				hsh( hsh ),
 				nPos( 0 ),
 				bFinished( false )
 			{
-				nPos = hsh.getFirstPos( bFinished );
+				nPos = hsh->getFirstPos( bFinished );
 			}
 			
-			const_iterator( const Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh, bool bDone ) :
+			const_iterator( const MyType *hsh, bool bDone ) :
 				hsh( hsh ),
 				nPos( 0 ),
 				bFinished( bDone )
 			{
 			}
 
-			const Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> &hsh;
+			const MyType *hsh;
 			uint32_t nPos;
 			bool bFinished;
 
 		public:
+			const_iterator() :
+				hsh( NULL ),
+				nPos( 0 ),
+				bFinished( true )
+			{
+			}
+
+			const_iterator( const const_iterator &src ) :
+				hsh( src.hsh ),
+				nPos( src.nPos ),
+				bFinished( src.bFinished )
+			{
+			}
+
+			const_iterator( const iterator &src ) :
+				hsh( src.hsh ),
+				nPos( src.nPos ),
+				bFinished( src.bFinished )
+			{
+			}
+
 			bool isValid() const
 			{
 				return !bFinished;
@@ -736,7 +763,7 @@ namespace Bu
 			const_iterator operator++( int )
 			{
 				if( bFinished == false )
-					nPos = hsh.getNextPos( nPos, bFinished );
+					nPos = hsh->getNextPos( nPos, bFinished );
 
 				return *this;
 			}
@@ -747,7 +774,7 @@ namespace Bu
 			const_iterator operator++()
 			{
 				if( bFinished == false )
-					nPos = hsh.getNextPos( nPos, bFinished );
+					nPos = hsh->getNextPos( nPos, bFinished );
 
 				return *this;
 			}
@@ -784,9 +811,7 @@ namespace Bu
 			 */
 			const_iterator operator=( const const_iterator &oth )
 			{
-				if( &hsh != &oth.hsh )
-					throw HashException(
-						"Cannot mix iterators from different hash objects.");
+				hsh = oth.hsh;
 				nPos = oth.nPos;
 				bFinished = oth.bFinished;
 				return *this;
@@ -798,7 +823,7 @@ namespace Bu
 			 */
 			const value &operator *() const
 			{
-				return hsh.getValueAtPos( nPos );
+				return hsh->getValueAtPos( nPos );
 			}
 			
 			/**
@@ -807,7 +832,7 @@ namespace Bu
 			 */
 			const key &getKey() const
 			{
-				return hsh.getKeyAtPos( nPos );
+				return hsh->getKeyAtPos( nPos );
 			}
 
 			/**
@@ -816,7 +841,7 @@ namespace Bu
 			 */
 			const value &getValue() const
 			{
-				return hsh.getValueAtPos( nPos );
+				return hsh->getValueAtPos( nPos );
 			}
 		} const_iterator;
 
@@ -827,12 +852,12 @@ namespace Bu
 		 */
 		iterator begin()
 		{
-			return iterator( *this );
+			return iterator( this );
 		}
 		
 		const_iterator begin() const
 		{
-			return const_iterator( *this );
+			return const_iterator( this );
 		}
 		
 		/**
@@ -843,12 +868,12 @@ namespace Bu
 		 */
 		iterator end()
 		{
-			return iterator( *this, true );
+			return iterator( this, true );
 		}
 		
 		const_iterator end() const
 		{
-			return const_iterator( *this, true );
+			return const_iterator( this, true );
 		}
 
 		/**
