@@ -167,6 +167,12 @@ namespace Bu
 			return *a > *b;
 		}
 	};
+
+	/**
+	 * Get the number of days in the month in the gregorian calendar, taking
+	 * leap years into account.
+	 */
+	int getDaysInMonth( int iMonth, int iYear );
 };
 
 #endif
