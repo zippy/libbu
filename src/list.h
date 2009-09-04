@@ -766,11 +766,11 @@ namespace Bu
 	class Formatter;
 	Formatter &operator<<( Formatter &rOut, char *sStr );
 	Formatter &operator<<( Formatter &rOut, signed char c );
-	template<typename value>
-	Formatter &operator<<( Formatter &f, const Bu::List<value> &l )
+	template<typename a, typename b, typename c, typename d>
+	Formatter &operator<<( Formatter &f, const Bu::List<a,b,c,d> &l )
 	{
 		f << '[';
-		for( typename Bu::List<value>::const_iterator i = l.begin(); i; i++ )
+		for( typename Bu::List<a,b,c,d>::const_iterator i = l.begin(); i; i++ )
 		{
 			if( i != l.begin() )
 				f << ", ";
