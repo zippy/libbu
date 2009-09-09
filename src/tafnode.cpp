@@ -168,7 +168,7 @@ const Bu::FString &Bu::TafGroup::getProperty( const Bu::FString &sName,
 {
 	try
 	{
-		return getProperty( sName );
+		return hProp.get( sName ).first();
 	}
 	catch( Bu::HashException &e )
 	{
