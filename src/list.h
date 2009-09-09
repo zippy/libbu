@@ -263,6 +263,27 @@ namespace Bu
 			return v;
 		}
 
+		MyType &push( const value &v )
+		{
+			_hardCopy();
+			prepend( v );
+
+			return *this;
+		}
+
+		MyType &pop()
+		{
+			_hardCopy();
+			erase( begin() );
+
+			return *this;
+		}
+
+		value &peek()
+		{
+			return first();
+		}
+
 		/**
 		 * Append a value to the list.
 		 *@param v (const value_type &) The value to append.

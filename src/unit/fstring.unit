@@ -35,7 +35,7 @@
 	unitTest( strcmp( b.getStr(), "abcdef" ) == 0 );
 }
 
-{%shared1:fail}
+{%shared1}
 {
 	Bu::FString a("Hey there");
 	Bu::FString b( a );
