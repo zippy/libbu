@@ -1408,12 +1408,12 @@ namespace Bu
 		 * Assignment operator.
 		 *@param rSrc (const MyType &) The FString to set your FString to.
 		 */
-		MyType &operator=( const MyType &rSrc )
+	/*	MyType &operator=( const MyType &rSrc )
 		{
 			set( rSrc );
 
 			return (*this);
-		}
+		} */
 		
 		/**
 		 * Equals comparison operator.

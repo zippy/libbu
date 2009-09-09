@@ -42,6 +42,9 @@ namespace Bu
 
 		SharedCore &operator=( const SharedCore &rhs )
 		{
+			if( core == rhs.core )
+				return *this;
+
 			_softCopy( rhs );
 			return *this;
 		}
