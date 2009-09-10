@@ -301,3 +301,14 @@
 	l.set( b.begin() );
 	unitTest( l == "thisthisthisthithisthisthisth" );
 }
+
+{%isSet1}
+{
+	Bu::FString bob;
+
+	unitTest( bob.isSet() == false );
+	bob = "something";
+	unitTest( bob.isSet() == true );
+	bob = "";
+	unitTest( bob.isSet() == false );
+}

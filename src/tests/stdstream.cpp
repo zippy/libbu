@@ -26,7 +26,7 @@ int main()
 	sio << "|" << Fmt( 10, 10, Fmt::Right ) << 123 << "|" << sio.nl;
 	sio << "+----------+" << sio.nl;
 
-	sio << Fmt(10,Fmt::Left) << "Hexcode:" << Fmt::ptr() << (&sio) << sio.nl;
+	sio << Fmt(10,Fmt::Left) << "Hexcode:" << Fmt::ptr() << (void*)(&sio) << sio.nl;
 
 	sio << 0.123 << sio.nl;
 	sio << true << " and then " << false << sio.nl;
