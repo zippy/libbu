@@ -217,6 +217,11 @@ namespace Bu
 			SharedCore< Core >( src )
 		{
 		}
+		
+		List( const value &v )
+		{
+			append( v );
+		}
 
 		~List()
 		{
