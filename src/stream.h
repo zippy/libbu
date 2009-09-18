@@ -46,6 +46,14 @@ namespace Bu
 		virtual size_t read( void *pBuf, size_t nBytes ) = 0;
 
 		/**
+		 * Attempts to read a complete line from the stream.  This will stop
+		 * reading when it has reached the end of the stream, or runs out of
+		 * data in a non-blocking stream.
+		 *@returns The line read, not including newline character.
+		 */
+		virtual Bu::FString readLine();
+
+		/**
 		 * Write data to the stream.
 		 *@param pBuf (const void *) The data to be written.
 		 *@param nBytes (size_t) Amount of data to write from pBuf.

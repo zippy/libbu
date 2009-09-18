@@ -15,6 +15,21 @@ Bu::Stream::~Stream()
 {
 }
 
+Bu::FString Bu::Stream::readLine()
+{
+	Bu::FString sRet;
+	
+	for(;;)
+	{
+		char s;
+		if( read( &s, 1 ) == 0 )
+			return sRet;
+		if( s == '\n' || s == '\r' )
+			return sRet;
+		sRet.append( s );
+	}
+}
+
 size_t Bu::Stream::write( const Bu::FString &sBuf )
 {
 	return write( sBuf.getStr(), sBuf.getSize() );
