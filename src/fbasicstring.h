@@ -919,6 +919,8 @@ namespace Bu
 		{
 			if( pData == NULL )
 				return;
+
+			_hardCopy();
 			long nLen;
 			for( nLen = 0; pData[nLen] != (chr)0; nLen++ ) { }
 			
@@ -939,7 +941,13 @@ namespace Bu
 			
 			cpy( pNew->pData, pData, nLen );
 
+			_hardCopy();
 			core->prependChunk( pNew );
+		}
+
+		void prepend( const chr c )
+		{
+			prepend( &c, 1 );
 		}
 
 		/**
