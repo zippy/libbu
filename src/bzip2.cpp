@@ -12,7 +12,8 @@ using namespace Bu;
 
 Bu::BZip2::BZip2( Bu::Stream &rNext, int nCompression ) :
 	Bu::Filter( rNext ),
-	nCompression( nCompression )
+	nCompression( nCompression ),
+	sTotalOut( 0 )
 {
 	TRACE( nCompression );
 	start();
@@ -50,7 +51,7 @@ size_t Bu::BZip2::stop()
 		}
 		else
 		{
-			size_t sTotal = 0;
+//			size_t sTotal = 0;
 			for(;;)
 			{
 				bzState.next_in = NULL;
@@ -60,7 +61,7 @@ size_t Bu::BZip2::stop()
 				int res = BZ2_bzCompress( &bzState, BZ_FINISH );
 				if( bzState.avail_out < nBufSize )
 				{
-					sTotal += rNext.write( pBuf, nBufSize-bzState.avail_out );
+					sTotalOut += rNext.write( pBuf, nBufSize-bzState.avail_out );
 				}
 				if( res == BZ_STREAM_END )
 					break;
@@ -68,7 +69,7 @@ size_t Bu::BZip2::stop()
 			BZ2_bzCompressEnd( &bzState );
 			delete[] pBuf;
 			pBuf = NULL;
-			return sTotal;
+			return sTotalOut;
 		}
 	}
 	return 0;
@@ -182,7 +183,7 @@ size_t Bu::BZip2::write( const void *pData, size_t nBytes )
 	if( bReading == true )
 		throw ExceptionBase("This bzip2 filter is in reading mode, you can't write.");
 
-	size_t sTotalOut = 0;
+//	size_t sTotalOut = 0;
 	bzState.next_in = (char *)pData;
 	bzState.avail_in = nBytes;
 	for(;;)
@@ -207,5 +208,10 @@ bool Bu::BZip2::isOpen()
 {
 	TRACE();
 	return (bzState.state != NULL);
+}
+
+size_t Bu::BZip2::getCompressedSize()
+{
+	return sTotalOut;
 }
 

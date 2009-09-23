@@ -32,6 +32,8 @@ namespace Bu
 
 		virtual bool isOpen();
 
+		size_t getCompressedSize();
+
 	private:
 		void bzError( int code );
 		bz_stream bzState;
@@ -39,6 +41,7 @@ namespace Bu
 		int nCompression;
 		char *pBuf;
 		uint32_t nBufSize;
+		size_t sTotalOut;
 	};
 }
 

@@ -93,6 +93,7 @@ void Bu::File::seek( long offset )
 		throw FileException("File not open.");
 
 	lseek( fd, offset, SEEK_CUR );
+	bEos = false;
 }
 
 void Bu::File::setPos( long pos )
@@ -101,6 +102,7 @@ void Bu::File::setPos( long pos )
 		throw FileException("File not open.");
 
 	lseek( fd, pos, SEEK_SET );
+	bEos = false;
 }
 
 void Bu::File::setPosEnd( long pos )
@@ -109,6 +111,7 @@ void Bu::File::setPosEnd( long pos )
 		throw FileException("File not open.");
 	
 	lseek( fd, pos, SEEK_END );
+	bEos = false;
 }
 
 bool Bu::File::isEos()
