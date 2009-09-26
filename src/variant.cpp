@@ -18,6 +18,15 @@ Bu::Variant::Variant() :
 {
 }
 
+Bu::Variant::Variant( const Variant &v ) :
+	pCore( NULL )
+{
+	if( v.pCore )
+	{
+		pCore = v.pCore->clone();
+	}
+}
+
 Bu::Variant::~Variant()
 {
 }

@@ -52,7 +52,7 @@ namespace Bu
 			return data;
 		}
 		
-		t &getData() const
+		const t &getData() const
 		{
 			return data;
 		}
@@ -90,6 +90,7 @@ namespace Bu
 	{
 	public:
 		Variant();
+		Variant( const Variant &v );
 		virtual ~Variant();
 
 		bool isSet();
