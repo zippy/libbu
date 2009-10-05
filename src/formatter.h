@@ -192,7 +192,7 @@ namespace Bu
 		void ffmt( type f )
 		{
 			Bu::FString fTmp;
-			fTmp.format("%f {~!~}", f );
+			fTmp.format("%f", f );
 //			writeAligned("**make floats work**");
 			writeAligned( fTmp );
 			usedFormat();
