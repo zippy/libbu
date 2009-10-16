@@ -1931,6 +1931,21 @@ namespace Bu
 					ar.write( core->pFirst->pData, core->nLength*sizeof(chr) );
 			}
 		}
+		/*
+		void archive( class Archive &ar ) const
+		{
+			if( ar.isLoading() )
+			{
+			}
+			else
+			{
+				flatten();
+				
+				ar << core->nLength;
+				if( core->nLength )
+					ar.write( core->pFirst->pData, core->nLength*sizeof(chr) );
+			}
+		}*/
 
 		iterator begin()
 		{

@@ -5,8 +5,9 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/tafreader.h"
+#include "bu/taf.h"
 #include "bu/fstring.h"
+#include "bu/stream.h"
 
 #include <stdlib.h>
 

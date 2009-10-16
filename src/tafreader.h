@@ -9,12 +9,16 @@
 #define BU_TAF_READER_H
 
 #include <stdint.h>
-#include "bu/tafnode.h"
-#include "bu/stream.h"
 #include "bu/fstring.h"
 
 namespace Bu
 {
+	class TafNode;
+	class TafGroup;
+	class TafProperty;
+	class TafComment;
+	class Stream;
+
 	/**
 	 *
 	 *@ingroup Taf

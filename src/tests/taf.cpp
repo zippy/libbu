@@ -5,8 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/tafreader.h"
-#include "bu/tafwriter.h"
+#include "bu/taf.h"
 #include "bu/file.h"
 
 int main( int argc, char *argv[] )
