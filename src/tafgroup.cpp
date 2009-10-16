@@ -162,3 +162,40 @@ const Bu::FString &Bu::TafGroup::getProperty( const Bu::FString &sName,
 	}
 }
 
+const Bu::TafGroup *Bu::TafGroup::getChildByPath(
+		const Bu::FString &sPath ) const
+{
+	return getChildByPath( sPath.split('/') );
+}
+
+const Bu::TafGroup *Bu::TafGroup::getChildByPath( Bu::StrList lPath ) const
+{
+	const Bu::TafGroup *cur = this;
+
+	for( Bu::StrList::const_iterator i = lPath.begin(); i; i++ )
+	{
+		cur = cur->getChild( *i );
+	}
+
+	return cur;
+}
+
+const Bu::FString &Bu::TafGroup::getByPath( const Bu::FString &sPath ) const
+{
+	return getByPath( sPath.split('/') );
+}
+
+const Bu::FString &Bu::TafGroup::getByPath( Bu::StrList lPath ) const
+{
+	const Bu::TafGroup *cur = this;
+
+	for( Bu::StrList::const_iterator i = lPath.begin(); i; i++ )
+	{
+		if( !(i+1) )
+			break;
+		cur = cur->getChild( *i );
+	}
+
+	return cur->getProperty( lPath.last() );
+}
+

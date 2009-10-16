@@ -1,0 +1,52 @@
+// vim: syntax=cpp
+/*
+ * Copyright (C) 2007-2008 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
+#include "bu/membuf.h"
+#include "bu/substream.h"
+
+{=Init}
+
+{%testRead01}
+{
+	Bu::MemBuf mb("abcdefghijklmnopqrstuvwxyz");
+	mb.seek( 4 );
+	Bu::SubStream ss( mb, 10 );
+	unitTest( ss.readLine() == "efghijklmn" );
+}
+
+{%testRead02}
+{
+	Bu::MemBuf mb("abcdefghijklmnopqrstuvwxyz");
+	mb.seek( 4 );
+	Bu::SubStream ss( mb, 10 );
+	char buf[8];
+	size_t iRead = ss.read( buf, 8 );
+	unitTest( iRead == 8 );
+	unitTest( strncmp( buf, "efghijkl", 8 ) == 0 );
+	unitTest( !ss.isEos() );
+	iRead = ss.read( buf, 8 );
+	unitTest( iRead == 2 );
+	unitTest( strncmp( buf, "mn", 2 ) == 0 );
+	unitTest( ss.isEos() );
+}
+
+{%testRead03}
+{
+	Bu::MemBuf mb("abcdefghijklmnopqrstuvwxyz");
+	mb.seek( 20 );
+	Bu::SubStream ss( mb, 10 );
+	char buf[8];
+	size_t iRead = ss.read( buf, 8 );
+	unitTest( iRead == 6 );
+	unitTest( strncmp( buf, "uvwxyz", 6 ) == 0 );
+	unitTest( ss.isEos() );
+	iRead = ss.read( buf, 8 );
+	unitTest( iRead == 0 );
+	unitTest( ss.isEos() );
+}
+

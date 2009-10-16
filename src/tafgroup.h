@@ -16,6 +16,7 @@
 
 namespace Bu
 {
+	typedef Bu::List<Bu::FString> StrList;
 	class TafProperty;
 	class TafComment;
 	/**
@@ -53,6 +54,10 @@ namespace Bu
 		TafProperty *addProperty(
 			const Bu::FString &sName, const Bu::FString &sValue );
 		const NodeList &getChildren() const;
+		const TafGroup *getChildByPath( const Bu::FString &sPath ) const;
+		const TafGroup *getChildByPath( StrList lPath ) const;
+		const Bu::FString &getByPath( const Bu::FString &sPath ) const;
+		const Bu::FString &getByPath( StrList lPath ) const;
 
 	private:
 		Bu::FString sName;

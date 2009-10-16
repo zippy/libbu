@@ -109,3 +109,13 @@
 		// Woot
 	}
 }
+
+{%bypath1}
+{
+	Bu::MemBuf mb("{outer: \"Hello=\" {inner: {final: test=hi} } }");
+	Bu::TafReader tr( mb );
+	const Bu::TafGroup *g = tr.readGroup();
+	unitTest( g->getChildByPath("inner/final")->getProperty("test") == "hi" );
+	unitTest( g->getByPath("inner/final/test") == "hi" );
+}
+

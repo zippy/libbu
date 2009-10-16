@@ -178,11 +178,11 @@ namespace Bu
 
 	/**
 	 * Linked list template container.  This class is similar to the stl list
-	 * class except for a few minor changes.  First, it doesn't mimic a stack or
-	 * queue, use the Stack or Queue clasess for that.  Second, when const, all
-	 * members are only accessable const.  Third, erasing a location does not
-	 * invalidate the iterator, it simply points to the next valid location, or
-	 * end() if there are no more.
+	 * class except for a few minor changes.  First, when const, all
+	 * members are only accessable const.  Second, erasing a location does not
+	 * invalidate the iterator used, it simply points to the next valid
+	 * location, or end() if there are no more.  Other iterators pointing to
+	 * the deleted record will, of course, no longer be valid.
 	 *
 	 *@param value (typename) The type of data to store in your list
 	 *@param valuealloc (typename) Memory Allocator for your value type
@@ -506,6 +506,32 @@ namespace Bu
 				return *this;
 			}
 
+			iterator operator+( int iDelta )
+			{
+				iterator ret( *this );
+				for( int j = 0; j < iDelta; j++ )
+				{
+					if( ret.pLink == NULL )
+						throw Bu::ExceptionBase(
+							"Attempt to iterate past begining of list.");
+					ret.pLink = ret.pLink->pNext;
+				}
+				return ret;
+			}
+
+			iterator operator-( int iDelta )
+			{
+				iterator ret( *this );
+				for( int j = 0; j < iDelta; j++ )
+				{
+					if( ret.pLink == NULL )
+						throw Bu::ExceptionBase(
+							"Attempt to iterate past begining of list.");
+					ret.pLink = ret.pLink->pPrev;
+				}
+				return ret;
+			}
+
 			operator bool()
 			{
 				return pLink != NULL;
@@ -617,6 +643,32 @@ namespace Bu
 						"Attempt to iterate past begining of list.");
 				pLink = pLink->pPrev;
 				return *this;
+			}
+
+			const_iterator operator+( int iDelta )
+			{
+				const_iterator ret( *this );
+				for( int j = 0; j < iDelta; j++ )
+				{
+					if( ret.pLink == NULL )
+						throw Bu::ExceptionBase(
+							"Attempt to iterate past begining of list.");
+					ret.pLink = ret.pLink->pNext;
+				}
+				return ret;
+			}
+
+			const_iterator operator-( int iDelta )
+			{
+				const_iterator ret( *this );
+				for( int j = 0; j < iDelta; j++ )
+				{
+					if( ret.pLink == NULL )
+						throw Bu::ExceptionBase(
+							"Attempt to iterate past begining of list.");
+					ret.pLink = ret.pLink->pPrev;
+				}
+				return ret;
 			}
 
 			const_iterator &operator=( const iterator &oth )
