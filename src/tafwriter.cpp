@@ -28,7 +28,8 @@ void Bu::TafWriter::writeGroup( const Bu::TafGroup *pRoot )
 {
 	ident();
 	sOut.write("{", 1 );
-	writeString( pRoot->getName() );
+	if( pRoot->getName() )
+		writeString( pRoot->getName() );
 	sOut.write(":\n", 2 );
 	iDepth++;
 	const Bu::TafGroup::NodeList &nl = pRoot->getChildren();
