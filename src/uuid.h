@@ -8,14 +8,21 @@
 #ifndef BU_UUID_H
 #define BU_UUID_H
 
+#include "bu/fstring.h"
+
 namespace Bu
 {
 	class Uuid
 	{
 	public:
 		Uuid();
+		Uuid( const Uuid &src );
 		virtual ~Uuid();
 
+		Bu::FString toRawString();
+		Bu::FString toString();
+
+		static Uuid gen();
 		static Uuid genV1();
 		static Uuid genV2();
 		static Uuid genV3();
@@ -25,7 +32,7 @@ namespace Bu
 		void clear();
 
 	private:
-		unsigned char data[8];
+		unsigned char data[16];
 	};
 };
 
