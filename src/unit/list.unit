@@ -66,3 +66,83 @@ typedef Bu::List<int> IntList;
 	}
 }
 
+{%sort1}
+{
+	IntList lst;
+
+	lst.insertSorted( 5 );
+	lst.insertSorted( 1 );
+	lst.insertSorted( 10 );
+	lst.insertSorted( 3 );
+
+	unitTest( lst == IntList(1).append(3).append(5).append(10) );
+}
+
+{%sort2}
+{
+	IntList lst;
+
+	lst.insertSorted<Bu::__basicGTCmp<int> >( 5 );
+	lst.insertSorted<Bu::__basicGTCmp<int> >( 1 );
+	lst.insertSorted<Bu::__basicGTCmp<int> >( 10 );
+	lst.insertSorted<Bu::__basicGTCmp<int> >( 3 );
+
+	unitTest( lst == IntList(10).append(5).append(3).append(1) );
+}
+
+{%sort3}
+{
+	IntList lst;
+	Bu::__basicGTCmp<int> cmp;
+
+	lst.insertSorted( cmp, 5 );
+	lst.insertSorted( cmp, 1 );
+	lst.insertSorted( cmp, 10 );
+	lst.insertSorted( cmp, 3 );
+
+	unitTest( lst == IntList(10).append(5).append(3).append(1) );
+}
+
+{%sort4}
+{
+	IntList lst;
+
+	lst.append( 5 );
+	lst.append( 1 );
+	lst.append( 10 );
+	lst.append( 3 );
+
+	lst.sort();
+
+	unitTest( lst == IntList(1).append(3).append(5).append(10) );
+}
+
+{%sort5}
+{
+	IntList lst;
+
+	lst.append( 5 );
+	lst.append( 1 );
+	lst.append( 10 );
+	lst.append( 3 );
+
+	lst.sort<Bu::__basicGTCmp<int> >();
+
+	unitTest( lst == IntList(10).append(5).append(3).append(1) );
+}
+
+{%sort6}
+{
+	IntList lst;
+
+	lst.append( 5 );
+	lst.append( 1 );
+	lst.append( 10 );
+	lst.append( 3 );
+
+	Bu::__basicGTCmp<int> x;
+	lst.sort( x );
+
+	unitTest( lst == IntList(10).append(5).append(3).append(1) );
+}
+

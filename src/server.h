@@ -16,6 +16,7 @@
 
 #include "bu/clientlink.h"
 #include "bu/clientlinkfactory.h"
+#include "bu/hash.h"
 
 namespace Bu
 {

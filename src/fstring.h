@@ -14,6 +14,12 @@ namespace Bu
 {
 	typedef FBasicString<char> FString;
 
+	template<typename T>
+	uint32_t __calcHashCode( const T &k );
+
+	template<typename T>
+	bool __cmpHashKeys( const T &a, const T &b );
+
 	template<> uint32_t __calcHashCode<FString>( const FString &k );
 	template<> bool __cmpHashKeys<FString>(
 		const FString &a, const FString &b );

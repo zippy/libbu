@@ -7,6 +7,7 @@
 
 #include "bu/serversocket.h"
 #include "bu/socket.h"
+#include <unistd.h>
 
 int main()
 {

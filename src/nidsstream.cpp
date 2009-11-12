@@ -7,6 +7,8 @@
 
 #include "bu/nidsstream.h"
 
+#include <string.h>
+
 Bu::NidsStream::NidsStream( Nids &rNids, uint32_t uStream ) :
 	rNids( rNids ),
 	uStream( uStream ),

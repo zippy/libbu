@@ -67,22 +67,3 @@ template<> bool Bu::__cmpHashKeys<char *>( char * const &a, char * const &b )
 	return false;
 }
 
-template<> uint32_t Bu::__calcHashCode<std::string>( const std::string &k )
-{
-	std::string::size_type j, sz = k.size();
-	const char *s = k.c_str();
-
-	unsigned long int nPos = 0;
-	for( j = 0; j < sz; j++, s++ )
-	{
-		nPos = *s + (nPos << 6) + (nPos << 16) - nPos;
-	}
-
-	return nPos;
-}
-
-template<> bool Bu::__cmpHashKeys<std::string>( const std::string &a, const std::string &b )
-{
-	return a == b;
-}
-

@@ -15,3 +15,21 @@ Bu::Archival::~Archival()
 {
 }
 
+Bu::ArchiveBase &Bu::operator<<(Bu::ArchiveBase &s, const Bu::Archival &p)
+{
+	const_cast<Bu::Archival &>(p).archive( s );
+	return s;
+}
+
+Bu::ArchiveBase &Bu::operator<<(Bu::ArchiveBase &s, Bu::Archival &p)
+{
+	p.archive( s );
+	return s;
+}
+
+Bu::ArchiveBase &Bu::operator>>(Bu::ArchiveBase &s, Bu::Archival &p)
+{
+	p.archive( s );
+	return s;
+}
+

@@ -8,17 +8,11 @@
 #ifndef BU_HASH_H
 #define BU_HASH_H
 
-#include <stddef.h>
-#include <string.h>
 #include <memory>
-#include <iostream>
-#include <list>
-#include <utility>
 #include "bu/exceptionbase.h"
 #include "bu/list.h"
 #include "bu/util.h"
-//#include "archival.h"
-//#include "archive.h"
+#include "archivebase.h"
 
 #define bitsToBytes( n ) (n/32+(n%32>0 ? 1 : 0))
 
@@ -371,6 +365,11 @@ namespace Bu
 		uint32_t getSize() const
 		{
 			return nFilled-nDeleted;
+		}
+
+		bool isEmpty() const
+		{
+			return (nFilled-nDeleted) == 0;
 		}
 
 		/**
@@ -1171,9 +1170,6 @@ namespace Bu
 	template<> uint32_t __calcHashCode<char *>( char * const &k );
 	template<> bool __cmpHashKeys<char *>( char * const &a, char * const &b );
 
-	template<> uint32_t __calcHashCode<std::string>( const std::string &k );
-	template<> bool __cmpHashKeys<std::string>( const std::string &a, const std::string &b );
-
 	class Formatter;
 	Formatter &operator<<( Formatter &rOut, char *sStr );
 	Formatter &operator<<( Formatter &rOut, signed char c );
@@ -1190,30 +1186,30 @@ namespace Bu
 		f << '}';
 
 		return f;
-	}	
+	}
 
-	/*
-	template<typename key, typename value>
-	Archive &operator<<( Archive &ar, Hash<key,value> &h )
+	template<typename key, typename value, typename a, typename b,
+		typename c, typename d>
+	ArchiveBase &operator<<( ArchiveBase &ar, const Hash<key,value,a,b,c,d> &h )
 	{
-		ar << h.size();
-		for( typename Hash<key,value>::iterator i = h.begin(); i != h.end(); i++ )
+		ar << h.getSize();
+		for( typename Hash<key,value>::const_iterator i = h.begin(); i != h.end(); i++ )
 		{
-			std::pair<key,value> p = *i;
-			ar << p.first << p.second;
+			ar << (i.getKey()) << (i.getValue());
 		}
 
 		return ar;
 	}
 
-	template<typename key, typename value>
-	Archive &operator>>( Archive &ar, Hash<key,value> &h )
+	template<typename key, typename value, typename a, typename b,
+		typename c, typename d>
+	ArchiveBase &operator>>( ArchiveBase &ar, Hash<key,value,a,b,c,d> &h )
 	{
 		h.clear();
-		uint32_t nSize;
+		long nSize;
 		ar >> nSize;
 
-		for( uint32_t j = 0; j < nSize; j++ )
+		for( long j = 0; j < nSize; j++ )
 		{
 			key k; value v;
 			ar >> k >> v;
@@ -1221,21 +1217,7 @@ namespace Bu
 		}
 
 		return ar;
-	}*/
-
-	/*
-	template<typename key, typename value>
-	Serializer &operator&&( Serializer &ar, Hash<key,value> &h )
-	{
-		if( ar.isLoading() )
-		{
-			return ar >> h;
-		}
-		else
-		{
-			return ar << h;
-		}
-	}*/
+	}
 }
 
 #endif

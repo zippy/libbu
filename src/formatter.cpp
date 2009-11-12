@@ -7,6 +7,8 @@
 
 #include "formatter.h"
 
+#include <string.h>
+
 Bu::Formatter::Formatter( Stream &rOut ) :
 	rOut( rOut ),
 	uIndent( 0 ),

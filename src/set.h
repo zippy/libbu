@@ -16,6 +16,7 @@
 #include <utility>
 #include "bu/exceptionbase.h"
 #include "bu/list.h"
+#include "bu/archive.h"
 
 #define bitsToBytes( n ) (n/32+(n%32>0 ? 1 : 0))
 
@@ -763,6 +764,35 @@ namespace Bu
 		challoc ca;
 		sizecalc szCalc;
 	};
+
+	template<typename key, typename b, typename c, typename d>
+	Archive &operator<<( Archive &ar, const Set<key, b, c, d> &h )
+	{
+		ar << h.getSize();
+		for( typename Set<key, b, c, d>::const_iterator i = h.begin(); i != h.end(); i++ )
+		{
+			ar << (*i);
+		}
+
+		return ar;
+	}
+
+	template<typename key, typename b, typename c, typename d>
+	Archive &operator>>( Archive &ar, Set<key, b, c, d> &h )
+	{
+		h.clear();
+		long nSize;
+		ar >> nSize;
+
+		for( long j = 0; j < nSize; j++ )
+		{
+			key v;
+			ar >> v;
+			h.insert( v );
+		}
+
+		return ar;
+	}
 }
 
 #endif

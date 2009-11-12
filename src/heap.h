@@ -9,11 +9,10 @@
 #define BU_HEAP_H
 
 #include <stddef.h>
-#include <string.h>
 #include <memory>
-#include <iostream>
 #include "bu/exceptionbase.h"
 #include "bu/util.h"
+// #include "bu/formatter.h"
 
 namespace Bu
 {
@@ -28,6 +27,33 @@ namespace Bu
 			iFill( 0 ),
 			aItem( ia.allocate( iSize ) )
 		{
+		}
+		
+		Heap( cmpfunc cmpin ) :
+			iSize( 7 ),
+			iFill( 0 ),
+			aItem( ia.allocate( iSize ) ),
+			cmp( cmpin )
+		{
+		}
+
+		Heap( int iInitialCapacity ) :
+			iSize( 0 ),
+			iFill( 0 ),
+			aItem( NULL )
+		{
+			for( iSize = 1; iSize < iInitialCapacity; iSize=iSize*2+1 ) { }
+			aItem = ia.allocate( iSize );
+		}
+		
+		Heap( cmpfunc cmpin, int iInitialCapacity ) :
+			iSize( 0 ),
+			iFill( 0 ),
+			aItem( NULL ),
+			cmp( cmpin )
+		{
+			for( iSize = 1; iSize < iInitialCapacity; iSize=iSize*2+1 ) { }
+			aItem = ia.allocate( iSize );
 		}
 
 		virtual ~Heap()
@@ -47,9 +73,11 @@ namespace Bu
 			{
 				if( cmp( i, aItem[j] ) )
 				{
-					swap( i, aItem[j] );
+					Bu::swap( i, aItem[j] );
 				}
 
+				if( j*2+1 >= iFill )
+					break;
 				if( cmp( i, aItem[j*2+1] ) )
 				{
 					j = j*2+1;
@@ -68,7 +96,7 @@ namespace Bu
 					if( cmp( aItem[k], aItem[j] ) )
 						break;
 
-					swap( aItem[k], aItem[j] );
+					Bu::swap( aItem[k], aItem[j] );
 					j = k;
 				}
 			}
@@ -90,20 +118,22 @@ namespace Bu
 			int j;
 			for( j = 0; j < iFill; )
 			{
-				if( cmp( aItem[j*2+2], aItem[j*2+1] ) && j*2+2 < iFill )
+				int k = j*2+1;
+				if( k+1 < iFill && cmp( aItem[k+1], aItem[k] ) )
 				{
-					aItem[j] = aItem[j*2+2];
-					j = j*2+2;
+					aItem[j] = aItem[k+1];
+					j = k+1;
 				}
-				else if( j*2+1 < iFill )
+				else if( k < iFill )
 				{
-					aItem[j] = aItem[j*2+1];
-					j = j*2+1;
+					aItem[j] = aItem[k];
+					j = k;
 				}
 				else
 					break;
 			}
-			aItem[j] = aItem[iFill-1];
+			if( j < iFill-1 )
+				aItem[j] = aItem[iFill-1];
 			ia.destroy( &aItem[iFill-1] );
 			iFill--;
 
@@ -119,35 +149,34 @@ namespace Bu
 		{
 			return iFill;
 		}
-
-		void print()
+/*
+		void print( Formatter &f )
 		{
-			printf("graph G {\n");
+			f << "graph G {" << f.nl;
 			for( int j = 0; j < iFill; j++ )
 			{
 				if( j*2+1 < iFill )
-					printf("    %d -- %d;\n",
-							j, j*2+1
-						  );
+					f << "    " << j << " -- " << j*2+1 << ";" << f.nl;
 				if( j*2+2 < iFill )
-					printf("    %d -- %d;\n",
-							j, j*2+2
-						  );
+					f << "    " << j << " -- " << j*2+2 << ";" << f.nl;
 			}
 			for( int j = 0; j < iFill; j++ )
 			{
-				printf("    %d [label=\"%d\"];\n",
-						j, aItem[j]
-					  );
+				f << "    " << j << " [label=\"" << aItem[j] << "\"];" << f.nl;
 			}
-			printf("}\n");
-		}
+			f << "}" << f.nl;
+		} */
 
 	private:
 		void upSize()
 		{
 			item *aNewItems = ia.allocate( iSize*2+1 );
-			memcpy( aNewItems, aItem, sizeof(item)*iFill );
+//			memcpy( aNewItems, aItem, sizeof(item)*iFill );
+			for( int j = 0; j < iFill; j++ )
+			{
+				ia.construct( &aNewItems[j], aItem[j] );
+				ia.destroy( &aItem[j] );
+			}
 			ia.deallocate( aItem, iSize );
 			aItem = aNewItems;
 			iSize = iSize*2+1;

@@ -10,6 +10,7 @@
 
 #include <memory>
 #include "bu/exceptionbase.h"
+#include "bu/archivebase.h"
 
 namespace Bu
 {
@@ -442,6 +443,38 @@ namespace Bu
 
 		return f;
 	}
+
+	template<typename value, int inc, typename valuealloc>
+	ArchiveBase &operator<<( ArchiveBase &ar,
+			const Array<value, inc, valuealloc> &h )
+	{
+		ar << h.getSize();
+		for( typename Array<value, inc, valuealloc>::const_iterator i =
+			 h.begin(); i != h.end(); i++ )
+		{
+			ar << (*i);
+		}
+
+		return ar;
+	}
+
+	template<typename value, int inc, typename valuealloc>
+	ArchiveBase &operator>>(ArchiveBase &ar, Array<value, inc, valuealloc> &h )
+	{
+		h.clear();
+		long nSize;
+		ar >> nSize;
+
+		h.setCapacity( nSize );
+		for( long j = 0; j < nSize; j++ )
+		{
+			value v;
+			ar >> v;
+			h.append( v );
+		}
+		return ar;
+	}
+
 }
 
 #endif

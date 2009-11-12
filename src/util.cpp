@@ -35,7 +35,24 @@ int Bu::getDaysInMonth( int iMonth, int iYear )
 			return 29;
 		return 28;
 		break;
-	}
 
+	default:
+		return -1;
+	}
+}
+void Bu::memcpy( void *pDest, const void *pSrc, size_t iBytes )
+{
+#ifdef VALTEST
+	const char *src = (const char *)pSrc;
+	char *dest = (char *)pDest;
+	for( int j = 0; j < count; j++ )
+	{
+		*dest = *src;
+		dest++;
+		src++;
+	}
+#else
+	::memcpy( pDest, pSrc, iBytes );
+#endif
 }
 

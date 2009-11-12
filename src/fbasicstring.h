@@ -15,10 +15,13 @@
 #include <wordexp.h>
 #endif
 
-#include "bu/archival.h"
-#include "bu/archive.h"
 #include "bu/util.h"
 #include "bu/sharedcore.h"
+#include "bu/exceptionbase.h"
+#include "bu/archivebase.h"
+#include "bu/list.h"
+
+#include <string.h> 
 
 namespace Bu
 {
@@ -30,21 +33,8 @@ namespace Bu
 		FStringChunk *pNext;
 	};
 
-#ifndef VALTEST
-#define cpy( dest, src, size ) memcpy( dest, src, size*sizeof(chr) )
-#endif
+#define cpy( dest, src, size ) Bu::memcpy( dest, src, size*sizeof(chr) )
 
-#ifdef VALTEST
-		void cpy( chr *dest, const chr *src, long count ) const
-		{
-			for( int j = 0; j < count; j++ )
-			{
-				*dest = *src;
-				dest++;
-				src++;
-			}
-		}
-#endif
 	template<typename chr, int nMinSize, typename chralloc, typename chunkalloc>
 	struct FStringCore
 	{
@@ -185,7 +175,7 @@ namespace Bu
 	 *@param chunkalloc (typename) Memory Allocator for chr chunks
 	 */
 	template< typename chr, int nMinSize=256, typename chralloc=std::allocator<chr>, typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
-	class FBasicString : public SharedCore< FStringCore<chr, nMinSize, chralloc, chunkalloc> >, public Archival
+	class FBasicString : public SharedCore< FStringCore<chr, nMinSize, chralloc, chunkalloc> >
 	{
 	protected:
 		typedef struct FStringChunk<chr> Chunk;
@@ -211,8 +201,7 @@ namespace Bu
 		}
 
 		FBasicString( const MyType &rSrc ) :
-			SharedCore<Core>( rSrc ),
-			Archival()
+			SharedCore<Core>( rSrc )
 		{
 		}
 
@@ -1284,13 +1273,6 @@ namespace Bu
 			return (*this);
 		}
 
-		MyType &operator=( const std::basic_string<chr> &rData )
-		{
-			set( rData.c_str(), rData.size() );
-
-			return (*this);
-		}
-
 		MyType operator+( const MyType &rRight ) const
 		{
 			MyType ret( *this );
@@ -1505,8 +1487,8 @@ namespace Bu
 			flatten();
 			pData.flatten();
 
-			const chr *a = pData.core->pFirst->pData;
-			chr *b = core->pFirst->pData;
+			const chr *a = core->pFirst->pData;
+			chr *b = pData.core->pFirst->pData;
 			for( long j = 0; j < core->nLength; j++, a++, b++ )
 			{
 				if( *a != *b )
@@ -1521,8 +1503,8 @@ namespace Bu
 			flatten();
 			pData.flatten();
 
-			const chr *a = pData.core->pFirst->pData;
-			chr *b = core->pFirst->pData;
+			const chr *a = core->pFirst->pData;
+			chr *b = pData.core->pFirst->pData;
 			for( long j = 0; j < core->nLength; j++, a++, b++ )
 			{
 				if( *a != *b )
@@ -1902,51 +1884,6 @@ namespace Bu
 			va_end( ap );
 		}
 
-		/**
-		 * Function the archiver calls to archive your FString.
-		 *@param ar (Archive) The archive which is archiving your FString.
-		 */
-		void archive( class Archive &ar )
-		{
-			if( ar.isLoading() )
-			{
-				_hardCopy();
-				core->clear();
-				long nLen;
-				ar >> nLen;
-
-				if( nLen > 0 )
-				{
-					Chunk *pNew = core->newChunk( nLen );
-					ar.read( pNew->pData, nLen*sizeof(chr) );
-					core->appendChunk( pNew );
-				}
-			}
-			else
-			{
-				flatten();
-				
-				ar << core->nLength;
-				if( core->nLength )
-					ar.write( core->pFirst->pData, core->nLength*sizeof(chr) );
-			}
-		}
-		/*
-		void archive( class Archive &ar ) const
-		{
-			if( ar.isLoading() )
-			{
-			}
-			else
-			{
-				flatten();
-				
-				ar << core->nLength;
-				if( core->nLength )
-					ar.write( core->pFirst->pData, core->nLength*sizeof(chr) );
-			}
-		}*/
-
 		iterator begin()
 		{
 			if( core->nLength == 0 )
@@ -2016,10 +1953,27 @@ namespace Bu
 		ret.append( rRight );
 		return ret;
 	}
+
+	template<class chr, int b, class c, class d>
+	ArchiveBase &operator<<( ArchiveBase &ar, const FBasicString<chr, b, c, d> &s )
+	{
+		long n = s.getSize();
+		ar << n;
+		ar.write( s.getConstStr(), n );
+		return ar;
+	}
+
+	template<class chr, int b, class c, class d>
+	ArchiveBase &operator>>( ArchiveBase &ar, FBasicString<chr, b, c, d> &s )
+	{
+		long n;
+		ar >> n;
+		s.setSize( n );
+		ar.read( s.getStr(), n );
+		return ar;
+	}
 }
 
-#ifndef VALTEST
 #undef cpy
-#endif
 
 #endif

@@ -9,6 +9,7 @@
 #include "bu/socket.h"
 #include "bu/serversocket.h"
 #include <stdio.h>
+#include <unistd.h>
 
 class TstServer : public Bu::Ito
 {

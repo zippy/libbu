@@ -7,14 +7,18 @@
  */
 
 #include "bu/membuf.h"
+#include "bu/array.h"
+#include "bu/archive.h"
+
+using namespace Bu;
 
 {=Init}
 
 {%testPrimitives}
 {
-	Bu::MemBuf mb;
+	MemBuf mb;
 	{
-		Bu::Archive ar( mb, Bu::Archive::save );
+		Archive ar( mb, Archive::save );
 		ar << (int8_t)1;
 		ar << (uint8_t)2;
 		ar << (int16_t)3;
@@ -37,7 +41,7 @@
 	}
 	mb.setPos( 0 );
 	{
-		Bu::Archive ar( mb, Bu::Archive::load );
+		Archive ar( mb, Archive::load );
 		int8_t p1;
 		uint8_t p2;
 		int16_t p3;
@@ -96,13 +100,13 @@
 	}
 }
 
-{%testContainers}
+{%testContainers1}
 {
-	Bu::MemBuf mb;
+	MemBuf mb;
 	{
-		Bu::Archive ar( mb, Bu::Archive::save );
-		Bu::FString sStr("This is a test string.");
-		Bu::List<int> lList;
+		Archive ar( mb, Archive::save );
+		FString sStr("This is a test string.");
+		List<int> lList;
 		lList.append( 10 );
 		lList.append( 20 );
 		lList.append( 30 );
@@ -113,18 +117,79 @@
 	}
 	mb.setPos( 0 );
 	{
-		Bu::Archive ar( mb, Bu::Archive::load );
-		Bu::FString sStr;
-		Bu::List<int> lList;
+		Archive ar( mb, Archive::load );
+		FString sStr;
+		List<int> lList;
 		ar >> sStr;
 		ar >> lList;
 		unitTest( sStr == "This is a test string." );
 		unitTest( lList.getSize() == 4 );
-		Bu::List<int>::iterator i = lList.begin();
+		List<int>::iterator i = lList.begin();
 		unitTest( *i == 10 ); i++;
 		unitTest( *i == 20 ); i++;
 		unitTest( *i == 30 ); i++;
 		unitTest( *i == 40 );
+		ar.close();
+	}
+}
+
+{%testContainers2}
+{
+	MemBuf mb;
+	{
+		Archive ar( mb, Archive::save );
+		FString sStr("This is a test string.");
+		Array<int> lArray;
+		lArray.append( 10 );
+		lArray.append( 20 );
+		lArray.append( 30 );
+		lArray.append( 40 );
+		ar << sStr;
+		ar << lArray;
+		ar.close();
+	}
+	mb.setPos( 0 );
+	{
+		Archive ar( mb, Archive::load );
+		FString sStr;
+		Array<int> lArray;
+		ar >> sStr;
+		ar >> lArray;
+		unitTest( sStr == "This is a test string." );
+		unitTest( lArray.getSize() == 4 );
+		Array<int>::iterator i = lArray.begin();
+		unitTest( *i == 10 ); i++;
+		unitTest( *i == 20 ); i++;
+		unitTest( *i == 30 ); i++;
+		unitTest( *i == 40 );
+		ar.close();
+	}
+}
+
+{%testContainers3}
+{
+	MemBuf mb;
+	{
+		Archive ar( mb, Archive::save );
+		Array<FString> lArray;
+		lArray.append( "10" );
+		lArray.append( "20" );
+		lArray.append( "30" );
+		lArray.append( "40" );
+		ar << lArray;
+		ar.close();
+	}
+	mb.setPos( 0 );
+	{
+		Archive ar( mb, Archive::load );
+		Array<FString> lArray;
+		ar >> lArray;
+		unitTest( lArray.getSize() == 4 );
+		Array<FString>::iterator i = lArray.begin();
+		unitTest( *i == "10" ); i++;
+		unitTest( *i == "20" ); i++;
+		unitTest( *i == "30" ); i++;
+		unitTest( *i == "40" );
 		ar.close();
 	}
 }

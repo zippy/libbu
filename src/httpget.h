@@ -12,6 +12,7 @@
 #include "bu/fstring.h"
 #include "bu/url.h"
 #include "bu/socket.h"
+#include "bu/hash.h"
 
 namespace Bu
 {

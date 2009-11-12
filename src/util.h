@@ -9,17 +9,19 @@
 #define BU_UTIL_H
 
 #ifndef NULL
-#define NULL 0
+# define NULL 0
 #endif
 
 /* I borrowed this from someone who borrowed it from glib who borrowed it
  * from...
  */
 #if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
-#define DEPRECATED  __attribute__((__deprecated__))
+# define DEPRECATED  __attribute__((__deprecated__))
 #else
-#define DEPRECATED
+# define DEPRECATED
 #endif /* __GNUC__ */
+
+#include <string.h>
 
 namespace Bu
 {
@@ -173,6 +175,8 @@ namespace Bu
 	 * leap years into account.
 	 */
 	int getDaysInMonth( int iMonth, int iYear );
+
+	void memcpy( void *pDest, const void *pSrc, size_t iBytes );
 };
 
 #endif

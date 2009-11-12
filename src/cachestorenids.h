@@ -15,6 +15,7 @@
 #include "bu/cachestore.h"
 
 #include "bu/file.h"
+#include "bu/archive.h"
 
 namespace Bu
 {

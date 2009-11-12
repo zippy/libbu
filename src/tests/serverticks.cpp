@@ -8,6 +8,7 @@
 #include "bu/server.h"
 #include "bu/client.h"
 #include "bu/protocol.h"
+#include <unistd.h>
 
 class TickProtocol : public Bu::Protocol
 {

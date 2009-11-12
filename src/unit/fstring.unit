@@ -312,3 +312,24 @@
 	bob = "";
 	unitTest( bob.isSet() == false );
 }
+
+{%swap1}
+{
+	Bu::FString a, b;
+	a = "Goodbye";
+	b = "Hello";
+	Bu::swap( a, b );
+	unitTest( a == "Hello" );
+	unitTest( b == "Goodbye" );
+}
+
+{%swap2}
+{
+	Bu::FString a, b;
+	a = "Goodbye";
+	b = "Hello";
+	std::swap( a, b );
+	unitTest( a == "Hello" );
+	unitTest( b == "Goodbye" );
+}
+

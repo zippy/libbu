@@ -16,7 +16,7 @@
 
 {%writeFull}
 {
-	Bu::File sf("testfile1", Bu::File::Write );
+	Bu::File sf("testfile1", Bu::File::WriteNew );
 	for( int c = 0; c < 256; c++ )
 	{
 		unsigned char ch = (unsigned char)c;

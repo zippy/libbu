@@ -14,6 +14,7 @@
 #include "bu/protocol.h"
 #include "bu/client.h"
 #include "bu/fstring.h"
+#include "bu/hash.h"
 
 namespace Bu
 {

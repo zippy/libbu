@@ -7,6 +7,7 @@
 
 #include "bu/server.h"
 #include <errno.h>
+#include <unistd.h>
 #include "bu/serversocket.h"
 #include "bu/client.h"
 #include "bu/socket.h"

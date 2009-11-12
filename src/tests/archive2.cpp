@@ -23,7 +23,7 @@ public:
 	{
 	}
 
-	virtual void archive( Bu::Archive &ar )
+	virtual void archive( Bu::ArchiveBase &ar )
 	{
 		ar && iId;
 	}
@@ -47,7 +47,7 @@ public:
 		delete a2;
 	}
 
-	virtual void archive( Bu::Archive &ar )
+	virtual void archive( Bu::ArchiveBase &ar )
 	{
 		//ar && iId && a1 && a2;
 		ar << iId << a1 << a2;
@@ -73,7 +73,7 @@ public:
 		delete b;
 	}
 
-	virtual void archive( Bu::Archive &ar )
+	virtual void archive( Bu::ArchiveBase &ar )
 	{
 		//ar && iId && a && b;
 		ar << iId;

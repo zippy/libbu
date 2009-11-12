@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include "bu/cache.h"
 #include "bu/file.h"

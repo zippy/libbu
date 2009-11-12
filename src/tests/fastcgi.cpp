@@ -7,6 +7,8 @@
 
 #include "bu/fastcgi.h"
 
+#include <unistd.h>
+
 class Cgi : public Bu::FastCgi
 {
 public:

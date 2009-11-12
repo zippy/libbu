@@ -9,11 +9,8 @@
 #define BU_ARCHIVE_H
 
 #include <stdint.h>
-#include <string>
-#include <list>
+#include "bu/archivebase.h"
 #include "bu/hash.h"
-#include "bu/list.h"
-//#include "bu/set.h"
 #include "bu/util.h"
 
 namespace Bu
@@ -68,7 +65,7 @@ namespace Bu
 	 * One way of dealing with the latter problem is to make sure and use
 	 * explicit primitive types from the stdint.h header, i.e. int32_t.
 	 */
-	class Archive
+	class Archive : public ArchiveBase
 	{
 	private:
 		bool bLoading;
@@ -88,81 +85,6 @@ namespace Bu
 		virtual void write(const void *, int32_t);
 		virtual void read(void *, int32_t);
 		
-		virtual Archive &operator<<(bool p);
-		virtual Archive &operator<<(char p);
-		virtual Archive &operator<<(signed char p);
-		virtual Archive &operator<<(unsigned char p);
-		virtual Archive &operator<<(signed short p);
-		virtual Archive &operator<<(unsigned short p);
-		virtual Archive &operator<<(signed int p);
-		virtual Archive &operator<<(unsigned int p);
-		virtual Archive &operator<<(signed long p);
-		virtual Archive &operator<<(unsigned long p);
-		virtual Archive &operator<<(signed long long p);
-		virtual Archive &operator<<(unsigned long long p);
-		virtual Archive &operator<<(float p);
-		virtual Archive &operator<<(double p);
-		virtual Archive &operator<<(long double p);
-		
-		virtual Archive &operator>>(bool &p);
-		virtual Archive &operator>>(char &p);
-		virtual Archive &operator>>(signed char &p);
-		virtual Archive &operator>>(unsigned char &p);
-		virtual Archive &operator>>(signed short &p);
-		virtual Archive &operator>>(unsigned short &p);
-		virtual Archive &operator>>(signed int &p);
-		virtual Archive &operator>>(unsigned int &p);
-		virtual Archive &operator>>(signed long &p);
-		virtual Archive &operator>>(unsigned long &p);
-		virtual Archive &operator>>(signed long long &p);
-		virtual Archive &operator>>(unsigned long long &p);
-		virtual Archive &operator>>(float &p);
-		virtual Archive &operator>>(double &p);
-		virtual Archive &operator>>(long double &p);
-
-		/*
-		virtual Archive &operator<<(bool);
-		virtual Archive &operator<<(int8_t);
-		virtual Archive &operator<<(int16_t);
-		virtual Archive &operator<<(int32_t);
-		virtual Archive &operator<<(int64_t);
-		virtual Archive &operator<<(uint8_t);
-		virtual Archive &operator<<(uint16_t);
-		virtual Archive &operator<<(uint32_t);
-		virtual Archive &operator<<(uint64_t);
-//		virtual Archive &operator<<(long);
-		virtual Archive &operator<<(float);
-		virtual Archive &operator<<(double);
-		virtual Archive &operator<<(long double);
-
-		virtual Archive &operator>>(bool &);
-		virtual Archive &operator>>(int8_t &);
-		virtual Archive &operator>>(int16_t &);
-		virtual Archive &operator>>(int32_t &);
-		virtual Archive &operator>>(int64_t &);
-		virtual Archive &operator>>(uint8_t &);
-		virtual Archive &operator>>(uint16_t &);
-		virtual Archive &operator>>(uint32_t &);
-		virtual Archive &operator>>(uint64_t &);
-//		virtual Archive &operator>>(long &);
-		virtual Archive &operator>>(float &);
-		virtual Archive &operator>>(double &);
-		virtual Archive &operator>>(long double &);
-		
-		virtual Archive &operator&&(bool &);
-		virtual Archive &operator&&(int8_t &);
-		virtual Archive &operator&&(int16_t &);
-		virtual Archive &operator&&(int32_t &);
-		virtual Archive &operator&&(int64_t &);
-		virtual Archive &operator&&(uint8_t &);
-		virtual Archive &operator&&(uint16_t &);
-		virtual Archive &operator&&(uint32_t &);
-		virtual Archive &operator&&(uint64_t &);
-		virtual Archive &operator&&(float &);
-		virtual Archive &operator&&(double &);
-		virtual Archive &operator&&(long double &);
-		*/
-
 		/**
 		 * For storage, get an ID for the pointer to the object you're going to
 		 * write.
@@ -193,176 +115,6 @@ namespace Bu
 		Hash<uint32_t,uint32_t> hPtrID;
 		Hash<uint32_t,List<void **> > hPtrDest;
 	};
-
-	Archive &operator<<(Archive &, class Bu::Archival &);
-	Archive &operator>>(Archive &, class Bu::Archival &);
-	//Archive &operator&&(Archive &s, class Bu::Archival &p);
-	
-	Archive &operator<<(Archive &, std::string &);
-	Archive &operator>>(Archive &, std::string &);
-	//Archive &operator&&(Archive &, std::string &);
-	
-	template<typename T> Archive &operator&&( Archive &ar, T &dat )
-	{
-		if( ar.isLoading() )
-		{
-			return ar >> dat;
-		}
-		else
-		{
-			return ar << dat;
-		}
-	}
-
-	template<typename T> Archive &operator<<( Archive &ar, std::list<T> &l )
-	{
-		typename std::list<T>::size_type num = l.getSize();
-		ar << num;
-		for( typename std::list<T>::const_iterator i = l.begin(); i != l.end();
-			 i++ )
-		{
-			ar << *i;
-		}
-
-		return ar;
-	}
-
-	template<typename T> Archive &operator>>( Archive &ar, std::list<T> &l )
-	{
-		typename std::list<T>::size_type num;
-		ar >> num;
-
-		l.resize( num );
-		for( typename std::list<T>::const_iterator i = l.begin();
-			 i != l.end(); i++ )
-		{
-			ar >> *i;
-		}
-
-		return ar;
-	}
-	
-	Archive &operator<<(Archive &, class Bu::Archival *p);
-	Archive &operator>>(Archive &, class Bu::Archival *p);
-
-	template<typename key, typename value>
-	Archive &operator<<( Archive &ar, Hash<key,value> &h )
-	{
-		ar << h.getSize();
-		for( typename Hash<key,value>::iterator i = h.begin(); i != h.end(); i++ )
-		{
-			//std::pair<key,value> p = *i;
-			ar << (i.getKey()) << (i.getValue());
-		}
-
-		return ar;
-	}
-
-	template<typename key, typename value>
-	Archive &operator>>( Archive &ar, Hash<key,value> &h )
-	{
-		h.clear();
-		long nSize;
-		ar >> nSize;
-
-		for( long j = 0; j < nSize; j++ )
-		{
-			key k; value v;
-			ar >> k >> v;
-			h.insert( k, v );
-		}
-
-		return ar;
-	}
-
-	template<typename value>
-	Archive &operator<<( Archive &ar, List<value> &h )
-	{
-		ar << h.getSize();
-		for( typename List<value>::iterator i = h.begin(); i != h.end(); i++ )
-		{
-			ar << (*i);
-		}
-
-		return ar;
-	}
-
-	template<typename value>
-	Archive &operator>>( Archive &ar, List<value> &h )
-	{
-		h.clear();
-		long nSize;
-		ar >> nSize;
-
-		for( long j = 0; j < nSize; j++ )
-		{
-			value v;
-			ar >> v;
-			h.append( v );
-		}
-
-		return ar;
-	}
-
-	template<typename value, int inc, typename valuealloc> class Array;
-	template<typename value, int inc, typename valuealloc>
-	Archive &operator<<( Archive &ar, Array<value, inc, valuealloc> &h )
-	{
-		ar << h.getSize();
-		for( typename Array<value, inc, valuealloc>::iterator i = h.begin(); i != h.end(); i++ )
-		{
-			ar << (*i);
-		}
-
-		return ar;
-	}
-
-	template<typename value, int inc, typename valuealloc>
-	Archive &operator>>(Archive &ar, Array<value, inc, valuealloc> &h )
-	{
-		h.clear();
-		long nSize;
-		ar >> nSize;
-		
-		h.setCapacity( nSize );
-		for( long j = 0; j < nSize; j++ )
-		{
-			value v;
-			ar >> v;
-			h.append( v );
-		}
-		return ar;
-	}
-
-	template<typename key, typename b, typename c, typename d> class Set;
-	template<typename key, typename b, typename c, typename d>
-	Archive &operator<<( Archive &ar, Set<key, b, c, d> &h )
-	{
-		ar << h.getSize();
-		for( typename Set<key, b, c, d>::iterator i = h.begin(); i != h.end(); i++ )
-		{
-			ar << (*i);
-		}
-
-		return ar;
-	}
-
-	template<typename key, typename b, typename c, typename d>
-	Archive &operator>>( Archive &ar, Set<key, b, c, d> &h )
-	{
-		h.clear();
-		long nSize;
-		ar >> nSize;
-
-		for( long j = 0; j < nSize; j++ )
-		{
-			key v;
-			ar >> v;
-			h.insert( v );
-		}
-
-		return ar;
-	}
 }
 
 #endif

@@ -8,6 +8,8 @@
 #ifndef BU_ARCHIVAL_H
 #define BU_ARCHIVAL_H
 
+#include "bu/archivebase.h"
+
 namespace Bu
 {
 	/**
@@ -38,8 +40,13 @@ namespace Bu
 		 * you are loading or saving.
 		 * @param ar A reference to the Archive object to use.
 		 */
-		virtual void archive( class Archive &ar )=0;
+		virtual void archive( class ArchiveBase &ar )=0;
 	};
+
+	ArchiveBase &operator<<(ArchiveBase &, const class Bu::Archival &);
+	ArchiveBase &operator<<(ArchiveBase &, class Bu::Archival &);
+	ArchiveBase &operator>>(ArchiveBase &, class Bu::Archival &);
+
 }
 
 #endif

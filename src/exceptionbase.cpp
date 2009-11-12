@@ -8,6 +8,7 @@
 #include "exceptionbase.h"
 #include <stdarg.h>
 #include <string.h>
+#include <stdio.h>
 
 Bu::ExceptionBase::ExceptionBase( const char *lpFormat, ... ) throw() :
 	nErrorCode( 0 ),

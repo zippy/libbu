@@ -8,7 +8,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "bu/formatter.h"
 #include "bu/heap.h"
+#include "bu/fstring.h"
+#include "bu/file.h"
 
 typedef struct num
 {
@@ -35,8 +38,18 @@ typedef struct num
 	}
 } num;
 
+void printHeap( Bu::Heap<Bu::FString> &h, int j )
+{
+	Bu::FString sFName;
+	sFName.format("graph-step-%02d.dot", j );
+	Bu::File fOut( sFName, Bu::File::WriteNew );
+	Bu::Formatter f( Bu::File );
+	//h.print( f );
+}
+
 int main()
 {
+	/*
 	Bu::Heap<num> hNum;
 
 	for( int j = 0; j < 30; j++ )
@@ -51,6 +64,46 @@ int main()
 	{
 		printf("(%d:%d) ", hNum.peek().iOrder, hNum.peek().iNum );
 		hNum.dequeue();
+	}
+	printf("\n");
+*/
+	Bu::Heap<Bu::FString> hStr;
+	int j = 0;
+
+	hStr.enqueue("George");
+	printHeap( hStr, j++ );
+	hStr.enqueue("Sam");
+	printHeap( hStr, j++ );
+	hStr.enqueue("Abby");
+	printHeap( hStr, j++ );
+	hStr.enqueue("Zorro");
+	printHeap( hStr, j++ );
+	hStr.enqueue("Brianna");
+	printHeap( hStr, j++ );
+	hStr.enqueue("Kate");
+	printHeap( hStr, j++ );
+	hStr.enqueue("Soggy");
+	printHeap( hStr, j++ );
+
+	while( !hStr.isEmpty() )
+	{
+		printf("\"%s\" ", hStr.dequeue().getStr() );
+		printHeap( hStr, j++ );
+	}
+	printf("\n");
+
+	Bu::List<Bu::FString> lStr;
+
+	lStr.insertSorted("George");
+	lStr.insertSorted("Sam");
+	lStr.insertSorted("Abby");
+	lStr.insertSorted("Zorro");
+	lStr.insertSorted("Brianna");
+	lStr.insertSorted("Kate");
+	lStr.insertSorted("Soggy");
+	for( Bu::List<Bu::FString>::iterator i = lStr.begin(); i; i++ )
+	{
+		printf("\"%s\" ", (*i).getStr() );
 	}
 	printf("\n");
 

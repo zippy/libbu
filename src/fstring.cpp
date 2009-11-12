@@ -33,12 +33,6 @@ template<> bool Bu::__cmpHashKeys<Bu::FString>(
 	return a == b;
 }
 
-std::basic_ostream<char>& operator<< (std::basic_ostream<char> &os, const Bu::FString &val )
-{
-	os.write( val.getStr(), val.getSize() );
-	return os;
-}
-
 template<> void Bu::__tracer_format<Bu::FString>( const Bu::FString &v )
 {
 	printf("(%ld)\"%s\"", v.getSize(), v.getStr() );

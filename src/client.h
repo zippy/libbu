@@ -15,6 +15,7 @@
 namespace Bu
 {
 	class Protocol;
+	class Stream;
 	class Socket;
 	class ClientLinkFactory;
 

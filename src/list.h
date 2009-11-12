@@ -11,7 +11,8 @@
 #include <memory>
 #include "bu/exceptionbase.h"
 #include "bu/sharedcore.h"
-//#include "bu/util.h"
+#include "bu/archivebase.h"
+#include "bu/heap.h"
 
 namespace Bu
 {
@@ -23,7 +24,7 @@ namespace Bu
 		ListLink *pPrev;
 	};
 
-	template<typename value, typename cmpfunc, typename valuealloc,
+	template<typename value, typename valuealloc,
 		typename linkalloc>
 	struct ListCore
 	{
@@ -42,7 +43,6 @@ namespace Bu
 		Link *pFirst;
 		Link *pLast;
 		long nSize;
-		cmpfunc cmp;
 		linkalloc la;
 		valuealloc va;
 		
@@ -189,16 +189,15 @@ namespace Bu
 	 *@param linkalloc (typename) Memory Allocator for the list links.
 	 *@ingroup Containers
 	 */
-	template<typename value, typename cmpfunc=__basicGTCmp<value>,
-		typename valuealloc=std::allocator<value>,
+	template<typename value, typename valuealloc=std::allocator<value>,
 		typename linkalloc=std::allocator<struct ListLink<value> > >
-	class List : public SharedCore< struct ListCore<value, cmpfunc, valuealloc,
+	class List : public SharedCore< struct ListCore<value, valuealloc,
 		linkalloc> >
 	{
 	private:
 		typedef struct ListLink<value> Link;
-		typedef class List<value, cmpfunc, valuealloc, linkalloc> MyType;
-		typedef struct ListCore<value, cmpfunc, valuealloc, linkalloc> Core;
+		typedef class List<value, valuealloc, linkalloc> MyType;
+		typedef struct ListCore<value, valuealloc, linkalloc> Core;
 
 	protected:
 		using SharedCore< Core >::core;
@@ -239,6 +238,26 @@ namespace Bu
 			_hardCopy();
 			append( src );
 			return *this;
+		}
+
+		bool operator==( const MyType &rhs )
+		{
+			if( getSize() != rhs.getSize() )
+				return false;
+
+			for( typename MyType::const_iterator a = begin(), b = rhs.begin();
+				 a; a++, b++ )
+			{
+				if( *a != *b )
+					return false;
+			}
+
+			return true;
+		}
+
+		bool operator!=( const MyType &rhs )
+		{
+			return !(*this == rhs);
 		}
 
 		/**
@@ -350,6 +369,41 @@ namespace Bu
 			return *this;
 		}
 
+		template<typename cmptype>
+		void sort( cmptype cmp )
+		{
+			Heap<value, cmptype, valuealloc> hSort( cmp, getSize() );
+			for( typename MyType::iterator i = begin(); i; i++ )
+			{
+				hSort.enqueue( *i );
+			}
+			clear();
+			while( !hSort.isEmpty() )
+			{
+				append( hSort.dequeue() );
+			}
+		}
+
+		void sort()
+		{
+			sort<__basicLTCmp<value> >();
+		}
+
+		template<typename cmptype>
+		void sort()
+		{
+			Heap<value, cmptype, valuealloc> hSort( getSize() );
+			for( typename MyType::iterator i = begin(); i; i++ )
+			{
+				hSort.enqueue( *i );
+			}
+			clear();
+			while( !hSort.isEmpty() )
+			{
+				append( hSort.dequeue() );
+			}
+		}
+
 		/**
 		 * Insert a new item in sort order by searching for the first item that
 		 * is larger and inserting this before it, or at the end if none are
@@ -357,7 +411,8 @@ namespace Bu
 		 * List all items will be sorted.  To use this, the value type must
 		 * support the > operator.
 		 */
-		MyType &insertSorted( const value &v )
+		template<typename cmptype>
+		MyType &insertSorted( cmptype cmp, const value &v )
 		{
 			_hardCopy();
 			if( core->pFirst == NULL )
@@ -371,7 +426,7 @@ namespace Bu
 				Link *pCur = core->pFirst;
 				for(;;)
 				{
-					if( !core->cmp( v, *(pCur->pValue)) )
+					if( cmp( v, *(pCur->pValue)) )
 					{
 						core->insert( pCur, v );
 						return *this;
@@ -385,6 +440,18 @@ namespace Bu
 				}
 			}
 		}
+		
+		MyType &insertSorted( const value &v )
+		{
+			return insertSorted<__basicLTCmp<value> >( v );
+		}
+
+		template<typename cmptype>
+		MyType &insertSorted( const value &v )
+		{
+			cmptype cmp;
+			return insertSorted( cmp, v );
+		}
 
 		/**
 		 * An iterator to iterate through your list.
@@ -392,7 +459,7 @@ namespace Bu
 		typedef struct iterator
 		{
 			friend struct const_iterator;
-			friend class List<value, cmpfunc, valuealloc, linkalloc>;
+			friend class List<value, valuealloc, linkalloc>;
 		private:
 			Link *pLink;
 
@@ -559,7 +626,7 @@ namespace Bu
 		 */
 		typedef struct const_iterator
 		{
-			friend class List<value, cmpfunc, valuealloc, linkalloc>;
+			friend class List<value, valuealloc, linkalloc>;
 		private:
 			Link *pLink;
 
@@ -844,11 +911,11 @@ namespace Bu
 	class Formatter;
 	Formatter &operator<<( Formatter &rOut, char *sStr );
 	Formatter &operator<<( Formatter &rOut, signed char c );
-	template<typename a, typename b, typename c, typename d>
-	Formatter &operator<<( Formatter &f, const Bu::List<a,b,c,d> &l )
+	template<typename a, typename b, typename c>
+	Formatter &operator<<( Formatter &f, const Bu::List<a,b,c> &l )
 	{
 		f << '[';
-		for( typename Bu::List<a,b,c,d>::const_iterator i = l.begin(); i; i++ )
+		for( typename Bu::List<a,b,c>::const_iterator i = l.begin(); i; i++ )
 		{
 			if( i != l.begin() )
 				f << ", ";
@@ -858,6 +925,36 @@ namespace Bu
 
 		return f;
 	}
+
+	template<typename value, typename a, typename b>
+	ArchiveBase &operator<<( ArchiveBase &ar, const List<value,a,b> &h )
+	{
+		ar << h.getSize();
+		for( typename List<value>::const_iterator i = h.begin(); i != h.end(); i++ )
+		{
+			ar << (*i);
+		}
+
+		return ar;
+	}
+
+	template<typename value, typename a, typename b>
+	ArchiveBase &operator>>( ArchiveBase &ar, List<value,a,b> &h )
+	{
+		h.clear();
+		long nSize;
+		ar >> nSize;
+
+		for( long j = 0; j < nSize; j++ )
+		{
+			value v;
+			ar >> v;
+			h.append( v );
+		}
+
+		return ar;
+	}
+
 }
 
 #endif
