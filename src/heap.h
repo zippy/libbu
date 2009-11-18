@@ -12,14 +12,14 @@
 #include <memory>
 #include "bu/exceptionbase.h"
 #include "bu/util.h"
-// #include "bu/formatter.h"
+#include "bu/queue.h"
 
 namespace Bu
 {
 	subExceptionDecl( HeapException );
 
 	template<typename item, typename cmpfunc=__basicLTCmp<item>, typename itemalloc=std::allocator<item> >
-	class Heap
+	class Heap : public Queue<item>
 	{
 	public:
 		Heap() :
@@ -64,8 +64,10 @@ namespace Bu
 			aItem = NULL;
 		}
 
-		void enqueue( item i )
+		virtual void enqueue( const item &it )
 		{
+			item i = it; // TODO: This is a silly workaround, put the i item
+						 // at the end.
 			if( iFill+1 >= iSize )
 				upSize();
 
@@ -103,14 +105,21 @@ namespace Bu
 			iFill++;
 		}
 
-		item &peek()
+		virtual item &peek()
 		{
 			if( iFill == 0 )
 				throw HeapException("Heap empty.");
 			return aItem[0];
 		}
 
-		item dequeue()
+		virtual const item &peek() const
+		{
+			if( iFill == 0 )
+				throw HeapException("Heap empty.");
+			return aItem[0];
+		}
+
+		virtual item dequeue()
 		{
 			if( iFill == 0 )
 				throw HeapException("Heap empty.");
@@ -121,11 +130,15 @@ namespace Bu
 				int k = j*2+1;
 				if( k+1 < iFill && cmp( aItem[k+1], aItem[k] ) )
 				{
+					if( k+1 < iFill-1 && cmp( aItem[iFill-1], aItem[k+1] ) )
+						break;
 					aItem[j] = aItem[k+1];
 					j = k+1;
 				}
 				else if( k < iFill )
 				{
+					if( k < iFill-1 && cmp( aItem[iFill-1], aItem[k] ) )
+						break;
 					aItem[j] = aItem[k];
 					j = k;
 				}
@@ -140,31 +153,32 @@ namespace Bu
 			return iRet;
 		}
 
-		bool isEmpty()
+		virtual bool isEmpty() const
 		{
 			return (iFill==0);
 		}
 
-		int getSize()
+		virtual int getSize() const
 		{
 			return iFill;
 		}
-/*
-		void print( Formatter &f )
+
+		/*
+		void print( class Formatter &f )
 		{
-			f << "graph G {" << f.nl;
+			f << "graph G {" << "\n";
 			for( int j = 0; j < iFill; j++ )
 			{
 				if( j*2+1 < iFill )
-					f << "    " << j << " -- " << j*2+1 << ";" << f.nl;
+					f << "    " << j << " -- " << j*2+1 << ";" << "\n";
 				if( j*2+2 < iFill )
-					f << "    " << j << " -- " << j*2+2 << ";" << f.nl;
+					f << "    " << j << " -- " << j*2+2 << ";" << "\n";
 			}
 			for( int j = 0; j < iFill; j++ )
 			{
-				f << "    " << j << " [label=\"" << aItem[j] << "\"];" << f.nl;
+				f << "    " << j << " [label=\"" << aItem[j] << "\"];" << "\n";
 			}
-			f << "}" << f.nl;
+			f << "}" << "\n";
 		} */
 
 	private:

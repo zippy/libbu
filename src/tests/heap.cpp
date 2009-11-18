@@ -38,13 +38,14 @@ typedef struct num
 	}
 } num;
 
-void printHeap( Bu::Heap<Bu::FString> &h, int j )
+void printHeap( Bu::Heap<Bu::FString> &/*h*/, int j )
 {
+	return;
 	Bu::FString sFName;
 	sFName.format("graph-step-%02d.dot", j );
 	Bu::File fOut( sFName, Bu::File::WriteNew );
-	Bu::Formatter f( Bu::File );
-	//h.print( f );
+	Bu::Formatter f( fOut );
+//	h.print( f );
 }
 
 int main()

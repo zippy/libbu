@@ -6,6 +6,18 @@ using namespace Bu;
 
 int main()
 {
+	/*
+	List<int> il;
+	il.append( 5 );
+	il.append( 12 );
+	il.append( 0 );
+	il.append( 7 );
+	il.append( 3 );
+	il.append( 5 );
+	Bu::__basicLTCmp<int> cmp;
+	il.sortI( cmp );
+	*/
+
 	FString a("Soggy"), b("Sam");
 
 	if( a < b )
