@@ -333,3 +333,10 @@
 	unitTest( b == "Goodbye" );
 }
 
+{%replace1}
+{
+	Bu::FString a;
+	a = "This is a test.";
+	unitTest( a.replace("i", "ooo") == "Thooos ooos a test." );
+}
+

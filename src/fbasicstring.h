@@ -1035,6 +1035,28 @@ namespace Bu
 			core->clear();
 		}
 
+		MyType replace( const MyType &fnd, const MyType &rep ) const
+		{
+			MyType out;
+			const_iterator o = begin();
+			while( true )
+			{
+				const_iterator i = o.find( fnd );
+				if( !i )
+				{
+					out.append( o );
+					return out;
+				}
+				else
+				{
+					out.append( o, i );
+					out.append( rep );
+					o = i;
+					o += fnd.getSize();
+				}
+			}
+		}
+
 		/**
 		 * Force the string to resize
 		 *@param nNewSize (long) The new size of the string.
