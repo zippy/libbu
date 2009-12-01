@@ -241,10 +241,9 @@ namespace Bu
 	Formatter &operator<<( Formatter &rOut, bool b );
 
 	template<typename type>
-	Formatter &operator<<( Formatter &rOut, const type *p )
+	Formatter &operator<<( Formatter &rOut, type * const &p )
 	{
-		rOut << (ptrdiff_t)(p);
-		return rOut;
+		return rOut << "0x" << Fmt::hex(sizeof(ptrdiff_t)*2) << (ptrdiff_t)(p);
 	}
 };
 
