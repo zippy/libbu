@@ -95,6 +95,8 @@ namespace Bu
 				for( int j = iFill; j >= 0; )
 				{
 					int k = (j-1)/2;
+					if( j == k )
+						break;
 					if( cmp( aItem[k], aItem[j] ) )
 						break;
 

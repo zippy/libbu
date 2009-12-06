@@ -240,7 +240,7 @@ namespace Bu
 			return *this;
 		}
 
-		bool operator==( const MyType &rhs )
+		bool operator==( const MyType &rhs ) const
 		{
 			if( getSize() != rhs.getSize() )
 				return false;
@@ -255,7 +255,7 @@ namespace Bu
 			return true;
 		}
 
-		bool operator!=( const MyType &rhs )
+		bool operator!=( const MyType &rhs ) const
 		{
 			return !(*this == rhs);
 		}

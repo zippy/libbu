@@ -73,6 +73,8 @@ int main()
 
 	hStr.enqueue("George");
 	printHeap( hStr, j++ );
+	hStr.enqueue("George");
+	printHeap( hStr, j++ );
 	hStr.enqueue("Sam");
 	printHeap( hStr, j++ );
 	hStr.enqueue("Abby");
@@ -95,6 +97,7 @@ int main()
 
 	Bu::List<Bu::FString> lStr;
 
+	lStr.insertSorted("George");
 	lStr.insertSorted("George");
 	lStr.insertSorted("Sam");
 	lStr.insertSorted("Abby");
