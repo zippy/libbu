@@ -94,7 +94,13 @@ void Bu::Process::close()
 
 size_t Bu::Process::read( void *pBuf, size_t nBytes )
 {
-	return TEMP_FAILURE_RETRY( ::read( iStdOut, pBuf, nBytes ) );
+	size_t nRead = TEMP_FAILURE_RETRY( ::read( iStdOut, pBuf, nBytes ) );
+	if( nRead == 0 )
+	{
+		close();
+		return 0;
+	}
+	return nRead;
 	/*
 	size_t iTotal = 0;
 	for(;;)
@@ -162,12 +168,12 @@ void Bu::Process::setPosEnd( long )
 
 bool Bu::Process::isEos()
 {
-	return false;
+	return (iPid == 0);
 }
 
 bool Bu::Process::isOpen()
 {
-	return true;
+	return (iPid != 0);
 }
 
 void Bu::Process::flush()
@@ -210,5 +216,10 @@ void Bu::Process::setBlocking( bool bBlocking )
 		fcntl( iStdOut, F_SETFL, fcntl( iStdOut, F_GETFL, 0 )&(~O_NONBLOCK) );
 	else
 		fcntl( iStdOut, F_SETFL, fcntl( iStdOut, F_GETFL, 0 )|O_NONBLOCK );
+}
+
+pid_t Bu::Process::getPid()
+{
+	return iPid;
 }
 

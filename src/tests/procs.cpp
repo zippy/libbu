@@ -13,7 +13,7 @@ int main()
 {
 	//Bu::Process p( argv[1], argv+1 );
 	    Bu::Process p("mplayer", "mplayer", "dvd://", "-framedrop",
-        "-ao", "null", "-nosound", "-vf", "framestep=I,cropdetect" "-sstep",
+        "-ao", "null", "-nosound", "-vf", "framestep=I,cropdetect", "-sstep",
         "197", NULL );
 
 	char buf[1000];

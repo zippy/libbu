@@ -53,6 +53,13 @@ namespace Bu
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
 
+		/**
+		 * Returns the pid of the child process, or zero if there is no
+		 * currently running child.  Note that a read operation must be
+		 * performed in order to discover that the child has ended.
+		 */
+		pid_t getPid();
+
 	private:
 		int iStdIn;
 		int iStdOut;
