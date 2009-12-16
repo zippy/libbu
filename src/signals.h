@@ -2,9 +2,11 @@
 #define BU_OBJECT_SIGNALS_H
 
 #include "bu/util.h"
+#include "bu/exceptionbase.h"
 
 namespace Bu
 {
+	subExceptionDecl( SignalException );
 	//
 	// 0 Parameters
 	//
@@ -31,6 +33,7 @@ namespace Bu
 
 		virtual ret operator()()
 		{
+
 			return (pCls->*pFnc)();
 		}
 		
@@ -79,7 +82,17 @@ namespace Bu
 
 		ret operator()()
 		{
+			if( !pCb ) throw SignalException("Uninitialized signal used.");
 			return (*pCb)();
+		}
+
+		bool isSet() const { return pCb != NULL; }
+		operator bool() const { return isSet(); }
+		
+		Signal0 &operator=( const Signal0 &rhs )
+		{
+			pCb = rhs.pCb->clone();
+			return *this;
 		}
 
 	private:
@@ -89,6 +102,7 @@ namespace Bu
 	template<typename cls, typename ret>
 	Signal0<ret> slot( cls *pCls, ret (cls::*pFnc)() )
 	{
+		if( !pCls || !pFnc ) throw SignalException("NULL pointer in slot().");
 		return Signal0<ret>(
 			new __Slot0<cls, ret>( pCls, pFnc )
 			);
@@ -97,6 +111,7 @@ namespace Bu
 	template<typename ret>
 	Signal0<ret> slot( ret (*pFnc)() )
 	{
+		if( !pFnc ) throw SignalException("NULL pointer in slot().");
 		return Signal0<ret>(
 			new __Slot0F<ret>( pFnc )
 			);
@@ -176,7 +191,17 @@ namespace Bu
 
 		ret operator()( p1t p1 )
 		{
+			if( !pCb ) throw SignalException("Uninitialized signal used.");
 			return (*pCb)( p1 );
+		}
+
+		bool isSet() const { return pCb != NULL; }
+		operator bool() const { return isSet(); }
+		
+		Signal1 &operator=( const Signal1 &rhs )
+		{
+			pCb = rhs.pCb->clone();
+			return *this;
 		}
 
 	private:
@@ -186,6 +211,7 @@ namespace Bu
 	template<typename cls, typename ret, typename p1t>
 	Signal1<ret, p1t> slot( cls *pCls, ret (cls::*pFnc)( p1t ) )
 	{
+		if( !pCls || !pFnc ) throw SignalException("NULL pointer in slot().");
 		return Signal1<ret, p1t>(
 			new __Slot1<cls, ret, p1t>( pCls, pFnc )
 			);
@@ -194,6 +220,7 @@ namespace Bu
 	template<typename ret, typename p1t>
 	Signal1<ret, p1t> slot( ret (*pFnc)( p1t ) )
 	{
+		if( !pFnc ) throw SignalException("NULL pointer in slot().");
 		return Signal1<ret, p1t>(
 			new __Slot1F<ret, p1t>( pFnc )
 			);
@@ -273,7 +300,17 @@ namespace Bu
 
 		ret operator()( p1t p1, p2t p2 )
 		{
+			if( !pCb ) throw SignalException("Uninitialized signal used.");
 			return (*pCb)( p1, p2 );
+		}
+
+		bool isSet() const { return pCb != NULL; }
+		operator bool() const { return isSet(); }
+		
+		Signal2 &operator=( const Signal2 &rhs )
+		{
+			pCb = rhs.pCb->clone();
+			return *this;
 		}
 
 	private:
@@ -283,6 +320,7 @@ namespace Bu
 	template<typename cls, typename ret, typename p1t, typename p2t>
 	Signal2<ret, p1t, p2t> slot( cls *pCls, ret (cls::*pFnc)( p1t, p2t ) )
 	{
+		if( !pCls || !pFnc ) throw SignalException("NULL pointer in slot().");
 		return Signal2<ret, p1t, p2t>(
 			new __Slot2<cls, ret, p1t, p2t>( pCls, pFnc )
 			);
@@ -291,6 +329,7 @@ namespace Bu
 	template<typename ret, typename p1t, typename p2t>
 	Signal2<ret, p1t, p2t> slot( ret (*pFnc)( p1t, p2t ) )
 	{
+		if( !pFnc ) throw SignalException("NULL pointer in slot().");
 		return Signal2<ret, p1t, p2t>(
 			new __Slot2F<ret, p1t, p2t>( pFnc )
 			);
@@ -370,7 +409,17 @@ namespace Bu
 
 		ret operator()( p1t p1, p2t p2, p3t p3 )
 		{
+			if( !pCb ) throw SignalException("Uninitialized signal used.");
 			return (*pCb)( p1, p2, p3 );
+		}
+
+		bool isSet() const { return pCb != NULL; }
+		operator bool() const { return isSet(); }
+		
+		Signal3 &operator=( const Signal3 &rhs )
+		{
+			pCb = rhs.pCb->clone();
+			return *this;
 		}
 
 	private:
@@ -380,6 +429,7 @@ namespace Bu
 	template<typename cls, typename ret, typename p1t, typename p2t, typename p3t>
 	Signal3<ret, p1t, p2t, p3t> slot( cls *pCls, ret (cls::*pFnc)( p1t, p2t, p3t ) )
 	{
+		if( !pCls || !pFnc ) throw SignalException("NULL pointer in slot().");
 		return Signal3<ret, p1t, p2t, p3t>(
 			new __Slot3<cls, ret, p1t, p2t, p3t>( pCls, pFnc )
 			);
@@ -388,6 +438,7 @@ namespace Bu
 	template<typename ret, typename p1t, typename p2t, typename p3t>
 	Signal3<ret, p1t, p2t, p3t> slot( ret (*pFnc)( p1t, p2t, p3t ) )
 	{
+		if( !pFnc ) throw SignalException("NULL pointer in slot().");
 		return Signal3<ret, p1t, p2t, p3t>(
 			new __Slot3F<ret, p1t, p2t, p3t>( pFnc )
 			);
@@ -467,7 +518,17 @@ namespace Bu
 
 		ret operator()( p1t p1, p2t p2, p3t p3, p4t p4 )
 		{
+			if( !pCb ) throw SignalException("Uninitialized signal used.");
 			return (*pCb)( p1, p2, p3, p4 );
+		}
+
+		bool isSet() const { return pCb != NULL; }
+		operator bool() const { return isSet(); }
+		
+		Signal4 &operator=( const Signal4 &rhs )
+		{
+			pCb = rhs.pCb->clone();
+			return *this;
 		}
 
 	private:
@@ -477,6 +538,7 @@ namespace Bu
 	template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t>
 	Signal4<ret, p1t, p2t, p3t, p4t> slot( cls *pCls, ret (cls::*pFnc)( p1t, p2t, p3t, p4t ) )
 	{
+		if( !pCls || !pFnc ) throw SignalException("NULL pointer in slot().");
 		return Signal4<ret, p1t, p2t, p3t, p4t>(
 			new __Slot4<cls, ret, p1t, p2t, p3t, p4t>( pCls, pFnc )
 			);
@@ -485,6 +547,7 @@ namespace Bu
 	template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t>
 	Signal4<ret, p1t, p2t, p3t, p4t> slot( ret (*pFnc)( p1t, p2t, p3t, p4t ) )
 	{
+		if( !pFnc ) throw SignalException("NULL pointer in slot().");
 		return Signal4<ret, p1t, p2t, p3t, p4t>(
 			new __Slot4F<ret, p1t, p2t, p3t, p4t>( pFnc )
 			);
@@ -564,7 +627,17 @@ namespace Bu
 
 		ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5 )
 		{
+			if( !pCb ) throw SignalException("Uninitialized signal used.");
 			return (*pCb)( p1, p2, p3, p4, p5 );
+		}
+
+		bool isSet() const { return pCb != NULL; }
+		operator bool() const { return isSet(); }
+		
+		Signal5 &operator=( const Signal5 &rhs )
+		{
+			pCb = rhs.pCb->clone();
+			return *this;
 		}
 
 	private:
@@ -574,6 +647,7 @@ namespace Bu
 	template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t>
 	Signal5<ret, p1t, p2t, p3t, p4t, p5t> slot( cls *pCls, ret (cls::*pFnc)( p1t, p2t, p3t, p4t, p5t ) )
 	{
+		if( !pCls || !pFnc ) throw SignalException("NULL pointer in slot().");
 		return Signal5<ret, p1t, p2t, p3t, p4t, p5t>(
 			new __Slot5<cls, ret, p1t, p2t, p3t, p4t, p5t>( pCls, pFnc )
 			);
@@ -582,6 +656,7 @@ namespace Bu
 	template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t>
 	Signal5<ret, p1t, p2t, p3t, p4t, p5t> slot( ret (*pFnc)( p1t, p2t, p3t, p4t, p5t ) )
 	{
+		if( !pFnc ) throw SignalException("NULL pointer in slot().");
 		return Signal5<ret, p1t, p2t, p3t, p4t, p5t>(
 			new __Slot5F<ret, p1t, p2t, p3t, p4t, p5t>( pFnc )
 			);
