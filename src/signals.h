@@ -89,7 +89,7 @@ namespace Bu
 		bool isSet() const { return pCb != NULL; }
 		operator bool() const { return isSet(); }
 		
-		Signal0 &operator=( const Signal0 &rhs )
+		Signal0<ret> &operator=( const Signal0<ret> &rhs )
 		{
 			pCb = rhs.pCb->clone();
 			return *this;
@@ -198,7 +198,7 @@ namespace Bu
 		bool isSet() const { return pCb != NULL; }
 		operator bool() const { return isSet(); }
 		
-		Signal1 &operator=( const Signal1 &rhs )
+		Signal1<ret, p1t> &operator=( const Signal1<ret, p1t> &rhs )
 		{
 			pCb = rhs.pCb->clone();
 			return *this;
@@ -307,7 +307,7 @@ namespace Bu
 		bool isSet() const { return pCb != NULL; }
 		operator bool() const { return isSet(); }
 		
-		Signal2 &operator=( const Signal2 &rhs )
+		Signal2<ret, p1t, p2t> &operator=( const Signal2<ret, p1t, p2t> &rhs )
 		{
 			pCb = rhs.pCb->clone();
 			return *this;
@@ -416,7 +416,7 @@ namespace Bu
 		bool isSet() const { return pCb != NULL; }
 		operator bool() const { return isSet(); }
 		
-		Signal3 &operator=( const Signal3 &rhs )
+		Signal3<ret, p1t, p2t, p3t> &operator=( const Signal3<ret, p1t, p2t, p3t> &rhs )
 		{
 			pCb = rhs.pCb->clone();
 			return *this;
@@ -525,7 +525,7 @@ namespace Bu
 		bool isSet() const { return pCb != NULL; }
 		operator bool() const { return isSet(); }
 		
-		Signal4 &operator=( const Signal4 &rhs )
+		Signal4<ret, p1t, p2t, p3t, p4t> &operator=( const Signal4<ret, p1t, p2t, p3t, p4t> &rhs )
 		{
 			pCb = rhs.pCb->clone();
 			return *this;
@@ -634,7 +634,7 @@ namespace Bu
 		bool isSet() const { return pCb != NULL; }
 		operator bool() const { return isSet(); }
 		
-		Signal5 &operator=( const Signal5 &rhs )
+		Signal5<ret, p1t, p2t, p3t, p4t, p5t> &operator=( const Signal5<ret, p1t, p2t, p3t, p4t, p5t> &rhs )
 		{
 			pCb = rhs.pCb->clone();
 			return *this;

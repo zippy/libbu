@@ -4,12 +4,16 @@
 #include "bu/fstring.h"
 #include "bu/list.h"
 #include "bu/hash.h"
+#include "bu/signals.h"
+#include "bu/array.h"
 
 namespace Bu
 {
+	typedef Bu::Array<Bu::FString> StrArray;
 	class OptParser
 	{
 	public:
+		typedef Signal1<int, StrArray> OptionSignal;
 		class Option
 		{
 		public:
@@ -18,22 +22,21 @@ namespace Bu
 
 			char cOpt;
 			Bu::FString sOpt;
-			Bu::FString sDesc;
+			Bu::FString sHelp;
+			OptionSignal sUsed;
+			bool bShortHasParams;
 		};
 
 	public:
 		OptParser();
 		virtual ~OptParser();
 
-		void parse( int argc, char *argv[] );
+		void parse( int argc, char **argv );
 
 		void addOption( const Option &opt );
+		void addHelpOption( char c, const Bu::FString &s, const Bu::FString &sHelp );
 
-		template<typename c>
-		void callback( c *pObj, int (c::*fnc)( int, char *[] ) )
-		{
-			(pObj->*fnc)( 0, NULL );
-		}
+		int optHelp( StrArray aParams );
 
 	private:
 		Bu::FString format( const Bu::FString &sIn, int iWidth, int iIndent );
