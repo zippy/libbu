@@ -76,7 +76,7 @@ namespace Bu
 		Signal0() : pCb( NULL ) { }
 		Signal0( _Slot0<ret> *pCb ) : pCb( pCb ) { }
 		Signal0( const Signal0<ret> &rSrc ) :
-			pCb( rSrc.pCb->clone() ) { }
+			pCb( (rSrc.pCb)?(rSrc.pCb->clone()):(NULL) ) { }
 
 		virtual ~Signal0() { delete pCb; pCb = NULL; }
 
@@ -185,7 +185,7 @@ namespace Bu
 		Signal1() : pCb( NULL ) { }
 		Signal1( _Slot1<ret, p1t> *pCb ) : pCb( pCb ) { }
 		Signal1( const Signal1<ret, p1t> &rSrc ) :
-			pCb( rSrc.pCb->clone() ) { }
+			pCb( (rSrc.pCb)?(rSrc.pCb->clone()):(NULL) ) { }
 
 		virtual ~Signal1() { delete pCb; pCb = NULL; }
 
@@ -294,7 +294,7 @@ namespace Bu
 		Signal2() : pCb( NULL ) { }
 		Signal2( _Slot2<ret, p1t, p2t> *pCb ) : pCb( pCb ) { }
 		Signal2( const Signal2<ret, p1t, p2t> &rSrc ) :
-			pCb( rSrc.pCb->clone() ) { }
+			pCb( (rSrc.pCb)?(rSrc.pCb->clone()):(NULL) ) { }
 
 		virtual ~Signal2() { delete pCb; pCb = NULL; }
 
@@ -403,7 +403,7 @@ namespace Bu
 		Signal3() : pCb( NULL ) { }
 		Signal3( _Slot3<ret, p1t, p2t, p3t> *pCb ) : pCb( pCb ) { }
 		Signal3( const Signal3<ret, p1t, p2t, p3t> &rSrc ) :
-			pCb( rSrc.pCb->clone() ) { }
+			pCb( (rSrc.pCb)?(rSrc.pCb->clone()):(NULL) ) { }
 
 		virtual ~Signal3() { delete pCb; pCb = NULL; }
 
@@ -512,7 +512,7 @@ namespace Bu
 		Signal4() : pCb( NULL ) { }
 		Signal4( _Slot4<ret, p1t, p2t, p3t, p4t> *pCb ) : pCb( pCb ) { }
 		Signal4( const Signal4<ret, p1t, p2t, p3t, p4t> &rSrc ) :
-			pCb( rSrc.pCb->clone() ) { }
+			pCb( (rSrc.pCb)?(rSrc.pCb->clone()):(NULL) ) { }
 
 		virtual ~Signal4() { delete pCb; pCb = NULL; }
 
@@ -621,7 +621,7 @@ namespace Bu
 		Signal5() : pCb( NULL ) { }
 		Signal5( _Slot5<ret, p1t, p2t, p3t, p4t, p5t> *pCb ) : pCb( pCb ) { }
 		Signal5( const Signal5<ret, p1t, p2t, p3t, p4t, p5t> &rSrc ) :
-			pCb( rSrc.pCb->clone() ) { }
+			pCb( (rSrc.pCb)?(rSrc.pCb->clone()):(NULL) ) { }
 
 		virtual ~Signal5() { delete pCb; pCb = NULL; }
 

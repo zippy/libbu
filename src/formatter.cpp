@@ -9,8 +9,8 @@
 
 #include <string.h>
 
-Bu::Formatter::Formatter( Stream &rOut ) :
-	rOut( rOut ),
+Bu::Formatter::Formatter( Stream &rStream ) :
+	rStream( rStream ),
 	uIndent( 0 ),
 	cIndent( '\t' )
 {
@@ -22,12 +22,12 @@ Bu::Formatter::~Formatter()
 
 void Bu::Formatter::write( const Bu::FString &sStr )
 {
-	rOut.write( sStr );
+	rStream.write( sStr );
 }
 
 void Bu::Formatter::write( const void *sStr, int iLen )
 {
-	rOut.write( sStr, iLen );
+	rStream.write( sStr, iLen );
 }
 
 void Bu::Formatter::writeAligned( const Bu::FString &sStr )
@@ -111,6 +111,36 @@ void Bu::Formatter::writeAligned( const char *sStr, int iLen )
 	usedFormat();
 }
 
+Bu::FString Bu::Formatter::readToken()
+{
+	Bu::FString sRet;
+	for(;;)
+	{
+		char buf;
+		int iRead = rStream.read( &buf, 1 );
+		if( iRead == 0 )
+			return sRet;
+		if( buf == ' ' || buf == '\t' || buf == '\n' || buf == '\r' )
+			continue;
+		else
+		{
+			sRet += buf;
+			break;
+		}
+	}
+	for(;;)
+	{
+		char buf;
+		int iRead = rStream.read( &buf, 1 );
+		if( iRead == 0 )
+			return sRet;
+		if( buf == ' ' || buf == '\t' || buf == '\n' || buf == '\r' )
+			return sRet;
+		else
+			sRet += buf;
+	}
+}
+
 void Bu::Formatter::incIndent()
 {
 	if( uIndent < 0xFFU )
@@ -192,137 +222,143 @@ Bu::Formatter::Fmt &Bu::Formatter::Fmt::caps( bool bCaps )
 	return *this;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, const Bu::Formatter::Fmt &f )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::Formatter::Fmt &fmt )
 {
-	rOut.setTempFormat( f );
-	return rOut;
+	f.setTempFormat( fmt );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, Bu::Formatter::Special s )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, Bu::Formatter::Special s )
 {
 	switch( s )
 	{
 		case Formatter::nl:
 			{
-				rOut.write("\n", 1 );
-				char ci = rOut.getIndentChar();
-				for( int j = 0; j < rOut.getIndent(); j++ )
-					rOut.write( &ci, 1 );
+				f.write("\n", 1 );
+				char ci = f.getIndentChar();
+				for( int j = 0; j < f.getIndent(); j++ )
+					f.write( &ci, 1 );
 			}
 			break;
 
 		case Formatter::flush:
-			rOut.doFlush();
+			f.doFlush();
 			break;
 	}
-	return rOut;
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, const char *sStr )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const char *sStr )
 {
-	rOut.writeAligned( sStr, strlen( sStr ) );
-	return rOut;
+	f.writeAligned( sStr, strlen( sStr ) );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, char *sStr )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, char *sStr )
 {
-	rOut.writeAligned( sStr, strlen( sStr ) );
-	return rOut;
+	f.writeAligned( sStr, strlen( sStr ) );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, const Bu::FString &sStr )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::FString &sStr )
 {
-	rOut.writeAligned( sStr );
-	return rOut;
+	f.writeAligned( sStr );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, signed char c )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, signed char c )
 {
-	rOut.write( (char *)&c, 1 );
-	return rOut;
+	f.write( (char *)&c, 1 );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, char c )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, char c )
 {
-	rOut.write( (char *)&c, 1 );
-	return rOut;
+	f.write( (char *)&c, 1 );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, unsigned char c )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, unsigned char c )
 {
-	rOut.write( (char *)&c, 1 );
-	return rOut;
+	f.write( (char *)&c, 1 );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, signed short i )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, signed short i )
 {
-	rOut.ifmt<signed short>( i );
-	return rOut;
+	f.ifmt<signed short>( i );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, unsigned short i )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, unsigned short i )
 {
-	rOut.ufmt<unsigned short>( i );
-	return rOut;
+	f.ufmt<unsigned short>( i );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, signed int i )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, signed int i )
 {
-	rOut.ifmt<signed int>( i );
-	return rOut;
+	f.ifmt<signed int>( i );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, unsigned int i )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, unsigned int i )
 {
-	rOut.ufmt<unsigned int>( i );
-	return rOut;
+	f.ufmt<unsigned int>( i );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, signed long i )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, signed long i )
 {
-	rOut.ifmt<signed long>( i );
-	return rOut;
+	f.ifmt<signed long>( i );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, unsigned long i )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, unsigned long i )
 {
-	rOut.ufmt<unsigned long>( i );
-	return rOut;
+	f.ufmt<unsigned long>( i );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, signed long long i )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, signed long long i )
 {
-	rOut.ifmt<signed long long>( i );
-	return rOut;
+	f.ifmt<signed long long>( i );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, unsigned long long i )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, unsigned long long i )
 {
-	rOut.ufmt<unsigned long long>( i );
-	return rOut;
+	f.ufmt<unsigned long long>( i );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, float f )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, float flt )
 {
-	rOut.ffmt<float>( f );
-	return rOut;
+	f.ffmt<float>( flt );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, double f )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, double flt )
 {
-	rOut.ffmt<double>( f );
-	return rOut;
+	f.ffmt<double>( flt );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, long double f )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, long double flt )
 {
-	rOut.ffmt<long double>( f );
-	return rOut;
+	f.ffmt<long double>( flt );
+	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &rOut, bool b )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, bool b )
 {
-	rOut.writeAligned( b?("true"):("false") );
-	return rOut;
+	f.writeAligned( b?("true"):("false") );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, Bu::FString &sStr )
+{
+	sStr = f.readToken();
+	return f;
 }
 

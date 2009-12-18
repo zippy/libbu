@@ -23,6 +23,8 @@ public:
 		o2.bShortHasParams = false;
 		o2.sHelp = "This is the second test parameter.  It does not take parameters.  However, I do want to make this part much longer to see how it looks when you add way too much text to one of these things.  It can't really be that bad, right?";
 		addOption( o2 );
+
+		addOption( 's', "str", sVar, "Set a variable, see what it does.", "bob!");
 	
 		addHelpOption('h', "help", "This help.");
 	}
@@ -35,6 +37,7 @@ public:
 	}
 
 	int iBob;
+	Bu::FString sVar;
 };
 
 int main( int argc, char *argv[] )
@@ -42,5 +45,7 @@ int main( int argc, char *argv[] )
 	Opts o;
 
 	o.parse( argc, argv );
+
+	sio << "sVar = \"" << o.sVar << "\"" << sio.nl;
 }
 

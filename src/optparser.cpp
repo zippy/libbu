@@ -28,28 +28,48 @@ void Bu::OptParser::parse( int argc, char **argv )
 
 				Bu::FString sOpt;
 				int iCount = argc-j;
+				Bu::FString sExtraParam;
 				if( argv[j][iEPos] == '=' )
 				{
 					sOpt.set( argv[j]+2, iEPos-2 );
 					iCount++;
+					sExtraParam.set( argv[j]+iEPos+1 );
 				}
 				else
 				{
 					sOpt.set( argv[j]+2 );
 				}
 				Option *pOpt = hlOption.get( sOpt );
-				Bu::StrArray aParams( iCount );
-				aParams.append( sOpt );
-				if( argv[j][iEPos] == '=' )
-				{
-					aParams.append( argv[j]+iEPos+1 );
-				}
-				for( int k = j+1; k < argc; k++ )
-				{
-					aParams.append( argv[k] );
-				}
 				if( pOpt->sUsed )
+				{
+					Bu::StrArray aParams( iCount );
+					aParams.append( sOpt );
+					if( sExtraParam )
+					{
+						aParams.append( argv[j]+iEPos+1 );
+					}
+					for( int k = j+1; k < argc; k++ )
+					{
+						aParams.append( argv[k] );
+					}
 					j += pOpt->sUsed( aParams );
+				}
+				else if( pOpt->pProxy )
+				{
+					if( pOpt->sOverride )
+					{
+						pOpt->pProxy->setValue( pOpt->sOverride );
+					}
+					else if( sExtraParam )
+					{
+						pOpt->pProxy->setValue( sExtraParam );
+					}
+					else if( argv[j+1] != '\0' )
+					{
+						pOpt->pProxy->setValue( argv[j+1] );
+						j++;
+					}
+				}
 			}
 			else
 			{
@@ -57,26 +77,45 @@ void Bu::OptParser::parse( int argc, char **argv )
 				for( iCPos = 1; argv[j][iCPos] != '\0'; iCPos++ )
 				{
 					Option *pOpt = hsOption.get( argv[j][iCPos] );
-					Bu::StrArray aParams( argc-j+1 );
 					char buf[2] = {argv[j][iCPos], '\0'};
-					aParams.append( buf );
 					if( pOpt->bShortHasParams )
 					{
-						if( argv[j][iCPos+1] != '\0' )
-							aParams.append( argv[j]+iCPos+1 );
-						for( int k = j+1; k < argc; k++ )
-						{
-							aParams.append( argv[k] );
-						}
 						if( pOpt->sUsed )
 						{
+							Bu::StrArray aParams( argc-j+1 );
+							aParams.append( buf );
+							if( argv[j][iCPos+1] != '\0' )
+								aParams.append( argv[j]+iCPos+1 );
+							for( int k = j+1; k < argc; k++ )
+							{
+								aParams.append( argv[k] );
+							}
 							j += pOpt->sUsed( aParams );
+							break;
 						}
-						break;
+						else if( pOpt->pProxy )
+						{
+							if( pOpt->sOverride )
+							{
+								pOpt->pProxy->setValue( pOpt->sOverride );
+							}
+							else if( argv[j][iCPos+1] != '\0' )
+							{
+								pOpt->pProxy->setValue(
+									argv[j]+iCPos+1
+									);
+								break;
+							}
+						}
 					}
 					else
 					{
-						pOpt->sUsed( aParams );
+						if( pOpt->sUsed )
+						{
+							Bu::StrArray aParam( 1 );
+							aParam.append( buf );
+							pOpt->sUsed( aParam );
+						}
 					}
 				}
 			}
@@ -247,16 +286,44 @@ Bu::FString Bu::OptParser::format( const Bu::FString &sIn, int iWidth,
 
 
 //
+// Code for Bu::OptParser::_ValueProxy
+//
+
+Bu::OptParser::_ValueProxy::_ValueProxy()
+{
+}
+
+Bu::OptParser::_ValueProxy::~_ValueProxy()
+{
+}
+
+//
 // Code for Bu::OptParser::Option
 //
 
 Bu::OptParser::Option::Option() :
 	cOpt( '\0' ),
-	bShortHasParams( false )
+	bShortHasParams( false ),
+	pProxy( NULL )
 {
+}
+
+Bu::OptParser::Option::Option( const Option &rSrc ) :
+	cOpt( rSrc.cOpt ),
+	sOpt( rSrc.sOpt ),
+	sHelp( rSrc.sHelp ),
+	sUsed( rSrc.sUsed ),
+	bShortHasParams( rSrc.bShortHasParams ),
+	pProxy( NULL ),
+	sOverride( rSrc.sOverride )
+{
+	if( rSrc.pProxy )
+		pProxy = rSrc.pProxy->clone();
 }
 
 Bu::OptParser::Option::~Option()
 {
+	delete pProxy;
+	pProxy = NULL;
 }
 

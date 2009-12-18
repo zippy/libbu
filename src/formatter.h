@@ -15,7 +15,7 @@ namespace Bu
 	class Formatter
 	{
 	public:
-		Formatter( Stream &rOut );
+		Formatter( Stream &rStream );
 		virtual ~Formatter();
 
 		typedef struct Fmt
@@ -102,6 +102,8 @@ namespace Bu
 		void write( const void *sStr, int iLen );
 		void writeAligned( const Bu::FString &sStr );
 		void writeAligned( const char *sStr, int iLen );
+
+		Bu::FString readToken();
 
 		void incIndent();
 		void decIndent();
@@ -206,11 +208,11 @@ namespace Bu
 
 		void doFlush()
 		{
-			rOut.flush();
+			rStream.flush();
 		}
 
 	private:
-		Stream &rOut;
+		Stream &rStream;
 		Fmt fLast;
 		bool bTempFmt;
 		uint8_t uIndent;
@@ -219,31 +221,33 @@ namespace Bu
 
 	typedef Formatter::Fmt Fmt;
 
-	Formatter &operator<<( Formatter &rOut, const Formatter::Fmt &f );
-	Formatter &operator<<( Formatter &rOut, Formatter::Special s );
-	Formatter &operator<<( Formatter &rOut, const char *sStr );
-	Formatter &operator<<( Formatter &rOut, char *sStr );
-	Formatter &operator<<( Formatter &rOut, const Bu::FString &sStr );
-	Formatter &operator<<( Formatter &rOut, signed char c );
-	Formatter &operator<<( Formatter &rOut, char c );
-	Formatter &operator<<( Formatter &rOut, unsigned char c );
-	Formatter &operator<<( Formatter &rOut, signed short i );
-	Formatter &operator<<( Formatter &rOut, unsigned short i );
-	Formatter &operator<<( Formatter &rOut, signed int i );
-	Formatter &operator<<( Formatter &rOut, unsigned int i );
-	Formatter &operator<<( Formatter &rOut, signed long i );
-	Formatter &operator<<( Formatter &rOut, unsigned long i );
-	Formatter &operator<<( Formatter &rOut, signed long long i );
-	Formatter &operator<<( Formatter &rOut, unsigned long long i );
-	Formatter &operator<<( Formatter &rOut, float f );
-	Formatter &operator<<( Formatter &rOut, double f );
-	Formatter &operator<<( Formatter &rOut, long double f );
-	Formatter &operator<<( Formatter &rOut, bool b );
+	Formatter &operator<<( Formatter &f, const Formatter::Fmt &fmt );
+	Formatter &operator<<( Formatter &f, Formatter::Special s );
+	Formatter &operator<<( Formatter &f, const char *sStr );
+	Formatter &operator<<( Formatter &f, char *sStr );
+	Formatter &operator<<( Formatter &f, const Bu::FString &sStr );
+	Formatter &operator<<( Formatter &f, signed char c );
+	Formatter &operator<<( Formatter &f, char c );
+	Formatter &operator<<( Formatter &f, unsigned char c );
+	Formatter &operator<<( Formatter &f, signed short i );
+	Formatter &operator<<( Formatter &f, unsigned short i );
+	Formatter &operator<<( Formatter &f, signed int i );
+	Formatter &operator<<( Formatter &f, unsigned int i );
+	Formatter &operator<<( Formatter &f, signed long i );
+	Formatter &operator<<( Formatter &f, unsigned long i );
+	Formatter &operator<<( Formatter &f, signed long long i );
+	Formatter &operator<<( Formatter &f, unsigned long long i );
+	Formatter &operator<<( Formatter &f, float flt );
+	Formatter &operator<<( Formatter &f, double flt );
+	Formatter &operator<<( Formatter &f, long double flt );
+	Formatter &operator<<( Formatter &f, bool b );
+
+	Formatter &operator>>( Formatter &f, Bu::FString &sStr );
 
 	template<typename type>
-	Formatter &operator<<( Formatter &rOut, const type *p )
+	Formatter &operator<<( Formatter &f, const type *p )
 	{
-		return rOut << "0x" << Fmt::hex(sizeof(ptrdiff_t)*2) << (ptrdiff_t)(p);
+		return f << "0x" << Fmt::hex(sizeof(ptrdiff_t)*2) << (ptrdiff_t)(p);
 	}
 };
 
