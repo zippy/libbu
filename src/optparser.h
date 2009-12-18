@@ -14,7 +14,7 @@ namespace Bu
 	typedef Bu::Array<Bu::FString> StrArray;
 	class OptParser
 	{
-	public:
+	private:
 		class _ValueProxy
 		{
 		public:
@@ -54,6 +54,7 @@ namespace Bu
 			ptype &v;
 		};
 
+	public:
 		typedef Signal1<int, StrArray> OptionSignal;
 		class Option
 		{
@@ -70,6 +71,21 @@ namespace Bu
 			_ValueProxy *pProxy;
 			Bu::FString sOverride;
 		};
+	
+	private:
+		typedef Bu::List<Option> OptionList;
+		typedef Bu::Hash<char, Option *> ShortOptionHash;
+		typedef Bu::Hash<Bu::FString, Option *> LongOptionHash;
+		
+		class Banner
+		{
+		public:
+			Bu::FString sText;
+			bool bFormatted;
+			OptionList::const_iterator iAfter;
+		};
+
+		typedef Bu::List<Banner> BannerList;
 
 	public:
 		OptParser();
@@ -80,8 +96,8 @@ namespace Bu
 		void addOption( const Option &opt );
 		
 		template<typename vtype>
-		void addOption( char cOpt, const Bu::FString &sOpt, vtype &var,
-				const Bu::FString &sHelp="", const Bu::FString &sOverride="" )
+		void addOption( vtype &var, char cOpt, const Bu::FString &sOpt,
+				const Bu::FString &sHelp )
 		{
 			Option o;
 			o.cOpt = cOpt;
@@ -89,24 +105,64 @@ namespace Bu
 			o.pProxy = new ValueProxy<vtype>( var );
 			o.bShortHasParams = true;
 			o.sHelp = sHelp;
-			o.sOverride = sOverride;
 			addOption( o );
 		}
 		
-		void addHelpOption( char c, const Bu::FString &s, const Bu::FString &sHelp );
+		template<typename vtype>
+		void addOption( vtype &var, const Bu::FString &sOpt,
+				const Bu::FString &sHelp )
+		{
+			addOption( var, '\0', sOpt, sHelp );
+		}
+		
+		template<typename vtype>
+		void addOption( vtype &var, char cOpt, const Bu::FString &sHelp )
+		{
+			addOption( var, cOpt, "", sHelp );
+		}
+
+		void addOption( OptionSignal sUsed, char cOpt, const Bu::FString &sOpt,
+				const Bu::FString &sHelp )
+		{
+			Option o;
+			o.cOpt = cOpt;
+			o.sOpt = sOpt;
+			o.sUsed = sUsed;
+			o.sHelp = sHelp;
+			addOption( o );
+		}
+		
+		void addOption( OptionSignal sUsed, const Bu::FString &sOpt,
+				const Bu::FString &sHelp )
+		{
+			addOption( sUsed, '\0', sOpt, sHelp );
+		}
+		
+		void addOption( OptionSignal sUsed, char cOpt,
+				const Bu::FString &sHelp )
+		{
+			addOption( sUsed, cOpt, "", sHelp );
+		}
+
+		void setOverride( char cOpt, const Bu::FString &sOverride );
+		void setOverride( const Bu::FString &sOpt,
+				const Bu::FString &sOverride );
+		
+//		void addOption( char cOpt, const Bu::FString &sOpt, 
+		
+		void addHelpOption( char c='h', const Bu::FString &s="help",
+				const Bu::FString &sHelp="This help." );
+		void addHelpBanner( const Bu::FString &sText, bool bFormatted=true );
 
 		int optHelp( StrArray aParams );
 
 	private:
 		Bu::FString format( const Bu::FString &sIn, int iWidth, int iIndent );
 
-		typedef Bu::List<Option> OptionList;
-		typedef Bu::Hash<char, Option *> ShortOptionHash;
-		typedef Bu::Hash<Bu::FString, Option *> LongOptionHash;
-
 		OptionList lOption;
 		ShortOptionHash hsOption;
 		LongOptionHash hlOption;
+		BannerList lBanner;
 	};
 };
 

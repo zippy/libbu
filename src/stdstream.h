@@ -9,7 +9,6 @@
 #define BU_STD_STREAM_H
 
 #include <stdint.h>
-#include <stdio.h>
 #include "stream.h"
 
 namespace Bu

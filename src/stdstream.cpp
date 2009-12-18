@@ -5,6 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
+#include <stdio.h>
 #include "bu/stdstream.h"
 
 Bu::StdStream::StdStream()

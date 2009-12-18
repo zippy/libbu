@@ -111,6 +111,11 @@ void Bu::Formatter::writeAligned( const char *sStr, int iLen )
 	usedFormat();
 }
 
+void Bu::Formatter::read( void *sStr, int iLen )
+{
+	rStream.read( sStr, iLen );
+}
+
 Bu::FString Bu::Formatter::readToken()
 {
 	Bu::FString sRet;
@@ -359,6 +364,104 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &f, bool b )
 Bu::Formatter &Bu::operator>>( Bu::Formatter &f, Bu::FString &sStr )
 {
 	sStr = f.readToken();
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, signed char &c )
+{
+	f.read( &c, 1 );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, char &c )
+{
+	f.read( &c, 1 );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, unsigned char &c )
+{
+	f.read( &c, 1 );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, signed short &i )
+{
+	f.iparse( i, f.readToken() );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, unsigned short &i )
+{
+	f.uparse( i, f.readToken() );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, signed int &i )
+{
+	f.iparse( i, f.readToken() );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, unsigned int &i )
+{
+	f.uparse( i, f.readToken() );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, signed long &i )
+{
+	f.iparse( i, f.readToken() );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, unsigned long &i )
+{
+	f.uparse( i, f.readToken() );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, signed long long &i )
+{
+	f.iparse( i, f.readToken() );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, unsigned long long &i )
+{
+	f.uparse( i, f.readToken() );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, float &flt )
+{
+	f.fparse( flt, f.readToken() );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, double &flt )
+{
+	f.fparse( flt, f.readToken() );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, long double &flt )
+{
+	f.fparse( flt, f.readToken() );
+	return f;
+}
+
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, bool &b )
+{
+	Bu::FString sStr = f.readToken();
+	if( !sStr )
+		return f;
+	char c = *sStr.begin();
+	if( c == 'y' || c == 'Y' || c == 't' || c == 'T' )
+		b = true;
+	else if( c == 'n' || c == 'N' || c == 'f' || c == 'F' )
+		b = false;
+
 	return f;
 }
 

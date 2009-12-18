@@ -103,6 +103,7 @@ namespace Bu
 		void writeAligned( const Bu::FString &sStr );
 		void writeAligned( const char *sStr, int iLen );
 
+		void read( void *sStr, int iLen );
 		Bu::FString readToken();
 
 		void incIndent();
@@ -199,6 +200,63 @@ namespace Bu
 			writeAligned( fTmp );
 			usedFormat();
 		}
+		
+		template<typename type>
+		void iparse( type &i, const Bu::FString &sBuf )
+		{
+			if( !sBuf )
+				return;
+			if( sBuf[0] != '+' && sBuf[0] != '-' &&
+				(sBuf[0] < '0' && sBuf[0] > '9') )
+				return;
+			int j = 1;
+			int iMax = sBuf.getSize();
+			for(; j < iMax && (sBuf[j] >= '0' && sBuf[j] <= '9'); j++ ) { }
+			i = 0;
+			type iPos = 1;
+			for(j--; j >= 0; j-- )
+			{
+				if( sBuf[j] == '+' || sBuf[j] == '-' )
+					continue;
+				i += (sBuf[j]-'0')*iPos;
+				iPos *= fLast.uRadix;
+			}
+			if( sBuf[0] == '-' )
+				i = -i;
+
+			usedFormat();
+		}
+		
+		template<typename type>
+		void uparse( type &i, const Bu::FString &sBuf )
+		{
+			if( !sBuf )
+				return;
+			if( sBuf[0] != '+' &&
+				(sBuf[0] < '0' && sBuf[0] > '9') )
+				return;
+			int j = 1;
+			int iMax = sBuf.getSize();
+			for(; j < iMax && (sBuf[j] >= '0' && sBuf[j] <= '9'); j++ ) { }
+			i = 0;
+			type iPos = 1;
+			for(j--; j >= 0; j-- )
+			{
+				if( sBuf[j] == '+' )
+					continue;
+				i += (sBuf[j]-'0')*iPos;
+				iPos *= fLast.uRadix;
+			}
+
+			usedFormat();
+		}
+		
+		template<typename type>
+		void fparse( type &f, const Bu::FString &sBuf )
+		{
+			sscanf( sBuf.getStr(), "%f", &f );
+			usedFormat();
+		}
 
 		enum Special
 		{
@@ -243,6 +301,21 @@ namespace Bu
 	Formatter &operator<<( Formatter &f, bool b );
 
 	Formatter &operator>>( Formatter &f, Bu::FString &sStr );
+	Formatter &operator>>( Formatter &f, signed char &c );
+	Formatter &operator>>( Formatter &f, char &c );
+	Formatter &operator>>( Formatter &f, unsigned char &c );
+	Formatter &operator>>( Formatter &f, signed short &i );
+	Formatter &operator>>( Formatter &f, unsigned short &i );
+	Formatter &operator>>( Formatter &f, signed int &i );
+	Formatter &operator>>( Formatter &f, unsigned int &i );
+	Formatter &operator>>( Formatter &f, signed long &i );
+	Formatter &operator>>( Formatter &f, unsigned long &i );
+	Formatter &operator>>( Formatter &f, signed long long &i );
+	Formatter &operator>>( Formatter &f, unsigned long long &i );
+	Formatter &operator>>( Formatter &f, float &flt );
+	Formatter &operator>>( Formatter &f, double &flt );
+	Formatter &operator>>( Formatter &f, long double &flt );
+	Formatter &operator>>( Formatter &f, bool &b );
 
 	template<typename type>
 	Formatter &operator<<( Formatter &f, const type *p )

@@ -106,6 +106,14 @@ void Bu::OptParser::parse( int argc, char **argv )
 									);
 								break;
 							}
+							else if( argv[j+1] )
+							{
+								pOpt->pProxy->setValue(
+									argv[j+1]
+									);
+								j++;
+								break;
+							}
 						}
 					}
 					else
@@ -135,6 +143,16 @@ void Bu::OptParser::addOption( const Option &opt )
 		hlOption.insert( opt.sOpt, &lOption.last() );
 }
 
+void Bu::OptParser::setOverride( char cOpt, const Bu::FString &sOverride )
+{
+	hsOption.get( cOpt )->sOverride = sOverride;
+}
+
+void Bu::OptParser::setOverride( const Bu::FString &sOpt, const Bu::FString &sOverride )
+{
+	hlOption.get( sOpt )->sOverride = sOverride;
+}
+
 void Bu::OptParser::addHelpOption( char c, const Bu::FString &s, const Bu::FString &sHelp )
 {
 	Option o;
@@ -146,7 +164,19 @@ void Bu::OptParser::addHelpOption( char c, const Bu::FString &s, const Bu::FStri
 	addOption( o );
 }
 
-int Bu::OptParser::optHelp( StrArray aParams )
+void Bu::OptParser::addHelpBanner( const Bu::FString &sText, bool bFormatted )
+{
+	Banner b;
+	b.sText = sText;
+	b.bFormatted = bFormatted;
+	if( lOption.getSize() > 0 )
+	{
+		for( b.iAfter = lOption.begin(); b.iAfter+1; b.iAfter++ ) { }
+	}
+	lBanner.append( b );
+}
+
+int Bu::OptParser::optHelp( StrArray /*aParams*/ )
 {
 	bool bHasShort = false;
 	int iMaxWidth = 0;
@@ -166,6 +196,19 @@ int Bu::OptParser::optHelp( StrArray aParams )
 		iIndent += 4;
 	if( iMaxWidth > 0 )
 		iIndent += 4 + iMaxWidth;
+
+	BannerList::iterator iBanner;
+	for( iBanner = lBanner.begin(); iBanner; iBanner++ )
+	{
+		if( (*iBanner).iAfter )
+			break;
+
+		if( (*iBanner).bFormatted )
+			sio << format( (*iBanner).sText, iScrWidth-1, 0 );
+		else
+			sio << (*iBanner).sText;
+		sio << sio.nl;
+	}
 	for( OptionList::iterator i = lOption.begin(); i; i++ )
 	{
 		sio << "    ";
@@ -191,6 +234,18 @@ int Bu::OptParser::optHelp( StrArray aParams )
 		}
 		sio << format( (*i).sHelp, iScrWidth-iIndent-1, iIndent );
 		sio << sio.nl;
+	
+		for( ; iBanner; iBanner++ )
+		{
+			if( (*iBanner).iAfter != i )
+				break;
+			
+			if( (*iBanner).bFormatted )
+				sio << format( (*iBanner).sText, iScrWidth-1, 0 );
+			else
+				sio << (*iBanner).sText;
+			sio << sio.nl;
+		}
 	}
 	exit( 0 );
 	return 0;
