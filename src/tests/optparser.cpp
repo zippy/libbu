@@ -40,6 +40,8 @@ public:
 		setOverride("str", "Bob!");
 	
 		addHelpOption();
+
+		setNonOption( slot( this, &Opts::nonOption ) );
 	}
 
 	int yesparam( StrArray aParams )
@@ -52,6 +54,12 @@ public:
 	{
 		sio << " - noparam" << aParams << sio.nl;
 		return 0;
+	}
+
+	int nonOption( StrArray aParams )
+	{
+		sio << " - nonOption" << aParams << sio.nl;
+		return aParams.getSize()-1;
 	}
 
 	int iBob;

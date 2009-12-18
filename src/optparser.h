@@ -12,6 +12,18 @@
 namespace Bu
 {
 	typedef Bu::Array<Bu::FString> StrArray;
+
+	/**
+	 * POSIX/Gnu style command line parser.  Handles long and short options in
+	 * a variety of fun and useful ways, along with singal based callbacks and
+	 * automatic variable setting.  It's pretty easy to use, and very flexible.
+	 *
+	 * OptParser supports it's own builtin help mechanism which automatically
+	 * enumerates the available options and their help in a well formatted and
+	 * easy to read way, automatically formatting your help text per option and
+	 * allows for addition "help banners" which can be placed wherever you
+	 * would like.
+	 */
 	class OptParser
 	{
 	private:
@@ -67,7 +79,6 @@ namespace Bu
 			Bu::FString sOpt;
 			Bu::FString sHelp;
 			OptionSignal sUsed;
-			bool bShortHasParams;
 			_ValueProxy *pProxy;
 			Bu::FString sOverride;
 		};
@@ -103,7 +114,6 @@ namespace Bu
 			o.cOpt = cOpt;
 			o.sOpt = sOpt;
 			o.pProxy = new ValueProxy<vtype>( var );
-			o.bShortHasParams = true;
 			o.sHelp = sHelp;
 			addOption( o );
 		}
@@ -148,13 +158,23 @@ namespace Bu
 		void setOverride( const Bu::FString &sOpt,
 				const Bu::FString &sOverride );
 		
-//		void addOption( char cOpt, const Bu::FString &sOpt, 
-		
 		void addHelpOption( char c='h', const Bu::FString &s="help",
 				const Bu::FString &sHelp="This help." );
 		void addHelpBanner( const Bu::FString &sText, bool bFormatted=true );
 
 		int optHelp( StrArray aParams );
+
+		/**
+		 * This function is called when an unrecognized option is found, the
+		 * default behaviour is to print an error to stdout and exit( 1 ), if
+		 * you want to do something different, just override this function.
+		 * This is also called by default when something is found that hasn't
+		 * been handled by an option, and isn't an option (starts with - or --).
+		 * To change this behaviour call 
+		 */
+		virtual void optionError( const Bu::FString sOption );
+
+		void setNonOption( OptionSignal sSignal );
 
 	private:
 		Bu::FString format( const Bu::FString &sIn, int iWidth, int iIndent );
@@ -163,6 +183,7 @@ namespace Bu
 		ShortOptionHash hsOption;
 		LongOptionHash hlOption;
 		BannerList lBanner;
+		OptionSignal sNonOption;
 	};
 };
 

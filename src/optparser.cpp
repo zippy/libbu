@@ -21,7 +21,6 @@ void Bu::OptParser::parse( int argc, char **argv )
 			// Now we're on to something, which kind is it?
 			if( argv[j][1] == '-' )
 			{
-				// Long param, cool, that's easy, first search for =
 				int iEPos;
 				for( iEPos = 2; argv[j][iEPos] != '\0' &&
 					 argv[j][iEPos] != '='; iEPos++ ) { }
@@ -39,36 +38,44 @@ void Bu::OptParser::parse( int argc, char **argv )
 				{
 					sOpt.set( argv[j]+2 );
 				}
-				Option *pOpt = hlOption.get( sOpt );
-				if( pOpt->sUsed )
+				try
 				{
-					Bu::StrArray aParams( iCount );
-					aParams.append( sOpt );
-					if( sExtraParam )
+					// Long param, cool, that's easy, first search for =
+					Option *pOpt = hlOption.get( sOpt );
+					if( pOpt->sUsed )
 					{
-						aParams.append( argv[j]+iEPos+1 );
+						Bu::StrArray aParams( iCount );
+						aParams.append( sOpt );
+						if( sExtraParam )
+						{
+							aParams.append( argv[j]+iEPos+1 );
+						}
+						for( int k = j+1; k < argc; k++ )
+						{
+							aParams.append( argv[k] );
+						}
+						j += pOpt->sUsed( aParams );
 					}
-					for( int k = j+1; k < argc; k++ )
+					else if( pOpt->pProxy )
 					{
-						aParams.append( argv[k] );
+						if( pOpt->sOverride )
+						{
+							pOpt->pProxy->setValue( pOpt->sOverride );
+						}
+						else if( sExtraParam )
+						{
+							pOpt->pProxy->setValue( sExtraParam );
+						}
+						else if( argv[j+1] != '\0' )
+						{
+							pOpt->pProxy->setValue( argv[j+1] );
+							j++;
+						}
 					}
-					j += pOpt->sUsed( aParams );
 				}
-				else if( pOpt->pProxy )
+				catch( Bu::HashException &e )
 				{
-					if( pOpt->sOverride )
-					{
-						pOpt->pProxy->setValue( pOpt->sOverride );
-					}
-					else if( sExtraParam )
-					{
-						pOpt->pProxy->setValue( sExtraParam );
-					}
-					else if( argv[j+1] != '\0' )
-					{
-						pOpt->pProxy->setValue( argv[j+1] );
-						j++;
-					}
+					optionError( "--" + sOpt );
 				}
 			}
 			else
@@ -76,22 +83,30 @@ void Bu::OptParser::parse( int argc, char **argv )
 				int iCPos;
 				for( iCPos = 1; argv[j][iCPos] != '\0'; iCPos++ )
 				{
-					Option *pOpt = hsOption.get( argv[j][iCPos] );
-					char buf[2] = {argv[j][iCPos], '\0'};
-					if( pOpt->bShortHasParams )
+					try
 					{
+						Option *pOpt = hsOption.get( argv[j][iCPos] );
+						char buf[2] = {argv[j][iCPos], '\0'};
 						if( pOpt->sUsed )
 						{
 							Bu::StrArray aParams( argc-j+1 );
 							aParams.append( buf );
+							int iMod = 0;
 							if( argv[j][iCPos+1] != '\0' )
+							{
 								aParams.append( argv[j]+iCPos+1 );
+								iMod = -1;
+							}
 							for( int k = j+1; k < argc; k++ )
 							{
 								aParams.append( argv[k] );
 							}
-							j += pOpt->sUsed( aParams );
-							break;
+							int iUsed = pOpt->sUsed( aParams );
+							if( iUsed > 0 )
+							{
+								j += iUsed + iMod;
+								break;
+							}
 						}
 						else if( pOpt->pProxy )
 						{
@@ -116,20 +131,31 @@ void Bu::OptParser::parse( int argc, char **argv )
 							}
 						}
 					}
-					else
+					catch( Bu::HashException &e )
 					{
-						if( pOpt->sUsed )
-						{
-							Bu::StrArray aParam( 1 );
-							aParam.append( buf );
-							pOpt->sUsed( aParam );
-						}
+						Bu::FString sOpt("-");
+						sOpt += argv[j][iCPos];
+						optionError( sOpt );
 					}
 				}
 			}
 		}
 		else
 		{
+			if( !sNonOption )
+			{
+				optionError( argv[j] );
+			}
+			else
+			{
+				int iCount = argc-j;
+				Bu::StrArray aParams( iCount );
+				for( int k = j; k < argc; k++ )
+				{
+					aParams.append( argv[k] );
+				}
+				j += sNonOption( aParams );
+			}
 		}
 	}
 }
@@ -160,7 +186,6 @@ void Bu::OptParser::addHelpOption( char c, const Bu::FString &s, const Bu::FStri
 	o.cOpt = c;
 	o.sOpt = s;
 	o.sHelp = sHelp;
-	o.bShortHasParams = false;
 	addOption( o );
 }
 
@@ -249,6 +274,17 @@ int Bu::OptParser::optHelp( StrArray /*aParams*/ )
 	}
 	exit( 0 );
 	return 0;
+}
+
+void Bu::OptParser::optionError( const Bu::FString sOption )
+{
+	sio << "Unregcognized option discovered: " << sOption << sio.nl << sio.nl;
+	exit( 1 );
+}
+
+void Bu::OptParser::setNonOption( OptionSignal sSignal )
+{
+	sNonOption = sSignal;
 }
 
 Bu::FString Bu::OptParser::format( const Bu::FString &sIn, int iWidth,
@@ -358,7 +394,6 @@ Bu::OptParser::_ValueProxy::~_ValueProxy()
 
 Bu::OptParser::Option::Option() :
 	cOpt( '\0' ),
-	bShortHasParams( false ),
 	pProxy( NULL )
 {
 }
@@ -368,7 +403,6 @@ Bu::OptParser::Option::Option( const Option &rSrc ) :
 	sOpt( rSrc.sOpt ),
 	sHelp( rSrc.sHelp ),
 	sUsed( rSrc.sUsed ),
-	bShortHasParams( rSrc.bShortHasParams ),
 	pProxy( NULL ),
 	sOverride( rSrc.sOverride )
 {
