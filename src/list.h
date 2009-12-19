@@ -239,6 +239,13 @@ namespace Bu
 			append( src );
 			return *this;
 		}
+		
+		MyType operator+( const MyType &src )
+		{
+			MyType lNew( *this );
+			lNew += src;
+			return lNew;
+		}
 
 		bool operator==( const MyType &rhs ) const
 		{
@@ -301,6 +308,13 @@ namespace Bu
 			erase( begin() );
 
 			return *this;
+		}
+
+		value peekPop()
+		{
+			value v = first();
+			pop();
+			return v;
 		}
 
 		value &peek()
