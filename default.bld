@@ -1,10 +1,14 @@
-# vim: syntax=build
+/**
+ * This is the default.bld file for libbu++, it pretty much handles everything
+ * libbu++ related, kinda' cool, eh?  It can completely replace the old build
+ * and actually does a better job with a number of things.
+ */
 
 CXXFLAGS += "-ggdb -W -Wall";
 
 action "default"
 {
-	build: [targets("header-links"), "libbu++.a"];
+	build: [targets("header-links"), "libbu++.a", targets("tools")];
 }
 
 action "pkg"
@@ -14,7 +18,8 @@ action "pkg"
 
 action "all"
 {
-	build: [targets("header-links"), "libbu++.a", targets("tests")];
+	build: [targets("header-links"), "libbu++.a", targets("tools"),
+		targets("tests")];
 }
 
 target files("src/*.h").replace("src/", "bu/")
@@ -36,14 +41,27 @@ target "libbu++.a"
 }
 
 //
-// Tests
+// Tools
+//
+
+target files("src/tools/*.cpp").replace("src/tools/","").replace(".cpp","")
+{
+	input "src/tools/${OUTPUT}.cpp";
+	rule "exe";
+	tag "tools";
+	CXXFLAGS += "-I.";
+	LDFLAGS += "-L. -lbu++";
+}
+
+//
+// General Tests
 //
 
 target files("src/tests/*.cpp").replace("src/","").replace(".cpp","")
 {
 	input "src/${OUTPUT}.cpp";
 	rule "exe";
-	tag "tests";
+	tag ["tests", "general tests"];
 	CXXFLAGS += "-I.";
 	LDFLAGS += "-L. -lbu++";
 }
@@ -55,13 +73,32 @@ target "tests/bzip2"
 	LDFLAGS += "-lbz2";
 }
 
+target ["tests/itoserver", "tests/socketblock", "tests/itoheap",
+	"tests/itoqueue1", "tests/itoqueue2"]
+{
+	LDFLAGS += "-lpthread";
+}
+
+//
+// Unit tests
+//
+
+target files("src/unit/*.unit").replace("src/","").replace(".unit","")
+{
+	input "src/${OUTPUT}.unit";
+	rule "exe";
+	tag ["tests", "unit tests"];
+	CXXFLAGS += "-I.";
+	LDFLAGS += "-L. -lbu++";
+}
+
 target "libbu++-r$(svnversion "-n").tar.bz2"
 {
 	input [
 		"LICENSE",
 		"build.conf",
 		"Doxyfile",
-		"buildm3.conf",
+		"default.bld",
 		"support/vim/syntax/taf.vim",
 		"support/vim/ftdetect/taf.vim",
 		"support/vim/ftplugin/taf.vim",
@@ -81,13 +118,24 @@ target "libbu++-r$(svnversion "-n").tar.bz2"
 
 rule "tarball"
 {
-	input matches("LICENSE", "*.cpp", "*.h", "*.conf", "Doxyfile", "*.vim",
-		"*.sh");
+	input matches("LICENSE", "*.cpp", "*.h", "*.conf", "*.bld", "Doxyfile",
+		"*.vim", "*.sh");
 	profile "build"
 	{
 		OUTDIR = OUTPUT.replace(".tar.bz2","");
 		execute("tar --transform=\"s@^@${OUTDIR}/@\" -c ${INPUT} |"
 			" bzip2 -9 > ${OUTPUT}");
+	}
+}
+
+rule "unit"
+{
+	input "*.unit";
+	output INPUT.replace(".unit", ".cpp");
+
+	profile "build"
+	{
+		execute("./mkunit.sh \"${INPUT}\" \"${OUTPUT}\"");
 	}
 }
 
