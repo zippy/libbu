@@ -1,6 +1,6 @@
 # vim: syntax=build
 
-set CXXFLAGS += "-ggdb -W -Wall";
+CXXFLAGS += "-ggdb -W -Wall";
 
 action "default"
 {
@@ -10,6 +10,11 @@ action "default"
 action "pkg"
 {
 	build: targets("pkg");
+}
+
+action "all"
+{
+	build: [targets("header-links"), "libbu++.a", targets("tests")];
 }
 
 target files("src/*.h").replace("src/", "bu/")
@@ -27,7 +32,27 @@ target "libbu++.a"
 {
 	input files("src/*.cpp");
 	rule "lib";
-	set CXXFLAGS += "-I. -fPIC";
+	CXXFLAGS += "-I. -fPIC";
+}
+
+//
+// Tests
+//
+
+target files("src/tests/*.cpp").replace("src/","").replace(".cpp","")
+{
+	input "src/${OUTPUT}.cpp";
+	rule "exe";
+	tag "tests";
+	CXXFLAGS += "-I.";
+	LDFLAGS += "-L. -lbu++";
+}
+
+// Some tests need extra libs and whatnot, that goes here.
+
+target "tests/bzip2"
+{
+	LDFLAGS += "-lbz2";
 }
 
 target "libbu++-r$(svnversion "-n").tar.bz2"
@@ -60,7 +85,7 @@ rule "tarball"
 		"*.sh");
 	profile "build"
 	{
-		set OUTDIR = OUTPUT.replace(".tar.bz2","");
+		OUTDIR = OUTPUT.replace(".tar.bz2","");
 		execute("tar --transform=\"s@^@${OUTDIR}/@\" -c ${INPUT} |"
 			" bzip2 -9 > ${OUTPUT}");
 	}
