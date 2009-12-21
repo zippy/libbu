@@ -1859,6 +1859,14 @@ namespace Bu
 			core->appendChunk( pNew );
 		}
 
+		void trimBack( chr c )
+		{
+			if( core->pFirst == NULL )
+				return;
+			flatten();
+			for( ; core->pFirst->nLength > 0 && core->pFirst->pData[core->pFirst->nLength-1] == c; core->pFirst->nLength--, core->nLength-- ) { }
+		}
+
 		void format( const char *sFrmt, ...)
 		{
 			_hardCopy();
