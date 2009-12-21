@@ -24,8 +24,16 @@ namespace Bu
 	class Process : public Bu::Stream
 	{
 	public:
-		Process( const char *sName, char *const argv[] );
-		Process( const char *sName, const char *argv, ...);
+		enum Flags
+		{
+			StdOut	=	0x01,
+			StdErr	=	0x02,
+			Both	=	0x03
+		};
+
+	public:
+		Process( Flags eFlags, const char *sName, char *const argv[] );
+		Process( Flags eFlags, const char *sName, const char *argv, ...);
 		virtual ~Process();
 
 		virtual void close();
@@ -53,6 +61,11 @@ namespace Bu
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
 
+		void select( bool &bStdOut, bool &bStdErr );
+
+		bool isRunning();
+		void ignoreStdErr();
+
 		/**
 		 * Returns the pid of the child process, or zero if there is no
 		 * currently running child.  Note that a read operation must be
@@ -60,13 +73,45 @@ namespace Bu
 		 */
 		pid_t getPid();
 
+		/**
+		 * Returns true if the child exited normally (by calling exit or
+		 * returning from main).
+		 */
+		bool childExited();
+
+		/**
+		 * Returns the 8 bit integer value returned from the child program if
+		 * childExited returned true.
+		 */
+		int childExitStatus();
+
+		/**
+		 * Returns true if the child exited because of a signal.
+		 */
+		bool childSignaled();
+
+		/**
+		 * Returns the signal ID if the childSignaled return true.
+		 */
+		int childSignal();
+
+		/**
+		 * Returns true if the child left a core dump behind when it exited.
+		 */
+		bool childCoreDumped();
+
 	private:
 		int iStdIn;
 		int iStdOut;
 		int iStdErr;
 		pid_t iPid;
+		int iProcStatus;
+		bool bBlocking;
+		bool bStdOutEos;
+		bool bStdErrEos;
 
-		void gexec( const char *sName, char *const argv[] );
+		void gexec( Flags eFlags, const char *sName, char *const argv[] );
+		void checkClose();
 	};
 }
 

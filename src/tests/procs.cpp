@@ -11,21 +11,25 @@
 
 int main()
 {
-	//Bu::Process p( argv[1], argv+1 );
-	    Bu::Process p("mplayer", "mplayer", "dvd://", "-framedrop",
-        "-ao", "null", "-nosound", "-vf", "framestep=I,cropdetect", "-sstep",
-        "197", NULL );
+    Bu::Process p( Bu::Process::Both, "/bin/bash", "/bin/bash", "-c", "echo Hello 1>&2; echo StdOut; sleep 1; echo Yup; echo Yup 1>&2", NULL );
 
 	char buf[1000];
-	for(;;)
+	while( !p.isEos() )
 	{
-		int iSize = p.read( buf, 1000 );
-		printf("::read=%d::\n", iSize );
-		if( iSize == 0 )
-			break;
-		fwrite( buf, iSize, 1, stdout );
-		if( iSize < 1000 )
-			break;
+		bool out, err;
+		p.select( out, err );
+		if( out )
+		{
+			int iSize = p.read( buf, 1000 );
+			printf("::read=%d::\n", iSize );
+			fwrite( buf, iSize, 1, stdout );
+		}
+		if( err )
+		{
+			int iSize = p.readErr( buf, 1000 );
+			printf("::readErr=%d::\n", iSize );
+			fwrite( buf, iSize, 1, stdout );
+		}
 	}
 
 	return 0;
