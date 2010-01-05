@@ -1193,9 +1193,10 @@ namespace Bu
 	ArchiveBase &operator<<( ArchiveBase &ar, const Hash<key,value,a,b,c,d> &h )
 	{
 		ar << h.getSize();
-		for( typename Hash<key,value>::const_iterator i = h.begin(); i != h.end(); i++ )
+		for( typename Hash<key,value,a,b,c,d>::const_iterator i = h.begin(); i != h.end(); i++ )
 		{
-			ar << (i.getKey()) << (i.getValue());
+			ar << (i.getKey());
+			ar << (i.getValue());
 		}
 
 		return ar;

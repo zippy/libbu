@@ -26,6 +26,7 @@ namespace Bu
 	public:
 		enum Flags
 		{
+			None	=	0x00,
 			StdOut	=	0x01,
 			StdErr	=	0x02,
 			Both	=	0x03
