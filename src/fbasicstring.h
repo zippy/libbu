@@ -758,6 +758,25 @@ namespace Bu
 			_hardCopy();
 			core->appendChunk( pNew );
 		}
+		
+		/**
+		 * Append data to your string.
+		 *@param pData (const chr *) The data to append.
+		 *@param nStart (long) The start position to copy from.
+		 *@param nLen (long) The length of the data to append.
+		 */
+		void append( const chr *pData, long nStart, long nLen )
+		{
+			if( nLen == 0 )
+				return;
+
+			Chunk *pNew = core->newChunk( nLen );
+			
+			cpy( pNew->pData, pData+nStart, nLen );
+
+			_hardCopy();
+			core->appendChunk( pNew );
+		}
 
 		/**
 		 * Append a single chr to your string.

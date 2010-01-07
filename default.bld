@@ -48,6 +48,7 @@ target files("src/tools/*.cpp").replace("src/tools/","").replace(".cpp","")
 {
 	input "src/tools/${OUTPUT}.cpp";
 	rule "exe";
+	requires "libbu++.a";
 	tag "tools";
 	CXXFLAGS += "-I.";
 	LDFLAGS += "-L. -lbu++";
@@ -61,6 +62,7 @@ target files("src/tests/*.cpp").replace("src/","").replace(".cpp","")
 {
 	input "src/${OUTPUT}.cpp";
 	rule "exe";
+	requires "libbu++.a";
 	tag ["tests", "general tests"];
 	CXXFLAGS += "-I.";
 	LDFLAGS += "-L. -lbu++";
@@ -87,6 +89,7 @@ target files("src/unit/*.unit").replace("src/","").replace(".unit","")
 {
 	input "src/${OUTPUT}.unit";
 	rule "exe";
+	requires "libbu++.a";
 	tag ["tests", "unit tests"];
 	CXXFLAGS += "-I.";
 	LDFLAGS += "-L. -lbu++";
