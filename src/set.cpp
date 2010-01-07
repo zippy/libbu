@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "set.h"
+#include "bu/set.h"
 
 namespace Bu { subExceptionDef( SetException ) }
 

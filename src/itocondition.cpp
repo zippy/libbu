@@ -7,7 +7,7 @@
 
 #include <sys/time.h>
 
-#include "itocondition.h"
+#include "bu/itocondition.h"
 
 Bu::ItoCondition::ItoCondition()
 {

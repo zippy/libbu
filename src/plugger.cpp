@@ -5,6 +5,6 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "plugger.h"
+#include "bu/plugger.h"
 
 namespace Bu { subExceptionDef( PluginException ) }

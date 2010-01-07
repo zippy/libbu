@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "md5.h"
+#include "bu/md5.h"
 #include "bu/stream.h"
 
 

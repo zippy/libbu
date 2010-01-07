@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "sha1.h"
+#include "bu/sha1.h"
 
 Sha1::Sha1() :
 	H0( 0x67452301 ),

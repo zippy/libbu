@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "hash.h"
+#include "bu/hash.h"
 
 namespace Bu { subExceptionDef( HashException ) }
 

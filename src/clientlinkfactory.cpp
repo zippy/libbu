@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "clientlinkfactory.h"
+#include "bu/clientlinkfactory.h"
 
 Bu::ClientLinkFactory::ClientLinkFactory()
 {

@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "archival.h"
+#include "bu/archival.h"
 
 Bu::Archival::Archival()
 {

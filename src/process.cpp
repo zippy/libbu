@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "process.h"
+#include "bu/process.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>

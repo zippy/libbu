@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "fifo.h"
+#include "bu/fifo.h"
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>

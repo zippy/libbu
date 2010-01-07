@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "exceptionbase.h"
+#include "bu/exceptionbase.h"
 #include <stdarg.h>
 #include <string.h>
 #include <stdio.h>

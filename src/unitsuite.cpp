@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "unitsuite.h"
+#include "bu/unitsuite.h"
 
 Bu::UnitSuite::UnitSuite() :
 	iOptions( 0 )

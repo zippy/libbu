@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "formula.h"
+#include "bu/formula.h"
 
 namespace Bu
 {

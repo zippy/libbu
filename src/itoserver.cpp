@@ -10,7 +10,7 @@
 #include "bu/serversocket.h"
 #include "bu/client.h"
 #include "bu/socket.h"
-#include "osx_compatibility.h"
+#include "bu/osx_compatibility.h"
 
 Bu::ItoServer::ItoServer() :
 	nTimeoutSec( 1 ),

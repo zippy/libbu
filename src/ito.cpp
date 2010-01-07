@@ -5,8 +5,8 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "ito.h"
-#include "osx_compatibility.h"
+#include "bu/ito.h"
+#include "bu/osx_compatibility.h"
 
 Bu::Ito::Ito()
 {

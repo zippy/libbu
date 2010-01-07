@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "itomutex.h"
+#include "bu/itomutex.h"
 
 Bu::ItoMutex::ItoMutex()
 {

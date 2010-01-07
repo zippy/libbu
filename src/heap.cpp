@@ -5,6 +5,6 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "heap.h"
+#include "bu/heap.h"
 
 namespace Bu { subExceptionDef( HeapException ) }
