@@ -179,6 +179,11 @@ void Bu::OptParser::setOverride( const Bu::FString &sOpt, const Bu::FString &sOv
 	hlOption.get( sOpt )->sOverride = sOverride;
 }
 
+void Bu::OptParser::setHelpDefault( const Bu::FString &sOpt, const Bu::FString &sTxt )
+{
+	hlOption.get( sOpt )->sHelpDefault = sTxt;
+}
+
 void Bu::OptParser::addHelpOption( char c, const Bu::FString &s, const Bu::FString &sHelp )
 {
 	Option o;
@@ -213,8 +218,9 @@ int Bu::OptParser::optHelp( StrArray /*aParams*/ )
 	{
 		if( (*i).cOpt != '\0' )
 			bHasShort = true;
-		if( (*i).sOpt && iMaxWidth < (*i).sOpt.getSize() )
-			iMaxWidth = (*i).sOpt.getSize();
+		int lOptSize = (*i).sOpt.getSize() + (*i).sHelpDefault.getSize();
+		if( (*i).sOpt && iMaxWidth < lOptSize )
+			iMaxWidth = lOptSize;
 	}
 	int iIndent = 4;
 	if( bHasShort )
@@ -249,7 +255,8 @@ int Bu::OptParser::optHelp( StrArray /*aParams*/ )
 		{
 			if( (*i).sOpt )
 			{
-				sio << "--" << Fmt(iMaxWidth, Fmt::Left) << (*i).sOpt;
+				sio << "--" << Fmt(iMaxWidth, Fmt::Left)
+					<< (*i).sOpt + (*i).sHelpDefault;
 			}
 			else
 			{

@@ -30,6 +30,12 @@ namespace Bu
 	 * By default a job will continually reschedule itself after being run
 	 * unless it calls stop() on it's job object, it is removed using
 	 * removeJob() on the cron object, or it is added with addJobOnce.
+	 *
+	 *@todo A minor change to the job execution system could allow a Timer to
+	 * defer or reschedule execution instead of the job executing.  This would,
+	 * in effect, allow us to do every type of interesting scheduling that
+	 * systems like fcron offer, including time constrained load-balanced
+	 * execution.
 	 */
 	class MiniCron
 	{
@@ -89,16 +95,35 @@ namespace Bu
 		 */
 		virtual void removeJob( JobId jid );
 
+		/**
+		 * The baseclass for timer/schedulers for MiniCron jobs.  Classes that
+		 * inherit from this are used to determine when jobs will run and at
+		 * what interval.
+		 */
 		class Timer
 		{
 		public:
 			Timer();
 			virtual ~Timer();
 
+			/**
+			 * Called by MiniCron when each job is run to determine the next
+			 * time that a job should be run.  When a job is run, this function
+			 * is actually called before the job is executed again so that the
+			 * job can tell when the next time it will be run will be.
+			 */
 			virtual time_t nextTime()=0;
+
+			/**
+			 * This function should return a copy of the child class.
+			 */
 			virtual Timer *clone() const = 0;
 		};
 
+		/**
+		 * Execute the job every tInterval seconds, also you can delay the
+		 * first run by a different amount of time from the job's creation.
+		 */
 		class TimerInterval : public Timer
 		{
 		public:
@@ -113,6 +138,23 @@ namespace Bu
 			time_t tInterval;
 		};
 
+		/**
+		 * A much more general timer class that can be used for much more
+		 * "cron-like" functionality.  The constructor takes a string that
+		 * describes the times that the job should be run.  At the moment the
+		 * following schemes are understood:
+		 *
+		 * "daily [hour] [minute]"
+		 * "hourly [minute]"
+		 * "weekly [day] [hour] [minute]"
+		 *
+		 * In these examples each word in [brackets] represents a number that
+		 * matches the data type in the brackets.  [day] is the number of days
+		 * since sunday, 0-6.  You can also use lowercase three character
+		 * abbreviations for the day names.
+		 *
+		 * Many more forms follow.
+		 */
 		class TimerBasic : public Timer
 		{
 		public:
@@ -142,12 +184,20 @@ namespace Bu
 			Bu::FString sSpec;
 		};
 		
+		/**
+		 * Represents a MiniCron Job.  This class is used for both internal
+		 * job management as well as job slot interaction and control.  Objects
+		 * of this class are passed into the slots that are signaled when a job
+		 * is executed.
+		 */
 		class Job
 		{
 			friend class Bu::MiniCron;
-		public:
+		private:
 			Job( JobId jid, bool bRepeat=true );
 			virtual ~Job();
+
+		public:
 
 			/**
 			 * Execute this job once, increment the runcount and schedule the

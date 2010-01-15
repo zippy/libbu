@@ -81,6 +81,7 @@ namespace Bu
 			OptionSignal sUsed;
 			_ValueProxy *pProxy;
 			Bu::FString sOverride;
+			Bu::FString sHelpDefault;
 		};
 	
 	private:
@@ -157,6 +158,8 @@ namespace Bu
 		void setOverride( char cOpt, const Bu::FString &sOverride );
 		void setOverride( const Bu::FString &sOpt,
 				const Bu::FString &sOverride );
+
+		void setHelpDefault( const Bu::FString &sOpt, const Bu::FString &sTxt );
 		
 		void addHelpOption( char c='h', const Bu::FString &s="help",
 				const Bu::FString &sHelp="This help." );

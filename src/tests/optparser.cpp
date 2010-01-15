@@ -34,10 +34,11 @@ public:
 			true
 			);
 		addOption( sVar, 's', "str", "Set a variable, see what it does.");
-		addOption( iBob, "bob", "Change iBob to wahtever you want.");
-		addOption( dBob, 'd', "Change dBob to wahtever you want.");
+		addOption( iBob, "bob", "Change iBob to whatever you want.");
+		addOption( dBob, 'd', "Change dBob to whatever you want.");
 
 		setOverride("str", "Bob!");
+		setHelpDefault("bob", "=542");
 	
 		addHelpOption();
 
