@@ -92,6 +92,7 @@ namespace Bu
 		} ArgSpec;
 
 	public:
+		DEPRECATED
 		ParamProc();
 		virtual ~ParamProc();
 		
