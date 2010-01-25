@@ -20,6 +20,11 @@ namespace Bu
 {
 //	template<class keytype, class obtype>
 //	keytype __cacheGetKey( obtype *&pObj );
+	template<class keytype, class obtype>
+	keytype __cacheGetKey( const obtype *pObj )
+	{
+		return pObj->getKey();
+	}
 
 	template<class keytype, class obtype>
 	class Cache
