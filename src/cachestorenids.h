@@ -19,16 +19,16 @@
 
 namespace Bu
 {
-	template<class obtype, class keytype>
+	template<class keytype, class obtype>
 	keytype __cacheGetKey( const obtype *pObj );
 
-	template<class obtype, class keytype>
+	template<class keytype, class obtype>
 	obtype *__cacheStoreNidsAlloc( const keytype &key )
 	{
 		return new obtype();
 	}
 
-	template<class obtype, class keytype>
+	template<class keytype, class obtype>
 	void __cacheStoreNidsStore( Bu::Stream &s, obtype &rObj,
 			const keytype & )
 	{
@@ -36,17 +36,17 @@ namespace Bu
 		ar << rObj;
 	}
 
-	template<class obtype, class keytype>
+	template<class keytype, class obtype>
 	obtype *__cacheStoreNidsLoad( Bu::Stream &s, const keytype &key )
 	{
-		obtype *pObj = __cacheStoreNidsAlloc<obtype, keytype>( key );
+		obtype *pObj = __cacheStoreNidsAlloc<keytype, obtype>( key );
 		Bu::Archive ar( s, Bu::Archive::load );
 		ar >> (*pObj);
 		return pObj;
 	}
 
-	template<class obtype, class keytype>
-	class CacheStoreNids : public CacheStore<obtype, keytype>
+	template<class keytype, class obtype>
+	class CacheStoreNids : public CacheStore<keytype, obtype>
 	{
 	public:
 		CacheStoreNids( Bu::Stream &sArch,
@@ -83,7 +83,7 @@ namespace Bu
 		{
 			int iStream = hId.get( key );
 			NidsStream ns = nStore.openStream( iStream );
-			obtype *pOb = __cacheStoreNidsLoad<obtype, keytype>( ns, key );
+			obtype *pOb = __cacheStoreNidsLoad<keytype, obtype>( ns, key );
 			return pOb;
 		}
 
@@ -91,17 +91,17 @@ namespace Bu
 		{
 			int iStream = hId.get( key );
 			NidsStream ns = nStore.openStream( iStream );
-			__cacheStoreNidsStore<obtype, keytype>( ns, *pObj, key );
+			__cacheStoreNidsStore<keytype, obtype>( ns, *pObj, key );
 			delete pObj;
 		}
 
 		virtual keytype create( obtype *pSrc )
 		{
-			keytype key = __cacheGetKey<obtype,keytype>( pSrc );
+			keytype key = __cacheGetKey<keytype, obtype>( pSrc );
 			int iStream = nStore.createStream();
 			hId.insert( key, iStream );
 			NidsStream ns = nStore.openStream( iStream );
-			__cacheStoreNidsStore<obtype, keytype>( ns, *pSrc, key );
+			__cacheStoreNidsStore<keytype, obtype>( ns, *pSrc, key );
 			return key;
 		}
 
@@ -118,7 +118,7 @@ namespace Bu
 		{
 			int iStream = hId.get( key );
 			NidsStream ns = nStore.openStream( iStream );
-			__cacheStoreNidsStore<obtype, keytype>( ns, *pSrc, key );
+			__cacheStoreNidsStore<keytype, obtype>( ns, *pSrc, key );
 		}
 
 		virtual void destroy( obtype *pObj, const keytype &key )

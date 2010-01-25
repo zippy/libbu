@@ -58,7 +58,7 @@ namespace Bu {
 	}
 }
 
-class BobStore : public Bu::CacheStore<Bob, long>
+class BobStore : public Bu::CacheStore<long, Bob>
 {
 public:
 	BobStore() :
@@ -158,7 +158,7 @@ private:
 	long cLastId;
 };
 
-class BobCalc : public Bu::CacheCalc<Bob, long>
+class BobCalc : public Bu::CacheCalc<long, Bob>
 {
 public:
 	BobCalc()
@@ -189,7 +189,7 @@ private:
 int main( int argc, char *argv[] )
 {
 	TRACE( argc, argv );
-	typedef Bu::Cache<Bob, long> BobCache;
+	typedef Bu::Cache<long, Bob> BobCache;
 	typedef BobCache::Ptr BobPtr;
 
 	if( argc < 3 )

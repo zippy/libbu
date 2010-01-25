@@ -14,14 +14,14 @@
 
 namespace Bu
 {
-	template<class obtype, class keytype> class Cache;
+	template<class keytype, class obtype> class Cache;
 
-	template<class obtype, class keytype>
+	template<class keytype, class obtype>
 	class CacheCalc
 	{
-	friend class Cache<obtype, keytype>;
+	friend class Cache<keytype, obtype>;
 	private:
-		typedef Cache<obtype, keytype> MyCache;
+		typedef Cache<keytype, obtype> MyCache;
 	public:
 		CacheCalc() :
 			pCache( (MyCache *)0 )

@@ -18,10 +18,10 @@
 
 namespace Bu
 {
-//	template<class obtype, class keytype>
+//	template<class keytype, class obtype>
 //	keytype __cacheGetKey( obtype *&pObj );
 
-	template<class obtype, class keytype>
+	template<class keytype, class obtype>
 	class Cache
 	{
 	public:
@@ -32,9 +32,9 @@ namespace Bu
 		 */
 		class Ptr
 		{
-		friend class Bu::Cache<obtype, keytype>;
+		friend class Bu::Cache<keytype, obtype>;
 		private:
-			Ptr( Cache<obtype, keytype> *pCache, obtype *pData,
+			Ptr( Cache<keytype, obtype> *pCache, obtype *pData,
 				const keytype &kId ) :
 				pCache( pCache ),
 				pData( pData ),
@@ -44,7 +44,7 @@ namespace Bu
 					pCache->incRef( kId );
 			}
 			
-			Ptr( Cache<obtype, keytype> *pCache, const keytype &kId ) :
+			Ptr( Cache<keytype, obtype> *pCache, const keytype &kId ) :
 				pCache( pCache ),
 				pData( NULL ),
 				kId( kId )
@@ -168,15 +168,15 @@ namespace Bu
 			}
 
 		private:
-			Bu::Cache<obtype, keytype> *pCache;
+			Bu::Cache<keytype, obtype> *pCache;
 			mutable obtype *pData;
 			mutable keytype kId;
 		};
 
 	private:
-		typedef Bu::CacheStore<obtype, keytype> Store;
+		typedef Bu::CacheStore<keytype, obtype> Store;
 		typedef Bu::List<Store *> StoreList;
-		typedef Bu::CacheCalc<obtype, keytype> Calc;
+		typedef Bu::CacheCalc<keytype, obtype> Calc;
 		
 		typedef struct CacheEntry
 		{

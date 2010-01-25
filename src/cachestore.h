@@ -16,7 +16,7 @@ namespace Bu
 	 * Handles I/O for data in the cache.  This also assigns ID's to the newly
 	 * created objects that are requested through this system.
 	 */
-	template<class obtype, class keytype>
+	template<class keytype, class obtype>
 	class CacheStore
 	{
 	public:
