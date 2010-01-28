@@ -243,6 +243,7 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &f, Bu::Formatter::Special s )
 				char ci = f.getIndentChar();
 				for( int j = 0; j < f.getIndent(); j++ )
 					f.write( &ci, 1 );
+				f.doFlush();
 			}
 			break;
 
