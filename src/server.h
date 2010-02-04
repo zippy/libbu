@@ -9,7 +9,10 @@
 #define BU_SERVER_H
 
 #include <stdint.h>
-#include <sys/select.h>
+
+#ifndef WIN32
+	#include <sys/select.h>
+#endif
 
 #include "bu/fstring.h"
 #include "bu/list.h"
@@ -17,6 +20,7 @@
 #include "bu/clientlink.h"
 #include "bu/clientlinkfactory.h"
 #include "bu/hash.h"
+#include "bu/win32_compatibility.h"
 
 namespace Bu
 {

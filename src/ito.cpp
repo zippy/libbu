@@ -43,6 +43,10 @@ bool Bu::Ito::join()
 
 void Bu::Ito::yield()
 {
+#ifndef WIN32
 	pthread_yield();
+#else
+	#warning Bu::Ito::yield IS A STUB for WIN32!!!!	
+#endif
 }
 

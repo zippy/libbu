@@ -8,6 +8,7 @@
 #ifndef BU_PLUGGER_H
 #define BU_PLUGGER_H
 
+#ifndef WIN32 //yeah, this one is going to take some work...
 
 #include "bu/hash.h"
 #include "bu/list.h"
@@ -211,5 +212,7 @@ namespace Bu
 		InstHash hObj;
 	};
 }
+
+#endif //#ifndef WIN32 //yeah, this one is going to take some work...
 
 #endif

@@ -1,0 +1,80 @@
+/**
+ * This is the default.bld file for libbu++, it pretty much handles everything
+ * libbu++ related, kinda' cool, eh?  It can completely replace the old build
+ * and actually does a better job with a number of things.
+ */
+
+CXXFLAGS += "-ggdb -W -Wall";
+
+
+action "default"
+{
+	build: [targets("header-links"), "libbu++win.a"];
+}
+
+
+target files("src/*.h").replace("src/", "bu/")
+{
+	tag "header-links";
+	display "symlink";
+	input OUTPUT.replace("bu/","src/");
+	profile "build"
+	{
+		execute("ln -s ../${INPUT} ${OUTPUT}");
+	}
+}
+
+target "libbu++win.a"
+{
+	input files("src/*.cpp");
+	rule "lib";
+	CXXFLAGS += "-I. -Isupport/windows";
+}
+
+target "src/process.win_o"
+{
+	profile "build"
+	{
+		execute("rm -f src/process.win_o && touch src/process.win_o && echo NOT BUILDING PROCESS RIGHT NOW!!!");
+	}
+}
+target "src/regex.win_o"
+{
+	profile "build"
+	{
+		execute("rm -f src/regex.win_o && touch src/regex.win_o && echo NOT BUILDING REGEX RIGHT NOW!!!");
+	}
+}
+
+function cppToWinObj()
+{
+	if OBJ_DIR == null then
+	{
+		return INPUT.regex("\\.cpp$", ".win_o");
+	}
+	else
+	{
+		return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cpp$", ".win_o");
+	}
+
+}
+
+rule "lib"
+{
+	input "*.win_o";
+	profile "build"
+	{
+		execute("wine C:/MinGW/bin/ar.exe cr ${OUTPUT} ${INPUT}");
+	}
+}
+
+rule "wincpp"
+{
+	input "*.cpp";
+	output INPUT.cppToWinObj();
+	//requires getMakeDeps("wine C:/MinGW/bin/g++.exe ${CXXFLAGS} -M ${INPUT}");
+	profile "build"
+	{
+		execute("wine C:/MinGW/bin/g++.exe ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
+	}
+}

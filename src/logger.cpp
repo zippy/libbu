@@ -23,6 +23,7 @@ Bu::Logger::~Logger()
 
 void Bu::Logger::log( uint32_t nLevel, const char *sFile, const char *sFunction, int nLine, const char *sFormat, ...)
 {
+#ifndef WIN32
 	if( (nLevel&nLevelMask) == 0 )
 		return;
 
@@ -63,6 +64,9 @@ void Bu::Logger::log( uint32_t nLevel, const char *sFile, const char *sFunction,
 	write( fileno(stdout), line, strlen(line) );
 	free( text );
 	free( line );
+#else
+	#warning Bu::Logger::log IS A STUB for WIN32!!!!	
+#endif
 }
 
 void Bu::Logger::setFormat( const Bu::FString &str )

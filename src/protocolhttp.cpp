@@ -6,7 +6,11 @@
  */
 
 #include <dirent.h>
-#include <sys/wait.h>
+
+#ifndef WIN32
+	#include <sys/wait.h>
+#endif 
+
 #include <errno.h>
 #include <stdlib.h>
 #include "bu/protocolhttp.h"

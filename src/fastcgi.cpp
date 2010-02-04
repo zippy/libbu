@@ -7,7 +7,10 @@
 
 #include "bu/fastcgi.h"
 
-#include <arpa/inet.h>
+#ifndef WIN32
+	#include <arpa/inet.h>
+#endif
+
 #include <errno.h>
 #include <unistd.h>
 
@@ -37,6 +40,7 @@ Bu::FastCgi::~FastCgi()
 
 bool Bu::FastCgi::isEmbedded()
 {
+#ifndef WIN32
 	struct sockaddr name;
 	socklen_t namelen = sizeof(name);
 	if( getpeername( STDIN_FILENO, &name, &namelen ) != 0 &&
@@ -54,6 +58,10 @@ bool Bu::FastCgi::isEmbedded()
 		sio << "No socket detected, running in standalone mode" << sio.nl;
 		return false;
 	}
+#else
+	#warning Bu::FastCgi::isEmbedded IS A STUB for WIN32!!!!
+	return false;
+#endif
 }
 
 void Bu::FastCgi::read( Bu::Socket &s, Bu::FastCgi::Record &r )

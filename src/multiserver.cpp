@@ -5,6 +5,8 @@
  * terms of the license contained in the file LICENSE.
  */
 
+#include "win32_compatibility.h"
+
 #include "bu/multiserver.h"
 #include "bu/protocol.h"
 #include "bu/client.h"

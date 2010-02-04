@@ -7,4 +7,9 @@
 
 #include "bu/plugger.h"
 
+#ifndef WIN32
+
 namespace Bu { subExceptionDef( PluginException ) }
+
+#endif
+

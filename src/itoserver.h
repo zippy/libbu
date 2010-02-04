@@ -9,7 +9,10 @@
 #define BU_ITO_SERVER_H
 
 #include <stdint.h>
-#include <sys/select.h>
+
+#ifndef WIN32
+	#include <sys/select.h>
+#endif
 
 #include "bu/fstring.h"
 #include "bu/list.h"

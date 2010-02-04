@@ -12,6 +12,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include "win32_compatibility.h"
+
 namespace Bu { subExceptionDef( FifoException ) }
 
 Bu::Fifo::Fifo( const Bu::FString &sName, int iFlags, mode_t mAcc ) :
@@ -19,6 +21,7 @@ Bu::Fifo::Fifo( const Bu::FString &sName, int iFlags, mode_t mAcc ) :
 	iIn( -1 ),
 	iOut( -1 )
 {
+#ifndef WIN32
 	if( iFlags&Create )
 	{
 		if( mkfifo( sName.getStr(), mAcc ) )
@@ -40,6 +43,9 @@ Bu::Fifo::Fifo( const Bu::FString &sName, int iFlags, mode_t mAcc ) :
 			O_WRONLY
 			);
 	}
+#else
+	#warning Bu::Fifo::Fifo IS A STUB for WIN32!!!!	
+#endif
 }
 
 Bu::Fifo::~Fifo()
@@ -126,15 +132,23 @@ bool Bu::Fifo::isSeekable()
 
 bool Bu::Fifo::isBlocking()
 {
+#ifndef WIN32
 	return ((fcntl( iIn, F_GETFL, 0 )&O_NONBLOCK) == O_NONBLOCK);
+#else
+	#warning Bu::Fifo::isBlocking IS A STUB for WIN32!!!!
+#endif	
 }
 
 void Bu::Fifo::setBlocking( bool bBlocking )
 {
+#ifndef WIN32
 	if( bBlocking )
 		fcntl( iIn, F_SETFL, fcntl( iIn, F_GETFL, 0 )&(~O_NONBLOCK) );
 	else
 		fcntl( iIn, F_SETFL, fcntl( iIn, F_GETFL, 0 )|O_NONBLOCK );
+#else
+	#warning Bu::Fifo::setBlocking IS A STUB for WIN32!!!!
+#endif	
 }
 
 void Bu::Fifo::flush()
