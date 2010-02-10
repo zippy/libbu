@@ -9,6 +9,7 @@
 #define BU_BITSTRING_H
 
 #include "bu/util.h"
+#include "bu/fstring.h"
 
 namespace Bu
 {
@@ -201,6 +202,8 @@ namespace Bu
 		 *@returns A long converted from your raw BitString data.
 		 */
 		long toLong( long iStart = 0, long iSize = 32 );
+
+		Bu::FString toString();
 
 		//operators
 		BitString &operator=( const BitString &xSrc );

@@ -443,6 +443,15 @@ long Bu::BitString::getHighestOrderBitPos()
 
 	return -1;
 }
+
+Bu::FString Bu::BitString::toString()
+{
+	Bu::FString sRet;
+	for( int j = iBits-1; j >= 0; j-- )
+		sRet.append( getBit( j )?'1':'0' );
+	return sRet;
+}
+
 /*
 bool Bu::BitString::writeToFile( FILE *fh )
 {

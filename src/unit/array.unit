@@ -76,7 +76,7 @@
 
 	StrHashArray a3;
 	a3 = a1;
-
+	
 	unitTest( a3[0].get("Hi") == "Yo" );
 	unitTest( a3[0].get("Bye") == "Later" );
 	unitTest( a3[1].get("Test") == "Bloop" );

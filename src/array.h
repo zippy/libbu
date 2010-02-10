@@ -11,70 +11,47 @@
 #include <memory>
 #include "bu/exceptionbase.h"
 #include "bu/archivebase.h"
+#include "bu/sharedcore.h"
 
 namespace Bu
 {
 	subExceptionDecl( ArrayException )
-	/**
-	 * Array type container, just like a normal array only flexible and keeps
-	 * track of your memory for you.
-	 *
-	 *@param value (typename) The type of data to store in your list
-	 *@param valuealloc (typename) Memory Allocator for your value type
-	 *@param linkalloc (typename) Memory Allocator for the list links.
-	 *@ingroup Containers
-	 */
-	template<typename value, int inc=10, typename valuealloc=std::allocator<value> >
-	class Array
+
+	template<typename value, int inc, typename valuealloc>
+	class ArrayCore
 	{
-	private:
-		typedef class Array<value, inc, valuealloc> MyType;
-
 	public:
-		Array() :
+		ArrayCore() :
 			pData( NULL ),
 			iSize( 0 ),
 			iCapacity( 0 )
-		{
-		}
+		{ }
 
-		Array( const MyType &src ) :
-			pData( NULL ),
-			iSize( 0 ),
-			iCapacity( 0 )
+		void setCapacity( int iNewLen )
 		{
-			*this = src;
-		}
-		
-		Array( long iSetCap ) :
-			pData( NULL ),
-			iSize( 0 ),
-			iCapacity( 0 )
-		{
-			setCapacity( iSetCap );
-		}
-
-		~Array()
-		{
-			clear();
-		}
-
-		MyType &operator=( const MyType &src )
-		{
-			clear();
-			setCapacity( src.iCapacity );
-
-			long iTop = src.getSize();
-			for( long i = 0; i < iTop; ++i )
+			//clear();
+			//iCapacity = iCapacity;
+			//pData = va.allocate( iCapacity );
+			if( iNewLen <= iCapacity ) return;
+			value *pNewData = va.allocate( iNewLen );
+			if( pData )
 			{
-				append( src[i] );
+				for( int j = 0; j < iSize; j++ )
+				{
+					va.construct( &pNewData[j], pData[j] );
+					va.destroy( &pData[j] );
+				}
+				va.deallocate( pData, iCapacity );
 			}
-			return *this;
+			pData = pNewData;
+			iCapacity = iNewLen;
 		}
 
-		/**
-		 * Clear the array.
-		 */
+		virtual ~ArrayCore()
+		{
+			clear();
+		}
+
 		void clear()
 		{
 			if( pData )
@@ -90,33 +67,162 @@ namespace Bu
 			iCapacity = 0;
 		}
 
+		void erase( int iPos )
+		{
+			for( int j = iPos; j < iSize; j++ )
+			{
+				va.destroy( &pData[j] );
+				if( j == iSize-1 )
+				{
+					iSize--;
+					return;
+				}
+				va.construct( &pData[j], pData[j+1] );
+			}
+		}
+
+		void swapErase( int iPos )
+		{
+			if( iPos == iSize-1 )
+			{
+				erase( iPos );
+				return;
+			}
+			va.destroy( &pData[iPos] );
+			va.construct( &pData[iPos], pData[iSize-1] );
+			va.destroy( &pData[iSize-1] );
+			iSize--;
+		}
+
+		valuealloc va;
+		value *pData;
+		long iSize;
+		long iCapacity;
+	};
+
+	/**
+	 * Array type container, just like a normal array only flexible and keeps
+	 * track of your memory for you.
+	 *
+	 *@param value (typename) The type of data to store in your list
+	 *@param valuealloc (typename) Memory Allocator for your value type
+	 *@param linkalloc (typename) Memory Allocator for the list links.
+	 *@ingroup Containers
+	 */
+	template<typename value, int inc=10, typename valuealloc=std::allocator<value> >
+	class Array : public SharedCore<ArrayCore<value, inc, valuealloc> >
+	{
+	private:
+		typedef class Array<value, inc, valuealloc> MyType;
+		typedef class ArrayCore<value, inc, valuealloc> Core;
+
+	protected:
+		using SharedCore< Core >::core;
+		using SharedCore< Core >::_hardCopy;
+		using SharedCore< Core >::_allocateCore;
+
+	public:
+		struct const_iterator;
+		struct iterator;
+
+		Array()
+		{
+		}
+
+		Array( const MyType &src ) :
+			SharedCore< Core >( src )
+		{
+		}
+		
+		Array( long iSetCap )
+		{
+			setCapacity( iSetCap );
+		}
+
+		~Array()
+		{
+		}
+
+		bool operator==( const MyType &src ) const
+		{
+			if( core == src.core )
+				return true;
+			if( core->iSize != src.core->iSize )
+				return false;
+
+			for( int j = 0; j < core->iSize; j++ )
+			{
+				if( core->pData[j] != src.core->pData[j] )
+					return false;
+			}
+			return true;
+		}
+
+		bool operator!=( const MyType &src ) const
+		{
+			return !(*this == src);
+		}
+
+		/**
+		 * Clear the array.
+		 */
+		void clear()
+		{
+			_hardCopy();
+			core->clear();
+		}
+
 		void append( const value &rVal )
 		{
-			if( iSize == iCapacity )
+			_hardCopy();
+			if( core->iSize == core->iCapacity )
 			{
-				setCapacity( iCapacity + inc );
+				core->setCapacity( core->iCapacity + inc );
 			}
 
-			va.construct( &pData[iSize++], rVal );
+			core->va.construct( &core->pData[core->iSize++], rVal );
 		}
 
 		//operator
 		value &operator[]( long iIndex )
 		{
-			if( iIndex < 0 || iIndex >= iSize )
+			_hardCopy();
+			if( iIndex < 0 || iIndex >= core->iSize )
 				throw ArrayException(
-					"Index %d out of range 0:%d", iIndex, iSize );
+					"Index %d out of range 0:%d", iIndex, core->iSize );
 
-			return pData[iIndex];
+			return core->pData[iIndex];
 		}
 		
 		const value &operator[]( long iIndex ) const
 		{
-			if( iIndex < 0 || iIndex >= iSize )
+			if( iIndex < 0 || iIndex >= core->iSize )
 				throw ArrayException(
-					"Index %d out of range 0:%d", iIndex, iSize );
+					"Index %d out of range 0:%d", iIndex, core->iSize );
 
-			return pData[iIndex];
+			return core->pData[iIndex];
+		}
+
+		value &first()
+		{
+			_hardCopy();
+			return core->pData[0];
+		}
+
+		const value &first() const
+		{
+			return core->pData[0];
+		}
+
+		value &last()
+		{
+			_hardCopy();
+			return core->pData[core->iSize-1];
+		}
+
+		const value &last() const
+		{
+			return core->pData[core->iSize-1];
 		}
 
 		/**
@@ -125,7 +231,7 @@ namespace Bu
 		 */
 		long getSize() const
 		{
-			return iSize;
+			return core->iSize;
 		}
 
 		/**
@@ -136,7 +242,7 @@ namespace Bu
 		 */
 		long getCapacity() const
 		{
-			return iCapacity;
+			return core->iCapacity;
 		}
 
 		/**
@@ -149,19 +255,8 @@ namespace Bu
 		 */
 		void setCapacity( long iNewLen )
 		{
-			if( iNewLen <= iCapacity ) return;
-			value *pNewData = va.allocate( iNewLen );
-			if( pData )
-			{
-				for( int j = 0; j < iSize; j++ )
-				{
-					va.construct( &pNewData[j], pData[j] );
-					va.destroy( &pData[j] );
-				}
-				va.deallocate( pData, iCapacity );
-			}
-			pData = pNewData;
-			iCapacity = iNewLen;
+			_hardCopy();
+			core->setCapacity( iNewLen );
 		}
 
 		typedef struct iterator
@@ -387,16 +482,8 @@ namespace Bu
 		 */
 		void erase( iterator i )
 		{
-			for( int j = i.iPos; j < iSize; j++ )
-			{
-				va.destroy( &pData[j] );
-				if( j == iSize-1 )
-				{
-					iSize--;
-					return;
-				}
-				va.construct( &pData[j], pData[j+1] );
-			}
+			_hardCopy();
+			core->erase( i.iPos );
 		}
 
 		/**
@@ -408,22 +495,24 @@ namespace Bu
 		 */
 		void swapErase( iterator i )
 		{
-			if( i.iPos == iSize-1 )
-			{
-				erase( i );
-				return;
+			_hardCopy();
+			swapErase( i.iPos );
+		}
+
+	protected:
+		virtual Core *_copyCore( Core *src )
+		{
+			Core *pRet = _allocateCore();
+			pRet->setCapacity( src->iCapacity );
+			pRet->iSize = src->iSize;
+			for( int j = 0; j < src->iSize; j++ )
+			{	
+				pRet->va.construct( &pRet->pData[j], src->pData[j] );
 			}
-			va.destroy( &pData[i.iPos] );
-			va.construct( &pData[i.iPos], pData[iSize-1] );
-			va.destroy( &pData[iSize-1] );
-			iSize--;
+			return pRet;
 		}
 
 	private:
-		valuealloc va;
-		value *pData;
-		long iSize;
-		long iCapacity;
 	};
 
 	class Formatter;
