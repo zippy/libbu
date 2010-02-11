@@ -796,7 +796,7 @@ namespace Bu
 				append( &cData, 1 );
 			}
 		}
-		
+
 		/**
 		 * Append another FString to this one.
 		 *@param sData (MyType &) The FString to append.
@@ -1276,6 +1276,13 @@ namespace Bu
 		MyType &operator+=( const MyType &rSrc )
 		{
 			append( rSrc );
+
+			return (*this);
+		}
+
+		MyType &operator+=( const MyType::const_iterator &i )
+		{
+			append( i, i+1 );
 
 			return (*this);
 		}
