@@ -19,24 +19,27 @@ size_t Bu::NewLine::stop()
 	return 0;
 }
 
-size_t Bu::NewLine::read( void *pBuf, size_t iAmnt )
+size_t Bu::NewLine::read( void *pBufV, size_t iAmnt )
 {
-	size_t iRead = rNext.read( pBuf, iAmnt );
+	size_t iTotal = 0;
 	size_t iOffset = 0;
+	size_t iRead = rNext.read( pBufV, iAmnt );
+	char *pBuf = (char *)pBufV;
 
 	for( size_t i = 0; i < iRead; i++ )
 	{
 		if( pBuf[i] == '\r' )
 		{
 			pBuf[i+iOffset] = '\n';
-			if( pBuf[j+1] == '\n' )
+			if( pBuf[i+1] == '\n' )
 			{
 				iOffset--;
 			}
 		}
 		else if( pBuf[i] == '\n' )
 		{
-			if( pBuf[j+1] == '\r' )
+			pBuf[i+iOffset] = '\n';
+			if( pBuf[i+1] == '\r' )
 			{
 				iOffset--;
 			}
@@ -47,7 +50,8 @@ size_t Bu::NewLine::read( void *pBuf, size_t iAmnt )
 		}
 	}
 
-	iRead += iOffset;
+	iTotal += iRead + iOffset;
+	return iTotal;
 }
 
 size_t Bu::NewLine::write( const void *pBuf, size_t iAmnt )

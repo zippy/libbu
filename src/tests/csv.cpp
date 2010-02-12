@@ -2,6 +2,7 @@
 #include "bu/file.h"
 #include "bu/newline.h"
 #include "bu/csvreader.h"
+#include "bu/buffer.h"
 #include "bu/sio.h"
 
 using namespace Bu;
@@ -23,7 +24,8 @@ public:
 	{
 		File fIn( aArgs[1], File::Read );
 		NewLine nlIn( fIn );
-		CsvReader rCsv( nlIn );
+		Buffer bIn( nlIn );
+		CsvReader rCsv( bIn );
 		while( !fIn.isEos() )
 		{
 			sio << rCsv.readLine() << sio.nl;
