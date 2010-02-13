@@ -5,59 +5,60 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_ITO_QUEUE_H
-#define BU_ITO_QUEUE_H
+#ifndef BU_ITO_ATOM_H
+#define BU_ITO_ATOM_H
 
 #include <pthread.h>
 
 #include "itomutex.h"
 #include "itocondition.h"
 
-/**
- * A thread-safe wrapper class.
- *@ingroup Threading
- */
-template <class T>
-class ItoAtom
+namespace Bu
 {
-public:
 	/**
-	 * Construct an empty queue.
+	 * A thread-safe wrapper class.
+	 *@ingroup Threading
 	 */
-	ItoAtom()
+	template <class T>
+	class ItoAtom
 	{
-	}
+	public:
+		/**
+		 * Construct an empty queue.
+		 */
+		ItoAtom()
+		{
+		}
 
-	ItoAtom( const T &src ) :
-		data( src )
-	{
-	}
-	
-	~ItoQueue()
-	{
-	}
+		ItoAtom( const T &src ) :
+			data( src )
+		{
+		}
+		
+		~ItoAtom()
+		{
+		}
 
-	T get()
-	{
-		mOperate.lock();
-		mOperate.unlock();
-		return data;
-	}
+		T get()
+		{
+			mOperate.lock();
+			T ret = data;
+			mOperate.unlock();
+			return ret;
+		}
 
-	void set( const T &val )
-	{
-		mOperate.lock();
-		data = val;
-		cBlock.signal();
-		mOperate.unlock();
-	}
+		void set( const T &val )
+		{
+			mOperate.lock();
+			data = val;
+			mOperate.unlock();
+		}
 
-private:
-	Item *pStart;	/**< The start of the queue, the next element to dequeue. */
-	Item *pEnd;		/**< The end of the queue, the last element to dequeue. */
+	private:
+		T data;
 
-	ItoMutex mOperate;	/**< The master mutex, used on all operations. */
-	ItoCondition cBlock;	/**< The condition for blocking dequeues. */
+		ItoMutex mOperate;	/**< The master mutex, used on all operations. */
+	};
 };
 
 #endif
