@@ -43,14 +43,22 @@ Bu::StrArray Bu::CsvReader::readLine()
 
 	Bu::FString sLine = sIn.readLine();
 
-	for( Bu::FString::iterator i = sLine.begin(); i; i++ )
+	Bu::FString::iterator i = sLine.begin();
+
+	aVals.append( sDecode( i ) );
+
+	while( i )
 	{
 		if( *i == ',' )
 		{
+			i++;
+			aVals.append( sDecode( i ) );
 		}
 		else
 		{
-			aVals.append( sDecode( i ) );
+			// Blanks and stuff?
+			sio << "Out of bound:  '" << *i << "'" << sio.nl;
+			i++;
 		}
 	}
 
