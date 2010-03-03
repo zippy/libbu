@@ -188,6 +188,7 @@ Bu::File Bu::File::tempFile( Bu::FString &sName )
 
 	return Bu::File( afh_d );
 }
+
 void Bu::File::truncate( long nSize )
 {
 	ftruncate( fd, nSize );
