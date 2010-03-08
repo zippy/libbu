@@ -31,6 +31,10 @@ namespace Bu { subExceptionDef( ServerSocketException ) }
 Bu::ServerSocket::ServerSocket( int nPort, int nPoolSize ) :
 	nPort( nPort )
 {
+#ifdef WIN32
+	Bu::Winsock2::getInstance();
+#endif
+	
 	/* Create the socket and set it up to accept connections. */
 	struct sockaddr_in name;
 
@@ -48,6 +52,10 @@ Bu::ServerSocket::ServerSocket( int nPort, int nPoolSize ) :
 Bu::ServerSocket::ServerSocket(const FString &sAddr,int nPort, int nPoolSize) :
 	nPort( nPort )
 {
+#ifdef WIN32
+	Bu::Winsock2::getInstance();
+#endif
+
 	/* Create the socket and set it up to accept connections. */
 	struct sockaddr_in name;
 
@@ -69,6 +77,10 @@ Bu::ServerSocket::ServerSocket( int nServer, bool bInit, int nPoolSize ) :
 	nServer( nServer ),
 	nPort( 0 )
 {
+#ifdef WIN32
+	Bu::Winsock2::getInstance();
+#endif
+	
 	if( bInit )
 	{
 		struct sockaddr name;
@@ -86,6 +98,10 @@ Bu::ServerSocket::ServerSocket( int nServer, bool bInit, int nPoolSize ) :
 
 Bu::ServerSocket::ServerSocket( const ServerSocket &rSrc )
 {
+#ifdef WIN32
+	Bu::Winsock2::getInstance();
+#endif
+
 	nServer = dup( rSrc.nServer );
 	nPort = rSrc.nPort;
 	FD_ZERO( &fdActive );

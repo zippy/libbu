@@ -96,10 +96,10 @@ namespace Bu
 			/*uint32_t uPrevBlock,*/ bool bNew=false );
 		uint32_t createBlock( uint32_t uFirstBlock, /*uint32_t uPrevBlock,*/
 			int iPreAllocate=1 );
-		void getBlock( uint32_t uIndex, struct Nids::Block *pBlock );
-		void setBlock( uint32_t uIndex, struct Nids::Block *pBlock );
+		void getBlock( uint32_t uIndex, Block *pBlock );
+		void setBlock( uint32_t uIndex, Block *pBlock );
 		void updateStreamSize( uint32_t uIndex, uint32_t uSize );
-		uint32_t getNextBlock( uint32_t uIndex, struct Nids::Block *pBlock,
+		uint32_t getNextBlock( uint32_t uIndex, Block *pBlock,
 			bool bCreate=true);
 
 		void updateHeader();
