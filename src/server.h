@@ -68,6 +68,8 @@ namespace Bu
 		virtual void onNewConnection( Client *pClient, int nPort )=0;
 		virtual void onClosedConnection( Client *pClient )=0;
 
+		void shutdown();
+
 	private:
 		class SrvClientLink : public Bu::ClientLink
 		{

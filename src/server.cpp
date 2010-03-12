@@ -23,15 +23,7 @@ Bu::Server::Server() :
 
 Bu::Server::~Server()
 {
-	for( SrvHash::iterator i = hServers.begin(); i != hServers.end(); i++ )
-	{
-		delete *i;
-	}
-
-	for( ClientHash::iterator i = hClients.begin(); i != hClients.end(); i++ )
-	{
-		delete *i;
-	}
+	shutdown();
 }
 
 void Bu::Server::addPort( int nPort, int nPoolSize )
@@ -183,5 +175,23 @@ void Bu::Server::tick()
 	{
 		(*i)->tick();
 	}
+}
+
+void Bu::Server::shutdown()
+{
+	for( SrvHash::iterator i = hServers.begin(); i != hServers.end(); i++ )
+	{
+		delete *i;
+	}
+
+	hServers.clear();
+
+	for( ClientHash::iterator i = hClients.begin(); i != hClients.end(); i++ )
+	{
+		onClosedConnection( *i );
+		delete *i;
+	}
+
+	hClients.clear();
 }
 

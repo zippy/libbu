@@ -43,3 +43,8 @@ void Bu::MultiServer::onClosedConnection( Bu::Client *pClient )
 	delete pClient->getProtocol();
 }
 
+void Bu::MultiServer::shutdown()
+{
+	Bu::Server::shutdown();
+}
+

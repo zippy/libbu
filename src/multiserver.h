@@ -45,6 +45,8 @@ namespace Bu
 		virtual void onNewConnection( Client *pClient, int nPort );
 		virtual void onClosedConnection( Client *pClient );
 
+		void shutdown();
+
 	private:
 		Bu::Hash<int, Protocol *(*)()> hProtos;
 	};
