@@ -239,7 +239,11 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &f, Bu::Formatter::Special s )
 	{
 		case Formatter::nl:
 			{
+#ifdef WIN32
+				f.write("\r\n", 2 );
+#else
 				f.write("\n", 1 );
+#endif
 				char ci = f.getIndentChar();
 				for( int j = 0; j < f.getIndent(); j++ )
 					f.write( &ci, 1 );

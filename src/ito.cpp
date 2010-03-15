@@ -25,14 +25,16 @@ bool Bu::Ito::start()
 
 bool Bu::Ito::stop()
 {
-	pthread_exit( &ptHandle );
+	pthread_cancel( ptHandle );
 
 	return true;
 }
 
 void *Bu::Ito::threadRunner( void *pThread )
 {
-	return ((Ito *)pThread)->run();
+	void *pRet = ((Ito *)pThread)->run();
+	pthread_exit( pRet );
+	return pRet;
 }
 
 bool Bu::Ito::join()
