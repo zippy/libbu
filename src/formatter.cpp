@@ -459,7 +459,7 @@ Bu::Formatter &Bu::operator>>( Bu::Formatter &f, long double &flt )
 Bu::Formatter &Bu::operator>>( Bu::Formatter &f, bool &b )
 {
 	Bu::FString sStr = f.readToken();
-	if( !sStr )
+	if( !sStr.isSet() )
 		return f;
 	char c = *sStr.begin();
 	if( c == 'y' || c == 'Y' || c == 't' || c == 'T' )

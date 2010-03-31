@@ -45,13 +45,13 @@ typedef Bu::Hash<int, Bu::FString> IntStrHash;
 	unitTest( h["Hi"].getValue() == "Yo" );
 
 	StrStrHash h2(h);
-	unitTest( h2["Hi"].getValue() = "Yo" );
-	unitTest( h2["Bye"].getValue() = "Later" );
+	unitTest( h2["Hi"].getValue() == "Yo" );
+	unitTest( h2["Bye"].getValue() == "Later" );
 
 	StrStrHash h3;
 	h3 = h;
-	unitTest( h3["Hi"].getValue() = "Yo" );
-	unitTest( h3["Bye"].getValue() = "Later" );
+	unitTest( h3["Hi"].getValue() == "Yo" );
+	unitTest( h3["Bye"].getValue() == "Later" );
 }
 
 {%insert3}

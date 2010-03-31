@@ -335,7 +335,7 @@ namespace Bu
 				if( !pChunk ) return false;
 				return pChunk->pData[iPos] != c;
 			}
-
+			
 			operator bool() const
 			{
 				return pChunk != NULL;
@@ -1598,11 +1598,12 @@ namespace Bu
 			return pFirst->pData;
 		}
 		*/
-
+		/*
 		operator bool() const
 		{
 			return (core->pFirst != NULL);
 		}
+		*/
 
 		bool isSet() const
 		{

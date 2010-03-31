@@ -71,6 +71,9 @@ Bu::FString Bu::CsvReader::decodeExcel( Bu::FString::iterator &i )
 
 	for(; i && (*i == ' ' || *i == '\t'); i++ ) { }
 	
+	if( !i )
+		return sRet;
+
 	if( *i == '\"' )
 	{
 		for( i++ ; i; i++ )

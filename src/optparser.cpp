@@ -53,7 +53,7 @@ void Bu::OptParser::parse( int argc, char **argv )
 					{
 						Bu::StrArray aParams( iCount );
 						aParams.append( sOpt );
-						if( sExtraParam )
+						if( sExtraParam.isSet() )
 						{
 							aParams.append( argv[j]+iEPos+1 );
 						}
@@ -65,11 +65,11 @@ void Bu::OptParser::parse( int argc, char **argv )
 					}
 					else if( pOpt->pProxy )
 					{
-						if( pOpt->sOverride )
+						if( pOpt->sOverride.isSet() )
 						{
 							pOpt->pProxy->setValue( pOpt->sOverride );
 						}
-						else if( sExtraParam )
+						else if( sExtraParam.isSet() )
 						{
 							pOpt->pProxy->setValue( sExtraParam );
 						}
@@ -117,7 +117,7 @@ void Bu::OptParser::parse( int argc, char **argv )
 						}
 						else if( pOpt->pProxy )
 						{
-							if( pOpt->sOverride )
+							if( pOpt->sOverride.isSet() )
 							{
 								pOpt->pProxy->setValue( pOpt->sOverride );
 							}
@@ -172,7 +172,7 @@ void Bu::OptParser::addOption( const Option &opt )
 	lOption.append( opt );
 	if( opt.cOpt != '\0' )
 		hsOption.insert( opt.cOpt, &lOption.last() );
-	if( opt.sOpt )
+	if( opt.sOpt.isSet() )
 		hlOption.insert( opt.sOpt, &lOption.last() );
 }
 
@@ -226,7 +226,7 @@ int Bu::OptParser::optHelp( StrArray /*aParams*/ )
 		if( (*i).cOpt != '\0' )
 			bHasShort = true;
 		int lOptSize = (*i).sOpt.getSize() + (*i).sHelpDefault.getSize();
-		if( (*i).sOpt && iMaxWidth < lOptSize )
+		if( (*i).sOpt.isSet() && iMaxWidth < lOptSize )
 			iMaxWidth = lOptSize;
 	}
 	int iIndent = 4;
@@ -260,7 +260,7 @@ int Bu::OptParser::optHelp( StrArray /*aParams*/ )
 		}
 		if( iMaxWidth > 0 )
 		{
-			if( (*i).sOpt )
+			if( (*i).sOpt.isSet() )
 			{
 				sio << "--" << Fmt(iMaxWidth, Fmt::Left)
 					<< (*i).sOpt + (*i).sHelpDefault;

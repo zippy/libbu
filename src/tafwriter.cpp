@@ -28,7 +28,7 @@ void Bu::TafWriter::writeGroup( const Bu::TafGroup *pRoot )
 {
 	ident();
 	sOut.write("{", 1 );
-	if( pRoot->getName() )
+	if( pRoot->getName().isSet() )
 		writeString( pRoot->getName() );
 	sOut.write(":\n", 2 );
 	iDepth++;

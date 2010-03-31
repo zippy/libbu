@@ -74,7 +74,7 @@
 	unitTest( a == "ab" );
 	a += "cdefghijklmnop";
 	a.remove( 5, 1 );
-	unitTest( a = "abcdeghijklmnop" );
+	unitTest( a == "abcdeghijklmnop" );
 }
 
 {%add1}

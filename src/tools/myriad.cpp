@@ -75,7 +75,7 @@ int main( int argc, char *argv[] )
 	switch( opts.eMode )
 	{
 		case modeCreate:
-			if( !opts.sOutput )
+			if( !opts.sOutput.isSet() )
 			{
 				sio << "Please specify an output file to create a stream for."
 					<< sio.nl;
@@ -90,7 +90,7 @@ int main( int argc, char *argv[] )
 			break;
 
 		case modeInfo:
-			if( !opts.sInput )
+			if( !opts.sInput.isSet() )
 			{
 				sio << "Please specify an input file to display info about."
 					<< sio.nl;

@@ -204,7 +204,7 @@ namespace Bu
 		template<typename type>
 		void iparse( type &i, const Bu::FString &sBuf )
 		{
-			if( !sBuf )
+			if( !sBuf.isSet() )
 				return;
 			if( sBuf[0] != '+' && sBuf[0] != '-' &&
 				(sBuf[0] < '0' && sBuf[0] > '9') )
@@ -230,7 +230,7 @@ namespace Bu
 		template<typename type>
 		void uparse( type &i, const Bu::FString &sBuf )
 		{
-			if( !sBuf )
+			if( !sBuf.isSet() )
 				return;
 			if( sBuf[0] != '+' &&
 				(sBuf[0] < '0' && sBuf[0] > '9') )

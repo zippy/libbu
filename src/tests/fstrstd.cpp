@@ -12,5 +12,5 @@ int main()
 {
 	Bu::FString s("Hey there, dude.\n");
 
-	std::cout << s << 5;
+//	std::cout << s << 5;
 }
