@@ -43,6 +43,9 @@ Bu::StrArray Bu::CsvReader::readLine()
 
 	Bu::FString sLine = sIn.readLine();
 
+	if( !sLine.isSet() )
+		return Bu::StrArray();
+
 	Bu::FString::iterator i = sLine.begin();
 
 	aVals.append( sDecode( i ) );
@@ -52,6 +55,8 @@ Bu::StrArray Bu::CsvReader::readLine()
 		if( *i == ',' )
 		{
 			i++;
+			if( !i )
+				break;
 			aVals.append( sDecode( i ) );
 		}
 		else
@@ -81,7 +86,11 @@ Bu::FString Bu::CsvReader::decodeExcel( Bu::FString::iterator &i )
 			if( *i == '\"' )
 			{
 				i++;
-				if( *i == '\"' )
+				if( !i )
+				{
+					return sRet;
+				}
+				else if( *i == '\"' )
 				{
 					sRet += *i;
 				}

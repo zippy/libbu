@@ -193,6 +193,7 @@ namespace Bu
 		typedef Bu::Hash<keytype, CacheEntry> CidHash;
 
 	public:
+		typedef keytype Key;
 		Cache( Calc *pCalc, Store *pStore ) :
 			pCalc( pCalc ),
 			pStore( pStore )
