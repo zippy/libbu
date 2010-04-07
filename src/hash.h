@@ -1115,7 +1115,8 @@ namespace Bu
 			// Delete all of the old data
 			for( uint32_t j = 0; j < nOldCapacity; j++ )
 			{
-				if( (bOldFilled[j/32]&(1<<(j%32)))!=0 )
+				if( (bOldFilled[j/32]&(1<<(j%32)))!=0 &&
+					(bOldDeleted[j/32]&(1<<(j%32)))==0 )
 				{
 					va.destroy( &aOldValues[j] );
 					ka.destroy( &aOldKeys[j] );
