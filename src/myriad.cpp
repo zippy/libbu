@@ -78,10 +78,6 @@ void Bu::Myriad::initialize()
 	sio << "Myriad: iSize=" << iSize << ", iBlockSize=" << iBlockSize
 		<< ", iBlocks=" << iBlocks << ", iStreams=" << iStreams << sio.nl;
 
-	// Don't do this, just read the damn header.
-	sio << "Myriad:  Don't do this, just read the damn header (line 82)"
-		<< sio.nl;
-
 	int iHeaderSize = 14 + 8 + 4;
 	int iHeaderBlocks = 0; //blkDiv( iHeaderSize+4, iBlockSize );
 
@@ -93,30 +89,38 @@ void Bu::Myriad::initialize()
 
 	sio << "Myriad: iHeaderSize=" << iHeaderSize
 		<< ", iHeaderBlocks=" << iHeaderBlocks << sio.nl;
+
+	Stream *pFakeHdr = new Stream;
+	pFakeHdr->iId = 0;
+	pFakeHdr->iSize = iHeaderSize;
+	for( int j = 0; j < iHeaderBlocks; j++ )
+	{
+		pFakeHdr->aBlocks.append( j );
+	}
 	
 	bsBlockUsed.setSize( iBlocks, true );
 
 	bool bCanSkip = false; // Can skip around, post initial header stream i/o
+	MyriadStream *pIn = new MyriadStream( *this, pFakeHdr );
+	pIn->setPos( sStore.tell() );
 	for( int j = 0; j < iStreams; j++ )
 	{
-		int iHdrBlock = 0;
-		int iCurBlock = 0;
 		aStreams.append( new Stream() );
 		Stream &s = *aStreams[j];
-		sStore.read( &s.iId, 4 );
-		sStore.read( &s.iSize, 4 );
+		pIn->read( &s.iId, 4 );
+		pIn->read( &s.iSize, 4 );
 		int iSBlocks = blkDiv(s.iSize, iBlockSize);
 		sio << "Myriad: - Stream::iId=" << s.iId
 			<< ", Stream::iSize=" << s.iSize
 			<< ", Stream::aBlocks=" << iSBlocks
-			<< ", sStore.tell()=" << sStore.tell() << sio.nl;
+			<< ", pIn->tell()=" << pIn->tell() << sio.nl;
 		for( int k = 0; k < iSBlocks; k++ )
 		{
 			int iBId;
-			sStore.read( &iBId, 4 );
+			pIn->read( &iBId, 4 );
 			sio << "Myriad:   - iBId=" << iBId
 				<< ", iStartPos=" << iBId*iBlockSize
-				<< ", sStore.tell()=" << sStore.tell() << sio.nl;
+				<< ", pIn->tell()=" << pIn->tell() << sio.nl;
 			s.aBlocks.append( iBId );
 			bsBlockUsed.setBit( iBId );
 			if( (j == 0 && k == iHeaderBlocks-1) )
@@ -124,25 +128,18 @@ void Bu::Myriad::initialize()
 				sio << "Myriad:   - End of prepartition, unlocking skipping."
 					<< sio.nl;
 				bCanSkip = true;
-				iCurBlock = blkDiv( (int)sStore.tell(), iBlockSize );
-			}
-			if( bCanSkip && sStore.tell() >= iCurBlock*iBlockSize+iBlockSize )
-			{
-				iHdrBlock++;
-				iCurBlock = aStreams[0]->aBlocks[iHdrBlock];
-				sio << "Myriad: Ran out of data in block, finding next header "
-					"block:  " << iHdrBlock << " = " << iCurBlock << " ("
-					<< iCurBlock*iBlockSize << "b)" << sio.nl;
-				sStore.setPos( iCurBlock*iBlockSize );
+				MyriadStream *pTmp = new MyriadStream( *this, aStreams[0] );
+				sio << "Myriad    - Position = " << pIn->tell() << sio.nl;
+				pTmp->setPos( pIn->tell() );
+				delete pIn;
+				delete pFakeHdr;
+				pIn = pTmp;
 			}
 		}
 	}
+	delete pIn;
 
 	sio << "Myriad: Blocks used: " << bsBlockUsed.toString() << sio.nl;
-
-	//printf("%d blocks, %db each, %db block offset\n",
-	//	iBlocks, iBlockSize, iBlockStart );
-
 }
 
 void Bu::Myriad::initialize( int iBlockSize, int iPreAllocate )
@@ -211,6 +208,14 @@ void Bu::Myriad::initialize( int iBlockSize, int iPreAllocate )
 	pStr->iSize = sStore.tell();
 	sio << "Myriad: Actual end of header stream = " << pStr->iSize << sio.nl;
 
+	pStr->iSize = iHeaderSize;
+	for( int j = 0; j < iHeaderBlocks; j++ )
+	{
+		pStr->aBlocks.append( j );
+	}
+
+	aStreams.append( pStr );
+
 	//hStreams.insert( 0, BlockArray( 0 ) );
 }
 
@@ -219,9 +224,64 @@ void Bu::Myriad::updateHeader()
 	if( !sStore.canWrite() )
 		return;
 
-	
+	char cBuf;
+	int iBuf;
 
-	// TODO: Use the stream class to access this really smoothly, I hope :)
+	// Compute the new size of the header.
+	int iHeaderSize = 14 + 8*aStreams.getSize();
+	sio << "Myriad: updateHeader: aStreams.getSize() = " << aStreams.getSize()
+		<< sio.nl;
+	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
+	{
+		iHeaderSize += 4*(*i)->aBlocks.getSize();
+		sio << "Myriad: updateHeader: (*i)->aBlocks.getSize() = "
+			<< (*i)->aBlocks.getSize() << sio.nl;
+	}
+	int iNewBlocks = blkDiv( iHeaderSize, iBlockSize );
+	while( iNewBlocks > aStreams[0]->aBlocks.getSize() )
+	{
+		int iBlock = findEmptyBlock();
+		sio << "Myriad: updateHeader: Appending block " << iBlock
+			<< " to header." << sio.nl;
+		aStreams[0]->aBlocks.append( iBlock );
+		bsBlockUsed.setBit( iBlock );
+		iHeaderSize += 4;
+		iNewBlocks = blkDiv( iHeaderSize, iBlockSize );
+	}
+	aStreams[0]->iSize = iHeaderSize;
+	sio << "Myriad: updateHeader: iHeaderSize=" << iHeaderSize
+		<< ", iNewBlocks=" << iNewBlocks << ", curBlocks="
+		<< aStreams[0]->aBlocks.getSize() << sio.nl;
+
+	MyriadStream sHdr( *this, aStreams[0] );
+	sHdr.write( Myriad_MAGIC_CODE, 4 );
+
+	// Version (1)
+	cBuf = 1;
+	sHdr.write( &cBuf, 1 );
+
+	// Bits per int
+	cBuf = 32;
+	sHdr.write( &cBuf, 1 );
+
+	// The size of each block
+	sHdr.write( &iBlockSize, 4 );
+
+	iBuf = aStreams.getSize();
+	// The number of streams
+	sHdr.write( &iBuf, 4 );
+	
+	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
+	{
+		sHdr.write( &(*i)->iId, 4 );
+		sHdr.write( &(*i)->iSize, 4 );
+		int iUsedBlocks = blkDiv( (*i)->iSize, iBlockSize );
+//		for( BlockArray::iterator j = (*i)->aBlocks.begin(); j; j++ )
+		for( int j = 0; j < iUsedBlocks; j++ )
+		{
+			sHdr.write( &(*i)->aBlocks[j], 4 );
+		}
+	}
 }
 
 int Bu::Myriad::createStream( int iPreAllocate )
@@ -231,6 +291,7 @@ int Bu::Myriad::createStream( int iPreAllocate )
 	sio << "Myriad: New stream id=" << pStr->iId << ", iPreAllocate="
 		<< iPreAllocate << sio.nl;
 	pStr->iSize = 0;
+	aStreams.append( pStr );
 
 	for( int j = 0; j < iPreAllocate; j++ )
 	{
@@ -240,7 +301,7 @@ int Bu::Myriad::createStream( int iPreAllocate )
 		bsBlockUsed.setBit( iFreeBlock );
 	}
 
-	return 0;
+	return pStr->iId;
 }
 
 int Bu::Myriad::findEmptyBlock()
@@ -260,7 +321,7 @@ int Bu::Myriad::findEmptyBlock()
 	sStore.write( pBlock, iBlockSize );
 	delete pBlock;
 
-	return iBlockSize++;
+	return iBlocks++;
 }
 
 void Bu::Myriad::deleteStream( int /*iID*/ )
@@ -314,6 +375,8 @@ Bu::Myriad::Block *Bu::Myriad::getBlock( int iBlock )
 
 void Bu::Myriad::releaseBlock( Bu::Myriad::Block *pBlock )
 {
+	if( pBlock == NULL )
+		return;
 	sio << "Myriad:  Releasing block " << pBlock->iBlockIndex << sio.nl;
 	if( pBlock->bChanged )
 	{

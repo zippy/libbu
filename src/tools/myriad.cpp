@@ -20,7 +20,8 @@ enum Mode
 	modeCreate,
 	modeInfo,
 	modeStreamNew,
-	modeStreamRead,
+	modeStreamDump,
+	modeStreamPut,
 
 	modeNone
 };
@@ -41,8 +42,10 @@ public:
 				"Display some info about a Myriad file." );
 		addOption( eMode, 'n', "new",
 				"Create a new sub-stream in a Myriad file.");
-		addOption( eMode, 'r', "read",
+		addOption( eMode, 'd', "dump",
 				"Read a stream from a Myriad file.");
+		addOption( eMode, "put",
+				"Put a file into a Myriad stream.");
 		addHelpOption();
 
 		addHelpBanner("\nGeneral options:");
@@ -56,7 +59,8 @@ public:
 		setOverride( "create", "create" );
 		setOverride( "info", "info" );
 		setOverride( "new", "new" );
-		setOverride( "read", "read" );
+		setOverride( "dump", "dump" );
+		setOverride( "put", "put" );
 
 		parse( argc, argv );
 	}
@@ -78,8 +82,10 @@ Bu::Formatter &operator>>( Bu::Formatter &f, Mode &m )
 		m = modeInfo;
 	else if( sTok == "new" )
 		m = modeStreamNew;
-	else if( sTok == "read" )
-		m = modeStreamRead;
+	else if( sTok == "dump" )
+		m = modeStreamDump;
+	else if( sTok == "put" )
+		m = modeStreamPut;
 	else
 		m = modeNone;
 	return f;
@@ -99,7 +105,7 @@ int main( int argc, char *argv[] )
 			}
 			else
 			{
-				File fOut( opts.sFile, File::WriteNew );
+				File fOut( opts.sFile, File::WriteNew|File::Read );
 				Myriad m( fOut );
 				m.initialize( opts.iBlockSize, opts.iPreallocate );
 			}
@@ -134,7 +140,7 @@ int main( int argc, char *argv[] )
 			}
 			break;
 
-		case modeStreamRead:
+		case modeStreamDump:
 			if( !opts.sFile.isSet() )
 			{
 				sio << "Please specify a file manipulate." << sio.nl;
@@ -172,6 +178,35 @@ int main( int argc, char *argv[] )
 							sio << "  ";
 					}
 					sio << sio.nl;
+				}
+				sio << "Position: " << s.tell() << ", isEos()=" << s.isEos()
+					<< sio.nl;
+			}
+			break;
+
+		case modeStreamPut:
+			if( !opts.sFile.isSet() )
+			{
+				sio << "Please specify a file manipulate." << sio.nl;
+				return 0;
+			}
+			else if( !opts.sSrc.isSet() )
+			{
+				sio << "Please specify a source file to read." << sio.nl;
+			}
+			else
+			{
+				File fOut( opts.sFile, File::Write|File::Read );
+				Myriad m( fOut );
+				m.initialize();
+				MyriadStream sOut = m.openStream(
+					m.createStream( opts.iPreallocate )
+					);
+				File fIn( opts.sSrc, File::Read );
+				char buf[1024];
+				while( !fIn.isEos() )
+				{
+					sOut.write( buf, fIn.read( buf, 1024 ) );
 				}
 			}
 			break;

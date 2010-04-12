@@ -93,8 +93,16 @@ void Bu::Server::scan()
 		}
 		if( FD_ISSET( j, &fdWrite ) )
 		{
-			Client *pClient = hClients.get( j );
-			pClient->processOutput();
+			try
+			{
+				Client *pClient = hClients.get( j );
+				pClient->processOutput();
+			}
+			catch( Bu::HashException &e )
+			{
+				// Do nothing, I guess, the client is already dead...
+				// TODO:  Someday, we may want to handle this more graceully.
+			}
 		}
 	}
 
