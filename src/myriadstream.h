@@ -20,7 +20,7 @@ namespace Bu
 		/**
 		 * These can only be created by the Myriad class.
 		 */
-		MyriadStream( Myriad &rMyriad, uint32_t uStream );
+		MyriadStream( Myriad &rMyriad, Myriad::Stream *pStream );
 
 	public:
 		virtual ~MyriadStream();
@@ -46,12 +46,10 @@ namespace Bu
 
 	private:
 		Myriad &rMyriad;
-		uint32_t uStream;
-		char *pCurBlock;
-		uint32_t uCurBlock;
-		uint32_t uSize;
-		uint32_t uBlockSize;
-		uint32_t uPos; 
+		Myriad::Stream *pStream;
+		Myriad::Block *pCurBlock;
+		int iBlockSize;
+		int iPos; 
 	};
 };
 

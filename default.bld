@@ -11,7 +11,7 @@
  * and actually does a better job with a number of things.
  */
 
-CXXFLAGS += "-ggdb -W -Wall";
+CXXFLAGS += "-ggdb -W -Wall -I.";
 
 action "default"
 {

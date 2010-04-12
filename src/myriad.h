@@ -30,7 +30,7 @@ namespace Bu
 	 * Header format is as follows:
 	 *
 	 * MMMMvBssssSSSS*
-	 * M = Magic number
+	 * M = Magic number (FFC399BD)
 	 * v = version number
 	 * B = Bits per int
 	 * s = Blocksize in bytes
@@ -95,12 +95,12 @@ namespace Bu
 		/**
 		 * Delete a stream that's already within the Myriad.
 		 */
-		void deleteStream( int iID );
+		void deleteStream( int iId );
 
 		/**
 		 * Return a new Stream object assosiated with the given stream ID.
 		 */
-		MyriadStream openStream( int iID );
+		MyriadStream openStream( int iId );
 
 		int getBlockSize();
 		int getNumBlocks();
@@ -118,16 +118,7 @@ namespace Bu
 		{
 			blockUnused	=	0xFFFFFFFFUL
 		};
-
-		void updateHeader();
-		int findEmptyBlock();
-
-	private:
-		Bu::Stream &sStore;
-		int iBlockSize;
-		int iBlocks;
-		int iUsed;
-		Bu::BitString bsBlockUsed;
+		
 		typedef Bu::Array<int> BlockArray;
 		class Stream
 		{
@@ -137,6 +128,32 @@ namespace Bu
 			BlockArray aBlocks;
 		};
 		typedef Bu::Array<Stream *> StreamArray;
+
+		class Block
+		{
+		public:
+			char *pData;
+			bool bChanged;
+			int iBlockIndex;
+		};
+
+		void updateHeader();
+		int findEmptyBlock();
+
+		/**
+		 *@todo Change this to use a binary search, it's nicer.
+		 */
+		Stream *findStream( int iId );
+
+		Block *getBlock( int iBlock );
+		void releaseBlock( Block *pBlock );
+
+	private:
+		Bu::Stream &sStore;
+		int iBlockSize;
+		int iBlocks;
+		int iUsed;
+		Bu::BitString bsBlockUsed;
 		StreamArray aStreams;
 	};
 };
