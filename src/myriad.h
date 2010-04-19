@@ -12,6 +12,7 @@
 #include "bu/bitstring.h"
 #include "bu/exceptionbase.h"
 #include "bu/array.h"
+#include "bu/hash.h"
 
 namespace Bu
 {
@@ -147,6 +148,7 @@ namespace Bu
 
 		Block *getBlock( int iBlock );
 		void releaseBlock( Block *pBlock );
+		void syncBlock( Block *pBlock );
 
 	private:
 		Bu::Stream &sStore;
@@ -155,6 +157,8 @@ namespace Bu
 		int iUsed;
 		Bu::BitString bsBlockUsed;
 		StreamArray aStreams;
+		typedef Bu::Hash<int, Block *> BlockHash;
+		BlockHash hActiveBlocks;
 	};
 };
 

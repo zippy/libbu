@@ -20,6 +20,7 @@ namespace Bu
 	class TafProperty : public TafNode
 	{
 	public:
+		TafProperty( const Bu::TafProperty &rSrc );
 		TafProperty( const Bu::FString &sName, const Bu::FString &sValue );
 		virtual ~TafProperty();
 

@@ -20,6 +20,7 @@ namespace Bu
 	class TafComment : public TafNode
 	{
 	public:
+		TafComment( const Bu::TafComment &rSrc );
 		TafComment( const Bu::FString &sText, bool bEOL=false );
 		virtual ~TafComment();
 

@@ -32,6 +32,7 @@ namespace Bu
 		typedef Bu::Hash<Bu::FString, GroupList> GroupHash;
 		typedef Bu::List<class Bu::TafNode *> NodeList;
 
+		TafGroup( const TafGroup &rSrc );
 		TafGroup( const Bu::FString &sName );
 		virtual ~TafGroup();
 

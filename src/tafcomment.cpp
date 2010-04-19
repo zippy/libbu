@@ -7,6 +7,13 @@
 
 #include "bu/tafcomment.h"
 
+Bu::TafComment::TafComment( const Bu::TafComment &rSrc ) :
+	TafNode( typeComment ),
+	sText( rSrc.sText ),
+	bEOL( rSrc.bEOL )
+{
+}
+
 Bu::TafComment::TafComment( const Bu::FString &sText, bool bEOL ) :
 	TafNode( typeComment ),
 	sText( sText ),

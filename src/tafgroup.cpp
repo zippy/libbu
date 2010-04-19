@@ -9,6 +9,29 @@
 #include "bu/tafproperty.h"
 #include "bu/tafcomment.h"
 
+Bu::TafGroup::TafGroup( const TafGroup &rSrc ) :
+	TafNode( typeGroup ),
+	sName( rSrc.sName )
+{
+	for( NodeList::const_iterator i = rSrc.lChildren.begin(); i; i++ )
+	{
+		switch( (*i)->getType() )
+		{
+			case typeGroup:
+				addChild( new TafGroup( *dynamic_cast<const TafGroup *>(*i) ) );
+				break;
+
+			case typeProperty:
+				addChild( new TafProperty( *dynamic_cast<const TafProperty *>(*i) ) );
+				break;
+
+			case typeComment:
+				addChild( new TafComment( *dynamic_cast<const TafComment *>(*i) ) );
+				break;
+		}
+	}
+}
+
 Bu::TafGroup::TafGroup( const Bu::FString &sName ) :
 	TafNode( typeGroup ),
 	sName( sName )

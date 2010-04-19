@@ -7,6 +7,13 @@
 
 #include "bu/tafproperty.h"
 
+Bu::TafProperty::TafProperty( const Bu::TafProperty &rSrc ) :
+	TafNode( typeProperty ),
+	sName( rSrc.sName ),
+	sValue( rSrc.sValue )
+{
+}
+
 Bu::TafProperty::TafProperty( const Bu::FString &sName, const Bu::FString &sValue ) :
 	TafNode( typeProperty ),
 	sName( sName ),
