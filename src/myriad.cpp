@@ -28,7 +28,8 @@ Bu::Myriad::Myriad( Bu::Stream &sStore ) :
 	sStore( sStore ),
 	iBlockSize( 0 ),
 	iBlocks( 0 ),
-	iUsed( 0 )
+	iUsed( 0 ),
+	bHeaderChanged( false )
 {
 }
 
@@ -86,8 +87,8 @@ void Bu::Myriad::initialize()
 	sStore.read( &iStreams, 4 );
 
 	iBlocks = iSize/iBlockSize;
-	sio << "Myriad: iSize=" << iSize << ", iBlockSize=" << iBlockSize
-		<< ", iBlocks=" << iBlocks << ", iStreams=" << iStreams << sio.nl;
+	//sio << "Myriad: iSize=" << iSize << ", iBlockSize=" << iBlockSize
+	//	<< ", iBlocks=" << iBlocks << ", iStreams=" << iStreams << sio.nl;
 
 	int iHeaderSize = 14 + 8 + 4;
 	int iHeaderBlocks = 0; //blkDiv( iHeaderSize+4, iBlockSize );
@@ -98,8 +99,8 @@ void Bu::Myriad::initialize()
 		iHeaderSize = 14 + 8 + 4*iHeaderBlocks;
 	}
 
-	sio << "Myriad: iHeaderSize=" << iHeaderSize
-		<< ", iHeaderBlocks=" << iHeaderBlocks << sio.nl;
+	//sio << "Myriad: iHeaderSize=" << iHeaderSize
+	//	<< ", iHeaderBlocks=" << iHeaderBlocks << sio.nl;
 
 	Stream *pFakeHdr = new Stream;
 	pFakeHdr->iId = 0;
@@ -121,26 +122,26 @@ void Bu::Myriad::initialize()
 		pIn->read( &s.iId, 4 );
 		pIn->read( &s.iSize, 4 );
 		int iSBlocks = blkDiv(s.iSize, iBlockSize);
-		sio << "Myriad: - Stream::iId=" << s.iId
-			<< ", Stream::iSize=" << s.iSize
-			<< ", Stream::aBlocks=" << iSBlocks
-			<< ", pIn->tell()=" << pIn->tell() << sio.nl;
+	//	sio << "Myriad: - Stream::iId=" << s.iId
+	//		<< ", Stream::iSize=" << s.iSize
+	//		<< ", Stream::aBlocks=" << iSBlocks
+	//		<< ", pIn->tell()=" << pIn->tell() << sio.nl;
 		for( int k = 0; k < iSBlocks; k++ )
 		{
 			int iBId;
 			pIn->read( &iBId, 4 );
-			sio << "Myriad:   - iBId=" << iBId
-				<< ", iStartPos=" << iBId*iBlockSize
-				<< ", pIn->tell()=" << pIn->tell() << sio.nl;
+	//		sio << "Myriad:   - iBId=" << iBId
+	//			<< ", iStartPos=" << iBId*iBlockSize
+	//			<< ", pIn->tell()=" << pIn->tell() << sio.nl;
 			s.aBlocks.append( iBId );
 			bsBlockUsed.setBit( iBId );
 			if( (j == 0 && k == iHeaderBlocks-1) )
 			{
-				sio << "Myriad:   - End of prepartition, unlocking skipping."
-					<< sio.nl;
+	//			sio << "Myriad:   - End of prepartition, unlocking skipping."
+	//				<< sio.nl;
 				bCanSkip = true;
 				MyriadStream *pTmp = new MyriadStream( *this, aStreams[0] );
-				sio << "Myriad    - Position = " << pIn->tell() << sio.nl;
+	//			sio << "Myriad    - Position = " << pIn->tell() << sio.nl;
 				pTmp->setPos( pIn->tell() );
 				delete pIn;
 				delete pFakeHdr;
@@ -150,7 +151,7 @@ void Bu::Myriad::initialize()
 	}
 	delete pIn;
 
-	sio << "Myriad: Blocks used: " << bsBlockUsed.toString() << sio.nl;
+	//sio << "Myriad: Blocks used: " << bsBlockUsed.toString() << sio.nl;
 }
 
 void Bu::Myriad::initialize( int iBlockSize, int iPreAllocate )
@@ -171,8 +172,8 @@ void Bu::Myriad::initialize( int iBlockSize, int iPreAllocate )
 
 	iPreAllocate += iHeaderBlocks;
 
-	sio << "Myriad: iHeaderSize=" << iHeaderSize << ", iBlockSize="
-		<< iBlockSize << ", iHeaderBlocks=" << iHeaderBlocks << sio.nl;
+	//sio << "Myriad: iHeaderSize=" << iHeaderSize << ", iBlockSize="
+	//	<< iBlockSize << ", iHeaderBlocks=" << iHeaderBlocks << sio.nl;
 	
 	bsBlockUsed.setSize( iPreAllocate, true );
 
@@ -181,7 +182,6 @@ void Bu::Myriad::initialize( int iBlockSize, int iPreAllocate )
 	for( int j = 0; j < iPreAllocate; j++ )
 	{
 		sStore.write( pBlock, iBlockSize );
-		pStr->aBlocks.append( j );
 	}
 	delete[] (char *)pBlock;
 
@@ -228,23 +228,26 @@ void Bu::Myriad::initialize( int iBlockSize, int iPreAllocate )
 
 	aStreams.append( pStr );
 
-	sio << bsBlockUsed.toString() << sio.nl;
+	//sio << bsBlockUsed.toString() << " - " << pStr->aBlocks << sio.nl;
 
+	bHeaderChanged = true;
 	//hStreams.insert( 0, BlockArray( 0 ) );
 }
 
 void Bu::Myriad::updateHeader()
 {
+	if( bHeaderChanged == false )
+		return;
 	if( !sStore.canWrite() )
 		return;
 
 	char cBuf;
 	int iBuf;
 
-	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
-	{
-		sio << "Myriad: Stream " << Fmt(4) << (*i)->iId << ": " << (*i)->aBlocks << sio.nl;
-	}
+	//for( StreamArray::iterator i = aStreams.begin(); i; i++ )
+	//{
+	//	sio << "Myriad: Stream " << Fmt(4) << (*i)->iId << ": " << (*i)->aBlocks << sio.nl;
+	//}
 
 	// Compute the new size of the header.
 	int iHeaderSize = 14 + 8*aStreams.getSize();
@@ -301,14 +304,16 @@ void Bu::Myriad::updateHeader()
 			sHdr.write( &(*i)->aBlocks[j], 4 );
 		}
 	}
+	
+	bHeaderChanged = false;
 }
 
 int Bu::Myriad::createStream( int iPreAllocate )
 {
 	Stream *pStr = new Stream();
 	pStr->iId = aStreams.last()->iId+1;
-	sio << "Myriad: New stream id=" << pStr->iId << ", iPreAllocate="
-		<< iPreAllocate << sio.nl;
+	//sio << "Myriad: New stream id=" << pStr->iId << ", iPreAllocate="
+	//	<< iPreAllocate << sio.nl;
 	pStr->iSize = 0;
 	aStreams.append( pStr );
 
@@ -320,11 +325,15 @@ int Bu::Myriad::createStream( int iPreAllocate )
 		bsBlockUsed.setBit( iFreeBlock );
 	}
 
+	bHeaderChanged = true;
+
 	return pStr->iId;
 }
 
 int Bu::Myriad::findEmptyBlock()
 {
+	bHeaderChanged = true;
+
 	for( int j = 0; j < bsBlockUsed.getSize(); j++ )
 	{
 		if( bsBlockUsed.getBit( j ) == false )
@@ -349,7 +358,7 @@ void Bu::Myriad::deleteStream( int /*iID*/ )
 
 Bu::MyriadStream Bu::Myriad::openStream( int iId )
 {
-	sio << "Myriad:  Request to open stream: " << iId << sio.nl;
+	//sio << "Myriad:  Request to open stream: " << iId << sio.nl;
 	return MyriadStream( *this, findStream( iId ) );
 }
 

@@ -159,6 +159,7 @@ namespace Bu
 		StreamArray aStreams;
 		typedef Bu::Hash<int, Block *> BlockHash;
 		BlockHash hActiveBlocks;
+		bool bHeaderChanged;
 	};
 };
 

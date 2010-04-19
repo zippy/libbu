@@ -16,8 +16,6 @@
 
 #include "bu/archive.h"
 
-#include "bu/sio.h"
-
 namespace Bu
 {
 	template<class keytype, class obtype>
@@ -60,7 +58,6 @@ namespace Bu
 				MyriadStream ns = mStore.openStream( 1 );
 				Bu::Archive ar( ns, Bu::Archive::load );
 				ar >> hId;
-				Bu::sio << hId << Bu::sio.nl;
 			}
 			catch( Bu::MyriadException &e )
 			{
