@@ -48,3 +48,8 @@ void Bu::MultiServer::shutdown()
 	Bu::Server::shutdown();
 }
 
+void Bu::MultiServer::tick()
+{
+	Bu::Server::tick();
+}
+

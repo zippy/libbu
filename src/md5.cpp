@@ -98,24 +98,6 @@ void Bu::Md5::writeResult( Bu::Stream &sOut )
 	sOut.write( lsum, 4*4 );
 }
 
-Bu::FString Bu::Md5::getHexResult()
-{
-	static const char hex_tab[] = {"0123456789abcdef"};
-	char str[33];
-
-	long lsum[4];
-	compCap( lsum );
-	
-	int k = 0;
-	for( int i = 0; i < 16; i++ )
-	{
-		str[k++] = hex_tab[(lsum[i>>2] >> ((i%4)*8+4)) & 0xF];
-		str[k++] = hex_tab[(lsum[i>>2] >> ((i%4)*8  )) & 0xF];
-	}
-
-	return Bu::FString( str, 32 );
-}
-
 void Bu::Md5::compCap( long *sumout )
 {
 	memcpy( sumout, sum, 4*4 );

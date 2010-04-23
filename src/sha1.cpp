@@ -5,44 +5,140 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
+
+#include "bu/stream.h"
 
 #include "bu/sha1.h"
 
-Sha1::Sha1() :
-	H0( 0x67452301 ),
-	H1( 0xefcdab89 ),
-	H2( 0x98badcfe ),
-	H3( 0x10325476 ),
-	H4( 0xc3d2e1f0 ),
-	unprocessedBytes( 0 ),
-	size( 0 )
+Bu::Sha1::Sha1() :
+	uH0( 0x67452301 ),
+	uH1( 0xefcdab89 ),
+	uH2( 0x98badcfe ),
+	uH3( 0x10325476 ),
+	uH4( 0xc3d2e1f0 ),
+	iUnprocessedBytes( 0 ),
+	uTotalBytes( 0 )
+{
+	reset();
+}
+
+Bu::Sha1::~Sha1()
 {
 }
 
-Sha1::~Sha1()
+void Bu::Sha1::reset()
+{
+	uH0 = 0x67452301;
+	uH1 = 0xefcdab89;
+	uH2 = 0x98badcfe;
+	uH3 = 0x10325476;
+	uH4 = 0xc3d2e1f0;
+	iUnprocessedBytes = 0;
+	uTotalBytes = 0;
+}
+
+void Bu::Sha1::setSalt( const Bu::FString & /*sSalt*/ )
 {
 }
 
-void Sha1::process()
+void Bu::Sha1::addData( const void *sDataRaw, int iSize )
+{
+	const unsigned char *sData = (const unsigned char *)sDataRaw;
+	// add these bytes to the running total
+	uTotalBytes += iSize;
+
+	// repeat until all data is processed
+	while( iSize > 0 )
+	{
+		// number of bytes required to complete block
+		int iNeeded = 64 - iUnprocessedBytes;
+
+		// number of bytes to copy (use smaller of two)
+		int iToCopy = (iSize < iNeeded) ? iSize : iNeeded;
+
+		// Copy the bytes
+		memcpy( uBytes + iUnprocessedBytes, sData, iToCopy );
+
+		// Bytes have been copied
+		iSize -= iToCopy;
+		sData += iToCopy;
+		iUnprocessedBytes += iToCopy;
+		
+		// there is a full block
+		if( iUnprocessedBytes == 64 )
+		{
+			process();
+		}
+	}
+}
+
+Bu::FString Bu::Sha1::getResult()
+{
+	// save the message size
+	uint32_t totalBitsL = uTotalBytes << 3;
+	uint32_t totalBitsH = uTotalBytes >> 29;
+
+	// add 0x80 to the message
+	addData( "\x80", 1 );
+	
+	unsigned char footer[64] = {
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+	// block has no room for 8-byte filesize, so finish it
+	if( iUnprocessedBytes > 56 )
+		addData( (char*)footer, 64 - iUnprocessedBytes);
+
+	// how many zeros do we need
+	int iNeededZeros = 56 - iUnprocessedBytes;
+
+	// store file size (in bits) in big-endian format
+	toBigEndian( totalBitsH, footer + iNeededZeros );
+	toBigEndian( totalBitsL, footer + iNeededZeros + 4 );
+
+	// finish the final block
+	addData( (char*)footer, iNeededZeros + 8 );
+
+	Bu::FString sRet( 20 );
+
+	unsigned char *digest = (unsigned char *)sRet.getStr();
+
+	// copy the digest bytes
+	toBigEndian( uH0, digest );
+	toBigEndian( uH1, digest + 4 );
+	toBigEndian( uH2, digest + 8 );
+	toBigEndian( uH3, digest + 12 );
+	toBigEndian( uH4, digest + 16 );
+
+	// return the digest
+	return sRet;
+}
+
+void Bu::Sha1::writeResult( Bu::Stream &sOut )
+{
+	sOut.write( getResult() );
+}
+
+void Bu::Sha1::process()
 {
 	int t;
 	uint32_t a, b, c, d, e, K, f, W[80];
 
 	// starting values
-	a = H0;
-	b = H1;
-	c = H2;
-	d = H3;
-	e = H4;
+	a = uH0;
+	b = uH1;
+	c = uH2;
+	d = uH3;
+	e = uH4;
 
 	// copy and expand the message block
-	for( t = 0; t < 16; t++ ) W[t] = (bytes[t*4] << 24)
-									+(bytes[t*4 + 1] << 16)
-									+(bytes[t*4 + 2] << 8)
-									+ bytes[t*4 + 3];
+	for( t = 0; t < 16; t++ ) W[t] = (uBytes[t*4] << 24)
+									+(uBytes[t*4 + 1] << 16)
+									+(uBytes[t*4 + 2] << 8)
+									+ uBytes[t*4 + 3];
 	for(; t< 80; t++ ) W[t] = lrot( W[t-3]^W[t-8]^W[t-14]^W[t-16], 1 );
 	
 	/* main loop */
@@ -72,93 +168,23 @@ void Sha1::process()
 	}
 
 	/* add variables */
-	H0 += a;
-	H1 += b;
-	H2 += c;
-	H3 += d;
-	H4 += e;
+	uH0 += a;
+	uH1 += b;
+	uH2 += c;
+	uH3 += d;
+	uH4 += e;
 
 	//printf( "Current: %08x %08x %08x %08x %08x\n",H0,H1,H2,H3,H4 );
 	/* all bytes have been processed */
-	unprocessedBytes = 0;
+	iUnprocessedBytes = 0;
 }
 
-void Sha1::update( const char* data, int num )
-{
-	// add these bytes to the running total
-	size += num;
-
-	// repeat until all data is processed
-	while( num > 0 )
-	{
-		// number of bytes required to complete block
-		int needed = 64 - unprocessedBytes;
-
-		// number of bytes to copy (use smaller of two)
-		int toCopy = (num < needed) ? num : needed;
-
-		// Copy the bytes
-		memcpy( bytes + unprocessedBytes, data, toCopy );
-
-		// Bytes have been copied
-		num -= toCopy;
-		data += toCopy;
-		unprocessedBytes += toCopy;
-		
-		// there is a full block
-		if( unprocessedBytes == 64 ) process();
-	}
-}
-
-unsigned char* Sha1::getDigest()
-{
-	// save the message size
-	uint32_t totalBitsL = size << 3;
-	uint32_t totalBitsH = size >> 29;
-
-	// add 0x80 to the message
-	update( "\x80", 1 );
-	
-	unsigned char footer[64] = {
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-	// block has no room for 8-byte filesize, so finish it
-	if( unprocessedBytes > 56 )
-		update( (char*)footer, 64 - unprocessedBytes);
-
-	// how many zeros do we need
-	int neededZeros = 56 - unprocessedBytes;
-
-	// store file size (in bits) in big-endian format
-	toBigEndian( totalBitsH, footer + neededZeros );
-	toBigEndian( totalBitsL, footer + neededZeros + 4 );
-
-	// finish the final block
-	update( (char*)footer, neededZeros + 8 );
-
-	// allocate memory for the digest bytes
-	unsigned char* digest = new unsigned char[20];
-
-	// copy the digest bytes
-	toBigEndian( H0, digest );
-	toBigEndian( H1, digest + 4 );
-	toBigEndian( H2, digest + 8 );
-	toBigEndian( H3, digest + 12 );
-	toBigEndian( H4, digest + 16 );
-
-	// return the digest
-	return digest;
-}
-
-uint32_t Sha1::lrot( uint32_t x, int bits )
+uint32_t Bu::Sha1::lrot( uint32_t x, int bits )
 {
 	return (x<<bits) | (x>>(32 - bits));
-};
+}
 
-void Sha1::toBigEndian( uint32_t num, unsigned char* byte )
+void Bu::Sha1::toBigEndian( uint32_t num, unsigned char* byte )
 {
 	byte[0] = (unsigned char)(num>>24);
 	byte[1] = (unsigned char)(num>>16);

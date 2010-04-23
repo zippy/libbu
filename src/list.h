@@ -871,6 +871,8 @@ namespace Bu
 		 */
 		value &first()
 		{
+			if( core->pFirst->pValue == NULL )
+				throw Bu::ExceptionBase("Attempt to read first element from empty list.");
 			_hardCopy();
 			return *core->pFirst->pValue;
 		}
@@ -881,6 +883,8 @@ namespace Bu
 		 */
 		const value &first() const
 		{
+			if( core->pFirst->pValue == NULL )
+				throw Bu::ExceptionBase("Attempt to read first element from empty list.");
 			return *core->pFirst->pValue;
 		}
 		

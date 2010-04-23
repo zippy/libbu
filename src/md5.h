@@ -31,7 +31,6 @@ namespace Bu
 		using Bu::CryptoHash::addData;
 		virtual FString getResult();
 		virtual void writeResult( Bu::Stream &sOut );
-		virtual FString getHexResult();
 
 	private:
 		/**

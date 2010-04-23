@@ -31,6 +31,8 @@ namespace Bu
 		CsvWriter( Stream &sOut, EncodeSignal sEncode );
 		virtual ~CsvWriter();
 
+		void writeLine( const StrArray &aStrs );
+
 	private:
 		Stream &sOut;
 		EncodeSignal sEncode;

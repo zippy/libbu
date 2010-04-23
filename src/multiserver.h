@@ -47,6 +47,8 @@ namespace Bu
 
 		void shutdown();
 
+		void tick();
+
 	private:
 		Bu::Hash<int, Protocol *(*)()> hProtos;
 	};

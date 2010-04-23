@@ -26,6 +26,7 @@ namespace Bu
 		virtual void addData( const Bu::FString &sData );
 		virtual FString getResult() = 0;
 		virtual void writeResult( Stream &sOut ) = 0;
+		virtual Bu::FString getHexResult();
 	};
 };
 

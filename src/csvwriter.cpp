@@ -34,13 +34,47 @@ Bu::CsvWriter::~CsvWriter()
 {
 }
 
+void Bu::CsvWriter::writeLine( const StrArray &aStrs )
+{
+	Bu::FString sBuf;
+	for( StrArray::const_iterator i = aStrs.begin(); i; i++ )
+	{
+		if( i != aStrs.begin() )
+			sBuf += ",";
+		sBuf += sEncode( *i );
+	}
+	sBuf += "\n";
+
+	sOut.write( sBuf );
+}
+
 Bu::FString Bu::CsvWriter::encodeExcel( const Bu::FString &sIn )
 {
-	return "";
+	if( sIn.find('\"') )
+	{
+		Bu::FString sOut = "\"";
+		for( Bu::FString::const_iterator i = sIn.begin(); i; i++ )
+		{
+			if( *i == '\"' )
+				sOut += "\"\"";
+			else
+				sOut += *i;
+		}
+		return sOut;
+	}
+	return sIn;
 }
 
 Bu::FString Bu::CsvWriter::encodeC( const Bu::FString &sIn )
 {
-	return "";
+	Bu::FString sOut = "";
+	for( Bu::FString::const_iterator i = sIn.begin(); i; i++ )
+	{
+		if( *i == ',' )
+			sOut += "\\,";
+		else
+			sOut += *i;
+	}
+	return sOut;
 }
 
