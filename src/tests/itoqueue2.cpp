@@ -19,7 +19,7 @@ public:
 	{
 	}
 
-	void *run()
+	void run()
 	{
 		for( int i = 0; i < 10; i++ )
 		{
@@ -35,8 +35,6 @@ public:
 				delete pStr;
 			}
 		}
-
-		return NULL;
 	}
 
 private:
@@ -54,7 +52,7 @@ public:
 	{
 	}
 
-	void *run()
+	void run()
 	{
 		for( int i = 0; i < 11; i++ )
 		{
@@ -62,8 +60,6 @@ public:
 			printf("[%d] write: %s\n", id, strbase );
 			q.enqueue( new std::string( strbase ) );
 		}
-
-		return NULL;
 	}
 
 private:

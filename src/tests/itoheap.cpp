@@ -23,7 +23,7 @@ public:
 	{
 	}
 
-	void *run()
+	void run()
 	{
 		for( int j = 0; j < 10; j++ )
 		{
@@ -39,8 +39,6 @@ public:
 				printf("Nothing yet...\n");
 			}
 		}
-
-		return NULL;
 	}
 
 	Bu::ItoHeap<int> hInt;

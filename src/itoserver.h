@@ -69,7 +69,8 @@ namespace Bu
 		virtual void onNewConnection( Client *pClient, int nPort )=0;
 		virtual void onClosedConnection( Client *pClient )=0;
 
-		virtual void *run();
+	protected:
+		virtual void run();
 
 	private:
 		class SrvClientLink;
@@ -81,10 +82,11 @@ namespace Bu
 					int nTimeoutSec, int nTimeoutUSec );
 			virtual ~ItoClient();
 
-			virtual void *run();
-
 			typedef ItoQueue<Bu::FString *> StringQueue;
 			StringQueue qMsg;
+
+		protected:
+			virtual void run();
 
 		private:
 			ItoServer &rSrv;

@@ -19,7 +19,7 @@ public:
 	{
 	}
 
-	virtual void *run()
+	virtual void run()
 	{
 		Bu::Socket c = s.accept( 45, 0 );
 		printf("TstServer:  Accetped connection.\n"); fflush( stdout );
@@ -33,8 +33,6 @@ public:
 
 		printf("TstServer:  Closing connection...\n"); fflush( stdout );
 		c.close();
-
-		return NULL;
 	}
 
 	Bu::ServerSocket s;

@@ -61,16 +61,6 @@ namespace Bu
 		bool stop();
 
 		/**
-		 * The workhorse of the Ito class.  This is the function that will run
-		 * in the thread, when this function exits the thread dies and is
-		 * cleaned up by the system.  Make sure to read up on ItoMutex,
-		 * ItoCondition, and cancel to see how to control and protect
-		 * everything you do in a safe way within this function.
-		 *@returns I'm not sure right now, but this is the posix standard form.
-		 */
-		virtual void *run()=0;
-
-		/**
 		 * Join the thread in action.  This function performs what is commonly
 		 * called a thread join.  That is that it effectively makes the calling
 		 * thread an the Ito thread contained in the called object one in the
@@ -88,6 +78,16 @@ namespace Bu
 		int nHandle;	/**< Numeric handle to the posix thread. */
 
 	protected:
+		/**
+		 * The workhorse of the Ito class.  This is the function that will run
+		 * in the thread, when this function exits the thread dies and is
+		 * cleaned up by the system.  Make sure to read up on ItoMutex,
+		 * ItoCondition, and cancel to see how to control and protect
+		 * everything you do in a safe way within this function.
+		 *@returns I'm not sure right now, but this is the posix standard form.
+		 */
+		virtual void run()=0;
+
 		/**
 		 * This is the hidden-heard of the thread system.  While run is what the
 		 * user gets to override, and everything said about it is true, this is

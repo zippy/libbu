@@ -74,7 +74,7 @@ void Bu::ItoServer::addClient( int nSocket, int nPort )
 	pC->start();
 }
 
-void *Bu::ItoServer::run()
+void Bu::ItoServer::run()
 {
 	for(;;)
 	{
@@ -105,8 +105,6 @@ void *Bu::ItoServer::run()
 			delete pCli;
 		}
 	}
-
-	return NULL;
 }
 
 void Bu::ItoServer::clientCleanup( int iSocket )
@@ -138,7 +136,7 @@ Bu::ItoServer::ItoClient::~ItoClient()
 {
 }
 
-void *Bu::ItoServer::ItoClient::run()
+void Bu::ItoServer::ItoClient::run()
 {
 	imProto.lock();
 	rSrv.onNewConnection( pClient, iPort );
@@ -186,7 +184,7 @@ void *Bu::ItoServer::ItoClient::run()
 
 				rSrv.clientCleanup( iSocket );
 				
-				return NULL;
+				return;
 			}
 		}
 
@@ -197,8 +195,6 @@ void *Bu::ItoServer::ItoClient::run()
 			imProto.unlock();
 		}
 	}
-
-	return NULL;
 }
 
 Bu::ItoServer::SrvClientLink::SrvClientLink( ItoClient *pClient ) :

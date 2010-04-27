@@ -32,9 +32,9 @@ bool Bu::Ito::stop()
 
 void *Bu::Ito::threadRunner( void *pThread )
 {
-	void *pRet = ((Ito *)pThread)->run();
-	pthread_exit( pRet );
-	return pRet;
+	((Ito *)pThread)->run();
+	pthread_exit( NULL );
+	return NULL;
 }
 
 bool Bu::Ito::join()
