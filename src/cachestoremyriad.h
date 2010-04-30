@@ -88,9 +88,6 @@ namespace Bu
 
 		virtual void unload( obtype *pObj, const keytype &key )
 		{
-			int iStream = hId.get( key );
-			MyriadStream ns = mStore.openStream( iStream );
-			__cacheStoreMyriadStore<keytype, obtype>( ns, *pObj, key );
 			delete pObj;
 		}
 
@@ -109,8 +106,6 @@ namespace Bu
 			MyriadStream ns = mStore.openStream( 1 );
 			Bu::Archive ar( ns, Bu::Archive::save );
 			ar << hId;
-
-			mStore.sync();
 		}
 
 		virtual void sync( obtype *pSrc, const keytype &key )

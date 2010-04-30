@@ -89,9 +89,6 @@ namespace Bu
 
 		virtual void unload( obtype *pObj, const keytype &key )
 		{
-			int iStream = hId.get( key );
-			NidsStream ns = nStore.openStream( iStream );
-			__cacheStoreNidsStore<keytype, obtype>( ns, *pObj, key );
 			delete pObj;
 		}
 
@@ -110,8 +107,6 @@ namespace Bu
 			NidsStream ns = nStore.openStream( 0 );
 			Bu::Archive ar( ns, Bu::Archive::save );
 			ar << hId;
-
-			nStore.sync();
 		}
 
 		virtual void sync( obtype *pSrc, const keytype &key )

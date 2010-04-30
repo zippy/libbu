@@ -145,3 +145,9 @@ Bu::FString &Bu::MemBuf::getString()
 	return sBuf;
 }
 
+void Bu::MemBuf::setString( const Bu::FString &sNewData )
+{
+	sBuf = sNewData;
+	nPos = 0;
+}
+

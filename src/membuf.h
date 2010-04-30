@@ -47,6 +47,7 @@ namespace Bu
 		virtual void setBlocking( bool bBlocking=true );
 
 		Bu::FString &getString();
+		void setString( const Bu::FString &sNewData );
 
 	private:
 		Bu::FString sBuf;

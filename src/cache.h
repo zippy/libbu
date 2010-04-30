@@ -205,6 +205,12 @@ namespace Bu
 		virtual ~Cache()
 		{
 			TRACE();
+
+			// Better safe than sorry, better try a sync before anything
+			// else happens.
+			sync();
+
+			// Cycle through and unload all objects from the system.
 			for( typename CidHash::iterator i = hEnt.begin();
 				 i != hEnt.end(); i++ )
 			{
@@ -214,10 +220,6 @@ namespace Bu
 					// object when the Cache is destroyed.
 					throw Bu::ExceptionBase("iRefs not zero.");
 				}
-				pCalc->onUnload(
-					i.getValue().pData,
-					i.getKey()
-					);
 				pStore->unload(
 					i.getValue().pData,
 					i.getKey()
@@ -230,6 +232,8 @@ namespace Bu
 		Ptr insert( obtype *pData )
 		{
 			TRACE( pData );
+			if( pStore->has( __cacheGetKey<keytype, obtype>( pData ) ) )
+				throw Bu::ExceptionBase("Key already exists in cache.");
 			CacheEntry e = {pData, 0, 0};
 			keytype k = pStore->create( pData );
 			hEnt.insert( k, e );
@@ -334,6 +338,11 @@ namespace Bu
 		KeyList getKeys()
 		{
 			return pStore->getKeys();
+		}
+
+		KeyList getActiveKeys()
+		{
+			return hEnt.getKeys();
 		}
 
 		int getSize()
