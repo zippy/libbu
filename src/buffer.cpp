@@ -41,12 +41,12 @@ void Bu::Buffer::fillReadBuf()
 {
 	if( iReadBufFill+iReadPos < iBufSize )
 	{
-		//printf("Buffer: Attempting to read %db.\n", iBufSize-iReadBufFill-iReadPos );
+		printf("Buffer: Attempting to read %db.\n", iBufSize-iReadBufFill-iReadPos );
 		iReadBufFill += rNext.read(
 			sReadBuf+iReadPos+iReadBufFill,
 			iBufSize-iReadBufFill-iReadPos
 			);
-		//printf("Buffer: Read from stream, %db now in buffer.\n", iReadBufFill );
+		printf("Buffer: Read from stream, %db now in buffer.\n", iReadBufFill );
 	}
 }
 
@@ -150,5 +150,10 @@ void Bu::Buffer::flush()
 			iWriteBufFill -= iWr;
 		} while( iWriteBufFill > 0 && iWr > 0 );
 	}
+}
+
+bool Bu::Buffer::isEos()
+{
+	return iReadPos == (iReadBufFill-1) && rNext.isEos();
 }
 

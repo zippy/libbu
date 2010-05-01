@@ -317,20 +317,23 @@ namespace Bu
 		void erase( const keytype &cId )
 		{
 			TRACE( cId );
-			try {
-				if( hEnt.get( cId ).iRefs > 0 )
-				{
-					printf("Shouldn't delete, references still exist!\n");
-					return;
+			if( hEnt.has( cId ) )
+			{
+				try {
+					if( hEnt.get( cId ).iRefs > 0 )
+					{
+						printf("Shouldn't delete, references still exist!\n");
+						return;
+					}
 				}
+				catch( Bu::HashException &e ) {
+					get( cId );
+				}
+
+				pCalc->onUnload( hEnt.get( cId ).pData, cId );
+				pStore->destroy( hEnt.get( cId ).pData, cId );
 			}
-			catch( Bu::HashException &e ) {
-				get( cId );
-			}
-			
-			pCalc->onUnload( hEnt.get( cId ).pData, cId );
-			
-			pStore->destroy( hEnt.get( cId ).pData, cId );
+
 			hEnt.erase( cId );
 		}
 

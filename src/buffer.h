@@ -30,6 +30,8 @@ namespace Bu
 
 		virtual void flush();
 
+		virtual bool isEos();
+
 	private:
 		void fillReadBuf();
 
