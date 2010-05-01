@@ -41,6 +41,12 @@ public:
 		TRACE( i );
 		iInt = i;
 	}
+	
+	long getKey() const
+	{
+		TRACE( i );
+		return iInt;
+	}
 
 	int getInt()
 	{
@@ -174,6 +180,10 @@ public:
 	}
 
 	virtual void onUnload( Bob *, const long & )
+	{
+	}
+
+	virtual void onDestroy( Bob *, const long & )
 	{
 	}
 

@@ -122,6 +122,7 @@ namespace Bu
 			nStore.deleteStream( iStream );
 			hId.erase( key );
 			delete pObj;
+			sync();
 		}
 
 		virtual bool has( const keytype &key )

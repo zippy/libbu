@@ -112,11 +112,6 @@ namespace Bu
 				return pData != NULL;
 			}
 
-			operator bool() const
-			{
-				return isBound() && isValid();
-			}
-
 			const keytype &getKey() const
 			{
 				return kId;
@@ -297,7 +292,7 @@ namespace Bu
 			try {
 				if( hEnt.get( cId ).iRefs > 0 )
 				{
-					printf("Shouldn't delete, references still exist!\n");
+					printf("Shouldn't unload, references still exist!\n");
 					return;
 				}
 			}
@@ -317,24 +312,22 @@ namespace Bu
 		void erase( const keytype &cId )
 		{
 			TRACE( cId );
-			if( hEnt.has( cId ) )
-			{
-				try {
-					if( hEnt.get( cId ).iRefs > 0 )
-					{
-						printf("Shouldn't delete, references still exist!\n");
-						return;
-					}
+			try {
+				if( hEnt.get( cId ).iRefs > 0 )
+				{
+					printf("Shouldn't erase, references still exist!\n");
+					return;
 				}
-				catch( Bu::HashException &e ) {
-					get( cId );
-				}
-
-				pCalc->onUnload( hEnt.get( cId ).pData, cId );
-				pStore->destroy( hEnt.get( cId ).pData, cId );
+			}
+			catch( Bu::HashException &e ) {
+				get( cId );
 			}
 
+			obtype *pObj = hEnt.get( cId ).pData;
+			pCalc->onDestroy( pObj, cId );
 			hEnt.erase( cId );
+
+			pStore->destroy( pObj, cId );
 		}
 
 		typedef Bu::List<keytype> KeyList;
