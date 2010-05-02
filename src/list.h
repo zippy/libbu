@@ -171,6 +171,8 @@ namespace Bu
 				pPrev->pNext = pTmp;
 				if( pTmp != NULL )
 					pTmp->pPrev = pPrev;
+				else
+					pLast = pPrev;
 				nSize--;
 			}
 		}
