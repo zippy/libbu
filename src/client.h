@@ -43,8 +43,8 @@ namespace Bu
 		void write( uint16_t nData );
 		void write( uint32_t nData );
 		void write( uint64_t nData );
-		void read( void *pData, int nBytes );
-		void peek( void *pData, int nBytes, int nOffset=0 );
+		int read( void *pData, int nBytes );
+		int peek( void *pData, int nBytes, int nOffset=0 );
 		void seek( int nBytes );
 		long getInputSize();
 

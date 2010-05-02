@@ -1497,6 +1497,8 @@ namespace Bu
 				return true;
 			if( core->nLength != pData.core->nLength )
 				return false;
+			if( pData.core->pFirst == NULL || core->pFirst == NULL )
+				return false;
 
 			flatten();
 			pData.flatten();

@@ -173,8 +173,14 @@ void Bu::Client::write( uint64_t nData )
 	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
 }
 
-void Bu::Client::read( void *pData, int nBytes )
+int Bu::Client::read( void *pData, int nBytes )
 {
+	if( nBytes > sReadBuf.getSize()-nRBOffset )
+	{
+		nBytes = sReadBuf.getSize()-nRBOffset;
+		if( nBytes <= 0 )
+			return 0;
+	}
 	memcpy( pData, sReadBuf.getStr()+nRBOffset, nBytes );
 	nRBOffset += nBytes;
 	if( sReadBuf.getSize()-nRBOffset == 0 )
@@ -192,11 +198,20 @@ void Bu::Client::read( void *pData, int nBytes )
 		sReadBuf.trimFront( nRBOffset );
 		nRBOffset = 0;
 	}
+
+	return nBytes;
 }
 
-void Bu::Client::peek( void *pData, int nBytes, int nOffset )
+int Bu::Client::peek( void *pData, int nBytes, int nOffset )
 {
+	if( nBytes+nOffset > sReadBuf.getSize()-nRBOffset )
+	{
+		nBytes = sReadBuf.getSize()-nRBOffset-nOffset;
+		if( nBytes <= 0 )
+			return 0;
+	}
 	memcpy( pData, sReadBuf.getStr()+nRBOffset+nOffset, nBytes );
+	return nBytes;
 }
 
 void Bu::Client::seek( int nBytes )

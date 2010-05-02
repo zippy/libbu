@@ -11,6 +11,7 @@
 
 Bu::Formatter::Formatter( Stream &rStream ) :
 	rStream( rStream ),
+	bTempFmt( false ),
 	uIndent( 0 ),
 	cIndent( '\t' )
 {
