@@ -1493,7 +1493,7 @@ namespace Bu
 				return true;
 			if( core->pFirst == pData.core->pFirst )
 				return true;
-			if( (core->pFirst == 0 && pData.core->nLength == 0) ) 
+			if( (core->nLength == 0 && pData.core->nLength == 0) ) 
 				return true;
 			if( core->nLength != pData.core->nLength )
 				return false;
