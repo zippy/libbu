@@ -160,6 +160,15 @@ public:
 		delete pObj;
 	}
 
+	virtual void destroy( const long &key )
+	{
+		TRACE( pObj, key );
+		Bu::FString sDest;
+		sDest.format("bobcache/%d", key );
+		if( !access( sDest.getStr(), F_OK ) )
+			unlink( sDest.getStr() );
+	}
+
 private:
 	long cLastId;
 };
@@ -184,6 +193,10 @@ public:
 	}
 
 	virtual void onDestroy( Bob *, const long & )
+	{
+	}
+
+	virtual void onDestroy( const long & )
 	{
 	}
 

@@ -318,16 +318,26 @@ namespace Bu
 					printf("Shouldn't erase, references still exist!\n");
 					return;
 				}
+
+				obtype *pObj = hEnt.get( cId ).pData;
+				pCalc->onDestroy( pObj, cId );
+				hEnt.erase( cId );
+
+				pStore->destroy( pObj, cId );
 			}
 			catch( Bu::HashException &e ) {
-				get( cId );
+				pCalc->onDestroy( cId );
+
+				if( hEnt.has( cId ) )
+				{
+					// The object was loaded by onDestroy
+					erase( cId );
+				}
+				else
+				{
+					pStore->destroy( cId );
+				}
 			}
-
-			obtype *pObj = hEnt.get( cId ).pData;
-			pCalc->onDestroy( pObj, cId );
-			hEnt.erase( cId );
-
-			pStore->destroy( pObj, cId );
 		}
 
 		typedef Bu::List<keytype> KeyList;

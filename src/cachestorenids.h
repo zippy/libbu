@@ -125,6 +125,14 @@ namespace Bu
 			sync();
 		}
 
+		virtual void destroy( const keytype &key )
+		{
+			int iStream = hId.get( key );
+			nStore.deleteStream( iStream );
+			hId.erase( key );
+			sync();
+		}
+
 		virtual bool has( const keytype &key )
 		{
 			return hId.has( key );
