@@ -112,6 +112,11 @@ namespace Bu
 				return pData != NULL;
 			}
 
+			bool isSet() const
+			{
+				return pCache != NULL;
+			}
+
 			const keytype &getKey() const
 			{
 				return kId;
