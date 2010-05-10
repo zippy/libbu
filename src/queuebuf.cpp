@@ -70,13 +70,13 @@ size_t Bu::QueueBuf::read( void *pRawBuf, size_t nBytes )
 		iLeft -= iCopy;
 		pBuf += iCopy;
 		iTotalSize -= iCopy;
-		sio << "Read " << iCopy << " bytes, new size: " << iTotalSize << sio.nl;
+//		sio << "Read " << iCopy << " bytes, new size: " << iTotalSize << sio.nl;
 	}
 
 	return nBytes - iLeft;
 }
 
-size_t QueueBuf::peek( void *pBuf, size_t nBytes )
+size_t Bu::QueueBuf::peek( void *pRawBuf, size_t nBytes )
 {
 	if( nBytes <= 0 )
 		return 0;
@@ -88,31 +88,33 @@ size_t QueueBuf::peek( void *pBuf, size_t nBytes )
 	char *pBuf = (char *)pRawBuf;
 
 	int iTmpReadOffset = iReadOffset;
-	int iTmpRemSize = iTotalSize;
+	size_t iTmpRemSize = iTotalSize;
+	BlockList::iterator iBlock = lBlocks.begin();
 	while( iLeft > 0 && iTmpRemSize > 0 )
 	{
-
 		// Switching to use temp variables instead of iReadOffset and iTotalSize
-		if( iReadOffset == iBlockSize )
+		if( iTmpReadOffset == iBlockSize )
 		{
-			if( lBlocks.isEmpty() )
+			iBlock++;
+			if( iBlock == lBlocks.end() )
 			{
 				return nBytes-iLeft;
 			}
-			iReadOffset = 0;
+			iTmpReadOffset = 0;
 		}
-		char *pBlock = lBlocks.first();
-		size_t iCopy = iBlockSize-iReadOffset;
+		char *pBlock = *iBlock;
+		size_t iCopy = iBlockSize-iTmpReadOffset;
 		if( iLeft < iCopy )
 			iCopy = iLeft;
-		if( iTotalSize < iCopy )
-			iCopy = iTotalSize;
-		memcpy( pBuf, pBlock+iReadOffset, iCopy );
-		iReadOffset += iCopy;
+		if( iTmpRemSize < iCopy )
+			iCopy = iTmpRemSize;
+		memcpy( pBuf, pBlock+iTmpReadOffset, iCopy );
+		iTmpReadOffset += iCopy;
 		iLeft -= iCopy;
 		pBuf += iCopy;
-		iTotalSize -= iCopy;
-		sio << "Read " << iCopy << " bytes, new size: " << iTotalSize << sio.nl;
+		iTmpRemSize -= iCopy;
+//		sio << "Read (peek) " << iCopy << " bytes, new temp size: "
+//			<< iTmpRemSize << sio.nl;
 	}
 
 	return nBytes - iLeft;
@@ -147,7 +149,8 @@ size_t Bu::QueueBuf::write( const void *pRawBuf, size_t nBytes )
 		iLeft -= iCopy;
 		pBuf += iCopy;
 		iTotalSize += iCopy;
-		sio << "Wrote " << iCopy << " bytes, new size: " << iTotalSize << sio.nl;
+//		sio << "Wrote " << iCopy << " bytes, new size: " << iTotalSize
+//			<< sio.nl;
 	}
 
 	return nBytes;
@@ -158,8 +161,27 @@ long Bu::QueueBuf::tell()
 	return -1;
 }
 
-void Bu::QueueBuf::seek( long )
+void Bu::QueueBuf::seek( long iAmnt )
 {
+	if( iAmnt <= 0 )
+		return;
+
+	if( iAmnt >= iTotalSize )
+	{
+//		sio << "seek: clear all data (" << iAmnt << ">=" << iTotalSize
+//			<< ")." << sio.nl;
+		close();
+		return;
+	}
+
+	iReadOffset += iAmnt;
+	iTotalSize -= iAmnt;
+	while( iReadOffset >= iBlockSize )
+	{
+		removeBlock();
+		iReadOffset -= iBlockSize;
+//		sio << "seek: removal step (" << iReadOffset << ")" << sio.nl;
+	}
 }
 
 void Bu::QueueBuf::setPos( long )
@@ -221,13 +243,13 @@ void Bu::QueueBuf::setBlocking( bool )
 void Bu::QueueBuf::addBlock()
 {
 	lBlocks.append( new char[iBlockSize] );
-	sio << "Added new block." << sio.nl;
+//	sio << "Added new block." << sio.nl;
 }
 
 void Bu::QueueBuf::removeBlock()
 {
 	delete[] lBlocks.first();
 	lBlocks.erase( lBlocks.begin() );
-	sio << "Removed block." << sio.nl;
+//	sio << "Removed block." << sio.nl;
 }
 
