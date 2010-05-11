@@ -68,12 +68,19 @@ namespace Bu
 		
 		virtual obtype *load( const keytype &key )
 		{
-			Bu::MemBuf mb;
-			Bu::Formatter f( mb );
-			f << sPrefix << "/" << key;
-			Bu::File fIn( mb.getString(), Bu::File::Read );
-			obtype *pOb = __cacheStoreFilesLoad<keytype, obtype>( fIn, key );
-			return pOb;
+			try
+			{
+				Bu::MemBuf mb;
+				Bu::Formatter f( mb );
+				f << sPrefix << "/" << key;
+				Bu::File fIn( mb.getString(), Bu::File::Read );
+				obtype *pOb = __cacheStoreFilesLoad<keytype, obtype>( fIn, key );
+				return pOb;
+			}
+			catch(...)
+			{
+				throw Bu::HashException("File-key not found.");
+			}
 		}
 
 		virtual void unload( obtype *pObj, const keytype &key )
