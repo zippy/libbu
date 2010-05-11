@@ -120,30 +120,45 @@ void Bu::Formatter::read( void *sStr, int iLen )
 Bu::FString Bu::Formatter::readToken()
 {
 	Bu::FString sRet;
-	for(;;)
+	if( fLast.bTokenize )
 	{
-		char buf;
-		int iRead = rStream.read( &buf, 1 );
-		if( iRead == 0 )
-			return sRet;
-		if( buf == ' ' || buf == '\t' || buf == '\n' || buf == '\r' )
-			continue;
-		else
+		for(;;)
 		{
-			sRet += buf;
-			break;
+			char buf;
+			int iRead = rStream.read( &buf, 1 );
+			if( iRead == 0 )
+				return sRet;
+			if( buf == ' ' || buf == '\t' || buf == '\n' || buf == '\r' )
+				continue;
+			else
+			{
+				sRet += buf;
+				break;
+			}
+		}
+		for(;;)
+		{
+			char buf;
+			int iRead = rStream.read( &buf, 1 );
+			if( iRead == 0 )
+				return sRet;
+			if( buf == ' ' || buf == '\t' || buf == '\n' || buf == '\r' )
+				return sRet;
+			else
+				sRet += buf;
 		}
 	}
-	for(;;)
+	else
 	{
-		char buf;
-		int iRead = rStream.read( &buf, 1 );
-		if( iRead == 0 )
-			return sRet;
-		if( buf == ' ' || buf == '\t' || buf == '\n' || buf == '\r' )
-			return sRet;
-		else
-			sRet += buf;
+		for(;;)
+		{
+			char buf;
+			int iRead = rStream.read( &buf, 1 );
+			if( iRead == 0 )
+				return sRet;
+			else
+				sRet += buf;
+		}
 	}
 }
 
@@ -225,6 +240,12 @@ Bu::Formatter::Fmt &Bu::Formatter::Fmt::plus( bool bPlus )
 Bu::Formatter::Fmt &Bu::Formatter::Fmt::caps( bool bCaps )
 {
 	this->bCaps = bCaps;
+	return *this;
+}
+
+Bu::Formatter::Fmt &Bu::Formatter::Fmt::tokenize( bool bTokenize )
+{
+	this->bTokenize = bTokenize;
 	return *this;
 }
 

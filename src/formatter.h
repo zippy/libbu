@@ -32,7 +32,8 @@ namespace Bu
 				uRadix( 10 ),
 				uAlign( Right ),
 				bPlus( false ),
-				bCaps( true )
+				bCaps( true ),
+				bTokenize( true )
 			{
 			}
 
@@ -44,7 +45,8 @@ namespace Bu
 				uRadix( uRadix ),
 				uAlign( a ),
 				bPlus( bPlus ),
-				bCaps( bCaps )
+				bCaps( bCaps ),
+				bTokenize( true )
 			{
 			}
 			Fmt( unsigned int uMinWidth, Alignment a,
@@ -55,7 +57,8 @@ namespace Bu
 				uRadix( uRadix ),
 				uAlign( a ),
 				bPlus( bPlus ),
-				bCaps( bCaps )
+				bCaps( bCaps ),
+				bTokenize( true )
 			{
 			}
 
@@ -85,6 +88,7 @@ namespace Bu
 			Fmt &align( Alignment eAlign );
 			Fmt &plus( bool bPlus=true );
 			Fmt &caps( bool bCaps=true );
+			Fmt &tokenize( bool bTokenize=true );
 
 			Fmt &left();
 			Fmt &right();
@@ -96,6 +100,7 @@ namespace Bu
 			unsigned short uAlign : 2;
 			unsigned short bPlus : 1;
 			unsigned short bCaps : 1;
+			unsigned short bTokenize : 1;
 		} Fmt;
 
 		void write( const Bu::FString &sStr );

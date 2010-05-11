@@ -77,9 +77,9 @@ namespace Bu
 				obtype *pOb = __cacheStoreFilesLoad<keytype, obtype>( fIn, key );
 				return pOb;
 			}
-			catch(...)
+			catch( std::exception &e )
 			{
-				throw Bu::HashException("File-key not found.");
+				throw Bu::HashException( e.what() );
 			}
 		}
 
@@ -158,6 +158,9 @@ namespace Bu
 				Bu::Formatter f( mb );
 				try
 				{
+					Fmt fm;
+					fm.tokenize( false );
+					f << fm;
 					f >> tmp;
 				}
 				catch( Bu::ExceptionBase &e )
