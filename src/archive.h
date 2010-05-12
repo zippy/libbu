@@ -12,6 +12,7 @@
 #include "bu/archivebase.h"
 #include "bu/hash.h"
 #include "bu/util.h"
+#include "bu/variant.h"
 
 namespace Bu
 {
@@ -109,11 +110,28 @@ namespace Bu
 		 */
 		void readID( const void *ptr, uint32_t id );
 
+		template<typename t>
+		void setProp( const Bu::FString &sId, const t &val )
+		{
+			if( !hProps.has( sId ) )
+			{
+				hProps.insert( sId, Variant() );
+			}
+			hProps.get( sId ) = val;
+		}
+
+		template<typename t>
+		t getProp( const Bu::FString &sId )
+		{
+			return hProps.get( sId );
+		}
+
 	private:
 		Stream &rStream;
 		uint32_t nNextID;
 		Hash<uint32_t,uint32_t> hPtrID;
 		Hash<uint32_t,List<void **> > hPtrDest;
+		Hash<Bu::FString, Variant> hProps;
 	};
 }
 

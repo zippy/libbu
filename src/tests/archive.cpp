@@ -13,11 +13,14 @@ using namespace Bu;
 
 int main()
 {
-	File f("test.dat", File::Write );
+	File f("test.dat", File::WriteNew );
 	Archive ar( f, Archive::save );
 
 	Bu::FString s("Hello there");
 	ar << s;
+
+	ar.setProp("hi", 45 );
+	printf("Hi: %d", ar.getProp<int>("hi") );
 
 	return 0;
 }
