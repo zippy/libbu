@@ -118,7 +118,7 @@ target "libbu++-r$(svnversion "-n").tar.bz2"
 		"LICENSE",
 		"build.conf",
 		"Doxyfile",
-		"default.bld",
+		files("*.bld"),
 		"support/vim/syntax/taf.vim",
 		"support/vim/ftdetect/taf.vim",
 		"support/vim/ftplugin/taf.vim",
