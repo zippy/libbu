@@ -29,6 +29,7 @@ namespace Bu
 		virtual void close();
 		virtual size_t read( void *pBuf, size_t nBytes );
 		virtual size_t peek( void *pBuf, size_t nBytes );
+		virtual size_t peek( void *pBuf, size_t nBytes, size_t nSkip );
 		virtual size_t write( const void *pBuf, size_t nBytes );
 		virtual long tell();
 		virtual void seek( long offset );

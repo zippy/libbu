@@ -20,7 +20,6 @@ Bu::Client::Client( Bu::Socket *pSocket, class Bu::ClientLinkFactory *pfLink ) :
 	pTopStream( pSocket ),
 	pSocket( pSocket ),
 	pProto( NULL ),
-	nRBOffset( 0 ),
 	bWantsDisconnect( false ),
 	pfLink( pfLink )
 {
@@ -54,7 +53,7 @@ void Bu::Client::processInput()
 			else
 			{
 				nTotal += nRead;
-				sReadBuf.append( buf, nRead );
+				qbRead.write( buf, nRead );
 				if( !pTopStream->canRead() )
 					break;
 			}
@@ -81,13 +80,14 @@ void Bu::Client::processInput()
 
 void Bu::Client::processOutput()
 {
-	if( sWriteBuf.getSize() > 0 )
+	if( qbWrite.getSize() > 0 )
 	{
-		int nAmnt = (sWriteBuf.getSize()<2048)?(sWriteBuf.getSize()):(2048);
-		int nReal = pTopStream->write( sWriteBuf.getStr(), nAmnt );
+		int nAmnt = RBS;
+		char *buf = new char[nAmnt];
+		nAmnt = qbWrite.peek( buf, nAmnt );
+		int nReal = pTopStream->write( buf, nAmnt );
+		qbWrite.seek( nReal );
 		pTopStream->flush();
-		sWriteBuf.trimFront( nReal );
-		//sWriteBuf.clear();
 	}
 }
 
@@ -106,7 +106,7 @@ void Bu::Client::clearProtocol()
 {
 	pProto = NULL;
 }
-
+/*
 Bu::FString &Bu::Client::getInput()
 {
 	return sReadBuf;
@@ -116,6 +116,7 @@ Bu::FString &Bu::Client::getOutput()
 {
 	return sWriteBuf;
 }
+*/
 
 bool Bu::Client::isOpen()
 {
@@ -125,118 +126,77 @@ bool Bu::Client::isOpen()
 
 void Bu::Client::write( const Bu::FString &sData )
 {
-	sWriteBuf += sData;
+	qbWrite.write( sData.getStr(), sData.getSize() );
 }
 
 void Bu::Client::write( const void *pData, int nBytes )
 {
-	sWriteBuf.append( (const char *)pData, nBytes );
+	qbWrite.write( pData, nBytes );
 }
 
 void Bu::Client::write( int8_t nData )
 {
-	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
+ 	qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
 void Bu::Client::write( int16_t nData )
 {
-	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
+	qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
 void Bu::Client::write( int32_t nData )
 {
-	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
+	qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
 void Bu::Client::write( int64_t nData )
 {
-	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
+	qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
 void Bu::Client::write( uint8_t nData )
 {
-	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
+	qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
 void Bu::Client::write( uint16_t nData )
 {
-	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
+	qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
 void Bu::Client::write( uint32_t nData )
 {
-	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
+	qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
 void Bu::Client::write( uint64_t nData )
 {
-	sWriteBuf.append( (const char *)&nData, sizeof(nData) );
+	qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
 int Bu::Client::read( void *pData, int nBytes )
 {
-	if( nBytes > sReadBuf.getSize()-nRBOffset )
-	{
-		nBytes = sReadBuf.getSize()-nRBOffset;
-		if( nBytes <= 0 )
-			return 0;
-	}
-	memcpy( pData, sReadBuf.getStr()+nRBOffset, nBytes );
-	nRBOffset += nBytes;
-	if( sReadBuf.getSize()-nRBOffset == 0 )
-	{
-		sReadBuf.clear();
-		nRBOffset = 0;
-	}
-	// This is an experimental threshold, maybe I'll make this configurable
-	// later on.
-	else if(
-		(sReadBuf.getSize() >= 1024 && nRBOffset >= sReadBuf.getSize()/2) ||
-		(nRBOffset >= sReadBuf.getSize()/4)
-		)
-	{
-		sReadBuf.trimFront( nRBOffset );
-		nRBOffset = 0;
-	}
-
-	return nBytes;
+	return qbRead.read( pData, nBytes );
 }
 
 int Bu::Client::peek( void *pData, int nBytes, int nOffset )
 {
-	if( nBytes+nOffset > sReadBuf.getSize()-nRBOffset )
-	{
-		nBytes = sReadBuf.getSize()-nRBOffset-nOffset;
-		if( nBytes <= 0 )
-			return 0;
-	}
-	memcpy( pData, sReadBuf.getStr()+nRBOffset+nOffset, nBytes );
-	return nBytes;
+	return qbRead.peek( pData, nBytes, nOffset );
 }
 
 void Bu::Client::seek( int nBytes )
 {
-	nRBOffset += nBytes;
-	if( sReadBuf.getSize()-nRBOffset == 0 )
-	{
-		sReadBuf.clear();
-		nRBOffset = 0;
-	}
-	// This is an experimental threshold, maybe I'll make this configurable
-	// later on.
-	else if(
-		(sReadBuf.getSize() >= 1024 && nRBOffset >= sReadBuf.getSize()/2) ||
-		(nRBOffset >= sReadBuf.getSize()/4)
-		)
-	{
-		sReadBuf.trimFront( nRBOffset );
-		nRBOffset = 0;
-	}
+	return qbRead.seek( nBytes );
 }
 
 long Bu::Client::getInputSize()
 {
-	return sReadBuf.getSize()-nRBOffset;
+	return qbRead.getSize();
+}
+
+long Bu::Client::getOutputSize()
+{
+	return qbWrite.getSize();
 }
 
 const Bu::Socket *Bu::Client::getSocket() const

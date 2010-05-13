@@ -67,8 +67,12 @@ public:
 
 	void onNewData( Bu::Client *pClient )
 	{
-		pClient->write( pClient->getInput().getStr(), pClient->getInputSize() );
-		pClient->seek( pClient->getInputSize() );
+		char buf[1024];
+		while( pClient->hasInput() )
+		{
+			int iAmnt = pClient->read( buf, 1024 );
+			pClient->write( buf, iAmnt );
+		}
 	}
 };
 

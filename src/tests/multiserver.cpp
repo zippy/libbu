@@ -19,8 +19,12 @@ public:
 
 	virtual void onNewData( Bu::Client *pClient )
 	{
-		pClient->write( pClient->getInput() );
-		pClient->seek( pClient->getInputSize() );
+		char buf[1024];
+		while( pClient->hasInput() )
+		{
+			int iAmnt = pClient->read( buf, 1024 );
+			pClient->write( buf, iAmnt );
+		}
 	}
 };
 
@@ -34,20 +38,23 @@ public:
 
 	virtual void onNewData( Bu::Client *pClient )
 	{
-		Bu::FString sTmp = pClient->getInput();
-		for( int j = 0; j < sTmp.getSize(); j++ )
+		while( pClient->hasInput() )
 		{
-			if( sTmp[j] >= 'a' && sTmp[j] <= 'z' )
+			char sTmp[1024];
+			int iAmnt = pClient->read( sTmp, 1024 );
+			for( int j = 0; j < iAmnt; j++ )
 			{
-				sTmp[j] = ((sTmp[j]-'a'+13)%26) + 'a';
+				if( sTmp[j] >= 'a' && sTmp[j] <= 'z' )
+				{
+					sTmp[j] = ((sTmp[j]-'a'+13)%26) + 'a';
+				}
+				else if( sTmp[j] >= 'A' && sTmp[j] <= 'Z' )
+				{
+					sTmp[j] = ((sTmp[j]-'A'+13)%26) + 'A';
+				}
 			}
-			else if( sTmp[j] >= 'A' && sTmp[j] <= 'Z' )
-			{
-				sTmp[j] = ((sTmp[j]-'A'+13)%26) + 'A';
-			}
+			pClient->write( sTmp, iAmnt );
 		}
-		pClient->write( sTmp );
-		pClient->seek( pClient->getInputSize() );
 	}
 };
 

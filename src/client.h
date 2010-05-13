@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include "bu/fstring.h"
+#include "bu/queuebuf.h"
 
 namespace Bu
 {
@@ -31,8 +32,8 @@ namespace Bu
 		void processInput();
 		void processOutput();
 
-		Bu::FString &getInput();
-		Bu::FString &getOutput();
+		//Bu::FString &getInput();
+		//Bu::FString &getOutput();
 		void write( const Bu::FString &sData );
 		void write( const void *pData, int nBytes );
 		void write( int8_t nData );
@@ -47,6 +48,7 @@ namespace Bu
 		int peek( void *pData, int nBytes, int nOffset=0 );
 		void seek( int nBytes );
 		long getInputSize();
+		long getOutputSize();
 
 		void setProtocol( Protocol *pProto );
 		Bu::Protocol *getProtocol();
@@ -65,7 +67,8 @@ namespace Bu
 
 		void onMessage( const Bu::FString &sMsg );
 
-		bool hasOutput() { return !sWriteBuf.isEmpty(); }
+		bool hasOutput() { return qbWrite.getSize() > 0; }
+		bool hasInput() { return qbRead.getSize() > 0; }
 
 		template<typename filter>
 		void pushFilter()
@@ -97,9 +100,8 @@ namespace Bu
 		Bu::Stream *pTopStream;
 		Bu::Socket *pSocket;
 		Bu::Protocol *pProto;
-		Bu::FString sReadBuf;
-		int nRBOffset;
-		Bu::FString sWriteBuf;
+		Bu::QueueBuf qbRead;
+		Bu::QueueBuf qbWrite;
 		bool bWantsDisconnect;
 		class Bu::ClientLinkFactory *pfLink;
 	};

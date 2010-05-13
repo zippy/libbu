@@ -76,7 +76,12 @@ size_t Bu::QueueBuf::read( void *pRawBuf, size_t nBytes )
 	return nBytes - iLeft;
 }
 
-size_t Bu::QueueBuf::peek( void *pRawBuf, size_t nBytes )
+size_t Bu::QueueBuf::peek( void *pBuf, size_t nBytes )
+{
+	return peek( pBuf, nBytes, 0 );
+}
+
+size_t Bu::QueueBuf::peek( void *pRawBuf, size_t nBytes, size_t nSkip )
 {
 	if( nBytes <= 0 )
 		return 0;
@@ -87,12 +92,16 @@ size_t Bu::QueueBuf::peek( void *pRawBuf, size_t nBytes )
 	size_t iLeft = nBytes;
 	char *pBuf = (char *)pRawBuf;
 
-	int iTmpReadOffset = iReadOffset;
+	int iTmpReadOffset = iReadOffset + nSkip;
 	size_t iTmpRemSize = iTotalSize;
 	BlockList::iterator iBlock = lBlocks.begin();
+	while( iTmpReadOffset > iBlockSize )
+	{
+		iTmpReadOffset -= iBlockSize;
+		iBlock++;
+	}
 	while( iLeft > 0 && iTmpRemSize > 0 )
 	{
-		// Switching to use temp variables instead of iReadOffset and iTotalSize
 		if( iTmpReadOffset == iBlockSize )
 		{
 			iBlock++;
