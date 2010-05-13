@@ -36,13 +36,23 @@ target files("src/*.h").replace("src/", "bu/")
 	input OUTPUT.replace("bu/","src/");
 	profile "build"
 	{
-		execute("ln -s ../${INPUT} ${OUTPUT}");
+		execute("mkdir -p $(dirname ${OUTPUT}); ln -s ../${INPUT} ${OUTPUT}");
+	}
+}
+target files("src/compat/*.h").replace("src/", "bu/")
+{
+	tag "header-links";
+	display "symlink";
+	input OUTPUT.replace("bu/","src/");
+	profile "build"
+	{
+		execute("mkdir -p $(dirname ${OUTPUT}); ln -s ../../${INPUT} ${OUTPUT}");
 	}
 }
 
 target "libbu++.a"
 {
-	input files("src/*.cpp");
+	input files("src/*.cpp", "src/compat/*.cpp");
 	rule "lib";
 	CXXFLAGS += "-I. -fPIC";
 }
@@ -120,7 +130,9 @@ target "libbu++-r$(svnversion "-n").tar.bz2"
 		files("src/tools/*.cpp"),
 		files("src/tools/*.h"),
 		files("src/unit/*.unit"),
-		files("src/doxy/*.dox")
+		files("src/doxy/*.dox"),
+		files("src/compat/*.cpp"),
+		files("src/compat/*.h")
 		];
 	rule "tarball";
 	tag "pkg";

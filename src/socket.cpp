@@ -15,9 +15,8 @@
 #include <errno.h>
 #include <fcntl.h>
 #include "bu/socket.h"
-#include "bu/osx_compatibility.h"
-#include "bu/win32_compatibility.h"
-#include "bu/linux_compatibility.h"
+
+#include "bu/config.h"
 
 #ifndef WIN32
  #include <sys/socket.h>

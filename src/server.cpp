@@ -11,7 +11,7 @@
 #include "bu/serversocket.h"
 #include "bu/client.h"
 #include "bu/socket.h"
-#include "bu/osx_compatibility.h"
+#include "bu/config.h"
 
 Bu::Server::Server() :
 	nTimeoutSec( 0 ),

@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/win32_compatibility.h"
+#include "bu/compat/win32.h"
 
 #ifdef WIN32
 

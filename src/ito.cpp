@@ -6,7 +6,8 @@
  */
 
 #include "bu/ito.h"
-#include "bu/osx_compatibility.h"
+
+#include "bu/config.h"
 
 Bu::Ito::Ito()
 {

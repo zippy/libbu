@@ -12,7 +12,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "win32_compatibility.h"
+#include "bu/config.h"
 
 namespace Bu { subExceptionDef( FifoException ) }
 

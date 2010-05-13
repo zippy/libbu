@@ -13,13 +13,19 @@
 #include <unistd.h>
 #include <stdlib.h> // for mkstemp
 
+#include "bu/config.h"
+
 namespace Bu { subExceptionDef( FileException ) }
 
 Bu::File::File( const Bu::FString &sName, int iFlags ) :
 	fd( -1 ),
 	bEos( true )
 {
+#ifdef USE_64BIT_IO
+	fd = ::open64( sName.getStr(), getPosixFlags( iFlags ), 0666 );
+#else
 	fd = ::open( sName.getStr(), getPosixFlags( iFlags ), 0666 );
+#endif
 	if( fd < 0 )
 	{
 		throw Bu::FileException( errno, "%s: %s",

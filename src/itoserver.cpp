@@ -5,14 +5,13 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "win32_compatibility.h"
-
 #include "bu/itoserver.h"
 #include <errno.h>
 #include "bu/serversocket.h"
 #include "bu/client.h"
 #include "bu/socket.h"
-#include "bu/osx_compatibility.h"
+
+#include "bu/config.h"
 
 Bu::ItoServer::ItoServer() :
 	nTimeoutSec( 1 ),

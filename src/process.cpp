@@ -15,9 +15,8 @@
 #include <errno.h>
 
 #include <sys/select.h>
-#include "bu/osx_compatibility.h"
-#include "bu/win32_compatibility.h"
-#include "bu/linux_compatibility.h"
+
+#include "bu/config.h"
 
 Bu::Process::Process( Flags eFlags, const char *sName, char *const argv[] ) :
 	iStdIn( -1 ),

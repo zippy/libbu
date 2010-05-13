@@ -22,9 +22,8 @@
 //#include <termios.h>
 #include <fcntl.h>
 #include "bu/serversocket.h"
-#include "bu/osx_compatibility.h"
-#include "bu/win32_compatibility.h"
-#include "bu/linux_compatibility.h"
+
+#include "bu/config.h"
 
 namespace Bu { subExceptionDef( ServerSocketException ) }
 

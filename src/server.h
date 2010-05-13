@@ -20,7 +20,8 @@
 #include "bu/clientlink.h"
 #include "bu/clientlinkfactory.h"
 #include "bu/hash.h"
-#include "bu/win32_compatibility.h"
+
+#include "bu/config.h"
 
 namespace Bu
 {

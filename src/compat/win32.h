@@ -124,6 +124,8 @@ namespace Bu
 
 #undef decltype
 
+#undef USE_64BIT_IO
+
 #endif /* WIN32 */
 #endif
 
