@@ -96,7 +96,17 @@ void Bu::Server::scan()
 			try
 			{
 				Client *pClient = hClients.get( j );
-				pClient->processOutput();
+				try
+				{
+					pClient->processOutput();
+				}
+				catch( Bu::SocketException &e )
+				{
+					onClosedConnection( pClient );
+					pClient->close();
+					hClients.erase( j );
+					FD_CLR( j, &fdActive );
+				}
 			}
 			catch( Bu::HashException &e )
 			{
