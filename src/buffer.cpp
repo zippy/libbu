@@ -41,12 +41,10 @@ void Bu::Buffer::fillReadBuf()
 {
 	if( iReadBufFill+iReadPos < iBufSize )
 	{
-		printf("Buffer: Attempting to read %db.\n", iBufSize-iReadBufFill-iReadPos );
 		iReadBufFill += rNext.read(
 			sReadBuf+iReadPos+iReadBufFill,
 			iBufSize-iReadBufFill-iReadPos
 			);
-		printf("Buffer: Read from stream, %db now in buffer.\n", iReadBufFill );
 	}
 }
 
