@@ -12,84 +12,85 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-{=Init}
-
-{%writeFull}
+suite File
 {
-	Bu::File sf("testfile1", Bu::File::WriteNew );
-	for( int c = 0; c < 256; c++ )
+	test writeFull
 	{
-		unsigned char ch = (unsigned char)c;
-		sf.write( &ch, 1 );
-		unitTest( sf.tell() == c+1 );
-	}
-	//unitTest( sf.canRead() == false );
-	//unitTest( sf.canWrite() == true );
-	//unitTest( sf.canSeek() == true );
-	sf.close();
-	struct stat sdat;
-	stat("testfile1", &sdat );
-	unitTest( sdat.st_size == 256 );
-}
-
-{%readBlocks}
-{
-	Bu::File sf("testfile1", Bu::File::Read );
-	unsigned char buf[50];
-	size_t total = 0;
-	for(;;)
-	{
-		size_t s = sf.read( buf, 50 );
-		for( size_t c = 0; c < s; c++ )
+		Bu::File sf("testfile1", Bu::File::WriteNew );
+		for( int c = 0; c < 256; c++ )
 		{
-			unitTest( buf[c] == (unsigned char)(c+total) );
+			unsigned char ch = (unsigned char)c;
+			sf.write( &ch, 1 );
+			unitTest( sf.tell() == c+1 );
 		}
-		total += s;
-		if( s < 50 )
-		{
-			unitTest( total == 256 );
-			unitTest( sf.isEos() == true );
-			break;
-		}
+		//unitTest( sf.canRead() == false );
+		//unitTest( sf.canWrite() == true );
+		//unitTest( sf.canSeek() == true );
+		sf.close();
+		struct stat sdat;
+		stat("testfile1", &sdat );
+		unitTest( sdat.st_size == 256 );
 	}
-	sf.close();
-}
 
-{%readError1}
-{
-	try
+	test readBlocks
 	{
-		Bu::File sf("doesn'texist", Bu::File::Read );
-		unitFailed("No exception thrown");
-	}
-	catch( Bu::FileException &e )
-	{
-		return;
-	}
-}
-
-{%readError2}
-{
-	Bu::File sf("testfile1", Bu::File::Read );
-	char buf[256];
-	int r = sf.read( buf, 256 );
-	unitTest( r == 256 );
-	// You have to read past the end to set the EOS flag.
-	unitTest( sf.isEos() == false );
-	try
-	{
-		if( sf.read( buf, 5 ) > 0 )
+		Bu::File sf("testfile1", Bu::File::Read );
+		unsigned char buf[50];
+		size_t total = 0;
+		for(;;)
 		{
-			unitFailed("Non-zero read result");
+			size_t s = sf.read( buf, 50 );
+			for( size_t c = 0; c < s; c++ )
+			{
+				unitTest( buf[c] == (unsigned char)(c+total) );
+			}
+			total += s;
+			if( s < 50 )
+			{
+				unitTest( total == 256 );
+				unitTest( sf.isEos() == true );
+				break;
+			}
 		}
-		else
+		sf.close();
+	}
+
+	test readError1
+	{
+		try
+		{
+			Bu::File sf("doesn'texist", Bu::File::Read );
+			unitFailed("No exception thrown");
+		}
+		catch( Bu::FileException &e )
+		{
+			return;
+		}
+	}
+
+	test readError2
+	{
+		Bu::File sf("testfile1", Bu::File::Read );
+		char buf[256];
+		int r = sf.read( buf, 256 );
+		unitTest( r == 256 );
+		// You have to read past the end to set the EOS flag.
+		unitTest( sf.isEos() == false );
+		try
+		{
+			if( sf.read( buf, 5 ) > 0 )
+			{
+				unitFailed("Non-zero read result");
+			}
+			else
+			{
+				sf.close();
+			}
+		}
+		catch( Bu::FileException &e )
 		{
 			sf.close();
+			return;
 		}
-	}
-	catch( Bu::FileException &e )
-	{
-		sf.close();
-		return;
 	}
 }

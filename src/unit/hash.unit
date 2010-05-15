@@ -15,72 +15,73 @@ typedef Bu::Hash<Bu::FString, int> StrIntHash;
 typedef Bu::Hash<Bu::FString, Bu::FString> StrStrHash;
 typedef Bu::Hash<int, Bu::FString> IntStrHash;
 
-{=Init}
-
-{%probe1}
+suite Hash
 {
-	StrIntHash h;
-	char buf[20];
-	for(int i=1;i<10000;i++)
+	test probe1
 	{
-		sprintf(buf,"%d",i);
-		Bu::FString sTmp(buf);
-		h[sTmp] = i;
-		unitTest( h.has(sTmp) );
+		StrIntHash h;
+		char buf[20];
+		for(int i=1;i<10000;i++)
+		{
+			sprintf(buf,"%d",i);
+			Bu::FString sTmp(buf);
+			h[sTmp] = i;
+			unitTest( h.has(sTmp) );
+		}
 	}
-}
 
-{%insert1}
-{
-	StrIntHash h;
-	h["Hi"] = 42;
-	unitTest( h["Hi"] == 42 );
-}
-
-{%insert2}
-{
-	StrStrHash h;
-	h["Hi"] = "Yo";
-	h["Bye"] = "Later";
-	unitTest( h["Hi"].getValue() == "Yo" );
-
-	StrStrHash h2(h);
-	unitTest( h2["Hi"].getValue() == "Yo" );
-	unitTest( h2["Bye"].getValue() == "Later" );
-
-	StrStrHash h3;
-	h3 = h;
-	unitTest( h3["Hi"].getValue() == "Yo" );
-	unitTest( h3["Bye"].getValue() == "Later" );
-}
-
-{%insert3}
-{
-	IntStrHash h;
-
-	for( unsigned int i=1; i<50; i++ )
+	test insert1
 	{
-		h[i] = "testing";
-		unitTest( h.getSize() == i );
+		StrIntHash h;
+		h["Hi"] = 42;
+		unitTest( h["Hi"] == 42 );
 	}
-}
 
-{%erase1}
-{
-	StrIntHash h;
-	h.insert("Number 1", 1 );
-	h.insert("Number 2", 2 );
-	h.insert("Number 3", 3 );
-	h.erase("Number 2");
-	h.get("Number 3");
-	try {
-		h.get("Number 2");
-		unitFailed("h.get(\"Number 2\") should have thrown an exception.");
-	} catch( Bu::HashException &e ) { }
-
-/*	printf("\n");
-	for( StrIntHash::iterator i = h.begin(); i != h.end(); i++ )
+	test insert2
 	{
-		printf(" - \"%s\" = %d\n", i.getKey().getStr(), i.getValue() );
-	} */
+		StrStrHash h;
+		h["Hi"] = "Yo";
+		h["Bye"] = "Later";
+		unitTest( h["Hi"].getValue() == "Yo" );
+
+		StrStrHash h2(h);
+		unitTest( h2["Hi"].getValue() == "Yo" );
+		unitTest( h2["Bye"].getValue() == "Later" );
+
+		StrStrHash h3;
+		h3 = h;
+		unitTest( h3["Hi"].getValue() == "Yo" );
+		unitTest( h3["Bye"].getValue() == "Later" );
+	}
+
+	test insert3
+	{
+		IntStrHash h;
+
+		for( unsigned int i=1; i<50; i++ )
+		{
+			h[i] = "testing";
+			unitTest( h.getSize() == i );
+		}
+	}
+
+	test erase1
+	{
+		StrIntHash h;
+		h.insert("Number 1", 1 );
+		h.insert("Number 2", 2 );
+		h.insert("Number 3", 3 );
+		h.erase("Number 2");
+		h.get("Number 3");
+		try {
+			h.get("Number 2");
+			unitFailed("h.get(\"Number 2\") should have thrown an exception.");
+		} catch( Bu::HashException &e ) { }
+
+	/*	printf("\n");
+		for( StrIntHash::iterator i = h.begin(); i != h.end(); i++ )
+		{
+			printf(" - \"%s\" = %d\n", i.getKey().getStr(), i.getValue() );
+		} */
+	}
 }

@@ -9,44 +9,44 @@
 #include "bu/membuf.h"
 #include "bu/substream.h"
 
-{=Init}
-
-{%testRead01}
+suite SubStream
 {
-	Bu::MemBuf mb("abcdefghijklmnopqrstuvwxyz");
-	mb.seek( 4 );
-	Bu::SubStream ss( mb, 10 );
-	unitTest( ss.readLine() == "efghijklmn" );
-}
+	test testRead01
+	{
+		Bu::MemBuf mb("abcdefghijklmnopqrstuvwxyz");
+		mb.seek( 4 );
+		Bu::SubStream ss( mb, 10 );
+		unitTest( ss.readLine() == "efghijklmn" );
+	}
 
-{%testRead02}
-{
-	Bu::MemBuf mb("abcdefghijklmnopqrstuvwxyz");
-	mb.seek( 4 );
-	Bu::SubStream ss( mb, 10 );
-	char buf[8];
-	size_t iRead = ss.read( buf, 8 );
-	unitTest( iRead == 8 );
-	unitTest( strncmp( buf, "efghijkl", 8 ) == 0 );
-	unitTest( !ss.isEos() );
-	iRead = ss.read( buf, 8 );
-	unitTest( iRead == 2 );
-	unitTest( strncmp( buf, "mn", 2 ) == 0 );
-	unitTest( ss.isEos() );
-}
+	test testRead02
+	{
+		Bu::MemBuf mb("abcdefghijklmnopqrstuvwxyz");
+		mb.seek( 4 );
+		Bu::SubStream ss( mb, 10 );
+		char buf[8];
+		size_t iRead = ss.read( buf, 8 );
+		unitTest( iRead == 8 );
+		unitTest( strncmp( buf, "efghijkl", 8 ) == 0 );
+		unitTest( !ss.isEos() );
+		iRead = ss.read( buf, 8 );
+		unitTest( iRead == 2 );
+		unitTest( strncmp( buf, "mn", 2 ) == 0 );
+		unitTest( ss.isEos() );
+	}
 
-{%testRead03}
-{
-	Bu::MemBuf mb("abcdefghijklmnopqrstuvwxyz");
-	mb.seek( 20 );
-	Bu::SubStream ss( mb, 10 );
-	char buf[8];
-	size_t iRead = ss.read( buf, 8 );
-	unitTest( iRead == 6 );
-	unitTest( strncmp( buf, "uvwxyz", 6 ) == 0 );
-	unitTest( ss.isEos() );
-	iRead = ss.read( buf, 8 );
-	unitTest( iRead == 0 );
-	unitTest( ss.isEos() );
+	test testRead03
+	{
+		Bu::MemBuf mb("abcdefghijklmnopqrstuvwxyz");
+		mb.seek( 20 );
+		Bu::SubStream ss( mb, 10 );
+		char buf[8];
+		size_t iRead = ss.read( buf, 8 );
+		unitTest( iRead == 6 );
+		unitTest( strncmp( buf, "uvwxyz", 6 ) == 0 );
+		unitTest( ss.isEos() );
+		iRead = ss.read( buf, 8 );
+		unitTest( iRead == 0 );
+		unitTest( ss.isEos() );
+	}
 }
-

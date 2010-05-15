@@ -10,333 +10,333 @@
 
 #include <dirent.h>
 
-{=Init}
-
-{%compare1}
+suite FString
 {
-	Bu::FString b("Bob");
-	unitTest( !(b == "Bobo") );
-	unitTest( b == "Bob" );
-}
-
-{%compare2}
-{
-	Bu::FString b("Bobo");
-	unitTest( !(b == "Bob") );
-	unitTest( b == "Bobo" );
-}
-
-{%appendSingle}
-{
-	Bu::FString b;
-	for( char l = 'a'; l < 'g'; l++ )
-		b += l;
-	unitTest( b == "abcdef" );
-	unitTest( strcmp( b.getStr(), "abcdef" ) == 0 );
-}
-
-{%shared1}
-{
-	Bu::FString a("Hey there");
-	Bu::FString b( a );
-	unitTest( a.getConstStr() == b.getConstStr() );
-	b += " guy";
-	unitTest( a.getConstStr() != b.getConstStr() );
-	a = b;
-	unitTest( a.getConstStr() == b.getConstStr() );
-}
-
-{%insert}
-{
-	Bu::FString a("abcd");
-	a.insert( 2, "-!-", 3 );
-	unitTest( a == "ab-!-cd" );
-	
-	a.insert( 0, "!!", 2 );
-	unitTest( a == "!!ab-!-cd" );
-	
-	a.insert( -10, "789", 3 );
-	unitTest( a == "789!!ab-!-cd" );
-	
-	a.insert( 12, "89", 2 );
-	unitTest( a == "789!!ab-!-cd89" );
-	
-	a.insert( 1203, "12", 2 );
-	unitTest( a == "789!!ab-!-cd8912" );
-}
-
-{%remove}
-{
-	Bu::FString a("abHEYcd");
-	a.remove( 2, 3 );
-	unitTest( a == "abcd" );
-	a.remove( 2, 5 );
-	unitTest( a == "ab" );
-	a += "cdefghijklmnop";
-	a.remove( 5, 1 );
-	unitTest( a == "abcdeghijklmnop" );
-}
-
-{%add1}
-{
-	Bu::FString a("hi there");
-	Bu::FString b(", yeah!");
-	Bu::FString c = a + b;
-
-	unitTest( c == "hi there, yeah!" );
-}
-
-{%add2}
-{
-	Bu::FString a("hi there");
-	Bu::FString c = a + ", yeah!";
-
-	unitTest( c == "hi there, yeah!" );
-}
-
-{%add3}
-{
-	Bu::FString a("hi there");
-	Bu::FString b(", yeah!");
-	Bu::FString c = a + ", Mr. Man" + b;
-
-	unitTest( c == "hi there, Mr. Man, yeah!" );
-}
-
-{%add4}
-{
-	Bu::FString b(", yeah!");
-	Bu::FString c = "hi there" + b;
-
-	unitTest( c == "hi there, yeah!" );
-}
-
-{%add5}
-{
-	Bu::FString b;
-	Bu::FString c = "sup?";
-	b += "hey, " + c;
-	
-	unitTest( b == "hey, sup?" );
-}
-
-{%add6}
-{
-	Bu::FString a("Hello");
-	char b[256] = {"Dude"};
-	Bu::FString c = a + "/" + b;
-
-	unitTest( c == "Hello/Dude" );
-}
-
-{%add7}
-{
-	const Bu::FString a("hello ");
-	Bu::FString b(" how ");
-	unitTest( a == "hello " );
-	unitTest( a + "dude" == "hello dude" );
-	unitTest( a + "dude" + b + "are you?" == "hello dude how are you?" );
-}
-
-{%subStr1}
-{
-	Bu::FString a("abcdefghijklmnop");
-	Bu::FString::iterator i = a.find('f');
-	unitTest( a.getSubStr( i, Bu::FString::iterator() ) == "fghijklmnop" );
-	Bu::FString::iterator j = i.find('l');
-	unitTest( a.getSubStr( i, j ) == "fghijk" );
-}
-
-{%compareSub1}
-{
-	Bu::FString a("just a string.");
-	unitTest( a.compareSub("a ", 5, 2) == true );
-	unitTest( a.compareSub("string.aoeu", 7, 11 ) == false );
-	unitTest( a.compareSub("string.aoeu", 7, 3 ) == true );
-}
-
-{%compareSub2}
-{
-	Bu::FString a("just a string.");
-	unitTest( a.compareSub(Bu::FString("a "), 5, 2) == true );
-	unitTest( a.compareSub(Bu::FString("string.aoeu"), 7, 11 ) == false );
-	unitTest( a.compareSub(Bu::FString("string.aoeu"), 7, 3 ) == true );
-}
-
-{%iterator1}
-{
-	Bu::FString a("This is a test.");
-	Bu::FString b;
-	for( Bu::FString::iterator i = a.begin(); i; i++ )
+	test compare1
 	{
-		b += *i;
+		Bu::FString b("Bob");
+		unitTest( !(b == "Bobo") );
+		unitTest( b == "Bob" );
 	}
-	unitTest( a == b );
-}
 
-{%iterator2}
-{
-	Bu::FString a("This is a test.");
-	Bu::FString b("--This is a test.");
-	Bu::FString::iterator ai = a.begin();
-	Bu::FString::iterator bi = b.begin();
-	unitTest( ai.compare( bi ) == false );
-	unitTest( bi.compare( ai ) == false );
-	bi++; bi++;
-	unitTest( ai.compare( bi ) == true );
-	unitTest( bi.compare( ai ) == true );
-}
-
-{%iterator3}
-{
-	Bu::FString a("1234honour");
-	Bu::FString b("--1234ueje");
-	Bu::FString::iterator ai = a.begin();
-	Bu::FString::iterator bi = b.begin();
-	unitTest( ai.compare( bi, 4 ) == false );
-	unitTest( bi.compare( ai, 4 ) == false );
-	bi++; bi++;
-	unitTest( ai.compare( bi, 4 ) == true );
-	unitTest( bi.compare( ai, 4 ) == true );
-	unitTest( ai.compare( bi, 5 ) == false );
-	unitTest( bi.compare( ai, 5 ) == false );
-
-}
-
-{%iterator4}
-{
-	Bu::FString a("1234aoeu");
-	Bu::FString::iterator ai = a.begin();
-	unitTest( ai.compare("1234") == false );
-	unitTest( ai.compare("1234aoeu") == true );
-	unitTest( ai.compare("1234aoeuee") == false );
-}
-
-{%iterator5}
-{
-	Bu::FString a("1234aoeu");
-	Bu::FString::iterator ai = a.begin();
-	unitTest( ai.compare("1234", 4) == true );
-	unitTest( ai.compare("1234aoeu", 8) == true );
-	unitTest( ai.compare("1234aoeuee", 10) == false );
-}
-
-{%iterator6}
-{
-	Bu::FString a("just ->this part");
-	Bu::FString b;
-	Bu::FString::iterator s = a.begin();
-	for(; s; s++ )
+	test compare2
 	{
-		if( *s == '>' )
+		Bu::FString b("Bobo");
+		unitTest( !(b == "Bob") );
+		unitTest( b == "Bobo" );
+	}
+
+	test appendSingle
+	{
+		Bu::FString b;
+		for( char l = 'a'; l < 'g'; l++ )
+			b += l;
+		unitTest( b == "abcdef" );
+		unitTest( strcmp( b.getStr(), "abcdef" ) == 0 );
+	}
+
+	test shared1
+	{
+		Bu::FString a("Hey there");
+		Bu::FString b( a );
+		unitTest( a.getConstStr() == b.getConstStr() );
+		b += " guy";
+		unitTest( a.getConstStr() != b.getConstStr() );
+		a = b;
+		unitTest( a.getConstStr() == b.getConstStr() );
+	}
+
+	test insert
+	{
+		Bu::FString a("abcd");
+		a.insert( 2, "-!-", 3 );
+		unitTest( a == "ab-!-cd" );
+		
+		a.insert( 0, "!!", 2 );
+		unitTest( a == "!!ab-!-cd" );
+		
+		a.insert( -10, "789", 3 );
+		unitTest( a == "789!!ab-!-cd" );
+		
+		a.insert( 12, "89", 2 );
+		unitTest( a == "789!!ab-!-cd89" );
+		
+		a.insert( 1203, "12", 2 );
+		unitTest( a == "789!!ab-!-cd8912" );
+	}
+
+	test remove
+	{
+		Bu::FString a("abHEYcd");
+		a.remove( 2, 3 );
+		unitTest( a == "abcd" );
+		a.remove( 2, 5 );
+		unitTest( a == "ab" );
+		a += "cdefghijklmnop";
+		a.remove( 5, 1 );
+		unitTest( a == "abcdeghijklmnop" );
+	}
+
+	test add1
+	{
+		Bu::FString a("hi there");
+		Bu::FString b(", yeah!");
+		Bu::FString c = a + b;
+
+		unitTest( c == "hi there, yeah!" );
+	}
+
+	test add2
+	{
+		Bu::FString a("hi there");
+		Bu::FString c = a + ", yeah!";
+
+		unitTest( c == "hi there, yeah!" );
+	}
+
+	test add3
+	{
+		Bu::FString a("hi there");
+		Bu::FString b(", yeah!");
+		Bu::FString c = a + ", Mr. Man" + b;
+
+		unitTest( c == "hi there, Mr. Man, yeah!" );
+	}
+
+	test add4
+	{
+		Bu::FString b(", yeah!");
+		Bu::FString c = "hi there" + b;
+
+		unitTest( c == "hi there, yeah!" );
+	}
+
+	test add5
+	{
+		Bu::FString b;
+		Bu::FString c = "sup?";
+		b += "hey, " + c;
+		
+		unitTest( b == "hey, sup?" );
+	}
+
+	test add6
+	{
+		Bu::FString a("Hello");
+		char b[256] = {"Dude"};
+		Bu::FString c = a + "/" + b;
+
+		unitTest( c == "Hello/Dude" );
+	}
+
+	test add7
+	{
+		const Bu::FString a("hello ");
+		Bu::FString b(" how ");
+		unitTest( a == "hello " );
+		unitTest( a + "dude" == "hello dude" );
+		unitTest( a + "dude" + b + "are you?" == "hello dude how are you?" );
+	}
+
+	test subStr1
+	{
+		Bu::FString a("abcdefghijklmnop");
+		Bu::FString::iterator i = a.find('f');
+		unitTest( a.getSubStr( i, Bu::FString::iterator() ) == "fghijklmnop" );
+		Bu::FString::iterator j = i.find('l');
+		unitTest( a.getSubStr( i, j ) == "fghijk" );
+	}
+
+	test compareSub1
+	{
+		Bu::FString a("just a string.");
+		unitTest( a.compareSub("a ", 5, 2) == true );
+		unitTest( a.compareSub("string.aoeu", 7, 11 ) == false );
+		unitTest( a.compareSub("string.aoeu", 7, 3 ) == true );
+	}
+
+	test compareSub2
+	{
+		Bu::FString a("just a string.");
+		unitTest( a.compareSub(Bu::FString("a "), 5, 2) == true );
+		unitTest( a.compareSub(Bu::FString("string.aoeu"), 7, 11 ) == false );
+		unitTest( a.compareSub(Bu::FString("string.aoeu"), 7, 3 ) == true );
+	}
+
+	test iterator1
+	{
+		Bu::FString a("This is a test.");
+		Bu::FString b;
+		for( Bu::FString::iterator i = a.begin(); i; i++ )
 		{
-			s++;
-			b.set( s );
-			break;
+			b += *i;
 		}
+		unitTest( a == b );
 	}
-	unitTest( b == "this part" );
 
-	b.append( s );
-
-	Bu::FString c;
-	c.set( b.begin() );
-
-	// This is here because the comparison operator used to cause flattening.
-	unitTest( b == "this partthis part" );
-	unitTest( c == b );
-}
-
-{%iterator7}
-{
-	Bu::FString a("just [this] part");
-	Bu::FString b;
-	Bu::FString::iterator s = a.begin();
-	for(; s; s++ )
+	test iterator2
 	{
-		if( *s == '[' )
-		{
-			s++;
-			break;
-		}
+		Bu::FString a("This is a test.");
+		Bu::FString b("--This is a test.");
+		Bu::FString::iterator ai = a.begin();
+		Bu::FString::iterator bi = b.begin();
+		unitTest( ai.compare( bi ) == false );
+		unitTest( bi.compare( ai ) == false );
+		bi++; bi++;
+		unitTest( ai.compare( bi ) == true );
+		unitTest( bi.compare( ai ) == true );
 	}
-	Bu::FString::iterator e = s;
-	for(; e; e++ )
+
+	test iterator3
 	{
-		if( *e == ']' )
-		{
-			b.set( s, e );
-			break;
-		}
+		Bu::FString a("1234honour");
+		Bu::FString b("--1234ueje");
+		Bu::FString::iterator ai = a.begin();
+		Bu::FString::iterator bi = b.begin();
+		unitTest( ai.compare( bi, 4 ) == false );
+		unitTest( bi.compare( ai, 4 ) == false );
+		bi++; bi++;
+		unitTest( ai.compare( bi, 4 ) == true );
+		unitTest( bi.compare( ai, 4 ) == true );
+		unitTest( ai.compare( bi, 5 ) == false );
+		unitTest( bi.compare( ai, 5 ) == false );
+
 	}
-	unitTest( b == "this" );
 
-	b.append( s, e );
-
-	for( Bu::FString::iterator i = b.begin(); i;)
+	test iterator4
 	{
-		Bu::FString::iterator k = i;
-		k++;
-		if( !k )
-		{
-			b.append( b.begin(), i );
-			break;
-		}
-		i = k;
+		Bu::FString a("1234aoeu");
+		Bu::FString::iterator ai = a.begin();
+		unitTest( ai.compare("1234") == false );
+		unitTest( ai.compare("1234aoeu") == true );
+		unitTest( ai.compare("1234aoeuee") == false );
 	}
-	Bu::FString l;
-	l.set( b.begin() );
-	unitTest( l == "thisthisthisthi" );
-	for( Bu::FString::iterator i = b.begin(); i;)
+
+	test iterator5
 	{
-		Bu::FString::iterator k = i;
-		k++;
-		if( !k )
-		{
-			b.append( b.begin(), i );
-			break;
-		}
-		i = k;
+		Bu::FString a("1234aoeu");
+		Bu::FString::iterator ai = a.begin();
+		unitTest( ai.compare("1234", 4) == true );
+		unitTest( ai.compare("1234aoeu", 8) == true );
+		unitTest( ai.compare("1234aoeuee", 10) == false );
 	}
-	l.set( b.begin() );
-	unitTest( l == "thisthisthisthithisthisthisth" );
+
+	test iterator6
+	{
+		Bu::FString a("just ->this part");
+		Bu::FString b;
+		Bu::FString::iterator s = a.begin();
+		for(; s; s++ )
+		{
+			if( *s == '>' )
+			{
+				s++;
+				b.set( s );
+				break;
+			}
+		}
+		unitTest( b == "this part" );
+
+		b.append( s );
+
+		Bu::FString c;
+		c.set( b.begin() );
+
+		// This is here because the comparison operator used to cause flattening.
+		unitTest( b == "this partthis part" );
+		unitTest( c == b );
+	}
+
+	test iterator7
+	{
+		Bu::FString a("just [this] part");
+		Bu::FString b;
+		Bu::FString::iterator s = a.begin();
+		for(; s; s++ )
+		{
+			if( *s == '[' )
+			{
+				s++;
+				break;
+			}
+		}
+		Bu::FString::iterator e = s;
+		for(; e; e++ )
+		{
+			if( *e == ']' )
+			{
+				b.set( s, e );
+				break;
+			}
+		}
+		unitTest( b == "this" );
+
+		b.append( s, e );
+
+		for( Bu::FString::iterator i = b.begin(); i;)
+		{
+			Bu::FString::iterator k = i;
+			k++;
+			if( !k )
+			{
+				b.append( b.begin(), i );
+				break;
+			}
+			i = k;
+		}
+		Bu::FString l;
+		l.set( b.begin() );
+		unitTest( l == "thisthisthisthi" );
+		for( Bu::FString::iterator i = b.begin(); i;)
+		{
+			Bu::FString::iterator k = i;
+			k++;
+			if( !k )
+			{
+				b.append( b.begin(), i );
+				break;
+			}
+			i = k;
+		}
+		l.set( b.begin() );
+		unitTest( l == "thisthisthisthithisthisthisth" );
+	}
+
+	test isSet1
+	{
+		Bu::FString bob;
+
+		unitTest( bob.isSet() == false );
+		bob = "something";
+		unitTest( bob.isSet() == true );
+		bob = "";
+		unitTest( bob.isSet() == false );
+	}
+
+	test swap1
+	{
+		Bu::FString a, b;
+		a = "Goodbye";
+		b = "Hello";
+		Bu::swap( a, b );
+		unitTest( a == "Hello" );
+		unitTest( b == "Goodbye" );
+	}
+
+	test swap2
+	{
+		Bu::FString a, b;
+		a = "Goodbye";
+		b = "Hello";
+		std::swap( a, b );
+		unitTest( a == "Hello" );
+		unitTest( b == "Goodbye" );
+	}
+
+	test replace1
+	{
+		Bu::FString a;
+		a = "This is a test.";
+		unitTest( a.replace("i", "ooo") == "Thooos ooos a test." );
+	}
 }
-
-{%isSet1}
-{
-	Bu::FString bob;
-
-	unitTest( bob.isSet() == false );
-	bob = "something";
-	unitTest( bob.isSet() == true );
-	bob = "";
-	unitTest( bob.isSet() == false );
-}
-
-{%swap1}
-{
-	Bu::FString a, b;
-	a = "Goodbye";
-	b = "Hello";
-	Bu::swap( a, b );
-	unitTest( a == "Hello" );
-	unitTest( b == "Goodbye" );
-}
-
-{%swap2}
-{
-	Bu::FString a, b;
-	a = "Goodbye";
-	b = "Hello";
-	std::swap( a, b );
-	unitTest( a == "Hello" );
-	unitTest( b == "Goodbye" );
-}
-
-{%replace1}
-{
-	Bu::FString a;
-	a = "This is a test.";
-	unitTest( a.replace("i", "ooo") == "Thooos ooos a test." );
-}
-

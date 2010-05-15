@@ -10,11 +10,12 @@
 #include "bu/xmlreader.h"
 #include "bu/membuf.h"
 
-{=Init}
-
-{%declaration}
+suite Xml
 {
-	Bu::FString sXml("<?xml ?> <hi />");
-	Bu::MemBuf buf( sXml );
-	Bu::XmlReader xr( buf );
+	test declaration
+	{
+		Bu::FString sXml("<?xml ?> <hi />");
+		Bu::MemBuf buf( sXml );
+		Bu::XmlReader xr( buf );
+	}
 }

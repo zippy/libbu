@@ -29,6 +29,11 @@ action "all"
 		targets("tests")];
 }
 
+action "unit"
+{
+	build: targets("unit tests");
+}
+
 target files("src/*.h").replace("src/", "bu/")
 {
 	tag "header-links";
@@ -157,7 +162,7 @@ rule "unit"
 
 	profile "build"
 	{
-		execute("./mkunit.sh \"${INPUT}\" \"${OUTPUT}\"");
+		execute("./mkunit \"${INPUT}\" \"${OUTPUT}\"");
 	}
 }
 

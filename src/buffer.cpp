@@ -34,7 +34,8 @@ void Bu::Buffer::start()
 
 size_t Bu::Buffer::stop()
 {
-	return 0;
+	iReadBufFill = iReadPos = iWriteBufFill = iWritePos = 0;
+	return sSoFar;
 }
 
 void Bu::Buffer::fillReadBuf()
