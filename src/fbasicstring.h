@@ -1547,6 +1547,22 @@ namespace Bu
 
 			return false;
 		}
+		
+		bool operator<=(const MyType &pData ) const
+		{
+			flatten();
+			pData.flatten();
+
+			const chr *a = core->pFirst->pData;
+			chr *b = pData.core->pFirst->pData;
+			for( long j = 0; j < core->nLength; j++, a++, b++ )
+			{
+				if( *a != *b )
+					return *a < *b;
+			}
+
+			return true;
+		}
 
 		bool operator>(const MyType &pData ) const
 		{
@@ -1562,6 +1578,22 @@ namespace Bu
 			}
 
 			return false;
+		}
+
+		bool operator>=(const MyType &pData ) const
+		{
+			flatten();
+			pData.flatten();
+
+			const chr *a = core->pFirst->pData;
+			chr *b = pData.core->pFirst->pData;
+			for( long j = 0; j < core->nLength; j++, a++, b++ )
+			{
+				if( *a != *b )
+					return *a > *b;
+			}
+
+			return true;
 		}
 
 		/**
