@@ -1928,7 +1928,7 @@ namespace Bu
 			for( ; core->pFirst->nLength > 0 && core->pFirst->pData[core->pFirst->nLength-1] == c; core->pFirst->nLength--, core->nLength-- ) { }
 		}
 		
-		void format( const char *sFrmt, ...)
+		MyType &format( const char *sFrmt, ...)
 		{
 			_hardCopy();
 			clear();
@@ -1943,9 +1943,11 @@ namespace Bu
 			core->appendChunk( pNew );
 
 			va_end( ap );
+
+			return *this;
 		}
 
-		void formatAppend( const char *sFrmt, ...)
+		MyType &formatAppend( const char *sFrmt, ...)
 		{
 			_hardCopy();
 			va_list ap;
@@ -1958,9 +1960,11 @@ namespace Bu
 			core->appendChunk( pNew );
 
 			va_end( ap );
+
+			return *this;
 		}
 
-		void formatPrepend( const char *sFrmt, ...)
+		MyType &formatPrepend( const char *sFrmt, ...)
 		{
 			_hardCopy();
 			va_list ap;
@@ -1973,6 +1977,8 @@ namespace Bu
 			core->prependChunk( pNew );
 
 			va_end( ap );
+
+			return *this;
 		}
 
 		iterator begin()

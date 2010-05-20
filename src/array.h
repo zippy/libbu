@@ -172,7 +172,7 @@ namespace Bu
 			core->clear();
 		}
 
-		void append( const value &rVal )
+		MyType &append( const value &rVal )
 		{
 			_hardCopy();
 			if( core->iSize == core->iCapacity )
@@ -181,6 +181,8 @@ namespace Bu
 			}
 
 			core->va.construct( &core->pData[core->iSize++], rVal );
+
+			return *this;
 		}
 
 		//operator
