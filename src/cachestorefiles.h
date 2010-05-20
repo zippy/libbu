@@ -137,7 +137,12 @@ namespace Bu
 		{
 			Bu::MemBuf mb;
 			Bu::Formatter f( mb );
-			f << sPrefix << "/" << key;
+			f << sPrefix << "/";
+			Bu::FString sBase = mb.getString();
+			f << key;
+
+			if( sBase == mb.getString() )
+				return false;
 
 			return access( mb.getString().getStr(), F_OK ) == 0;
 		}
