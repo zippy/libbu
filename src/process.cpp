@@ -66,6 +66,11 @@ Bu::Process::~Process()
 	close();
 }
 
+void Bu::Process::wait()
+{
+	close();
+}
+
 void Bu::Process::gexec( Flags eFlags, const char *sName, char *const argv[] )
 {
 	int iaStdIn[2];
@@ -258,13 +263,17 @@ void Bu::Process::setBlocking( bool bBlocking )
 {
 	if( bBlocking )
 	{
-		fcntl( iStdOut, F_SETFL, fcntl( iStdOut, F_GETFL, 0 )&(~O_NONBLOCK) );
-		fcntl( iStdErr, F_SETFL, fcntl( iStdErr, F_GETFL, 0 )&(~O_NONBLOCK) );
+		if( !bStdOutEos )
+			fcntl( iStdOut, F_SETFL, fcntl(iStdOut,F_GETFL,0 )&(~O_NONBLOCK) );
+		if( !bStdErrEos )
+			fcntl( iStdErr, F_SETFL, fcntl(iStdErr,F_GETFL,0 )&(~O_NONBLOCK) );
 	}
 	else
 	{
-		fcntl( iStdOut, F_SETFL, fcntl( iStdOut, F_GETFL, 0 )|O_NONBLOCK );
-		fcntl( iStdErr, F_SETFL, fcntl( iStdErr, F_GETFL, 0 )|O_NONBLOCK );
+		if( !bStdOutEos )
+			fcntl( iStdOut, F_SETFL, fcntl( iStdOut, F_GETFL, 0 )|O_NONBLOCK );
+		if( !bStdErrEos )
+			fcntl( iStdErr, F_SETFL, fcntl( iStdErr, F_GETFL, 0 )|O_NONBLOCK );
 	}
 	this->bBlocking = bBlocking;
 }
@@ -293,6 +302,8 @@ void Bu::Process::select( bool &bStdOut, bool &bStdErr )
 
 bool Bu::Process::isRunning()
 {
+	if( waitpid( iPid, NULL, WNOHANG ) == iPid )
+		close();
 	return iPid != 0;
 }
 

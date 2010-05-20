@@ -37,6 +37,12 @@ namespace Bu
 		Process( Flags eFlags, const char *sName, const char *argv, ...);
 		virtual ~Process();
 
+		/**
+		 * Waits until the process exits.  This blocks the caller until the
+		 * child process terminates.
+		 */
+		void wait();
+
 		virtual void close();
 		virtual size_t read( void *pBuf, size_t nBytes );
 		virtual size_t readErr( void *pBuf, size_t nBytes );
