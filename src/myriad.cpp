@@ -347,7 +347,7 @@ int Bu::Myriad::findEmptyBlock()
 	char *pBlock = new char[iBlockSize];
 	memset( pBlock, 0, iBlockSize );
 	sStore.write( pBlock, iBlockSize );
-	delete pBlock;
+	delete[] pBlock;
 
 	return iBlocks++;
 }

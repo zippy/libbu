@@ -1,0 +1,139 @@
+// vim: syntax=cpp
+/*
+ * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
+#include "bu/fstring.h"
+#include "bu/file.h"
+#include "bu/myriad.h"
+#include "bu/myriadstream.h"
+#include "bu/array.h"
+
+#include "bu/sio.h"
+
+#include <stdlib.h>
+
+using namespace Bu;
+
+suite Myriad
+{
+	void addBlock( Stream &s )
+	{
+		s.setPosEnd( 0 );
+		int iSize = (random()%1016)+8;
+		s.write( &iSize, 4 );
+		char *buf = new char[iSize-8];
+		for( int j = 0; j < iSize-8; j++ )
+		{
+			buf[j] = (j+iSize)%256;
+		}
+		s.write( buf, iSize-8 );
+		delete[] buf;
+		iSize = ~iSize;
+		s.write( &iSize, 4 );
+	}
+
+	void verifyBlock( Stream &s )
+	{
+		int iSize, iInv;
+		if( s.read( &iSize, 4 ) == 0 )
+			return;
+		if( iSize < 8 || iSize > 1024 )
+			throw ExceptionBase("Read bad data, %d", iSize );
+		char *buf = new char[iSize-8];
+		if( s.read( buf, iSize-8 ) < (size_t)iSize-8 )
+		{
+			delete[] buf;
+			throw ExceptionBase("Block failed verify (insuffient block data).");
+		}
+		for( int j = 0; j < iSize-8; j++ )
+		{
+			if( buf[j] != (char)((j+iSize)%256) )
+			{
+				char b = buf[j];
+				delete[] buf;
+				throw ExceptionBase("Block failed computed data verify (%02X==%02X).", b, (char)((j+iSize)%256) );
+			}
+		}
+		delete[] buf;
+		if( s.read( &iInv, 4 ) < 4 )
+			throw ExceptionBase("Block failed verify (insufficient data).");
+		if( iInv != ~iSize )
+			throw ExceptionBase("Block failed inversion verify.");
+	}
+	
+	void verifyStream( Stream &s )
+	{
+		s.setPos( 0 );
+		while( !s.isEos() )
+			verifyBlock( s );
+	}
+
+	test grow1
+	{
+		FString sFileName("myriad-XXXXXXX");
+
+		File::tempFile( sFileName );
+		File fMyriad( sFileName, File::WriteNew|File::Read );
+		Myriad m( fMyriad );
+		m.initialize( 64 );
+
+		Array<int> aStreams;
+		for( int j = 0; j < 5; j++ )
+		{
+			aStreams.append( m.createStream() );
+		}
+
+		srandom( 512 );
+
+		for( int j = 0; j < 2500; j++ )
+		{
+
+			switch( random()%5 )
+			{
+				case 0:
+					aStreams.append( m.createStream() );
+					break;
+
+				case 1:
+					if( aStreams.getSize() > 0 )
+					{
+						int iStream = random()%aStreams.getSize();
+						{
+							MyriadStream ms = m.openStream( aStreams[iStream] );
+							verifyStream( ms );
+						}
+						m.deleteStream( aStreams[iStream] );
+						Array<int>::iterator i = aStreams.begin();
+						for( int k = 0; k < iStream; k++ )
+							i++;
+						aStreams.erase( i );
+					}
+					break;
+
+				default:
+					if( aStreams.getSize() == 0 )
+					{
+						aStreams.append( m.createStream() );
+					}
+					{
+						int iStream = random()%aStreams.getSize();
+						MyriadStream ms = m.openStream( aStreams[iStream] );
+						addBlock( ms );
+						verifyStream( ms );
+					}
+					break;
+			}
+		}
+
+		for( Array<int>::iterator i = aStreams.begin(); i; i++ )
+		{
+			MyriadStream ms = m.openStream( *i );
+			verifyStream( ms );
+		}
+	}
+}
+

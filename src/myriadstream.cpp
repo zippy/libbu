@@ -23,7 +23,7 @@ Bu::MyriadStream::MyriadStream( Bu::Myriad &rMyriad,
 	iPos( 0 )
 {
 #ifdef MYRIAD_STREAM_DEBUG
-	sio << "MyriadStream: Created, iId=" << pStream->iId << ", iSize="
+	sio << "MyriadStream: " << __LINE__ << ": Created, iId=" << pStream->iId << ", iSize="
 		<< pStream->iSize << sio.nl;
 #endif
 	//pCurBlock = rMyriad.newBlock();
@@ -46,7 +46,7 @@ void Bu::MyriadStream::close()
 size_t Bu::MyriadStream::read( void *pBuf, size_t nBytes )
 {
 #ifdef MYRIAD_STREAM_DEBUG
-	sio << "MyriadStream: read: Started, asked to read " << nBytes << "b."
+	sio << "MyriadStream: read: " << __LINE__ << ": Started, asked to read " << nBytes << "b."
 		<< sio.nl;
 #endif
 	if( nBytes > pStream->iSize-iPos )
@@ -55,13 +55,13 @@ size_t Bu::MyriadStream::read( void *pBuf, size_t nBytes )
 		return 0;
 	int iLeft = nBytes;
 #ifdef MYRIAD_STREAM_DEBUG
-	sio << "MyriadStream: read: Started, going to read " << nBytes << "b."
+	sio << "MyriadStream: read: " << __LINE__ << ": Started, going to read " << nBytes << "b."
 		<< sio.nl;
 #endif
 	if( pCurBlock == NULL )
 	{
 #ifdef MYRIAD_STREAM_DEBUG
-		sio << "MyriadStream: read: No block loaded, loading initial block."
+		sio << "MyriadStream: read: " << __LINE__ << ": No block loaded, loading initial block."
 			<< sio.nl;
 #endif
 		pCurBlock = rMyriad.getBlock(
@@ -74,7 +74,7 @@ size_t Bu::MyriadStream::read( void *pBuf, size_t nBytes )
 		if( pCurBlock->iBlockIndex != iCurBlock )
 		{
 #ifdef MYRIAD_STREAM_DEBUG
-			sio << "MyriadStream: read: Loading new block " << iCurBlock << "."
+			sio << "MyriadStream: read: " << __LINE__ << ": Loading new block " << iCurBlock << "."
 				<< sio.nl;
 #endif
 			rMyriad.releaseBlock( pCurBlock );
@@ -89,7 +89,7 @@ size_t Bu::MyriadStream::read( void *pBuf, size_t nBytes )
 			pStream->iSize-iPos
 			);
 #ifdef MYRIAD_STREAM_DEBUG
-		sio << "MyriadStream: read: Copying out bytes: "
+		sio << "MyriadStream: read: " << __LINE__ << ": Copying out bytes: "
 			<< iPos << "(" << (iPos%rMyriad.iBlockSize) << ")+"
 			<< iAmnt
 			<< ", " << iLeft << "b left." << sio.nl;
@@ -112,7 +112,7 @@ size_t Bu::MyriadStream::write( const void *pBuf, size_t nBytes )
 		return 0;
 
 #ifdef MYRIAD_STREAM_DEBUG
-	sio << "MyriadStream: write: Started, asked to write " << nBytes << "b."
+	sio << "MyriadStream: write: " << __LINE__ << ": Started, asked to write " << nBytes << "b."
 		<< sio.nl;
 #endif
 	if( nBytes <= 0 )
@@ -143,7 +143,7 @@ size_t Bu::MyriadStream::write( const void *pBuf, size_t nBytes )
 			pStream->aBlocks.append( iCurBlock );
 			rMyriad.bsBlockUsed.setBit( iCurBlock );
 #ifdef MYRIAD_STREAM_DEBUG
-			sio << "MyriadStream: write: New block allocated and appended: "
+			sio << "MyriadStream: write: " << __LINE__ << ": New block allocated and appended: "
 				<< iCurBlock << "." << sio.nl;
 
 #endif
@@ -151,7 +151,7 @@ size_t Bu::MyriadStream::write( const void *pBuf, size_t nBytes )
 		if( !pCurBlock || pCurBlock->iBlockIndex != iCurBlock )
 		{
 #ifdef MYRIAD_STREAM_DEBUG
-			sio << "MyriadStream: write: Loading new block " << iCurBlock << "."
+			sio << "MyriadStream: write: " << __LINE__ << ": Loading new block " << iCurBlock << "."
 				<< sio.nl;
 #endif
 			rMyriad.releaseBlock( pCurBlock );
@@ -172,7 +172,7 @@ size_t Bu::MyriadStream::write( const void *pBuf, size_t nBytes )
 				pStream->iSize-iPos
 				);
 #ifdef MYRIAD_STREAM_DEBUG
-			sio << "MyriadStream: write (ovr): Copying in bytes: "
+			sio << "MyriadStream: write (ovr): " << __LINE__ << ": Copying in bytes: "
 				<< (iPos%rMyriad.iBlockSize) << "+"
 				<< iAmnt
 				<< ", " << iLeft << "b left." << sio.nl;
@@ -193,7 +193,7 @@ size_t Bu::MyriadStream::write( const void *pBuf, size_t nBytes )
 				iLeft
 				);
 #ifdef MYRIAD_STREAM_DEBUG
-			sio << "MyriadStream: write (app): Copying in bytes: "
+			sio << "MyriadStream: write (app): " << __LINE__ << ": Copying in bytes: "
 				<< (iPos%rMyriad.iBlockSize) << "+"
 				<< iAmnt
 				<< ", " << iLeft << "b left." << sio.nl;
@@ -230,7 +230,7 @@ void Bu::MyriadStream::setPos( long pos )
 
 void Bu::MyriadStream::setPosEnd( long pos )
 {
-	iPos = pStream->iSize-pos-1;
+	iPos = pStream->iSize-pos;
 }
 
 bool Bu::MyriadStream::isEos()

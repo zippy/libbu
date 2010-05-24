@@ -67,6 +67,7 @@ class Parser
 {
 public:
 	Parser( const Bu::FString &sFile ) :
+		sIn( sFile ),
 		fIn( sFile, File::Read ),
 		bIn( fIn ),
 		cBuf( 0 ),
@@ -475,7 +476,7 @@ public:
 								
 								f << "\tvoid " << t.sName << "()"
 									<< f.nl << "#line " << iL
-									<< " \"" << sOut << "\"" << f.nl
+									<< " \"" << sIn << "\"" << f.nl
 									<< v << f.nl;
 							}
 							break;
@@ -496,7 +497,7 @@ public:
 						
 						case tokBlock:
 							fOut.write( sWs );
-							f << f.nl << "#line " << iL << " \"" << sOut
+							f << f.nl << "#line " << iL << " \"" << sIn
 								<< "\"" << f.nl;
 							fOut.write( v.get<Bu::FString>() );
 
@@ -520,6 +521,7 @@ public:
 	}
 
 private:
+	Bu::FString sIn;
 	File fIn;
 	Buffer bIn;
 	char cBuf;
