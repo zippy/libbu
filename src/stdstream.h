@@ -40,6 +40,7 @@ namespace Bu
 		virtual bool isSeekable();
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
+		virtual void setSize( long iSize );
 	};
 }
 

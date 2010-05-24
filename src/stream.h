@@ -152,6 +152,14 @@ namespace Bu
 		 */
 		virtual void setBlocking( bool bBlocking=true ) = 0;
 
+		/**
+		 * Set the size of the stream, this does not apply to many types of
+		 * streams.  For those that it does apply to, data will be added or
+		 * removed from the end of the stream, but the content of the added
+		 * data is undefined.
+		 */
+		virtual void setSize( long iSize ) = 0;
+
 	public: // Filters
 
 

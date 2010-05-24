@@ -249,6 +249,10 @@ void Bu::QueueBuf::setBlocking( bool )
 {
 }
 
+void Bu::QueueBuf::setSize( long iSize )
+{
+}
+
 void Bu::QueueBuf::addBlock()
 {
 	lBlocks.append( new char[iBlockSize] );

@@ -150,6 +150,8 @@ namespace Bu
 		void releaseBlock( Block *pBlock );
 		void syncBlock( Block *pBlock );
 
+		void setStreamSize( Stream *pStream, long iSize );
+
 	private:
 		Bu::Stream &sStore;
 		int iBlockSize;

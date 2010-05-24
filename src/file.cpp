@@ -187,19 +187,27 @@ void Bu::File::setBlocking( bool bBlocking )
 #endif
 }
 
-#ifndef WIN32
 Bu::File Bu::File::tempFile( Bu::FString &sName )
 {
+#ifndef WIN32
 	int afh_d = mkstemp( sName.getStr() );
 
 	return Bu::File( afh_d );
+#else
+	return Bu::File( sName, Bu::File::Write|Bu::File::Create );
+#endif
 }
 
-void Bu::File::truncate( long nSize )
+void Bu::File::setSize( long iSize )
 {
-	ftruncate( fd, nSize );
+#ifndef WIN32
+	ftruncate( fd, iSize );
+#else
+#warning Bu::File::setSize not implemented on this platform
+#endif
 }
 
+#ifndef WIN32
 void Bu::File::chmod( mode_t t )
 {
 	fchmod( fd, t );

@@ -62,6 +62,12 @@ namespace Bu
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
 
+		/**
+		 * Most filters won't re-implement this, it doesn't make a lot of sense
+		 * for filters, in general.
+		 */
+		virtual void setSize( long iSize );
+
 	protected:
 		Bu::Stream &rNext;
 

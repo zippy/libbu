@@ -87,6 +87,10 @@ void Bu::Filter::setBlocking( bool bBlocking )
 	rNext.setBlocking( bBlocking );
 }
 
+void Bu::Filter::setSize( long iSize )
+{
+}
+
 void Bu::Filter::flush()
 {
 	rNext.flush();

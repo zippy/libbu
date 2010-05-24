@@ -61,6 +61,8 @@ namespace Bu
 
 		int run( int argc=0, char *argv[]=NULL );
 
+		void tempFile( Bu::FString &sFileName );
+
 		typedef void (UnitSuite::*Test)();
 
 		class Failed
@@ -105,6 +107,9 @@ namespace Bu
 		FString sSuiteName;
 
 		int iOptions;
+
+		typedef Bu::List<Bu::FString> StrList;
+		StrList lFileCleanup;
 	};
 }
 

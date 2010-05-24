@@ -6,6 +6,9 @@
  */
 
 #include "bu/unitsuite.h"
+#include "bu/file.h"
+
+#include <unistd.h>
 
 Bu::UnitSuite::UnitSuite() :
 	iOptions( 0 )
@@ -102,7 +105,18 @@ int Bu::UnitSuite::run( int /*argc*/, char * /*argv */ [] )
 	if( iUPass == 0 && iUFail == 0 )
 		printf("\tNothing unexpected.\n\n");
 
+	for( StrList::iterator i = lFileCleanup.begin(); i; i++ )
+	{
+		unlink( (*i).getStr() );
+	}
+
 	return 0;
+}
+
+void Bu::UnitSuite::tempFile( Bu::FString &sFileName )
+{
+	Bu::File::tempFile( sFileName );
+	lFileCleanup.append( sFileName );
 }
 
 void Bu::UnitSuite::add( Test fTest, const Bu::FString &sName, Expect e )

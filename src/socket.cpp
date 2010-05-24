@@ -405,6 +405,10 @@ void Bu::Socket::setBlocking( bool bBlocking )
 #endif	
 }
 
+void Bu::Socket::setSize( long iSize )
+{
+}
+
 void Bu::Socket::flush()
 {
 }

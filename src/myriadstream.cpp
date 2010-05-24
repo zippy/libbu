@@ -281,3 +281,10 @@ void Bu::MyriadStream::setBlocking( bool /*bBlocking*/ )
 {
 }
 
+void Bu::MyriadStream::setSize( long iSize )
+{
+	rMyriad.setStreamSize( pStream, iSize );
+	if( iPos > iSize )
+		iPos = iSize;
+}
+

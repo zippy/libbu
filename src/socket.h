@@ -92,6 +92,8 @@ namespace Bu
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
 
+		virtual void setSize( long iSize );
+
 		Bu::FString getAddress() const;
 		operator int() const;
 

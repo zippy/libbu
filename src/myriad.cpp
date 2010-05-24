@@ -426,3 +426,9 @@ void Bu::Myriad::syncBlock( Block *pBlock )
 	}
 }
 
+void Bu::Myriad::setStreamSize( Stream *pStream, long iSize )
+{
+	sio << "Oh man, you have to implement Bu::Myriad::setStreamSize!!! (line "
+		<< __LINE__ << ")" << sio.nl;
+}
+

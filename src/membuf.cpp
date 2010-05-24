@@ -140,6 +140,15 @@ void Bu::MemBuf::setBlocking( bool )
 {
 }
 
+void Bu::MemBuf::setSize( long iSize )
+{
+	if( iSize < 0 )
+		iSize = 0;
+	sBuf.setSize( iSize );
+	if( nPos > iSize )
+		nPos = iSize;
+}
+
 Bu::FString &Bu::MemBuf::getString()
 {
 	return sBuf;

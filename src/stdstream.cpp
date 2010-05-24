@@ -96,3 +96,7 @@ void Bu::StdStream::setBlocking( bool )
 {
 }
 
+void Bu::StdStream::setSize( long iSize )
+{
+}
+

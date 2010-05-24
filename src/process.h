@@ -68,6 +68,8 @@ namespace Bu
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
 
+		virtual void setSize( long iSize );
+
 		void select( bool &bStdOut, bool &bStdErr );
 
 		bool isRunning();

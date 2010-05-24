@@ -278,6 +278,10 @@ void Bu::Process::setBlocking( bool bBlocking )
 	this->bBlocking = bBlocking;
 }
 
+void Bu::Process::setSize( long iSize )
+{
+}
+
 void Bu::Process::select( bool &bStdOut, bool &bStdErr )
 {
 	fd_set rfds;

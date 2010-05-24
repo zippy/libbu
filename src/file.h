@@ -69,6 +69,9 @@ namespace Bu
 			WriteNew	= 0x0E	///< Create a file (or truncate) for writing.
 								/// Same as Write|Create|Truncate
 		};
+
+		virtual void setSize( long iSize );
+
 		/**
 		 * Create a temp file and return its handle.  The file is opened 
 		 * Read/Write.
@@ -77,16 +80,9 @@ namespace Bu
 		 *		characters.
 		 *@returns (Bu::File) A file object representing your temp file.
 		 */
-#ifndef WIN32
 		static Bu::File tempFile( Bu::FString &sName );
 
-		/**
-		 * Set the size of the file to (nSize). You can either grow or shrink
-		 * 		the file.
-		 *@param nSize (long) The new size of the file.
-		 */
-		void truncate( long nSize );
-
+#ifndef WIN32
 		/**
 		 * Change the file access permissions.
 		 *@param t (mode_t) The new file access permissions.
