@@ -365,6 +365,7 @@ void Bu::Myriad::deleteStream( int iId )
 			}
 			aStreams.erase( i );
 			bHeaderChanged = true;
+			delete pStream;
 			return;
 		}
 	}
