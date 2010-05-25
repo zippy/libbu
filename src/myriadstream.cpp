@@ -139,9 +139,7 @@ size_t Bu::MyriadStream::write( const void *pBuf, size_t nBytes )
 		}
 		else
 		{
-			iCurBlock = rMyriad.findEmptyBlock();
-			pStream->aBlocks.append( iCurBlock );
-			rMyriad.bsBlockUsed.setBit( iCurBlock );
+			iCurBlock = rMyriad.streamAddBlock( pStream );
 #ifdef MYRIAD_STREAM_DEBUG
 			sio << "MyriadStream: write: " << __LINE__ << ": New block allocated and appended: "
 				<< iCurBlock << "." << sio.nl;
@@ -283,6 +281,8 @@ void Bu::MyriadStream::setBlocking( bool /*bBlocking*/ )
 
 void Bu::MyriadStream::setSize( long iSize )
 {
+	if( iSize < 0 )
+		iSize = 0;
 	rMyriad.setStreamSize( pStream, iSize );
 	if( iPos > iSize )
 		iPos = iSize;

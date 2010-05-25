@@ -20,9 +20,33 @@ using namespace Bu;
 
 suite Myriad
 {
-	void addBlock( Stream &s )
+	test setSize
 	{
-		s.setPosEnd( 0 );
+		FString sFileName("myriad-XXXXXXX");
+
+		File fMyriad = tempFile( sFileName );
+		Myriad m( fMyriad );
+		m.initialize( 64 );
+
+		MyriadStream ms = m.openStream( m.createStream() );
+		ms.setSize( 150 );
+		ms.setPos( 145 );
+		char stuff[10];
+		unitTest( ms.read( stuff, 10 ) == 5 );
+
+		ms.setSize( 12 );
+		unitTest( ms.read( stuff, 10 ) == 0 );
+		unitTest( ms.write( "hello", 5 ) == 5 );
+		unitTest( ms.tell() == 17 );
+
+		ms.setSize( 500 );
+		unitTest( ms.tell() == 17 );
+	}
+
+	void addBlock( Stream &s, bool bAppend=true )
+	{
+		if( bAppend )
+			s.setPosEnd( 0 );
 		int iSize = (random()%1016)+8;
 		s.write( &iSize, 4 );
 		char *buf = new char[iSize-8];
@@ -72,7 +96,7 @@ suite Myriad
 			verifyBlock( s );
 	}
 
-	test grow1
+	test stressGrow
 	{
 		FString sFileName("myriad-XXXXXXX");
 
@@ -90,7 +114,6 @@ suite Myriad
 
 		for( int j = 0; j < 2500; j++ )
 		{
-
 			switch( random()%5 )
 			{
 				case 0:
@@ -132,6 +155,39 @@ suite Myriad
 		{
 			MyriadStream ms = m.openStream( *i );
 			verifyStream( ms );
+		}
+	}
+	
+	test stressTruncate
+	{
+		FString sFileName("myriad-XXXXXXX");
+
+		File fMyriad = tempFile( sFileName );
+		Myriad m( fMyriad );
+		m.initialize( 64 );
+
+		Array<int> aStream;
+
+		for( int j = 0; j < 5; j++ )
+		{
+			aStream.append( m.createStream() );
+		}
+		
+		srandom( 1024 );
+
+		char b;
+		for( int iter = 0; iter < 2500; iter++ )
+		{
+			for( Array<int>::iterator i = aStream.begin(); i; i++ )
+			{
+				MyriadStream ms = m.openStream( *i );
+				addBlock( ms, false );
+				ms.setSize( ms.tell() );
+				unitTest( ms.read( &b, 1 ) == 0 );
+				ms.setPos( 0 );
+				verifyBlock( ms );
+				unitTest( ms.read( &b, 1 ) == 0 );
+			}
 		}
 	}
 }

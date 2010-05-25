@@ -352,8 +352,22 @@ int Bu::Myriad::findEmptyBlock()
 	return iBlocks++;
 }
 
-void Bu::Myriad::deleteStream( int /*iID*/ )
+void Bu::Myriad::deleteStream( int iId )
 {
+	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
+	{
+		if( (*i)->iId == iId )
+		{
+			Stream *pStream = *i;
+			for( BlockArray::iterator j = pStream->aBlocks.begin(); j; j++ )
+			{
+				bsBlockUsed.setBit( *j, false );
+			}
+			aStreams.erase( i );
+			bHeaderChanged = true;
+			return;
+		}
+	}
 }
 
 Bu::MyriadStream Bu::Myriad::openStream( int iId )
@@ -426,9 +440,42 @@ void Bu::Myriad::syncBlock( Block *pBlock )
 	}
 }
 
+int Bu::Myriad::streamAddBlock( Stream *pStream )
+{
+	int iBlock = findEmptyBlock();
+	pStream->aBlocks.append( iBlock );
+	bsBlockUsed.setBit( iBlock );
+	return iBlock;
+}
+
 void Bu::Myriad::setStreamSize( Stream *pStream, long iSize )
 {
-	sio << "Oh man, you have to implement Bu::Myriad::setStreamSize!!! (line "
-		<< __LINE__ << ")" << sio.nl;
+	if( pStream->iSize == iSize )
+	{
+		return;
+	}
+	else if( pStream->iSize > iSize )
+	{
+		// Shrink
+		for( int iNewSize = pStream->aBlocks.getSize()*iBlockSize;
+			 iNewSize-64 > iSize; iNewSize -= iBlockSize )
+		{
+			bsBlockUsed.setBit( pStream->aBlocks.last(), false );
+			pStream->aBlocks.eraseLast();
+		}
+		pStream->iSize = iSize;
+		bHeaderChanged = true;
+	}
+	else
+	{
+		// Grow
+		for( int iNewSize = pStream->aBlocks.getSize()*iBlockSize;
+			 iNewSize < iSize; iNewSize += iBlockSize )
+		{
+			streamAddBlock( pStream );
+		}
+		pStream->iSize = iSize;
+		bHeaderChanged = true;
+	}
 }
 

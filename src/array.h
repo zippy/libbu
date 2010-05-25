@@ -488,6 +488,18 @@ namespace Bu
 			core->erase( i.iPos );
 		}
 
+		void eraseLast()
+		{
+			_hardCopy();
+			core->erase( core->iSize-1 );
+		}
+
+		void eraseFirst()
+		{
+			_hardCopy();
+			core->erase( 0 );
+		}
+
 		/**
 		 * In order to make swapErase faster, what it does is swap the given
 		 * item in the array with the last item, then make the array shorter

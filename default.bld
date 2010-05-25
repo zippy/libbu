@@ -146,7 +146,7 @@ target "libbu++-r$(svnversion "-n").tar.bz2"
 rule "tarball"
 {
 	input matches("LICENSE", "*.cpp", "*.h", "*.conf", "*.bld", "Doxyfile",
-		"*.vim", "*.sh");
+		"*.vim", "*.sh", "*.unit");
 	profile "build"
 	{
 		OUTDIR = OUTPUT.replace(".tar.bz2","");
