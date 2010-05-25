@@ -114,7 +114,7 @@ class name : public parent													\
 };
 
 #define subExceptionDeclBegin( name )										\
-class name : public Bu::ExceptionBase											\
+class name : public Bu::ExceptionBase										\
 {																			\
 	public:																	\
 		name( const char *sFormat, ... ) throw ();							\

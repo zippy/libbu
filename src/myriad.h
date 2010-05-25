@@ -19,7 +19,16 @@ namespace Bu
 	class Stream;
 	class MyriadStream;
 
-	subExceptionDecl( MyriadException )
+	subExceptionDeclBegin( MyriadException )
+		enum
+		{
+			emptyStream,
+			invalidFormat,
+			badVersion,
+			invalidWordSize,
+			noSuchStream
+		};
+	subExceptionDeclEnd()
 
 	/**
 	 * Numerically Indexed Data Streams.  This is a working name so I can
@@ -69,16 +78,8 @@ namespace Bu
 	{
 		friend class MyriadStream;
 	public:
-		Myriad( Bu::Stream &sStore );
+		Myriad( Bu::Stream &sStore, int iBlockSize=512, int iPreallocate=8 );
 		virtual ~Myriad();
-
-		/**
-		 * Initialize this object based on the data already in the assosiated
-		 * stream.  This will be called automatically for you if you forget,
-		 * but if you want to pre-initialize for some reason, just call this
-		 * once before you actually start doing anything with your Myriad.
-		 */
-		void initialize();
 
 		/**
 		 * Create a new Myriad system in the assosiated stream.  This should be
@@ -114,7 +115,17 @@ namespace Bu
 		 */
 		void sync();
 
+		static bool isMyriad( Bu::Stream &sStore );
+
 	private:
+		/**
+		 * Initialize this object based on the data already in the assosiated
+		 * stream.  This will be called automatically for you if you forget,
+		 * but if you want to pre-initialize for some reason, just call this
+		 * once before you actually start doing anything with your Myriad.
+		 */
+		void initialize();
+
 		enum
 		{
 			blockUnused	=	0xFFFFFFFFUL

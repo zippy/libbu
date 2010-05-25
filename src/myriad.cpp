@@ -24,13 +24,28 @@ namespace Bu
 	}
 }
 
-Bu::Myriad::Myriad( Bu::Stream &sStore ) :
+Bu::Myriad::Myriad( Bu::Stream &sStore, int iBlockSize, int iPreallocate ) :
 	sStore( sStore ),
-	iBlockSize( 0 ),
+	iBlockSize( iBlockSize ),
 	iBlocks( 0 ),
 	iUsed( 0 ),
 	bHeaderChanged( false )
 {
+	try
+	{
+		initialize();
+	}
+	catch( Bu::MyriadException &e )
+	{
+		if( e.getErrorCode() == MyriadException::emptyStream )
+		{
+			initialize( iBlockSize, iPreallocate );
+		}
+		else
+		{
+			throw;
+		}
+	}
 }
 
 Bu::Myriad::~Myriad()
@@ -69,18 +84,19 @@ void Bu::Myriad::initialize()
 
 	unsigned char buf[4];
 	if( sStore.read( buf, 4 ) < 4 )
-		throw MyriadException("Input stream appears to be empty.");
+		throw MyriadException( MyriadException::emptyStream,
+				"Input stream appears to be empty.");
 	if( memcmp( buf, Myriad_MAGIC_CODE, 4 ) )
 	{
-		throw MyriadException(
+		throw MyriadException( MyriadException::invalidFormat,
 			"Stream does not appear to be a valid Myriad format.");
 	}
 	sStore.read( buf, 2 );
 	if( buf[0] != 1 )
-		throw MyriadException(
+		throw MyriadException( MyriadException::badVersion,
 			"We can only handle version 1 for now.");
 	if( buf[1] != 32 )
-		throw MyriadException(
+		throw MyriadException( MyriadException::invalidWordSize,
 			"We can only handle 32-bit words at the moment.");
 	sStore.read( &iBlockSize, 4 );
 	int iStreams;
@@ -342,12 +358,16 @@ int Bu::Myriad::findEmptyBlock()
 //	sio << "Myriad: findEmptyBlock(): No empty blocks, adding new one." << sio.nl;
 
 	bsBlockUsed.setSize( bsBlockUsed.getSize()+1, false );
+	/*
 	sStore.setPos( iBlockSize*iBlocks );
 
 	char *pBlock = new char[iBlockSize];
 	memset( pBlock, 0, iBlockSize );
 	sStore.write( pBlock, iBlockSize );
 	delete[] pBlock;
+	*/
+
+	sStore.setSize( (iBlocks+1)*iBlockSize );
 
 	return iBlocks++;
 }
@@ -399,6 +419,9 @@ Bu::Myriad::Stream *Bu::Myriad::findStream( int iId )
 		if( (*i)->iId == iId )
 			return *i;
 	}
+
+	throw MyriadException( MyriadException::noSuchStream,
+		"The requested stream doesn't exist and cannot be opened." );
 
 	return NULL;
 }
@@ -478,5 +501,21 @@ void Bu::Myriad::setStreamSize( Stream *pStream, long iSize )
 		pStream->iSize = iSize;
 		bHeaderChanged = true;
 	}
+}
+
+bool Bu::Myriad::isMyriad( Bu::Stream &sStore )
+{
+	sStore.setPos( 0 );
+
+	unsigned char buf[4];
+	if( sStore.read( buf, 4 ) < 4 )
+		throw MyriadException( MyriadException::emptyStream,
+				"Input stream appears to be empty.");
+	sStore.setPos( 0 );
+	if( memcmp( buf, Myriad_MAGIC_CODE, 4 ) )
+	{
+		return false;
+	}
+	return true;
 }
 

@@ -10,8 +10,9 @@
 
 #include <stdint.h>
 #include "bu/list.h"
-#include "fstring.h"
+#include "bu/fstring.h"
 #include "bu/file.h"
+#include "bu/array.h"
 
 namespace Bu
 {
@@ -96,6 +97,9 @@ namespace Bu
 		void setName( const FString &sName );
 
 	private:
+		int onListCases( Bu::Array<Bu::FString> aParam );
+
+	private:
 		typedef struct TestInfo
 		{
 			FString sName;
@@ -113,6 +117,8 @@ namespace Bu
 		StrList lFileCleanup;
 		int iNameWidth;
 	};
+
+Bu::Formatter &operator<<( Bu::Formatter &f, const Bu::UnitSuite::Expect &e );
 }
 
 #define addTest( fn ) add( static_cast<Bu::UnitSuite::Test>(&fn), #fn )

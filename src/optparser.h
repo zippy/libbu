@@ -182,7 +182,7 @@ namespace Bu
 		 * been handled by an option, and isn't an option (starts with - or --).
 		 * To change this behaviour call 
 		 */
-		virtual void optionError( const Bu::FString sOption );
+		virtual void optionError( const Bu::FString &sOption );
 
 		void setNonOption( OptionSignal sSignal );
 

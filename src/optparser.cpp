@@ -290,7 +290,7 @@ int Bu::OptParser::optHelp( StrArray /*aParams*/ )
 	return 0;
 }
 
-void Bu::OptParser::optionError( const Bu::FString sOption )
+void Bu::OptParser::optionError( const Bu::FString &sOption )
 {
 	sio << "Unregcognized option discovered: " << sOption << sio.nl << sio.nl;
 	exit( 1 );

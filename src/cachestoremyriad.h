@@ -64,7 +64,8 @@ namespace Bu
 				mStore.initialize( iBlockSize, iPreAllocate );
 				int iStream = mStore.createStream();
 				if( iStream != 1 )
-					throw Bu::ExceptionBase("That's...horrible...id = %d.\n\n", iStream );
+					throw Bu::ExceptionBase("That's...horrible...id = %d.\n\n",
+							iStream );
 				MyriadStream ns = mStore.openStream( 1 );
 				Bu::Archive ar( ns, Bu::Archive::save );
 				ar << hId;

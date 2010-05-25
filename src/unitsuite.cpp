@@ -8,6 +8,8 @@
 #include "bu/unitsuite.h"
 #include "bu/file.h"
 #include "bu/sio.h"
+#include "bu/optparser.h"
+#include <stdlib.h>
 
 using namespace Bu;
 
@@ -30,8 +32,17 @@ Bu::UnitSuite::~UnitSuite()
 }
 
 // Argument handling is coming soon, I promise.
-int Bu::UnitSuite::run( int /*argc*/, char * /*argv */ [] )
+int Bu::UnitSuite::run( int argc, char *argv[] )
 {
+	bool bCleanup = true;
+	OptParser p;
+	p.addOption( Bu::slot( this, &Bu::UnitSuite::onListCases ), 'l', "list",
+			"List available test cases." );
+	p.addOption( bCleanup, "no-cleanup", "Don't erase temp files.");
+	p.setOverride( "no-cleanup", "false" );
+	p.addHelpOption();
+	p.parse( argc, argv );
+
 	int iEPass = 0;
 	int iEFail = 0;
 	int iUPass = 0;
@@ -133,9 +144,12 @@ int Bu::UnitSuite::run( int /*argc*/, char * /*argv */ [] )
 	if( iUPass == 0 && iUFail == 0 )
 		sio << "\tNothing unexpected." << sio.nl << sio.nl;
 
-	for( StrList::iterator i = lFileCleanup.begin(); i; i++ )
+	if( bCleanup )
 	{
-		unlink( (*i).getStr() );
+		for( StrList::iterator i = lFileCleanup.begin(); i; i++ )
+		{
+			unlink( (*i).getStr() );
+		}
 	}
 
 	return 0;
@@ -169,5 +183,32 @@ void Bu::UnitSuite::add( Test fTest, const Bu::FString &sName, Expect e )
 void Bu::UnitSuite::setName( const FString &sName )
 {
 	sSuiteName = sName;
+}
+
+int Bu::UnitSuite::onListCases( StrArray aParam )
+{
+	sio << "Test cases:" << sio.nl;
+	for( TestList::iterator i = lTests.begin(); i; i++ )
+	{
+		sio << "\t- " << Fmt( iNameWidth, 10, Fmt::Left ) << (*i).sName << "  "
+			<< (*i).eExpect << sio.nl;
+	}
+	sio << sio.nl;
+	exit( 0 );
+	return 0;
+}
+
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::UnitSuite::Expect &e )
+{
+	switch( e )
+	{
+		case Bu::UnitSuite::expectPass:
+			return f << "expect pass";
+
+		case Bu::UnitSuite::expectFail:
+			return f << "expect fail";
+	}
+
+	return f << "**error**";
 }
 

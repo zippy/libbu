@@ -121,7 +121,6 @@ int main( int argc, char *argv[] )
 			{
 				File fIn( opts.sFile, File::Read );
 				Myriad m( fIn );
-				m.initialize();
 			}
 			break;
 
@@ -135,7 +134,6 @@ int main( int argc, char *argv[] )
 			{
 				File fOut( opts.sFile, File::Write|File::Read );
 				Myriad m( fOut );
-				m.initialize();
 				m.createStream( opts.iPreallocate );
 			}
 			break;
@@ -143,14 +141,13 @@ int main( int argc, char *argv[] )
 		case modeStreamDump:
 			if( !opts.sFile.isSet() )
 			{
-				sio << "Please specify a file manipulate." << sio.nl;
+				sio << "Please specify a file to manipulate." << sio.nl;
 				return 0;
 			}
 			else
 			{
 				File fOut( opts.sFile, File::Read );
 				Myriad m( fOut );
-				m.initialize();
 				MyriadStream s = m.openStream( opts.iStream );
 				sio << "Stream " << opts.iStream << ":" << sio.nl;
 				char buf[8];
@@ -198,7 +195,6 @@ int main( int argc, char *argv[] )
 			{
 				File fOut( opts.sFile, File::Write|File::Read );
 				Myriad m( fOut );
-				m.initialize();
 				MyriadStream sOut = m.openStream(
 					m.createStream( opts.iPreallocate )
 					);
