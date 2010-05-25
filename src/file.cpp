@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h> // for mkstemp
+#include <time.h>
 
 #include "bu/config.h"
 
@@ -189,21 +190,41 @@ void Bu::File::setBlocking( bool bBlocking )
 
 Bu::File Bu::File::tempFile( Bu::FString &sName )
 {
-#ifndef WIN32
-	int afh_d = mkstemp( sName.getStr() );
+	uint32_t iX;
+	iX = time( NULL ) + getpid();
+	int iXes;
+	for( iXes = sName.getSize()-1; iXes >= 0; iXes-- )
+	{
+		if( sName[iXes] != 'X' )
+			break;
+	}
+	iXes++;
+	if( iXes == sName.getSize() )
+		throw Bu::ExceptionBase("Invalid temporary filename template.");
+	for( int iter = 0; iter < 100; iter++ )
+	{
+		for( int j = iXes; j < sName.getSize(); j++ )
+		{
+			iX = (1103515245 * iX + 12345);
+			sName[j] = ('A'+(iX%26)) | ((iX&0x1000)?(0x20):(0));
+		}
 
-	return Bu::File( afh_d );
-#else
-	return Bu::File( sName, Bu::File::Write|Bu::File::Create );
-#endif
+		try
+		{
+			return Bu::File( sName, Bu::File::Read|Bu::File::Write
+					|Bu::File::Create|Bu::File::Exclusive );
+		} catch(...) { }
+	}
+	throw Bu::FileException("Failed to create unique temporary file after 100"
+			" iterations.");
 }
 
 void Bu::File::setSize( long iSize )
 {
-#ifndef WIN32
-	ftruncate( fd, iSize );
+#ifdef WIN32
+	chsize( fd, iSize );
 #else
-#warning Bu::File::setSize not implemented on this platform
+	ftruncate( fd, iSize );
 #endif
 }
 

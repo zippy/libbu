@@ -7,16 +7,21 @@
 
 #include "bu/unitsuite.h"
 #include "bu/file.h"
+#include "bu/sio.h"
+
+using namespace Bu;
 
 #include <unistd.h>
 
 Bu::UnitSuite::UnitSuite() :
-	iOptions( 0 )
+	iOptions( 0 ),
+	iNameWidth( 0 )
 {
 }
 
 Bu::UnitSuite::UnitSuite( int iOptions ) :
-	iOptions( iOptions )
+	iOptions( iOptions ),
+	iNameWidth( 0 )
 {
 }
 
@@ -33,37 +38,46 @@ int Bu::UnitSuite::run( int /*argc*/, char * /*argv */ [] )
 	int iUFail = 0;
 	for( TestList::iterator i = lTests.begin(); i != lTests.end(); i++ )
 	{
-		printf("%s: ", i->sName.getStr() );
-		fflush( stdout );
+		sio << Fmt( iNameWidth+3, Fmt::Left ).fill('.') << i->sName
+			<< sio.flush;
 		try
 		{
 			(this->*(i->fTest))();
 			switch( i->eExpect )
 			{
-				case expectPass: printf("expected pass.\n"); iEPass++; break;
-				case expectFail: printf("unexpected pass.\n"); iUPass++; break;
+				case expectPass:
+					sio << "pass." << sio.nl;
+					iEPass++;
+					break;
+
+				case expectFail:
+					sio << "unexpected pass." << sio.nl;
+					iUPass++;
+					break;
 			}
 		}
 		catch( Failed &e )
 		{
 			switch( i->eExpect )
 			{
-				case expectPass: printf("unexpected "); iUFail++; break;
-				case expectFail: printf("expected "); iEFail++; break;
+				case expectPass:
+					sio << "unexpected ";
+					iUFail++;
+					break;
+
+				case expectFail:
+					sio << "expected ";
+					iEFail++;
+					break;
 			}
 			if( e.bFile )
 			{
-				printf("fail in unitTest(%s). (%s:%d)\n",
-					e.str.getStr(),
-					e.sFile.getStr(),
-					e.nLine
-					);
+				sio << "fail in unitTest(" << e.str << "). (" << e.sFile
+					<< ":" << e.nLine << ")." << sio.nl;
 			}
 			else
 			{
-				printf("fail in unitTest(%s).\n",
-					e.str.getStr()
-					);
+				sio << "fail in unitTest(" << e.str << ")." << sio.nl;
 			}
 
 			if( (iOptions & optStopOnError) )
@@ -73,10 +87,17 @@ int Bu::UnitSuite::run( int /*argc*/, char * /*argv */ [] )
 		{
 			switch( i->eExpect )
 			{
-				case expectPass: printf("unexpected "); iUFail++; break;
-				case expectFail: printf("expected "); iEFail++; break;
+				case expectPass:
+					sio << "unexpected ";
+					iUFail++;
+					break;
+
+				case expectFail:
+					sio << "expected ";
+					iEFail++;
+					break;
 			}
-			printf("fail with unknown exception.  what: %s\n", e.what() );
+			sio << "fail with unknown exception.  what: " << e.what() << sio.nl;
 
 			if( (iOptions & optStopOnError) )
 				return 0;
@@ -85,25 +106,32 @@ int Bu::UnitSuite::run( int /*argc*/, char * /*argv */ [] )
 		{
 			switch( i->eExpect )
 			{
-				case expectPass: printf("unexpected "); iUFail++; break;
-				case expectFail: printf("expected "); iEFail++; break;
+				case expectPass:
+					sio << "unexpected ";
+					iUFail++;
+					break;
+
+				case expectFail:
+					sio << "expected ";
+					iEFail++;
+					break;
 			}
-			printf("fail with external exception.\n");
+			sio << "fail with external exception." << sio.nl;
 
 			if( (iOptions & optStopOnError) )
 				return 0;
 		}
 	}
 
-	printf("\nReport:\n"
-		"\tTotal tests run:     %ld\n"
-		"\tExpected passes:     %d\n"
-		"\tExpected failures:   %d\n"
-		"\tUnexpected passes:   %d\n"
-		"\tUnexpected failures: %d\n\n",
-		lTests.getSize(), iEPass, iEFail, iUPass, iUFail );
+	sio << sio.nl
+		<< "Report:" << sio.nl
+		<< "\tTotal tests run:     " << lTests.getSize() << sio.nl
+		<< "\tExpected passes:     " << iEPass << sio.nl
+		<< "\tExpected failures:   " << iEFail << sio.nl
+		<< "\tUnexpected passes:   " << iUPass << sio.nl
+		<< "\tUnexpected failures: " << iUFail << sio.nl << sio.nl;
 	if( iUPass == 0 && iUFail == 0 )
-		printf("\tNothing unexpected.\n\n");
+		sio << "\tNothing unexpected." << sio.nl << sio.nl;
 
 	for( StrList::iterator i = lFileCleanup.begin(); i; i++ )
 	{
@@ -113,10 +141,11 @@ int Bu::UnitSuite::run( int /*argc*/, char * /*argv */ [] )
 	return 0;
 }
 
-void Bu::UnitSuite::tempFile( Bu::FString &sFileName )
+Bu::File Bu::UnitSuite::tempFile( Bu::FString &sFileName )
 {
-	Bu::File::tempFile( sFileName );
+	Bu::File f = Bu::File::tempFile( sFileName );
 	lFileCleanup.append( sFileName );
+	return f;
 }
 
 void Bu::UnitSuite::add( Test fTest, const Bu::FString &sName, Expect e )
@@ -133,6 +162,8 @@ void Bu::UnitSuite::add( Test fTest, const Bu::FString &sName, Expect e )
 	}
 	ti.fTest = fTest;
 	lTests.append( ti );
+	if( iNameWidth < ti.sName.getSize() )
+		iNameWidth = ti.sName.getSize();
 }
 
 void Bu::UnitSuite::setName( const FString &sName )

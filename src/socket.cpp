@@ -77,6 +77,7 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout ) :
 		if( (ret = bu_getaddrinfo(
 			sAddr.getStr(), ibuf, &aiHints, &pAddr )) != 0 )
 		{
+			close();
 			throw Bu::SocketException("Couldn't resolve hostname %s (%s).\n",
 				sAddr.getStr(), bu_gai_strerror(ret));
 		}
@@ -151,7 +152,11 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 	FD_SET(nSocket, &rfds);
 	struct timeval tv = {0, 0};
 	if( bu_select( nSocket+1, &rfds, NULL, NULL, &tv ) < 0 )
-		throw SocketException( SocketException::cRead, strerror(errno) );
+	{
+		int iErr = errno;
+		close();
+		throw SocketException( SocketException::cRead, strerror(iErr) );
+	}
 	if( FD_ISSET( nSocket, &rfds ) || bBlocking )
 	{
 		int nRead = TEMP_FAILURE_RETRY( 
@@ -176,7 +181,9 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 			}
 			if( errno == EAGAIN )
 				return 0;
-			throw SocketException( SocketException::cRead, strerror(errno) );
+			int iErr = errno;
+			close();
+			throw SocketException( SocketException::cRead, strerror(iErr) );
 #endif
 		}
 		return nRead;

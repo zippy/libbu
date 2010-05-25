@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include "bu/list.h"
 #include "fstring.h"
+#include "bu/file.h"
 
 namespace Bu
 {
@@ -61,7 +62,7 @@ namespace Bu
 
 		int run( int argc=0, char *argv[]=NULL );
 
-		void tempFile( Bu::FString &sFileName );
+		Bu::File tempFile( Bu::FString &sFileName );
 
 		typedef void (UnitSuite::*Test)();
 
@@ -110,6 +111,7 @@ namespace Bu
 
 		typedef Bu::List<Bu::FString> StrList;
 		StrList lFileCleanup;
+		int iNameWidth;
 	};
 }
 

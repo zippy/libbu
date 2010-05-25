@@ -76,8 +76,7 @@ suite Myriad
 	{
 		FString sFileName("myriad-XXXXXXX");
 
-		tempFile( sFileName );
-		File fMyriad( sFileName, File::WriteNew|File::Read );
+		File fMyriad = tempFile( sFileName );
 		Myriad m( fMyriad );
 		m.initialize( 64 );
 
