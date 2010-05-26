@@ -175,7 +175,7 @@ void Bu::QueueBuf::seek( long iAmnt )
 	if( iAmnt <= 0 )
 		return;
 
-	if( iAmnt >= iTotalSize )
+	if( (size_t)iAmnt >= iTotalSize )
 	{
 //		sio << "seek: clear all data (" << iAmnt << ">=" << iTotalSize
 //			<< ")." << sio.nl;
@@ -249,7 +249,7 @@ void Bu::QueueBuf::setBlocking( bool )
 {
 }
 
-void Bu::QueueBuf::setSize( long iSize )
+void Bu::QueueBuf::setSize( long )
 {
 }
 

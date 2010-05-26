@@ -86,7 +86,7 @@ void Bu::RegEx::getSubStringRange( int nIndex, int &iStart, int &iEnd )
 
 Bu::FString Bu::RegEx::getSubString( int nIndex )
 {
-	regmatch_t *Subs = aSubStr;
+//	regmatch_t *Subs = aSubStr;
 	return Bu::FString(
 		sTest.getStr()+aSubStr[nIndex].rm_so,
 		aSubStr[nIndex].rm_eo - aSubStr[nIndex].rm_so

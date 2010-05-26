@@ -1040,7 +1040,7 @@ namespace Bu
 				nLen = core->nLength-nPos;
 			flatten();
 			_hardCopy();
-			cpy( core->pFirst->pData+nPos, core->pFirst->pData+nPos+nLen, core->nLength-nPos-nLen+1 );
+			memmove( core->pFirst->pData+nPos, core->pFirst->pData+nPos+nLen, core->nLength-nPos-nLen+1 );
 			core->nLength -= nLen;
 			core->pFirst->nLength -= nLen;
 		}

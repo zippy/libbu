@@ -278,7 +278,7 @@ void Bu::Process::setBlocking( bool bBlocking )
 	this->bBlocking = bBlocking;
 }
 
-void Bu::Process::setSize( long iSize )
+void Bu::Process::setSize( long )
 {
 }
 

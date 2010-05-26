@@ -117,5 +117,6 @@ suite Taf
 		const Bu::TafGroup *g = tr.readGroup();
 		unitTest( g->getChildByPath("inner/final")->getProperty("test") == "hi" );
 		unitTest( g->getByPath("inner/final/test") == "hi" );
+		delete g;
 	}
 }

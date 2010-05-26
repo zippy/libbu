@@ -36,20 +36,30 @@ Bu::TafGroup *Bu::TafReader::readGroup()
 	ws();
 	FString sName = readStr();
 	TafGroup *pGroup = new TafGroup( sName );
-	ws();
-	if( c != ':' )
-		throw TafException("%d:%d: Expected ':' got '%c'.", iLine, iCol, c );
-	next();
-	//printf("Node[%s]:\n", sName.getStr() );
+	try
+	{
+		ws();
+		if( c != ':' )
+			throw TafException("%d:%d: Expected ':' got '%c'.",
+				iLine, iCol, c );
+		next();
+		//printf("Node[%s]:\n", sName.getStr() );
 
-	groupContent( pGroup );
+		groupContent( pGroup );
 
-	if( c != '}' )
-		throw TafException("%d:%d: Expected '}' got '%c'.", iLine, iCol, c );
+		if( c != '}' )
+			throw TafException("%d:%d: Expected '}' got '%c'.",
+				iLine, iCol, c );
 
-	//next();
+		//next();
 
-	return pGroup;
+		return pGroup;
+	}
+	catch(...)
+	{
+		delete pGroup;
+		throw;
+	}
 }
 
 void Bu::TafReader::groupContent( Bu::TafGroup *pGroup )

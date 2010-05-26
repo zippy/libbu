@@ -540,6 +540,11 @@ private:
 
 int main( int argc, char *argv[] )
 {
+	if( argc < 3 )
+	{
+		sio << "Too few parameters." << sio.nl;
+		return 0;
+	}
 	Parser p( argv[1] );
 
 	p.firstPass();

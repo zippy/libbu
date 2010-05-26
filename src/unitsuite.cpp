@@ -185,7 +185,7 @@ void Bu::UnitSuite::setName( const FString &sName )
 	sSuiteName = sName;
 }
 
-int Bu::UnitSuite::onListCases( StrArray aParam )
+int Bu::UnitSuite::onListCases( StrArray )
 {
 	sio << "Test cases:" << sio.nl;
 	for( TestList::iterator i = lTests.begin(); i; i++ )

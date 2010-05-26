@@ -61,7 +61,8 @@ size_t Bu::NewLine::read( void *pBufV, size_t iAmnt )
 	return iTotal;
 }
 
-size_t Bu::NewLine::write( const void *pBuf, size_t iAmnt )
+size_t Bu::NewLine::write( const void *, size_t )
 {
+	return 0;
 }
 

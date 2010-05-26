@@ -49,7 +49,7 @@ size_t Bu::MyriadStream::read( void *pBuf, size_t nBytes )
 	sio << "MyriadStream: read: " << __LINE__ << ": Started, asked to read " << nBytes << "b."
 		<< sio.nl;
 #endif
-	if( nBytes > pStream->iSize-iPos )
+	if( nBytes > (size_t)pStream->iSize-iPos )
 		nBytes = pStream->iSize-iPos;
 	if( nBytes <= 0 )
 		return 0;

@@ -120,7 +120,7 @@ Bu::FString Bu::CsvReader::decodeExcel( Bu::FString::iterator &i )
 	return sRet;
 }
 
-Bu::FString Bu::CsvReader::decodeC( Bu::FString::iterator &i )
+Bu::FString Bu::CsvReader::decodeC( Bu::FString::iterator & )
 {
 	return "";
 }
