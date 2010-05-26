@@ -50,18 +50,16 @@ namespace Bu
 	public:
 		CacheStoreMyriad( Bu::Stream &sArch,
 			int iBlockSize=1024, int iPreAllocate=1 ) :
-			mStore( sArch )
+			mStore( sArch, iBlockSize, iPreAllocate )
 		{
 			try
 			{
-				mStore.initialize();
 				MyriadStream ns = mStore.openStream( 1 );
 				Bu::Archive ar( ns, Bu::Archive::load );
 				ar >> hId;
 			}
 			catch( Bu::MyriadException &e )
 			{
-				mStore.initialize( iBlockSize, iPreAllocate );
 				int iStream = mStore.createStream();
 				if( iStream != 1 )
 					throw Bu::ExceptionBase("That's...horrible...id = %d.\n\n",
@@ -99,6 +97,7 @@ namespace Bu
 			hId.insert( key, iStream );
 			MyriadStream ns = mStore.openStream( iStream );
 			__cacheStoreMyriadStore<keytype, obtype>( ns, *pSrc, key );
+			ns.setSize( ns.tell() );
 			return key;
 		}
 
@@ -114,6 +113,7 @@ namespace Bu
 			int iStream = hId.get( key );
 			MyriadStream ns = mStore.openStream( iStream );
 			__cacheStoreMyriadStore<keytype, obtype>( ns, *pSrc, key );
+			ns.setSize( ns.tell() );
 		}
 
 		virtual void destroy( obtype *pObj, const keytype &key )
@@ -122,6 +122,13 @@ namespace Bu
 			mStore.deleteStream( iStream );
 			hId.erase( key );
 			delete pObj;
+		}
+
+		virtual void destroy( const keytype &key )
+		{
+			int iStream = hId.get( key );
+			mStore.deleteStream( iStream );
+			hId.erase( key );
 		}
 
 		virtual bool has( const keytype &key )
