@@ -555,6 +555,7 @@ int Bu::Myriad::streamAddBlock( Stream *pStream )
 	int iBlock = findEmptyBlock();
 	pStream->aBlocks.append( iBlock );
 	bsBlockUsed.setBit( iBlock );
+	bHeaderChanged = true;
 	iUsed++;
 	return iBlock;
 }
@@ -569,7 +570,7 @@ void Bu::Myriad::setStreamSize( Stream *pStream, long iSize )
 	{
 		// Shrink
 		for( int iNewSize = pStream->aBlocks.getSize()*iBlockSize;
-			 iNewSize-64 > iSize; iNewSize -= iBlockSize )
+			 iNewSize-iBlockSize > iSize; iNewSize -= iBlockSize )
 		{
 			if( bsBlockUsed.getBit( pStream->aBlocks.last() ) )
 				iUsed--;

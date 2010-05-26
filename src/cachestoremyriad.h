@@ -49,7 +49,7 @@ namespace Bu
 	{
 	public:
 		CacheStoreMyriad( Bu::Stream &sArch,
-			int iBlockSize=1024, int iPreAllocate=1 ) :
+			int iBlockSize=512, int iPreAllocate=8 ) :
 			mStore( sArch, iBlockSize, iPreAllocate )
 		{
 			try

@@ -25,8 +25,7 @@ suite Myriad
 		FString sFileName("myriad-XXXXXXX");
 
 		File fMyriad = tempFile( sFileName );
-		Myriad m( fMyriad );
-		m.initialize( 64 );
+		Myriad m( fMyriad, 32 );
 
 		MyriadStream ms = m.openStream( m.createStream() );
 		ms.setSize( 150 );
@@ -54,7 +53,21 @@ suite Myriad
 		{
 			buf[j] = (j+iSize)%256;
 		}
-		s.write( buf, iSize-8 );
+		if( random()%2 == 0 )
+		{
+			s.write( buf, iSize-8 );
+		}
+		else
+		{
+			for( int j = 0; j < iSize-8; )
+			{
+				int iAmnt = (random()%8)+1;
+				if( iAmnt+j > iSize-8 )
+					iAmnt = iSize-8-j;
+				iAmnt = s.write( buf+j, iAmnt );
+				j += iAmnt;
+			}
+		}
 		delete[] buf;
 		iSize = ~iSize;
 		s.write( &iSize, 4 );
@@ -79,7 +92,8 @@ suite Myriad
 			{
 				char b = buf[j];
 				delete[] buf;
-				throw ExceptionBase("Block failed computed data verify (%02X==%02X).", b, (char)((j+iSize)%256) );
+				throw ExceptionBase("Block failed computed data verify "
+					"(%02X==%02X).", b, (char)((j+iSize)%256) );
 			}
 		}
 		delete[] buf;
@@ -164,7 +178,7 @@ suite Myriad
 
 		File fMyriad = tempFile( sFileName );
 		Myriad m( fMyriad );
-		m.initialize( 64 );
+		m.initialize( 128 );
 
 		Array<int> aStream;
 
@@ -178,6 +192,42 @@ suite Myriad
 		char b;
 		for( int iter = 0; iter < 2500; iter++ )
 		{
+			for( Array<int>::iterator i = aStream.begin(); i; i++ )
+			{
+				MyriadStream ms = m.openStream( *i );
+				addBlock( ms, false );
+				ms.setSize( ms.tell() );
+				unitTest( ms.read( &b, 1 ) == 0 );
+				ms.setPos( 0 );
+				verifyBlock( ms );
+				unitTest( ms.read( &b, 1 ) == 0 );
+			}
+		}
+	}
+	
+	test stressTruncate2
+	{
+		FString sFileName("myriad-XXXXXXX");
+
+		Array<int> aStream;
+
+		{
+			File fMyriad = tempFile( sFileName );
+			Myriad m( fMyriad, 64 );
+
+			for( int j = 0; j < 5; j++ )
+			{
+				aStream.append( m.createStream() );
+			}
+		}
+		
+		srandom( 1024 );
+
+		char b;
+		for( int iter = 0; iter < 2500; iter++ )
+		{
+			File fMyriad( sFileName, File::ReadWrite );
+			Myriad m( fMyriad );
 			for( Array<int>::iterator i = aStream.begin(); i; i++ )
 			{
 				MyriadStream ms = m.openStream( *i );
