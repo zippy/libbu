@@ -106,8 +106,7 @@ int main( int argc, char *argv[] )
 			else
 			{
 				File fOut( opts.sFile, File::WriteNew|File::Read );
-				Myriad m( fOut );
-				m.initialize( opts.iBlockSize, opts.iPreallocate );
+				Myriad m( fOut, opts.iBlockSize, opts.iPreallocate );
 			}
 			break;
 
@@ -121,6 +120,20 @@ int main( int argc, char *argv[] )
 			{
 				File fIn( opts.sFile, File::Read );
 				Myriad m( fIn );
+				sio << "Myriad info:" << sio.nl
+					<< "  Block size:   " << m.getBlockSize() << sio.nl
+					<< "  Block count:  " << m.getNumBlocks() << sio.nl
+					<< "  Blocks used:  " << m.getNumUsedBlocks() << " ("
+					<< m.getNumUsedBlocks()*100/m.getNumBlocks() << "%)"
+					<< sio.nl
+					<< "  Stream count: " << m.getNumStreams() << sio.nl;
+				Bu::Array<int> aStreams = m.getStreamIds();
+				sio << "  Stream info:" << sio.nl;
+				for( Bu::Array<int>::iterator i = aStreams.begin(); i; i++ )
+				{
+					sio << "    " << Fmt(4) << *i << ") "
+						<< m.getStreamSize( *i ) << "b" << sio.nl;
+				}
 			}
 			break;
 

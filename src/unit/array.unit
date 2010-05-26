@@ -9,6 +9,9 @@
 #include "bu/hash.h"
 #include "bu/array.h"
 
+#include "bu/sio.h"
+using Bu::sio;
+
 suite Array
 {
 	test general
@@ -81,5 +84,21 @@ suite Array
 		unitTest( a3[0].get("Bye") == "Later" );
 		unitTest( a3[1].get("Test") == "Bloop" );
 		unitTest( a3[1].get("Foo") == "ooF" );
+	}
+
+	test insert
+	{
+		Bu::Array<int> aInts;
+		aInts.insert( aInts.end(), 4 );
+		aInts.insert( aInts.begin(), 1 );
+		aInts.insert( aInts.end(), 5 );
+		aInts.insert( aInts.begin()+1, 3 );
+		aInts.insert( aInts.begin()+1, 2 );
+		aInts.insert( aInts.begin(), 0 );
+
+		for( int j = 0; j < 6; j++ )
+		{
+			unitTest( aInts[j] == j );
+		}
 	}
 }

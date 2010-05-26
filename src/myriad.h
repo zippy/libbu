@@ -26,16 +26,22 @@ namespace Bu
 			invalidFormat,
 			badVersion,
 			invalidWordSize,
-			noSuchStream
+			noSuchStream,
+			streamExists,
+			invalidStreamId,
+			protectedStream
 		};
 	subExceptionDeclEnd()
 
 	/**
-	 * Numerically Indexed Data Streams.  This is a working name so I can
-	 * actually get some code written instead of agonizing over the name.
-	 *
-	 * This is a system for creating streams that contain other streams in
-	 * a flexible block-allocated system.
+	 * Myriad block-allocated stream multiplexing system.  This is a system for
+	 * creating streams that contain other streams in a flexible and lightweight
+	 * manner.  Basically, you can create a file (or any other stream) that can
+	 * store any number of flexible, growing streams.  The streams within the
+	 * Myriad stream are automatically numbered, not named.  This works more
+	 * or less like a filesystem, but without the extra layer for managing
+	 * file and directory links.  This would actually be very easy to add
+	 * on top of Myriad, but is not required.
 	 *
 	 * Header format is as follows:
 	 *
@@ -78,21 +84,41 @@ namespace Bu
 	{
 		friend class MyriadStream;
 	public:
+		/**
+		 * Create a Myriad object that uses the given stream to store data.
+		 * This stream must be random access.  The block size and preallocate
+		 * values passed in are values that will be used if the given stream
+		 * is empty.  In that case the stream will be "formatted" for myriad
+		 * with the specified block size.  If there is already a viable Myriad
+		 * format present in the stream, then the blocksize and preallocate
+		 * values will be ignored and the values from the stream will be used
+		 * instead.  If the stream doesn't appear to be Myriad formatted an
+		 * exception will be thrown.
+		 */
 		Myriad( Bu::Stream &sStore, int iBlockSize=512, int iPreallocate=8 );
 		virtual ~Myriad();
 
 		/**
-		 * Create a new Myriad system in the assosiated stream.  This should be
-		 * used carefully, it will destroy all data already within the stream.
-		 * More options will probably be added soon.
+		 * Destroy whatever data may be in the base stream and create a new
+		 * Myriad system there with the given blocksize.  Use this with care,
+		 * it will destroy anything that was already in the stream, and
+		 * generally, should not ever have to be used.
 		 */
 		void initialize( int iBlockSize, int iPreAllocate=1 );
 
 		/**
-		 * Create a new stream within the Myriad system.  The ID of the new stream
-		 * is returned.
+		 * Create a new stream within the Myriad system.  The ID of the new
+		 * stream is returned.
 		 */
 		int createStream( int iPreAllocate=1 );
+
+		/**
+		 * Create a new stream within the Myriad system with a given id.  The
+		 * id that you provide will be the new id of the stream unless it's
+		 * already used, in which case an error is thrown.  This is primarilly
+		 * useful when copying an old Myriad file into a new one.
+		 */
+		int createStreamWithId( int iId, int iPreAllocate=1 );
 
 		/**
 		 * Delete a stream that's already within the Myriad.
@@ -104,10 +130,13 @@ namespace Bu
 		 */
 		MyriadStream openStream( int iId );
 
+		Bu::Array<int> getStreamIds();
+		int getStreamSize( int iId );
+
+		int getNumStreams();
 		int getBlockSize();
 		int getNumBlocks();
 		int getNumUsedBlocks();
-		int getBlockOverhead();
 
 		/**
 		 * Syncronize the header data, etc. with the storage stream.  It's not
@@ -115,6 +144,11 @@ namespace Bu
 		 */
 		void sync();
 
+		/**
+		 * Read the first few bytes from the given stream and return true/false
+		 * depending on weather or not it's a Myriad stream.  This will throw
+		 * an exception if the stream is empty, or is not random access.
+		 */
 		static bool isMyriad( Bu::Stream &sStore );
 
 	private:

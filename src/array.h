@@ -297,6 +297,17 @@ namespace Bu
 				return *this;
 			}
 			
+			iterator operator+( int iAmnt )
+			{
+				if( iPos < 0 )
+					throw ArrayException(
+						"Cannot increment iterator past end of array.");
+					iPos += iAmnt;
+				if( iPos >= src.getSize() )
+					iPos = -1;
+				return *this;
+			}
+			
 			iterator operator--( int )
 			{
 				if( iPos < 0 )
@@ -312,6 +323,15 @@ namespace Bu
 			{
 				if( iPos < src.getSize() )
 					iPos--;
+				if( iPos <= 0 )
+					iPos = -1;
+				return *this;
+			}
+			
+			iterator operator-( int iAmnt )
+			{
+				if( iPos < src.getSize() )
+					iPos -= iAmnt;
 				if( iPos <= 0 )
 					iPos = -1;
 				return *this;
@@ -475,6 +495,36 @@ namespace Bu
 		const_iterator end() const
 		{
 			return const_iterator( *this, -1 );
+		}
+
+		MyType &insert( iterator i, const value &rVal )
+		{
+			if( i.iPos == -1 )
+			{
+				append( rVal );
+				return *this;
+			}
+
+			_hardCopy();
+			if( core->iSize == core->iCapacity )
+			{
+				core->setCapacity( core->iCapacity + inc );
+			}
+			core->iSize++;
+
+			core->va.construct(
+				&core->pData[core->iSize-1],
+				core->pData[core->iSize-2]
+				);
+			for( int iPos = core->iSize-2; iPos > i.iPos; iPos-- )
+			{
+				core->va.destroy( &core->pData[iPos] );
+				core->va.construct( &core->pData[iPos], core->pData[iPos-1] );
+			}
+			core->va.destroy( &core->pData[i.iPos] );
+			core->va.construct( &core->pData[i.iPos], rVal );
+
+			return *this;
 		}
 
 		/**
