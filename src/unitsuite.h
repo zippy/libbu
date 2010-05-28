@@ -96,6 +96,11 @@ namespace Bu
 		void add( Test fTest, const Bu::FString &sName, Expect e=expectPass );
 		void setName( const FString &sName );
 
+		void dispProgress();
+		void setStepCount( int iSteps );
+		void incProgress( int iAmnt = 1 );
+		void setProgress( int iAmnt );
+
 	private:
 		int onListCases( Bu::Array<Bu::FString> aParam );
 
@@ -116,6 +121,9 @@ namespace Bu
 		typedef Bu::List<Bu::FString> StrList;
 		StrList lFileCleanup;
 		int iNameWidth;
+		int iStepCount;
+		int iProgress;
+		time_t tLastUpdate;
 	};
 
 Bu::Formatter &operator<<( Bu::Formatter &f, const Bu::UnitSuite::Expect &e );

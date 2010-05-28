@@ -13,10 +13,92 @@
 #include "bu/array.h"
 
 #include "bu/sio.h"
+#include "bu/archive.h"
+#include "bu/md5.h"
+#include "bu/unitsuite.h"
 
 #include <stdlib.h>
 
 using namespace Bu;
+
+class VerifyObject
+{
+friend Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const VerifyObject &vo );
+friend Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, VerifyObject &vo );
+public:
+	VerifyObject( int iUnits ) :
+		iUnits( iUnits ),
+		iBytesWritten( 0 )
+	{
+	}
+
+	virtual ~VerifyObject()
+	{
+	}
+
+	int getBytesWritten()
+	{
+		return iBytesWritten;
+	}
+
+private:
+	int iUnits;
+	mutable int iBytesWritten;
+};
+
+Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const VerifyObject &vo )
+{
+	Md5 sum;
+	ar << vo.iUnits;
+	vo.iBytesWritten = 4;
+	sum.addData( &vo.iUnits, 4 );
+	for( int j = 0; j < vo.iUnits; j++ )
+	{
+		int iRand = random()%128;
+//		ar << iRand;
+		Bu::FString sDat( iRand );
+		for( int j = 0; j < iRand; j++ )
+			sDat[j] = (char)((uint8_t)(random()%256));
+		ar << sDat;
+		sum.addData( &iRand, 4 );
+		sum.addData( sDat.getStr(), iRand );
+		vo.iBytesWritten += 4 + iRand;
+	}
+	Bu::FString sRes = sum.getResult();
+	ar << sRes;
+	vo.iBytesWritten += 4 + sRes.getSize();
+	return ar;
+}
+
+Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, VerifyObject &vo )
+{
+	Md5 sum;
+	ar >> vo.iUnits;
+	sum.addData( &vo.iUnits, 4 );
+	for( int j = 0; j < vo.iUnits; j++ )
+	{
+		int iRand;
+//		ar >> iRand;
+		Bu::FString sStr;
+		ar >> sStr;
+		iRand = sStr.getSize();
+		sum.addData( &iRand, 4 );
+		sum.addData( sStr.getStr(), iRand );
+	}
+	Bu::FString sSum;
+	ar >> sSum;
+	unitTest( sSum == sum.getResult() );
+	int iTooMuch;
+	try
+	{
+		ar >> iTooMuch;
+		unitFailed("should have thrown an exception.");
+	}
+	catch( Bu::ExceptionBase &e )
+	{
+	}
+	return ar;
+}
 
 suite Myriad
 {
@@ -211,13 +293,16 @@ suite Myriad
 
 		Array<int> aStream;
 
+		setStepCount( 5*2500 + 5 );
+
 		{
 			File fMyriad = tempFile( sFileName );
-			Myriad m( fMyriad, 64 );
+			Myriad m( fMyriad, 128 );
 
 			for( int j = 0; j < 5; j++ )
 			{
 				aStream.append( m.createStream() );
+				incProgress();
 			}
 		}
 		
@@ -237,6 +322,62 @@ suite Myriad
 				ms.setPos( 0 );
 				verifyBlock( ms );
 				unitTest( ms.read( &b, 1 ) == 0 );
+				incProgress();
+			}
+		}
+	}
+
+	test stressArchive
+	{
+		FString sFileName("myriad-XXXXXX");
+		Array<int> aStream;
+		
+		srandom( 2096 );
+
+		setStepCount( 15*250 + 15 );
+		
+		{
+			File fMyriad = tempFile( sFileName );
+			Myriad m( fMyriad, 1024 );
+
+			for( int j = 0; j < 15; j++ )
+			{
+				int iStream = m.createStream();
+				aStream.append( iStream );
+				VerifyObject vo( random()%1024 );
+				{
+					MyriadStream ms = m.openStream( iStream );
+					Archive ar( ms, Archive::save );
+					ar << vo;
+					unitTest( ms.tell() == vo.getBytesWritten() );
+					ms.setSize( ms.tell() );
+				}
+				unitTest( m.getStreamSize( iStream ) == vo.getBytesWritten() );
+				incProgress();
+			}
+		}
+
+		for( int iter = 0; iter < 250; iter++ )
+		{
+			File fMyriad( sFileName, File::ReadWrite );
+			Myriad m( fMyriad );
+			for( Array<int>::iterator i = aStream.begin(); i; i++ )
+			{
+				VerifyObject vo( random()%1024 );
+				{
+					MyriadStream ms = m.openStream( *i );
+					Archive ar( ms, Archive::load );
+					ar >> vo;
+				}
+				{
+					MyriadStream ms = m.openStream( *i );
+					Archive ar( ms, Archive::save );
+					ar << vo;
+					unitTest( ms.tell() == vo.getBytesWritten() );
+					ms.setSize( ms.tell() );
+				}
+				unitTest( m.getStreamSize( *i ) == vo.getBytesWritten() );
+				incProgress();
 			}
 		}
 	}

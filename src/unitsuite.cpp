@@ -10,6 +10,7 @@
 #include "bu/sio.h"
 #include "bu/optparser.h"
 #include <stdlib.h>
+#include <time.h>
 
 using namespace Bu;
 
@@ -53,6 +54,8 @@ int Bu::UnitSuite::run( int argc, char *argv[] )
 			<< sio.flush;
 		try
 		{
+			iStepCount = -1;
+			iProgress = 0;
 			(this->*(i->fTest))();
 			switch( i->eExpect )
 			{
@@ -183,6 +186,44 @@ void Bu::UnitSuite::add( Test fTest, const Bu::FString &sName, Expect e )
 void Bu::UnitSuite::setName( const FString &sName )
 {
 	sSuiteName = sName;
+}
+
+void Bu::UnitSuite::dispProgress()
+{
+	if( tLastUpdate == time( NULL ) )
+		return;
+	sio << Fmt(3) << (iProgress*100/iStepCount) << "%" << "\b\b\b\b"
+		<< sio.flush;
+	tLastUpdate = time( NULL );
+}
+
+void Bu::UnitSuite::setStepCount( int iSteps )
+{
+	iStepCount = iSteps;
+	if( iStepCount < 0 )
+		return;
+	tLastUpdate = 0;
+	dispProgress();
+}
+
+void Bu::UnitSuite::incProgress( int iAmnt )
+{
+	iProgress += iAmnt;
+	if( iProgress < 0 )
+		iProgress = 0;
+	if( iProgress > iStepCount )
+		iProgress = iStepCount;
+	dispProgress();
+}
+
+void Bu::UnitSuite::setProgress( int iAmnt )
+{
+	iProgress = iAmnt;
+	if( iProgress < 0 )
+		iProgress = 0;
+	if( iProgress > iStepCount )
+		iProgress = iStepCount;
+	dispProgress();
 }
 
 int Bu::UnitSuite::onListCases( StrArray )
