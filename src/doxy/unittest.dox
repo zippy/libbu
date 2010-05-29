@@ -9,7 +9,110 @@
  *@page howto_unittest Writing Unit Tests For Your Programs
  *
  * Libbu++ uses it's own simple and flexible unit testing framework, and you can
- * too!
+ * too!  Unit testing is a fairly simple concept.  You create many small tests
+ * that ensure that each individual component of a program is working as it
+ * should.  These make it easy to test code as it's designed, and even helps to
+ * ensure that your code continues to work as changes are made in the future.
+ *
+ * There are two main ways of writing unit test "suites" or pagkages with
+ * libbu++:  Using the mkunit unit test compiler or by using the Bu::UnitSuite
+ * class directly.  Both of these will be dicussed below, but the mkunit method
+ * is definately recommended.
+ *
+ *@section mkunit Using mkunit to create Unit Test Suites
+ *
+ * Using mkunit is definately the easiest way to go, the format is very basic,
+ * and almost all c++ constructs work exactly as you would expect.  First, the
+ * mkunit program itself is included with libbu++ and built when the library is
+ * built.  When you run mkunit on a .unit file it produces a matching .cpp file.
+ * You should avoid editing the generated .cpp file since it will be overwritten
+ * by the next run of mkunit.  To make debugging easier mkunit takes advantage
+ * of standard preprocessor macros to make debuggers and compilers treat the
+ * .unit file as the original source file, all errors will refer to that file.
+ *
+ * There are two new constructs that you can take advantage of in a .unit file:
+ * - suite: This identifier defines a suite of tests, each .unit file needs at
+ *   least one of these.  suite is followed by a { } block that may contain
+ *   standard c++ code as well as test identifiers.  This becomes the UnitSuite
+ *   child class.
+ * - test: This identifier defines a test within the suite, and is followed by
+ *   a { } block of code that is run for that test.  This becomes a function.
+ *
+ * A simple example will help illustrate this:
+ *@code
+#include <stdio.h>
+
+suite Math
+{
+	test arithmetic
+	{
+		unitTest( 5*5 == 25 );
+		unitTest( 25/5 == 5 );
+		unitTest( 5+5 == 10 );
+		// etc...
+	}
+}
+ @endcode
+ *
+ * This example creates one test suite named Math, and one test named arithmetic
+ * which tests the computer's ability to do simple arithmetic.  The macro
+ * unitTest(...) checks the contained code, if the expression evaluetes to true
+ * then the test continues, if not it fails immediately, exists, and reports
+ * what expression caused it to fail, and what line number it happened on.
+ * 
+ * Also available is the macro unitFailed("...") which will cause the test to
+ * immediately fail, and the reason given will be the textual message provided.
+ *
+ * When using the mkunit method, you shouldn't define a main function, this is
+ * automatically done for you.
+ *
+ * Compiling a mkunit style unit test suite is fairly easy too.  You basically
+ * need the following:
+ *@code
+mkunit mysuite.unit mysuite.cpp
+g++ mysuite.cpp -o mysuite -lbu++
+@endcode
+ * This will produce a ready to use executable that will run all tests in the
+ * suite and report success or failure, and provide a nice summary at the end.
+ * Each test suite also supports a rich set of command line options to get more
+ * information, control which tests are run, and control output.
+ *
+ *@section unitsuite_features UnitSuite features for everyone
+ * There are a number of features that you can take advantage of no matter what
+ * method you used to design your unit test suite.  One of them is the progress
+ * meter.  For tests that are going to take a noticable amount of time, or even
+ * all tests that have more than one step, you can use the functions:
+ *  - Bu::UnitSuite::setStepCount - to set the number of steps that will be
+ *    performed by the test.  This is effectively arbitrary and just sets the
+ *    upper limit for the progress indicator.  For example, if you're going to
+ *    perform a nested loop with 100 iterations in the outer and 250 on the
+ *    inner you may call setStepCount( 100*250 ) at the begining of the test.
+ *  - Bu::UnitSuite::incProgress - Increment the progress counter by one.
+ *    In the above example if you placed this function call at the end of the
+ *    innermost loop you would get a pleasant progress readout as the test
+ *    proceeded.
+ *
+ * Here is a slightly more concrete example of the progress meter functions:
+ *@code
+suite Intensive
+{
+	test LongTest1
+	{
+		setStepCount( 100*250 );
+		for( int iOuter = 0; iOuter < 100; ++iOuter )
+		{
+			for( int iInner = 0; iInner < 250; ++iInner )
+			{
+				doSomethingComplex( iOuter, iInner );
+				incProgress();
+			}
+		}
+	}
+}
+@endcode
+ * To ensure that the progress meter doesn't use up an exorbatant amount of CPU
+ * time in very tight loops the display will be updated at most every second,
+ * and only when a call to incProgress is made.
  *
  *@todo Finish this page.
  */
