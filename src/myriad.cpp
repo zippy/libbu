@@ -14,7 +14,7 @@
 using Bu::sio;
 using Bu::Fmt;
 
-#define Myriad_MAGIC_CODE		((unsigned char *)"\xFF\xC3\x99\xBD")
+#define Myriad_MAGIC_CODE		((unsigned char *)"\x0a\xd3\xfa\x84")
 
 namespace Bu
 {
