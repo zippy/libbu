@@ -560,7 +560,7 @@ namespace Bu
 		void swapErase( iterator i )
 		{
 			_hardCopy();
-			swapErase( i.iPos );
+			core->swapErase( i.iPos );
 		}
 
 	protected:
