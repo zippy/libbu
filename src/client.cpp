@@ -33,6 +33,7 @@ Bu::Client::~Client()
 		delete *i;
 	}
 	pTopStream = pSocket = NULL;
+	delete pfLink;
 }
 
 void Bu::Client::processInput()

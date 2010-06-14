@@ -84,10 +84,7 @@ void Bu::Server::scan()
 				pClient->processInput();
 				if( !pClient->isOpen() )
 				{
-					onClosedConnection( pClient );
-					pClient->close();
-					hClients.erase( j );
-					FD_CLR( j, &fdActive );
+					closeClient( j );
 				}
 			}
 		}
@@ -102,10 +99,7 @@ void Bu::Server::scan()
 				}
 				catch( Bu::SocketException &e )
 				{
-					onClosedConnection( pClient );
-					pClient->close();
-					hClients.erase( j );
-					FD_CLR( j, &fdActive );
+					closeClient( j );
 				}
 			}
 			catch( Bu::HashException &e )
@@ -130,11 +124,7 @@ void Bu::Server::scan()
 
 	for( Bu::List<int>::iterator i = lDelete.begin(); i != lDelete.end(); i++ )
 	{
-		Client *pClient = hClients.get( *i );
-		onClosedConnection( pClient );
-		pClient->close();
-		hClients.erase( *i );
-		FD_CLR( *i, &fdActive );
+		closeClient( *i );
 	}
 
 	if( bAutoTick )
@@ -206,10 +196,19 @@ void Bu::Server::shutdown()
 
 	for( ClientHash::iterator i = hClients.begin(); i != hClients.end(); i++ )
 	{
-		onClosedConnection( *i );
-		delete *i;
+		closeClient( i.getKey() );
 	}
 
 	hClients.clear();
+}
+
+void Bu::Server::closeClient( int iSocket )
+{
+	Bu::Client *pClient = hClients.get( iSocket );
+	onClosedConnection( pClient );
+	pClient->close();
+	hClients.erase( iSocket );
+	FD_CLR( iSocket, &fdActive );
+	delete pClient;
 }
 

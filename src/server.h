@@ -72,6 +72,7 @@ namespace Bu
 		void shutdown();
 
 	private:
+		void closeClient( int iSocket );
 		class SrvClientLink : public Bu::ClientLink
 		{
 		public:
