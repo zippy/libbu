@@ -10,10 +10,16 @@ using namespace Bu;
 class Options : public Bu::OptParser
 {
 public:
-	Options( int argc, char *argv[] )
+	Options( int argc, char *argv[] ) :
+		bHeader( true )
 	{
+		addOption( bHeader, "no-header",
+			"Don't use the first line as a header row.  This behaviour can "
+			"also be toggled while running with 'h'." );
 		setNonOption( slot( this, &Options::onNonOption ) );
 		addHelpOption();
+
+		setOverride( "no-header", "true" );
 		parse( argc, argv );
 	}
 
@@ -30,6 +36,7 @@ public:
 	}
 
 	Bu::FString sFileIn;
+	bool bHeader;
 };
 
 typedef Bu::Array<StrArray> StrGrid;
@@ -88,7 +95,7 @@ public:
 		int maxx, maxy;
 		getmaxyx( stdscr, maxy, maxx );
 
-		int iRows = min( (int)doc.sgData.getSize(), maxy-1 );
+		int iRows = min( (int)doc.sgData.getSize(), maxy-((bHeaderRow)?(4):(3)) );
 		int iCols = min( doc.iMaxCols, (int)maxx-1 );
 
 		int iHdrHeight = 1;
@@ -98,6 +105,8 @@ public:
 		// Draw the headers
 		for( int iRow = 0; iRow < iRows; iRow++ )
 		{
+			if( iRow+iYOff >= doc.sgData.getSize() )
+				break;
 			char buf[6];
 			snprintf( buf, 6, "%5d", iRow+iYOff );
 			mvaddnstr( iRow+iHdrHeight+1, 0, buf, 5 );
@@ -108,8 +117,9 @@ public:
 		{
 			for( int iCol = 0; iCol < iCols; iCol++ )
 			{
-				if( iXPos + doc.aWidths[iCol+iXOff]+2 >= maxx )
+				if( iXPos >= maxx )
 					break;
+				int iWidth = min( doc.aWidths[iCol+iXOff], maxx-iXPos-1 );
 				char buf[6];
 				snprintf( buf, 6, "%d", iCol+iXOff );
 				mvaddch( 0, iXPos, ACS_VLINE );
@@ -117,17 +127,23 @@ public:
 				mvaddnstr( 0, iXPos+1, buf, 5 );
 				if( bHeaderRow )
 				{
-					mvaddstr( 1, iXPos+1, doc.sgData[0][iCol+iXOff].getStr() );
+					mvaddnstr(
+						1, iXPos+1, doc.sgData[0][iCol+iXOff].getStr(), iWidth
+						);
 					mvaddch( 1, iXPos, ACS_VLINE );
 				}
-				for( int j = 0; j <= doc.aWidths[iCol+iXOff]; j++ )
+				for( int j = 0; j < iWidth; j++ )
 				{
 					mvaddch( iHdrHeight, iXPos+j+1, ACS_HLINE );
 				}
-				iXPos += doc.aWidths[iCol+iXOff]+2;
+				iXPos += iWidth+1;
 			}
 		}
 		catch(...) { }
+		for( int j = 0; j < 6; j++ )
+		{
+			mvaddch( iHdrHeight, j, ACS_HLINE );
+		}
 
 		// Draw some data
 		for( int iRow = 0; iRow < iRows; iRow++ )
@@ -137,15 +153,29 @@ public:
 			int iXPos = 6;
 			for( int iCol = 0; iCol < iCols; iCol++ )
 			{
-				if( iXPos + doc.aWidths[iCol+iXOff]+2 >= maxx )
+				if( iXPos >= maxx )
 					break;
+				int iWidth = min( doc.aWidths[iCol+iXOff], maxx-iXPos-1 );
 				mvaddch( iRow+iHdrHeight+1, iXPos, ACS_VLINE );
-				mvaddstr( iRow+iHdrHeight+1, iXPos+1,
-						doc.sgData[iRow+iYOff][iCol+iXOff].getStr() );
-				iXPos += doc.aWidths[iCol+iXOff]+2;
+				mvaddnstr( iRow+iHdrHeight+1, iXPos+1,
+						doc.sgData[iRow+iYOff][iCol+iXOff].getStr(), iWidth );
+				iXPos += iWidth+1;
 			}
 			} catch(...) { }
 		}
+
+		attron( A_REVERSE );
+		for( int j = 0; j < maxx; j++ )
+		{
+			mvaddch( maxy-1, j, ' ' );
+		}
+		mvaddstr( maxy-1, 1, "q) quit  h) toggle header row" );
+		char buf[30];
+		int iWidth = sprintf( buf, "[%dx%ld]",
+			doc.iMaxCols, doc.sgData.getSize()
+			);
+		mvaddstr( maxy-1, maxx-iWidth-1, buf );
+		attroff( A_REVERSE );
 	}
 
 	void move( int iX, int iY )
@@ -165,6 +195,12 @@ public:
 			if( iYOff < 0 )
 				iYOff = 0;
 		}
+
+		if( iYOff >= doc.sgData.getSize() )
+			iYOff = doc.sgData.getSize()-1;
+
+		if( iXOff >= doc.iMaxCols )
+			iXOff = doc.iMaxCols-1;
 	}
 
 	void pageDown()
@@ -183,8 +219,11 @@ public:
 
 	void setHeaderRow( bool bOn )
 	{
+		if( bHeaderRow == bOn )
+			return;
+
 		bHeaderRow = bOn;
-		move( 0, 0 );
+		move( 0, ((bOn)?(1):(-1)) );
 	}
 
 	void toggleHeaderRow()
@@ -229,7 +268,7 @@ int main( int argc, char *argv[] )
 	curs_set( 0 );
 
 	CsvView view( doc );
-	view.toggleHeaderRow();
+	view.setHeaderRow( opt.bHeader );
 
 	bool bRun = true;
 	do
