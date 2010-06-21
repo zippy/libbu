@@ -153,6 +153,6 @@ void Bu::Buffer::flush()
 
 bool Bu::Buffer::isEos()
 {
-	return iReadPos == (iReadBufFill-1) && rNext.isEos();
+	return (iReadPos >= (iReadBufFill-1)) && (rNext.isEos());
 }
 

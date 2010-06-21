@@ -1,0 +1,27 @@
+// vim: syntax=cpp
+/*
+ * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
+#include "bu/file.h"
+#include "bu/membuf.h"
+#include "bu/buffer.h"
+
+suite Buffer
+{
+	test emptyFile
+	{
+		Bu::FString sTmp("empty-XXXXXX");
+		Bu::File fEmpty = tempFile(sTmp);
+		Bu::Buffer buf( fEmpty );
+
+		unitTest( buf.isEos() == false );
+		Bu::FString sLine = buf.readLine();
+		unitTest( sLine == "" );
+		unitTest( fEmpty.isEos() == true );
+		unitTest( buf.isEos() == true );
+	}
+}
