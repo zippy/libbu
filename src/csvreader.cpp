@@ -21,7 +21,7 @@ Bu::CsvReader::CsvReader( Bu::Stream &sIn, Bu::CsvReader::Style eStyle ) :
 			break;
 
 		case styleC:
-			sDecode = Bu::slot( &decodeExcel );
+			sDecode = Bu::slot( &decodeC );
 			break;
 	}
 }

@@ -76,6 +76,11 @@ target files("src/tools/*.cpp").replace("src/tools/","").replace(".cpp","")
 	LDFLAGS += "-L. -lbu++";
 }
 
+target "viewcsv"
+{
+	LDFLAGS += "-lncurses";
+}
+
 //
 // General Tests
 //
