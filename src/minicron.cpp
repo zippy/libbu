@@ -17,6 +17,10 @@ Bu::MiniCron::MiniCron() :
 
 Bu::MiniCron::~MiniCron()
 {
+	while( !hJobs.isEmpty() )
+	{
+		delete hJobs.dequeue();
+	}
 }
 
 bool Bu::MiniCron::hasJobs()

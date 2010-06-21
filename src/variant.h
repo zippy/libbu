@@ -109,7 +109,7 @@ namespace Bu
 		template<class t>
 		Variant &operator=( const t &rhs )
 		{
-			if( pCore && pCore->getType() != typeid(t) )
+			if( pCore ) // && pCore->getType() != typeid(t) )
 			{
 				delete pCore;
 				pCore = NULL;

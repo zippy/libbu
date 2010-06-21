@@ -36,6 +36,11 @@ Bu::Variant::Variant( const Variant &v ) :
 
 Bu::Variant::~Variant()
 {
+	if( pCore )
+	{
+		delete pCore;
+		pCore = NULL;
+	}
 }
 
 bool Bu::Variant::isSet()
