@@ -284,10 +284,76 @@ public:
 		}
 	}
 
+	void resetCaret()
+	{
+		sysCaret.reset();
+	}
+
+	void findNext( const Bu::FString &sTerm )
+	{
+		int y = sysCaret.iRow;
+		if( y < 0 )
+			y = 0;
+		int x = sysCaret.iCol+1;
+		for( ; y < doc.sgData.getSize(); y++ )
+		{
+			StrArray &aRow = doc.sgData[y];
+			for( ; x < aRow.getSize(); x++ )
+			{
+				if( aRow[x].find( sTerm ) )
+				{
+					sysCaret.iRow = y;
+					sysCaret.iCol = x;
+					scrollToCaret();
+					return;
+				}
+			}
+			x = 0;
+		}
+	}
+
+	void scrollToCaret()
+	{
+		iXOff = sysCaret.iCol;
+		iYOff = sysCaret.iRow;
+	}
+
 	CsvDoc &doc;
 	int iXOff;
 	int iYOff;
 	bool bHeaderRow;
+
+	class Caret
+	{
+	public:
+		Caret() :
+			iRow( -1 ),
+			iCol( -1 )
+		{
+		}
+
+		virtual ~Caret()
+		{
+		}
+
+
+		void reset()
+		{
+			iRow = iCol = -1;
+		}
+
+		bool isSet()
+		{
+			if( iRow < 0 || iCol < 0 )
+				return false;
+			return true;
+		}
+
+		int iRow;
+		int iCol;
+	};
+
+	Caret sysCaret;
 };
 
 int main( int argc, char *argv[] )
@@ -326,6 +392,8 @@ int main( int argc, char *argv[] )
 
 	CsvView view( doc );
 	view.setHeaderRow( opt.bHeader );
+
+	Bu::FString sSearchTerm;
 
 	bool bRun = true;
 	do
@@ -372,9 +440,13 @@ int main( int argc, char *argv[] )
 				break;
 
 			case '/':
-				{
-					Bu::FString sIn = view.prompt("find: ");
-				}
+				sSearchTerm = view.prompt("find: ");
+				view.resetCaret();
+				view.findNext( sSearchTerm );
+				break;
+
+			case 'n':
+				view.findNext( sSearchTerm );
 				break;
 
 			case 'h':
