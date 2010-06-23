@@ -2,6 +2,8 @@
 #include <bu/optparser.h>
 #include <bu/csvreader.h>
 #include <bu/file.h>
+#include <bu/newline.h>
+#include <bu/buffer.h>
 #include <bu/util.h>
 #include <ncurses.h>
 
@@ -207,14 +209,25 @@ public:
 	{
 		int maxx, maxy;
 		getmaxyx( stdscr, maxy, maxx );
-		move( 0, maxy-2 );
+		move( 0, maxy-((bHeaderRow)?(4):(3)) );
 	}
 
 	void pageUp()
 	{
 		int maxx, maxy;
 		getmaxyx( stdscr, maxy, maxx );
-		move( 0, -(maxy-2) );
+		move( 0, -(maxy-((bHeaderRow)?(4):(3))) );
+	}
+
+	void home()
+	{
+		iYOff = 0;
+		if( bHeaderRow ) iYOff++;
+	}
+
+	void end()
+	{
+		iYOff = doc.sgData.getSize()-1;
 	}
 
 	void setHeaderRow( bool bOn )
@@ -229,6 +242,46 @@ public:
 	void toggleHeaderRow()
 	{
 		setHeaderRow( !bHeaderRow );
+	}
+
+	Bu::FString prompt( const Bu::FString &sPrompt )
+	{
+		int maxx, maxy;
+		Bu::FString sStr;
+
+		curs_set( 1 );
+		for(;;)
+		{
+			getmaxyx( stdscr, maxy, maxx );
+			for( int j = 0; j < maxx; j++ )
+			{
+				mvaddch( maxy-1, j, ' ' );
+			}
+			mvaddstr( maxy-1, 0, sPrompt.getStr() );
+
+			mvaddstr( maxy-1, sPrompt.getSize(), sStr.getStr() );
+
+			int iCh = getch();
+			switch( iCh )
+			{
+				case '\n':
+				case '\r':
+				case KEY_ENTER:
+					curs_set( 0 );
+					return sStr;
+					break;
+
+				case KEY_BACKSPACE:
+					if( sStr.getSize() > 0 )
+						sStr.setSize( sStr.getSize()-1 );
+					break;
+
+				default:
+					if( iCh < 127 )
+						sStr += (char)iCh;
+					break;
+			}
+		}
 	}
 
 	CsvDoc &doc;
@@ -248,15 +301,19 @@ int main( int argc, char *argv[] )
 	}
 
 	CsvDoc doc;
-	File fIn( opt.sFileIn, File::Read );
-	CsvReader cr( fIn );
-
-	while( !fIn.isEos() )
 	{
-		StrArray sa = cr.readLine();
-		if( fIn.isEos() )
-			break;
-		doc.addRow( sa );
+		File fIn( opt.sFileIn, File::Read );
+		NewLine nlIn( fIn );
+		Buffer bIn( nlIn );
+		CsvReader cr( bIn );
+
+		while( !fIn.isEos() )
+		{
+			StrArray sa = cr.readLine();
+			if( fIn.isEos() )
+				break;
+			doc.addRow( sa );
+		}
 	}
 
 	initscr();
@@ -304,6 +361,20 @@ int main( int argc, char *argv[] )
 
 			case KEY_PPAGE:
 				view.pageUp();
+				break;
+
+			case KEY_HOME:
+				view.home();
+				break;
+
+			case KEY_END:
+				view.end();
+				break;
+
+			case '/':
+				{
+					Bu::FString sIn = view.prompt("find: ");
+				}
 				break;
 
 			case 'h':
