@@ -32,6 +32,8 @@ namespace Bu
 
 		virtual bool isOpen();
 
+		virtual bool isEos();
+
 	private:
 		int iBPos;
 		int iBuf;

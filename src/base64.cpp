@@ -179,3 +179,10 @@ bool Bu::Base64::isOpen()
 	return true;
 }
 
+bool Bu::Base64::isEos()
+{
+	if( bEosIn == true && iRPos == iChars )
+		return true;
+	return false;
+}
+
