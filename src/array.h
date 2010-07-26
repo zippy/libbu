@@ -205,6 +205,25 @@ namespace Bu
 			return core->pData[iIndex];
 		}
 
+		value &get( long iIndex )
+		{
+			_hardCopy();
+			if( iIndex < 0 || iIndex >= core->iSize )
+				throw ArrayException(
+					"Index %d out of range 0:%d", iIndex, core->iSize );
+
+			return core->pData[iIndex];
+		}
+
+		const value &get( long iIndex ) const
+		{
+			if( iIndex < 0 || iIndex >= core->iSize )
+				throw ArrayException(
+					"Index %d out of range 0:%d", iIndex, core->iSize );
+
+			return core->pData[iIndex];
+		}
+
 		value &first()
 		{
 			_hardCopy();

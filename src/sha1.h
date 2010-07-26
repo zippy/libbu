@@ -28,6 +28,7 @@ namespace Bu
 		virtual void reset();
 		virtual void setSalt( const Bu::FString &sSalt );
 		virtual void addData( const void *sData, int iSize );
+		using CryptoHash::addData;
 		virtual FString getResult();
 		virtual void writeResult( Stream &sOut );
 
