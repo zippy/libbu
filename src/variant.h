@@ -134,6 +134,20 @@ namespace Bu
 		}
 		
 		template<class t>
+		t &get() const
+		{
+			if( !pCore )
+			{
+				throw Bu::ExceptionBase("No data!");
+			}
+			if( pCore->getType() != typeid(t) )
+			{
+				throw Bu::ExceptionBase("Invalid type conversion.");
+			}
+			return dynamic_cast<VariantType<t> *>(pCore)->getData();
+		}
+		
+		template<class t>
 		void set( const t &val )
 		{
 			if( pCore && pCore->getType() != typeid(t) )
@@ -143,6 +157,12 @@ namespace Bu
 			}
 			pCore = new VariantType<t>();
 			(*dynamic_cast<VariantType<t> *>(pCore)) = val;
+		}
+
+		template<class t>
+		bool isType() const
+		{
+			return pCore->getType() == typeid(t);
 		}
 
 		template<class t>
