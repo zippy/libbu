@@ -5,6 +5,7 @@
 #include <bu/newline.h>
 #include <bu/buffer.h>
 #include <bu/util.h>
+#include <bu/regex.h>
 #include <ncurses.h>
 
 using namespace Bu;
@@ -249,6 +250,8 @@ public:
 		int maxx, maxy;
 		Bu::FString sStr;
 
+		RegEx re( sPrompt );
+
 		curs_set( 1 );
 		for(;;)
 		{
@@ -273,7 +276,7 @@ public:
 
 				case KEY_BACKSPACE:
 					if( sStr.getSize() > 0 )
-						sStr.setSize( sStr.getSize()-1 );
+						sStr.resize( sStr.getSize()-1 );
 					break;
 
 				default:
@@ -291,6 +294,8 @@ public:
 
 	void findNext( const Bu::FString &sTerm )
 	{
+		RegEx re( sTerm );
+
 		int y = sysCaret.iRow;
 		if( y < 0 )
 			y = 0;
@@ -300,7 +305,7 @@ public:
 			StrArray &aRow = doc.sgData[y];
 			for( ; x < aRow.getSize(); x++ )
 			{
-				if( aRow[x].find( sTerm ) )
+				if( re.execute( aRow[x] ) ) //aRow[x].find( sTerm ) )
 				{
 					sysCaret.iRow = y;
 					sysCaret.iCol = x;
