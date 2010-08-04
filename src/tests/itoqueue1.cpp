@@ -9,6 +9,7 @@
 #include "bu/ito.h"
 #include "bu/itoqueue.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 class Reader : public Bu::Ito
 {
