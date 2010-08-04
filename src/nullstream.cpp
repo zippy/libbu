@@ -1,6 +1,8 @@
 #include "bu/nullstream.h"
 
-Bu::NullStream::NullStream()
+Bu::NullStream::NullStream() :
+	sRead( 0 ),
+	sWrote( 0 )
 {
 }
 
@@ -8,24 +10,96 @@ Bu::NullStream::~NullStream()
 {
 }
 
-void Bu::NullStream::close();
-size_t Bu::NullStream::read( void *pBuf, size_t nBytes );
-Bu::FString Bu::NullStream::readLine();
-size_t Bu::NullStream::write( const void *pBuf, size_t nBytes );
-long Bu::NullStream::tell();
-void Bu::NullStream::seek( long offset );
-void Bu::NullStream::setPos( long pos );
-void Bu::NullStream::setPosEnd( long pos );
-bool Bu::NullStream::isEos();
-bool Bu::NullStream::isOpen();
-void Bu::NullStream::flush();
-bool Bu::NullStream::canRead();
-bool Bu::NullStream::canWrite();
-bool Bu::NullStream::isReadable();
-bool Bu::NullStream::isWritable();
-bool Bu::NullStream::isSeekable();
-bool Bu::NullStream::isBlocking();
-void Bu::NullStream::setBlocking( bool bBlocking=true );
-void Bu::NullStream::setSize( long iSize );
+void Bu::NullStream::close()
+{
+	sRead = sWrote = 0;
+}
 
+size_t Bu::NullStream::read( void *pBuf, size_t nBytes )
+{
+	memset( pBuf, 0, nBytes );
+	sRead += nBytes;
+	return nBytes;
+}
+
+Bu::FString Bu::NullStream::readLine()
+{
+	sRead++;
+	return Bu::FString("\0", 1 );
+}
+
+size_t Bu::NullStream::write( const void *, size_t nBytes )
+{
+	sWrote += nBytes;
+	return nBytes;
+}
+
+long Bu::NullStream::tell()
+{
+	return sRead + sWrote;
+}
+
+void Bu::NullStream::seek( long )
+{
+}
+
+void Bu::NullStream::setPos( long )
+{
+}
+
+void Bu::NullStream::setPosEnd( long )
+{
+}
+
+bool Bu::NullStream::isEos()
+{
+	return false;
+}
+
+bool Bu::NullStream::isOpen()
+{
+	return true;
+}
+
+void Bu::NullStream::flush()
+{
+}
+
+bool Bu::NullStream::canRead()
+{
+	return true;
+}
+
+bool Bu::NullStream::canWrite()
+{
+	return true;
+}
+
+bool Bu::NullStream::isReadable()
+{
+	return true;
+}
+
+bool Bu::NullStream::isWritable()
+{
+	return true;
+}
+
+bool Bu::NullStream::isSeekable()
+{
+	return false;
+}
+
+bool Bu::NullStream::isBlocking()
+{
+	return true;
+}
+
+void Bu::NullStream::setBlocking( bool )
+{
+}
+
+void Bu::NullStream::setSize( long )
+{
+}
 
