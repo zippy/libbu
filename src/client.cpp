@@ -125,62 +125,62 @@ bool Bu::Client::isOpen()
 	return pTopStream->isOpen();
 }
 
-void Bu::Client::write( const Bu::FString &sData )
+size_t Bu::Client::write( const Bu::FString &sData )
 {
-	qbWrite.write( sData.getStr(), sData.getSize() );
+	return qbWrite.write( sData.getStr(), sData.getSize() );
 }
 
-void Bu::Client::write( const void *pData, int nBytes )
+size_t Bu::Client::write( const void *pData, size_t nBytes )
 {
-	qbWrite.write( pData, nBytes );
+	return qbWrite.write( pData, nBytes );
 }
 
-void Bu::Client::write( int8_t nData )
+size_t Bu::Client::write( int8_t nData )
 {
- 	qbWrite.write( (const char *)&nData, sizeof(nData) );
+	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-void Bu::Client::write( int16_t nData )
+size_t Bu::Client::write( int16_t nData )
 {
-	qbWrite.write( (const char *)&nData, sizeof(nData) );
+	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-void Bu::Client::write( int32_t nData )
+size_t Bu::Client::write( int32_t nData )
 {
-	qbWrite.write( (const char *)&nData, sizeof(nData) );
+	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-void Bu::Client::write( int64_t nData )
+size_t Bu::Client::write( int64_t nData )
 {
-	qbWrite.write( (const char *)&nData, sizeof(nData) );
+	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-void Bu::Client::write( uint8_t nData )
+size_t Bu::Client::write( uint8_t nData )
 {
-	qbWrite.write( (const char *)&nData, sizeof(nData) );
+	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-void Bu::Client::write( uint16_t nData )
+size_t Bu::Client::write( uint16_t nData )
 {
-	qbWrite.write( (const char *)&nData, sizeof(nData) );
+	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-void Bu::Client::write( uint32_t nData )
+size_t Bu::Client::write( uint32_t nData )
 {
-	qbWrite.write( (const char *)&nData, sizeof(nData) );
+	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-void Bu::Client::write( uint64_t nData )
+size_t Bu::Client::write( uint64_t nData )
 {
-	qbWrite.write( (const char *)&nData, sizeof(nData) );
+	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-int Bu::Client::read( void *pData, int nBytes )
+size_t Bu::Client::read( void *pData, size_t nBytes )
 {
 	return qbRead.read( pData, nBytes );
 }
 
-int Bu::Client::peek( void *pData, int nBytes, int nOffset )
+size_t Bu::Client::peek( void *pData, int nBytes, int nOffset )
 {
 	return qbRead.peek( pData, nBytes, nOffset );
 }
@@ -235,5 +235,68 @@ void Bu::Client::tick()
 {
 	if( pProto )
 		pProto->onTick( this );
+}
+
+long Bu::Client::tell()
+{
+}
+
+void Bu::Client::seek( long offset )
+{
+}
+
+void Bu::Client::setPos( long pos )
+{
+}
+
+void Bu::Client::setPosEnd( long pos )
+{
+}
+
+bool Bu::Client::isEos()
+{
+	return true;
+}
+
+void Bu::Client::flush()
+{
+}
+
+bool Bu::Client::canRead()
+{
+	return qbRead.getSize() > 0;
+}
+
+bool Bu::Client::canWrite()
+{
+	return true;
+}
+
+bool Bu::Client::isReadable()
+{
+	return true;
+}
+
+bool Bu::Client::isWritable()
+{
+	return true;
+}
+
+bool Bu::Client::isSeekable()
+{
+	return false;
+}
+
+bool Bu::Client::isBlocking()
+{
+	return false;
+}
+
+void Bu::Client::setBlocking( bool bBlocking )
+{
+}
+
+void Bu::Client::setSize( long iSize )
+{
 }
 

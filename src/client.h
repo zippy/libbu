@@ -23,7 +23,7 @@ namespace Bu
 	/**
 	 *@ingroup Serving
 	 */
-	class Client
+	class Client : public Bu::Stream
 	{
 	public:
 		Client( Bu::Socket *pSocket, Bu::ClientLinkFactory *pfLink );
@@ -34,18 +34,18 @@ namespace Bu
 
 		//Bu::FString &getInput();
 		//Bu::FString &getOutput();
-		void write( const Bu::FString &sData );
-		void write( const void *pData, int nBytes );
-		void write( int8_t nData );
-		void write( int16_t nData );
-		void write( int32_t nData );
-		void write( int64_t nData );
-		void write( uint8_t nData );
-		void write( uint16_t nData );
-		void write( uint32_t nData );
-		void write( uint64_t nData );
-		int read( void *pData, int nBytes );
-		int peek( void *pData, int nBytes, int nOffset=0 );
+		size_t write( const Bu::FString &sData );
+		size_t write( const void *pData, size_t nBytes );
+		size_t write( int8_t nData );
+		size_t write( int16_t nData );
+		size_t write( int32_t nData );
+		size_t write( int64_t nData );
+		size_t write( uint8_t nData );
+		size_t write( uint16_t nData );
+		size_t write( uint32_t nData );
+		size_t write( uint64_t nData );
+		size_t read( void *pData, size_t nBytes );
+		size_t peek( void *pData, int nBytes, int nOffset=0 );
 		void seek( int nBytes );
 		long getInputSize();
 		long getOutputSize();
@@ -93,6 +93,25 @@ namespace Bu
 			pTopStream = pFlt;
 			lFilts.prepend( pFlt );
 		}
+
+		/*
+		 * These are required to qualify as a stream, I dunno how many will
+		 * be implemented.
+		 */
+		virtual long tell();
+		virtual void seek( long offset );
+		virtual void setPos( long pos );
+		virtual void setPosEnd( long pos );
+		virtual bool isEos();
+		virtual void flush();
+		virtual bool canRead();
+		virtual bool canWrite();
+		virtual bool isReadable();
+		virtual bool isWritable();
+		virtual bool isSeekable();
+		virtual bool isBlocking();
+		virtual void setBlocking( bool bBlocking=true );
+		virtual void setSize( long iSize );
 
 	private:
 		typedef Bu::List<Bu::Stream *> FilterList;
