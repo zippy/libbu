@@ -97,7 +97,7 @@ target files("src/tests/*.cpp").replace("src/","").replace(".cpp","")
 
 // Some tests need extra libs and whatnot, that goes here.
 
-target "tests/bzip2"
+target ["tests/bzip2", "tests/streamstack"]
 {
 	LDFLAGS += "-lbz2";
 }
