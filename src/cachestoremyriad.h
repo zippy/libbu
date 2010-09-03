@@ -106,6 +106,8 @@ namespace Bu
 			MyriadStream ns = mStore.openStream( 1 );
 			Bu::Archive ar( ns, Bu::Archive::save );
 			ar << hId;
+			ns.setSize( ns.tell() );
+			mStore.sync();
 		}
 
 		virtual void sync( obtype *pSrc, const keytype &key )
