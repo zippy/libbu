@@ -46,7 +46,7 @@ namespace Bu
 		size_t write( uint64_t nData );
 		size_t read( void *pData, size_t nBytes );
 		size_t peek( void *pData, int nBytes, int nOffset=0 );
-		void seek( int nBytes );
+//		void seek( int nBytes );
 		long getInputSize();
 		long getOutputSize();
 

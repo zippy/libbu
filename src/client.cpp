@@ -185,11 +185,6 @@ size_t Bu::Client::peek( void *pData, int nBytes, int nOffset )
 	return qbRead.peek( pData, nBytes, nOffset );
 }
 
-void Bu::Client::seek( int nBytes )
-{
-	return qbRead.seek( nBytes );
-}
-
 long Bu::Client::getInputSize()
 {
 	return qbRead.getSize();
@@ -243,6 +238,7 @@ long Bu::Client::tell()
 
 void Bu::Client::seek( long offset )
 {
+	return qbRead.seek( offset );
 }
 
 void Bu::Client::setPos( long pos )
