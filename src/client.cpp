@@ -234,6 +234,7 @@ void Bu::Client::tick()
 
 long Bu::Client::tell()
 {
+	return 0;
 }
 
 void Bu::Client::seek( long offset )
@@ -241,12 +242,14 @@ void Bu::Client::seek( long offset )
 	return qbRead.seek( offset );
 }
 
-void Bu::Client::setPos( long pos )
+void Bu::Client::setPos( long )
 {
+	throw Bu::ExceptionBase();
 }
 
-void Bu::Client::setPosEnd( long pos )
+void Bu::Client::setPosEnd( long )
 {
+	throw Bu::ExceptionBase();
 }
 
 bool Bu::Client::isEos()
@@ -256,6 +259,7 @@ bool Bu::Client::isEos()
 
 void Bu::Client::flush()
 {
+	processOutput();
 }
 
 bool Bu::Client::canRead()
@@ -288,11 +292,13 @@ bool Bu::Client::isBlocking()
 	return false;
 }
 
-void Bu::Client::setBlocking( bool bBlocking )
+void Bu::Client::setBlocking( bool )
 {
+	throw Bu::ExceptionBase();
 }
 
-void Bu::Client::setSize( long iSize )
+void Bu::Client::setSize( long )
 {
+	throw Bu::ExceptionBase();
 }
 
