@@ -6,14 +6,17 @@
  */
 
 #include "bu/myriadstream.h"
-#include "bu/sio.h"
-
-using Bu::sio;
-using Bu::Fmt;
 
 #include <string.h>
 
 // #define MYRIAD_STREAM_DEBUG	1
+
+#ifdef MYRIAD_STREAM_DEBUG
+#include "bu/sio.h"
+
+using Bu::sio;
+using Bu::Fmt;
+#endif
 
 Bu::MyriadStream::MyriadStream( Bu::Myriad &rMyriad,
 		Bu::Myriad::Stream *pStream ) :
@@ -203,6 +206,7 @@ size_t Bu::MyriadStream::write( const void *pBuf, size_t nBytes )
 				);
 			iPos += iAmnt;
 			pStream->iSize += iAmnt;
+			rMyriad.headerChanged();
 			pBuf = &((char *)pBuf)[iAmnt];
 			iLeft -= iAmnt;
 		}

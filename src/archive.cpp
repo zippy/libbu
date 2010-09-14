@@ -9,6 +9,8 @@
 #include "bu/stream.h"
 #include "bu/archival.h"
 
+#include "bu/sio.h"
+
 Bu::Archive::Archive( Stream &rStream, bool bLoading ) :
 	bLoading( bLoading ),
 	rStream( rStream ),
@@ -24,8 +26,13 @@ void Bu::Archive::write( const void *pData, int32_t nSize )
 {
 	if( nSize == 0 || pData == NULL )
 		return;
-	
+
+//	Bu::sio << "Writing starting at pos: " << rStream.tell() << " - "
+//		<< Bu::sio.flush;
+
 	rStream.write( (const char *)pData, nSize );
+//
+//	Bu::sio << rStream.tell() << " (" << nSize << "b)" << Bu::sio.nl;
 }
 
 void Bu::Archive::read( void *pData, int32_t nSize )

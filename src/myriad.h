@@ -198,6 +198,8 @@ namespace Bu
 		int streamAddBlock( Stream *pStream );
 		void setStreamSize( Stream *pStream, long iSize );
 
+		void headerChanged();
+
 	private:
 		Bu::Stream &sStore;
 		int iBlockSize;

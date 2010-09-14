@@ -593,6 +593,11 @@ void Bu::Myriad::setStreamSize( Stream *pStream, long iSize )
 	}
 }
 
+void Bu::Myriad::headerChanged()
+{
+	bHeaderChanged = true;
+}
+
 bool Bu::Myriad::isMyriad( Bu::Stream &sStore )
 {
 	sStore.setPos( 0 );
