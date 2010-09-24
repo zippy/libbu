@@ -21,7 +21,7 @@ namespace Bu
 		bool hasStream();
 		void setStream( Bu::Stream *pStream );
 
-		void clearStack();
+		void clear();
 		void popFilter();
 		Bu::Stream *getTop();
 

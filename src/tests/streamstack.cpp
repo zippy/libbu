@@ -74,7 +74,7 @@ int main()
 
 	ds.write();
 
-	ss.clearStack();
+	ss.clear();
 
 	ss.setStream( new Bu::File("Hello.test", Bu::File::Read ) );
 

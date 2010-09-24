@@ -11,7 +11,7 @@ Bu::StreamStack::StreamStack( Bu::Stream *pStream )
 
 Bu::StreamStack::~StreamStack()
 {
-	clearStack();
+	clear();
 }
 
 bool Bu::StreamStack::isEmpty()
@@ -32,7 +32,7 @@ void Bu::StreamStack::setStream( Bu::Stream *pStream )
 	lFilts.prepend( pStream );
 }
 
-void Bu::StreamStack::clearStack()
+void Bu::StreamStack::clear()
 {
 	for( FilterList::iterator i = lFilts.begin(); i; i++ )
 	{
