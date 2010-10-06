@@ -41,11 +41,14 @@ void job3( Bu::MiniCron::Job &job )
 
 int main()
 {
-
-	mCron.addJob( slot( &job0 ), MiniCron::TimerInterval( time(NULL)+3, 5 ) );
-	mCron.addJob( slot( &job1 ), MiniCron::TimerInterval( time(NULL)+10, 8 ) );
-	mCron.addJob( slot( &job2 ), MiniCron::TimerBasic("weekly wed 17") );
-	mCron.addJob( slot( &job3 ), MiniCron::TimerInterval( time(NULL)+1, 2 ) );
+	mCron.addJob(
+		"job0", slot( &job0 ), MiniCron::TimerInterval( time(NULL)+3, 5 ) );
+	mCron.addJob(
+		"job1", slot( &job1 ), MiniCron::TimerInterval( time(NULL)+10, 8 ) );
+	mCron.addJob(
+		"job2", slot( &job2 ), MiniCron::TimerBasic("weekly wed 17") );
+	mCron.addJob(
+		"job3", slot( &job3 ), MiniCron::TimerInterval( time(NULL)+1, 2 ) );
 
 	sio << time( NULL ) << ": Program started." << sio.nl;
 

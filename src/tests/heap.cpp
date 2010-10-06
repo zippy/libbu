@@ -38,14 +38,19 @@ typedef struct num
 	}
 } num;
 
-void printHeap( Bu::Heap<Bu::FString> &/*h*/, int j )
+void printHeap( Bu::Heap<Bu::FString> &h, int j )
 {
-	return;
+//	return;
 	Bu::FString sFName;
 	sFName.format("graph-step-%02d.dot", j );
 	Bu::File fOut( sFName, Bu::File::WriteNew );
 	Bu::Formatter f( fOut );
-//	h.print( f );
+	f << "Graph step: " << j << ", total size: " << h.getSize() << f.nl;
+	for( Bu::Heap<Bu::FString>::iterator i = h.begin(); i; i++ )
+	{
+		f << *i << f.nl;
+	}
+	f << f.nl;
 }
 
 int main()

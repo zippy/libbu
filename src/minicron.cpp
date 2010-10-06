@@ -35,6 +35,18 @@ time_t Bu::MiniCron::getNextRun()
 	return -1;
 }
 
+time_t Bu::MiniCron::getNextRun( Bu::MiniCron::JobId jid )
+{
+	for( JobHeap::iterator i = hJobs.begin(); i; i++ )
+	{
+		if( (*i)->getId() == jid )
+		{
+			return (*i)->getNextRunTime();
+		}
+	}
+	return -1;
+}
+
 void Bu::MiniCron::poll()
 {
 	time_t tNow = time( NULL );
@@ -61,11 +73,11 @@ void Bu::MiniCron::poll()
 	}
 }
 
-Bu::MiniCron::JobId Bu::MiniCron::addJob( Bu::MiniCron::CronSignal sigJob,
-		const Bu::MiniCron::Timer &t )
+Bu::MiniCron::JobId Bu::MiniCron::addJob( const Bu::FString &sName,
+		Bu::MiniCron::CronSignal sigJob, const Bu::MiniCron::Timer &t )
 {
 	JobId jid = jidNext++;
-	Job *pJob = new Job( jid );
+	Job *pJob = new Job( sName, jid );
 	pJob->sigJob = sigJob;
 	pJob->pTimer = t.clone();
 	pJob->tNextRun = pJob->pTimer->nextTime();
@@ -74,11 +86,11 @@ Bu::MiniCron::JobId Bu::MiniCron::addJob( Bu::MiniCron::CronSignal sigJob,
 	return jid;
 }
 
-Bu::MiniCron::JobId Bu::MiniCron::addJobOnce( Bu::MiniCron::CronSignal sigJob,
-		const Bu::MiniCron::Timer &t )
+Bu::MiniCron::JobId Bu::MiniCron::addJobOnce( const Bu::FString &sName,
+		Bu::MiniCron::CronSignal sigJob, const Bu::MiniCron::Timer &t )
 {
 	JobId jid = jidNext++;
-	Job *pJob = new Job( jid, false );
+	Job *pJob = new Job( sName, jid, false );
 	pJob->sigJob = sigJob;
 	pJob->pTimer = t.clone();
 	pJob->tNextRun = pJob->pTimer->nextTime();
@@ -107,7 +119,21 @@ void Bu::MiniCron::removeJob( JobId jid )
 	}
 }
 
-Bu::MiniCron::Job::Job( JobId jid, bool bRepeat ) :
+Bu::MiniCron::JobInfoList Bu::MiniCron::getJobInfo()
+{
+	JobInfoList lRet;
+	for( JobHeap::iterator i = hJobs.begin(); i; i++ )
+	{
+		lRet.append(
+			JobInfo( (*i)->getName(), (*i)->getId(), (*i)->getNextRun() )
+			);
+	}
+	lRet.sort();
+	return lRet;
+}
+
+Bu::MiniCron::Job::Job( const Bu::FString &sName, JobId jid, bool bRepeat ) :
+	sName( sName ),
 	pTimer( NULL ),
 	bContinue( bRepeat ),
 	jid( jid ),
@@ -129,7 +155,7 @@ void Bu::MiniCron::Job::run()
 	sigJob( *this );
 }
 
-time_t Bu::MiniCron::Job::getNextRun()
+time_t Bu::MiniCron::Job::getNextRun() const
 {
 	return tNextRun;
 }
@@ -156,19 +182,46 @@ void Bu::MiniCron::Job::resume()
 	bContinue = true;
 }
 
-Bu::MiniCron::JobId Bu::MiniCron::Job::getId()
+Bu::MiniCron::JobId Bu::MiniCron::Job::getId() const
 {
 	return jid;
 }
 
-time_t Bu::MiniCron::Job::getTimeCreated()
+time_t Bu::MiniCron::Job::getTimeCreated() const
 {
 	return tAdded;
 }
 
-int Bu::MiniCron::Job::getRunCount()
+int Bu::MiniCron::Job::getRunCount() const
 {
 	return iRunCount;
+}
+
+time_t Bu::MiniCron::Job::getNextRunTime() const
+{
+	return tNextRun;
+}
+
+Bu::FString Bu::MiniCron::Job::getName() const
+{
+	return sName;
+}
+
+Bu::MiniCron::JobInfo::JobInfo( const Bu::FString &sName, JobId jid,
+		time_t tNext ) :
+	sName( sName ),
+	jid( jid ),
+	tNext( tNext )
+{
+}
+
+Bu::MiniCron::JobInfo::~JobInfo()
+{
+}
+
+bool Bu::MiniCron::JobInfo::operator<( const JobInfo &rhs ) const
+{
+	return jid < rhs.jid;
 }
 
 Bu::MiniCron::Timer::Timer()

@@ -66,6 +66,12 @@ namespace Bu
 		 *@returns The timestamp that the next job will execute at.
 		 */
 		virtual time_t getNextRun();
+		
+		/**
+		 * Tells you the time the job matching jid will run next.
+		 *@returns The timestamp that the job jid will next run.
+		 */
+		virtual time_t getNextRun( JobId jid );
 
 		/**
 		 * Call this regularly to execute all jobs that should be executed.
@@ -83,7 +89,8 @@ namespace Bu
 		 * JobId which can be used at a later time to control the execution of
 		 * the job.
 		 */
-		virtual JobId addJob( CronSignal sigJob, const Timer &t );
+		virtual JobId addJob( const Bu::FString &sName, CronSignal sigJob,
+				const Timer &t );
 
 		/**
 		 * Add a job for one time scheduling.  Pass in a slot to signal, and a
@@ -91,7 +98,8 @@ namespace Bu
 		 * function returns a JobId which can be used at a later time to control
 		 * the execution of the job.
 		 */
-		virtual JobId addJobOnce( CronSignal sigJob, const Timer &t );
+		virtual JobId addJobOnce( const Bu::FString &sName, CronSignal sigJob,
+				const Timer &t );
 
 		/**
 		 * Remove a job, preventing all future runs of the job.  If there is no
@@ -101,6 +109,22 @@ namespace Bu
 		 * a O(N*log(N)).
 		 */
 		virtual void removeJob( JobId jid );
+
+		class JobInfo
+		{
+		public:
+			JobInfo( const Bu::FString &sName, JobId jid, time_t tNext );
+			virtual ~JobInfo();
+			
+			bool operator<( const JobInfo &rhs ) const;
+
+			Bu::FString sName;
+			JobId jid;
+			time_t tNext;
+		};
+		typedef Bu::List<JobInfo> JobInfoList;
+
+		JobInfoList getJobInfo();
 
 		/**
 		 * The baseclass for timer/schedulers for MiniCron jobs.  Classes that
@@ -201,7 +225,7 @@ namespace Bu
 		{
 			friend class Bu::MiniCron;
 		private:
-			Job( JobId jid, bool bRepeat=true );
+			Job( const Bu::FString &sName, JobId jid, bool bRepeat=true );
 			virtual ~Job();
 
 		public:
@@ -215,7 +239,7 @@ namespace Bu
 			/**
 			 * Get the time this job will next run.
 			 */
-			time_t getNextRun();
+			time_t getNextRun() const;
 
 			/**
 			 * Compute the time this job will next run.
@@ -243,20 +267,33 @@ namespace Bu
 			/**
 			 * Get the unique ID of this job.
 			 */
-			JobId getId();
+			JobId getId() const;
 
 			/**
 			 * Get the timestamp this job was created.
 			 */
-			time_t getTimeCreated();
+			time_t getTimeCreated() const;
 
 			/**
 			 * Get the current run count of this job, how many times it has been
 			 * executed.  This is incremented before the slot is signaled.
 			 */
-			int getRunCount();
+			int getRunCount() const;
+
+			/**
+			 * Get the next time that this job will be run.  Certain timers may
+			 * have the ability to delay job executions, so this is the earliest
+			 * time that the job may run.
+			 */
+			time_t getNextRunTime() const;
+
+			/**
+			 * Gets the name that was set when the job was created.
+			 */
+			Bu::FString getName() const;
 
 		private:
+			Bu::FString sName;
 			CronSignal sigJob;
 			time_t tNextRun;
 			Timer *pTimer;

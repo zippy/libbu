@@ -18,6 +18,25 @@ namespace Bu
 {
 	subExceptionDecl( HeapException );
 
+	/**
+	 * A priority queue that allows for an unlimited number of priorities.  All
+	 * objects enqueued must support less-than-comparison.  Then every time an
+	 * item is dequeued it is always the least item in the heap.  The heap
+	 * operates using a binary tree for storage, which allows most operations
+	 * to be very fast.  Enqueueing and dequeueing are both O(log(N)) operatoins
+	 * whereas peeking is constant time.
+	 *
+	 * This heap implementation allows iterating, however please note that any
+	 * enqueue or dequeue operation will invalidate the iterator and make it
+	 * unusable (if it still works, you shouldn't trust the results).  Also,
+	 * the items are not stored in memory in order, they are optomized into a
+	 * tree.  This means that the items will be in effectively random order
+	 * while iterating through them, and the order cannot be trusted.  Also,
+	 * modifying an item in the heap will not cause that item to be re-sorted.
+	 * If you want to change the position of an item in the heap you will have
+	 * to dequeue every item before it, dequeue that item, change it, and
+	 * re-enqueue all of the items removed.
+	 */
 	template<typename item, typename cmpfunc=__basicLTCmp<item>, typename itemalloc=std::allocator<item> >
 	class Heap : public Queue<item>
 	{
@@ -165,29 +184,306 @@ namespace Bu
 			return iFill;
 		}
 
-		/*
-		void print( class Formatter &f )
+		class iterator
 		{
-			f << "graph G {" << "\n";
-			for( int j = 0; j < iFill; j++ )
+			friend class const_iterator;
+			friend class Heap<item, cmpfunc, itemalloc>;
+		private:
+			Heap<item, cmpfunc, itemalloc> *pHeap;
+			int iIndex;
+
+			iterator( Heap<item, cmpfunc, itemalloc> *pHeap, int iIndex ) :
+				pHeap( pHeap ), iIndex( iIndex )
 			{
-				if( j*2+1 < iFill )
-					f << "    " << j << " -- " << j*2+1 << ";" << "\n";
-				if( j*2+2 < iFill )
-					f << "    " << j << " -- " << j*2+2 << ";" << "\n";
 			}
-			for( int j = 0; j < iFill; j++ )
+
+			void checkValid()
 			{
-				f << "    " << j << " [label=\"" << aItem[j] << "\"];" << "\n";
+				if( pHeap == NULL )
+					throw Bu::ExceptionBase("Iterator not initialized.");
+				if( iIndex < 0 || iIndex >= pHeap->iFill )
+					throw Bu::ExceptionBase("Iterator out of bounds.");
 			}
-			f << "}" << "\n";
-		} */
+
+		public:
+			iterator() :
+				pHeap( NULL ),
+				iIndex( -1 )
+			{
+			}
+
+			iterator( const iterator &i ) :
+				pHeap( i.pHeap ),
+				iIndex( i.iIndex )
+			{
+			}
+
+			bool operator==( const iterator &oth ) const
+			{
+				return (oth.pHeap == pHeap) && (oth.iIndex == iIndex);
+			}
+
+			bool operator!=( const iterator &oth ) const
+			{
+				return (oth.pHeap != pHeap) || (oth.iIndex != iIndex);
+			}
+
+			item &operator*()
+			{
+				return pHeap->aItem[iIndex];
+			}
+
+			item *operator->()
+			{
+				return &(pHeap->aItem[iIndex]);
+			}
+
+			iterator &operator++()
+			{
+				checkValid();
+				iIndex++;
+				if( iIndex >= pHeap->iFill )
+					iIndex = -1;
+
+				return *this;
+			}
+
+			iterator &operator--()
+			{
+				checkValid();
+				iIndex--;
+
+				return *this;
+			}
+			
+			iterator &operator++( int )
+			{
+				checkValid();
+				iIndex++;
+				if( iIndex >= pHeap->iFill )
+					iIndex = -1;
+
+				return *this;
+			}
+
+			iterator &operator--( int )
+			{
+				checkValid();
+				iIndex--;
+
+				return *this;
+			}
+
+			iterator operator+( int iDelta )
+			{
+				checkValid();
+				iterator ret( *this );
+				ret.iIndex += iDelta;
+				if( ret.iIndex >= pHeap->iFill )
+					ret.iIndex = -1;
+				return ret;
+			}
+
+			iterator operator-( int iDelta )
+			{
+				checkValid();
+				iterator ret( *this );
+				ret.iIndex -= iDelta;
+				if( ret.iIndex < 0 )
+					ret.iIndex = -1;
+				return ret;
+			}
+
+			operator bool()
+			{
+				return iIndex != -1;
+			}
+
+			bool isValid()
+			{
+				return iIndex != -1;
+			}
+
+			iterator &operator=( const iterator &oth )
+			{
+				pHeap = oth.pHeap;
+				iIndex = oth.iIndex;
+			}
+		};
+		
+		class const_iterator
+		{
+			friend class Heap<item, cmpfunc, itemalloc>;
+		private:
+			Heap<item, cmpfunc, itemalloc> *pHeap;
+			int iIndex;
+
+			const_iterator( Heap<item, cmpfunc, itemalloc> *pHeap,
+					int iIndex ) :
+				pHeap( pHeap ), iIndex( iIndex )
+			{
+			}
+
+			void checkValid()
+			{
+				if( pHeap == NULL )
+					throw Bu::ExceptionBase("Iterator not initialized.");
+				if( iIndex < 0 || iIndex >= pHeap->iFill )
+					throw Bu::ExceptionBase("Iterator out of bounds.");
+			}
+
+		public:
+			const_iterator() :
+				pHeap( NULL ),
+				iIndex( -1 )
+			{
+			}
+			
+			const_iterator( const const_iterator &i ) :
+				pHeap( i.pHeap ),
+				iIndex( i.iIndex )
+			{
+			}
+			
+			const_iterator( const iterator &i ) :
+				pHeap( i.pHeap ),
+				iIndex( i.iIndex )
+			{
+			}
+
+			bool operator==( const const_iterator &oth ) const
+			{
+				return (oth.pHeap == pHeap) && (oth.iIndex == iIndex);
+			}
+
+			bool operator!=( const const_iterator &oth ) const
+			{
+				return (oth.pHeap != pHeap) || (oth.iIndex != iIndex);
+			}
+
+			const item &operator*()
+			{
+				return pHeap->aItem[iIndex];
+			}
+
+			const item *operator->()
+			{
+				return &(pHeap->aItem[iIndex]);
+			}
+
+			const_iterator &operator++()
+			{
+				checkValid();
+				iIndex++;
+				if( iIndex >= pHeap->iFill )
+					iIndex = -1;
+
+				return *this;
+			}
+
+			const_iterator &operator--()
+			{
+				checkValid();
+				iIndex--;
+
+				return *this;
+			}
+			
+			const_iterator &operator++( int )
+			{
+				checkValid();
+				iIndex++;
+				if( iIndex >= pHeap->iFill )
+					iIndex = -1;
+
+				return *this;
+			}
+
+			const_iterator &operator--( int )
+			{
+				checkValid();
+				iIndex--;
+
+				return *this;
+			}
+
+			const_iterator operator+( int iDelta )
+			{
+				checkValid();
+				const_iterator ret( *this );
+				ret.iIndex += iDelta;
+				if( ret.iIndex >= pHeap->iFill )
+					ret.iIndex = -1;
+				return ret;
+			}
+
+			const_iterator operator-( int iDelta )
+			{
+				checkValid();
+				const_iterator ret( *this );
+				ret.iIndex -= iDelta;
+				if( ret.iIndex < 0 )
+					ret.iIndex = -1;
+				return ret;
+			}
+
+			operator bool()
+			{
+				return iIndex != -1;
+			}
+
+			bool isValid()
+			{
+				return iIndex != -1;
+			}
+
+			const_iterator &operator=( const const_iterator &oth )
+			{
+				pHeap = oth.pHeap;
+				iIndex = oth.iIndex;
+			}
+
+			const_iterator &operator=( const iterator &oth )
+			{
+				pHeap = oth.pHeap;
+				iIndex = oth.iIndex;
+			}
+		};
+
+		iterator begin()
+		{
+			if( iFill == 0 )
+				return end();
+			return iterator( this, 0 );
+		}
+
+		const_iterator begin() const
+		{
+			if( iFill == 0 )
+				return end();
+			return const_iterator( this, 0 );
+		}
+
+		iterator end()
+		{
+			return iterator( this, -1 );
+		}
+
+		const_iterator end() const
+		{
+			return const_iterator( this, -1 );
+		}
+
 
 	private:
 		void upSize()
 		{
 			item *aNewItems = ia.allocate( iSize*2+1 );
-//			memcpy( aNewItems, aItem, sizeof(item)*iFill );
+			//
+			// We cannot use a memcopy here because we don't know what kind
+			// of datastructures are being used, we have to copy them one at
+			// a time.
+			//
 			for( int j = 0; j < iFill; j++ )
 			{
 				ia.construct( &aNewItems[j], aItem[j] );
