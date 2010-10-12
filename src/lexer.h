@@ -19,19 +19,21 @@ namespace Bu
 		Lexer();
 		virtual ~Lexer();
 
+		typedef int32_t TokenType;
+
 		class Token
 		{
 		public:
 			Token();
-			Token( int iToken );
+			Token( TokenType iToken );
 
 			template<class t>
-			Token( int iToken, const t &v ) :
+			Token( TokenType iToken, const t &v ) :
 				iToken( iToken ),
 				vExtra( v )
 			{
 			}
-			int iToken;
+			TokenType iToken;
 			Bu::Variant vExtra;
 		};
 

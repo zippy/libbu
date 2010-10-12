@@ -13,7 +13,7 @@ Bu::Lexer::Token::Token() :
 {
 }
 
-Bu::Lexer::Token::Token( int iToken ) :
+Bu::Lexer::Token::Token( Bu::Lexer::TokenType iToken ) :
 	iToken( iToken )
 {
 }

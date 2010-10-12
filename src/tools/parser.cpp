@@ -149,11 +149,90 @@ private:
 	QueueBuf qbIn;
 };
 
+void redAdd( Bu::Parser &p )
+{
+}
+
+void redPrint( Bu::Parser &p )
+{
+}
+
 int main( int argc, char *argv[] )
 {
 	File fIn( argv[1], File::Read );
 
 	Parser p;
+
+	{
+		Parser::NonTerminal nt;
+		int iSelf = p.addNonTerminal("expr");
+		nt.addProduction(
+			Parser::Production(
+				Parser::State(
+					Parser::State::typeTerminal,
+					tokPlus
+					)
+				).append(
+				Parser::State(
+					Parser::State::typeNonTerminal,
+					iSelf
+					)
+				).append(
+				Parser::State(
+					Parser::State::typeReduction,
+					p.addReduction("add")
+					)
+				)
+			);
+		nt.addProduction(
+			Parser::Production()
+			);
+		p.addNonTerminal( "expr", nt );
+	}
+	{
+		Parser::NonTerminal nt;
+		nt.addProduction(
+			Parser::Production(
+				Parser::State(
+					Parser::State::typeTerminalPush,
+					tokNumber
+					)
+				).append(
+				Parser::State(
+					Parser::State::typeNonTerminal,
+					p.getNonTerminalId("expr")
+					)
+				)
+			);
+		p.addNonTerminal( "expr'", nt );
+	}
+	{
+		Parser::NonTerminal nt;
+		nt.addProduction(
+			Parser::Production(
+				Parser::State(
+					Parser::State::typeNonTerminal,
+					p.getNonTerminalId("expr'")
+					)
+				).append(
+				Parser::State(
+					Parser::State::typeTerminal,
+					tokCompute
+					)
+				).append(
+				Parser::State(
+					Parser::State::typeReduction,
+					p.addReduction("print")
+					)
+				)
+			);
+		p.addNonTerminal("input", nt );
+	}
+
+	p.setRootNonTerminal("input");
+
+	p.setReduction("add", Bu::slot( &redAdd ) );
+	p.setReduction("print", Bu::slot( &redPrint ) );
 
 	p.pushLexer( new MathLexer( fIn ) );
 
