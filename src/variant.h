@@ -98,9 +98,15 @@ namespace Bu
 	public:
 		Variant();
 		Variant( const Variant &v );
+		template<class t>
+		Variant( const t &v ) :
+			pCore( new VariantType<t>() )
+		{
+			(*dynamic_cast<VariantType<t> *>(pCore)) = v;
+		}
 		virtual ~Variant();
 
-		bool isSet();
+		bool isSet() const;
 		Bu::FString toString() const;
 		const std::type_info &getType() const;
 

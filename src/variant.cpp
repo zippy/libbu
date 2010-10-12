@@ -43,7 +43,7 @@ Bu::Variant::~Variant()
 	}
 }
 
-bool Bu::Variant::isSet()
+bool Bu::Variant::isSet() const
 {
 	return pCore != NULL;
 }
