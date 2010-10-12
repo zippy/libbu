@@ -157,15 +157,44 @@ void redPrint( Bu::Parser &p )
 {
 }
 
+/* Basic grammer example:
+ *
+ * input: expr '='
+ *      ;
+ *
+ * expr: expr '+' expr
+ *     | '(' expr ')'
+ *     | NUMBER
+ *     ;
+ *
+ * The problem is, that we can't actually make something left hand recursive,
+ * so we break it into two exprs:
+ *
+ * expr': '(' expr ')'
+ *      | NUMBER
+ *      ;
+ *
+ * expr: expr' expr''
+ *     ;
+ *
+ * expr'': '+' expr
+ *       |
+ *       ;
+ *
+ * 5 + 5 + 5 =
+ */
+
 int main( int argc, char *argv[] )
 {
 	File fIn( argv[1], File::Read );
 
 	Parser p;
 
+	p.addNonTerminal("expr");
+	p.addNonTerminal("expr'");
+	p.addNonTerminal("expr''");
 	{
 		Parser::NonTerminal nt;
-		int iSelf = p.addNonTerminal("expr");
 		nt.addProduction(
 			Parser::Production(
 				Parser::State(
@@ -175,7 +204,7 @@ int main( int argc, char *argv[] )
 				).append(
 				Parser::State(
 					Parser::State::typeNonTerminal,
-					iSelf
+					p.getNonTerminalId("expr")
 					)
 				).append(
 				Parser::State(
@@ -185,9 +214,11 @@ int main( int argc, char *argv[] )
 				)
 			);
 		nt.addProduction(
-			Parser::Production()
+			Parser::Production(
+				)
 			);
-		p.addNonTerminal( "expr", nt );
+		nt.setCanSkip();
+		p.setNonTerminal("expr''", nt );
 	}
 	{
 		Parser::NonTerminal nt;
@@ -197,14 +228,9 @@ int main( int argc, char *argv[] )
 					Parser::State::typeTerminalPush,
 					tokNumber
 					)
-				).append(
-				Parser::State(
-					Parser::State::typeNonTerminal,
-					p.getNonTerminalId("expr")
-					)
 				)
 			);
-		p.addNonTerminal( "expr'", nt );
+		p.setNonTerminal("expr'", nt );
 	}
 	{
 		Parser::NonTerminal nt;
@@ -213,6 +239,23 @@ int main( int argc, char *argv[] )
 				Parser::State(
 					Parser::State::typeNonTerminal,
 					p.getNonTerminalId("expr'")
+					)
+				).append(
+				Parser::State(
+					Parser::State::typeNonTerminal,
+					p.getNonTerminalId("expr''")
+					)
+				)
+			);
+		p.setNonTerminal("expr", nt );
+	}
+	{
+		Parser::NonTerminal nt;
+		nt.addProduction(
+			Parser::Production(
+				Parser::State(
+					Parser::State::typeNonTerminal,
+					p.getNonTerminalId("expr")
 					)
 				).append(
 				Parser::State(

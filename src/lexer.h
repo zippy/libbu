@@ -19,7 +19,7 @@ namespace Bu
 		Lexer();
 		virtual ~Lexer();
 
-		typedef int32_t TokenType;
+		typedef int TokenType;
 
 		class Token
 		{

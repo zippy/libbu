@@ -62,7 +62,7 @@ namespace Bu
 			State( Type eType, int iIndex );
 			virtual ~State();
 
-		private:
+		//private:
 			Type eType;
 			int iIndex;
 		};
@@ -76,10 +76,12 @@ namespace Bu
 			virtual ~NonTerminal();
 
 			void addProduction( Production p );
+			void setCanSkip();
 
-		private:
+//		private:
 			typedef Bu::List<Production> ProductionList;
 			ProductionList lProduction;
+			bool bCanSkip;
 		};
 
 		int addNonTerminal( const Bu::FString &sName, NonTerminal &nt );
@@ -91,6 +93,10 @@ namespace Bu
 		int addReduction( const Bu::FString &sName );
 		void setReduction( const Bu::FString &sName, const Reduction &r );
 		int getReductionId( const Bu::FString &sName );
+
+	private:
+		bool selectProduction( int iNt, Lexer::Token *ptCur );
+		void advanceState();
 
 	private:
 		typedef Bu::List<Lexer *> LexerStack;
@@ -109,6 +115,9 @@ namespace Bu
 		NameIndexHash hNonTerminalName;
 		int iRootNonTerminal;
 	};
+Bu::Formatter &operator<<( Bu::Formatter &f, Bu::Parser::State::Type t );
+Bu::Formatter &operator<<( Bu::Formatter &f, const Bu::Parser::State &s );
 };
+
 
 #endif
