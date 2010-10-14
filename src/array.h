@@ -18,9 +18,17 @@ namespace Bu
 	subExceptionDecl( ArrayException )
 
 	template<typename value, int inc, typename valuealloc>
+	class Array;
+
+	template<typename value, int inc, typename valuealloc>
 	class ArrayCore
 	{
-	public:
+	friend class Array<value, inc, valuealloc>;
+	friend class SharedCore<
+		Array<value, inc, valuealloc>,
+		ArrayCore<value, inc, valuealloc>
+		>;
+	private:		
 		ArrayCore() :
 			pData( NULL ),
 			iSize( 0 ),
@@ -110,16 +118,20 @@ namespace Bu
 	 *@ingroup Containers
 	 */
 	template<typename value, int inc=10, typename valuealloc=std::allocator<value> >
-	class Array : public SharedCore<ArrayCore<value, inc, valuealloc> >
+	class Array : public SharedCore<
+				  Array<value, inc, valuealloc>,
+				  ArrayCore<value, inc, valuealloc>
+				  >
 	{
 	private:
 		typedef class Array<value, inc, valuealloc> MyType;
 		typedef class ArrayCore<value, inc, valuealloc> Core;
 
 	protected:
-		using SharedCore< Core >::core;
-		using SharedCore< Core >::_hardCopy;
-		using SharedCore< Core >::_allocateCore;
+		using SharedCore<MyType, Core>::core;
+		using SharedCore<MyType, Core>::_hardCopy;
+		using SharedCore<MyType, Core>::_resetCore;
+		using SharedCore<MyType, Core>::_allocateCore;
 
 	public:
 		struct const_iterator;
@@ -130,7 +142,7 @@ namespace Bu
 		}
 
 		Array( const MyType &src ) :
-			SharedCore< Core >( src )
+			SharedCore<MyType, Core >( src )
 		{
 		}
 		
@@ -168,8 +180,7 @@ namespace Bu
 		 */
 		void clear()
 		{
-			_hardCopy();
-			core->clear();
+			_resetCore();
 		}
 
 		MyType &append( const value &rVal )

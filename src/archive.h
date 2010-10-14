@@ -83,8 +83,8 @@ namespace Bu
 		virtual ~Archive();
 		virtual void close();
 
-		virtual void write(const void *, int32_t);
-		virtual void read(void *, int32_t);
+		virtual void write( const void *pData, size_t iSize );
+		virtual void read( void *pData, size_t iSize );
 		
 		/**
 		 * For storage, get an ID for the pointer to the object you're going to

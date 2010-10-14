@@ -22,20 +22,15 @@ Bu::Archive::~Archive()
 {
 }
 
-void Bu::Archive::write( const void *pData, int32_t nSize )
+void Bu::Archive::write( const void *pData, size_t nSize )
 {
 	if( nSize == 0 || pData == NULL )
 		return;
 
-//	Bu::sio << "Writing starting at pos: " << rStream.tell() << " - "
-//		<< Bu::sio.flush;
-
 	rStream.write( (const char *)pData, nSize );
-//
-//	Bu::sio << rStream.tell() << " (" << nSize << "b)" << Bu::sio.nl;
 }
 
-void Bu::Archive::read( void *pData, int32_t nSize )
+void Bu::Archive::read( void *pData, size_t nSize )
 {
 	if( nSize == 0 || pData == NULL )
 		return;

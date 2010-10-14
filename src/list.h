@@ -24,10 +24,18 @@ namespace Bu
 		ListLink *pPrev;
 	};
 
-	template<typename value, typename valuealloc,
-		typename linkalloc>
+	template<typename value, typename valuealloc, typename linkalloc>
+	class List;
+
+	template<typename value, typename valuealloc, typename linkalloc>
 	struct ListCore
 	{
+	friend class List<value, valuealloc, linkalloc>;
+	friend class SharedCore<
+		List<value, valuealloc, linkalloc>,
+		ListCore<value, valuealloc, linkalloc>
+		>;
+	private:
 		typedef struct ListLink<value> Link;
 		ListCore() :
 			pFirst( NULL ),
@@ -193,8 +201,10 @@ namespace Bu
 	 */
 	template<typename value, typename valuealloc=std::allocator<value>,
 		typename linkalloc=std::allocator<struct ListLink<value> > >
-	class List : public SharedCore< struct ListCore<value, valuealloc,
-		linkalloc> >
+	class List : public SharedCore<
+				 List<value, valuealloc, linkalloc>,
+				 ListCore<value, valuealloc, linkalloc>
+				 >
 	{
 	private:
 		typedef struct ListLink<value> Link;
@@ -202,9 +212,9 @@ namespace Bu
 		typedef struct ListCore<value, valuealloc, linkalloc> Core;
 
 	protected:
-		using SharedCore< Core >::core;
-		using SharedCore< Core >::_hardCopy;
-		using SharedCore< Core >::_allocateCore;
+		using SharedCore<MyType, Core>::core;
+		using SharedCore<MyType, Core>::_hardCopy;
+		using SharedCore<MyType, Core>::_allocateCore;
 
 	public:
 		struct const_iterator;
@@ -215,7 +225,7 @@ namespace Bu
 		}
 
 		List( const MyType &src ) :
-			SharedCore< Core >( src )
+			SharedCore<MyType, Core >( src )
 		{
 		}
 		

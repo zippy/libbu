@@ -9,6 +9,7 @@
 #define BU_ARCHIVE_BASE_H
 
 #include <stdint.h>
+#include <unistd.h>
 
 namespace Bu
 {
@@ -19,8 +20,8 @@ namespace Bu
 		virtual ~ArchiveBase();
 
 		virtual void close()=0;
-		virtual void write( const void *pData, int32_t iLength )=0;
-		virtual void read( void *pData, int32_t iLength )=0;
+		virtual void write( const void *pData, size_t iLength )=0;
+		virtual void read( void *pData, size_t iLength )=0;
 		virtual bool isLoading()=0;
 	};
 

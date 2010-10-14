@@ -34,10 +34,19 @@ namespace Bu
 	};
 
 #define cpy( dest, src, size ) Bu::memcpy( dest, src, size*sizeof(chr) )
+	
+	template< typename chr, int nMinSize, typename chralloc,
+		typename chunkalloc> class FBasicString;
 
 	template<typename chr, int nMinSize, typename chralloc, typename chunkalloc>
 	struct FStringCore
 	{
+	friend class FBasicString<chr, nMinSize, chralloc, chunkalloc>;
+	friend class SharedCore<
+		FBasicString<chr, nMinSize, chralloc, chunkalloc>,
+		FStringCore<chr, nMinSize, chralloc, chunkalloc>
+		>;
+	private:
 		typedef struct FStringCore<chr, nMinSize, chralloc, chunkalloc> MyType;
 		typedef struct FStringChunk<chr> Chunk;
 		FStringCore() :
@@ -174,16 +183,20 @@ namespace Bu
 	 *@param chralloc (typename) Memory Allocator for chr
 	 *@param chunkalloc (typename) Memory Allocator for chr chunks
 	 */
-	template< typename chr, int nMinSize=256, typename chralloc=std::allocator<chr>, typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
-	class FBasicString : public SharedCore< FStringCore<chr, nMinSize, chralloc, chunkalloc> >
+	template< typename chr, int nMinSize=256,
+		typename chralloc=std::allocator<chr>,
+		typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
+	class FBasicString : public SharedCore<
+						 FBasicString<chr, nMinSize, chralloc, chunkalloc>,
+						 FStringCore<chr, nMinSize, chralloc, chunkalloc> >
 	{
 	protected:
 		typedef struct FStringChunk<chr> Chunk;
 		typedef struct FBasicString<chr, nMinSize, chralloc, chunkalloc> MyType;
 		typedef struct FStringCore<chr, nMinSize, chralloc, chunkalloc> Core;
 
-		using SharedCore< Core >::core;
-		using SharedCore< Core >::_hardCopy;
+		using SharedCore<MyType, Core >::core;
+		using SharedCore<MyType, Core >::_hardCopy;
 
 	public:
 		FBasicString()
@@ -201,7 +214,7 @@ namespace Bu
 		}
 
 		FBasicString( const MyType &rSrc ) :
-			SharedCore<Core>( rSrc )
+			SharedCore<MyType, Core>( rSrc )
 		{
 		}
 

@@ -15,10 +15,10 @@
 
 namespace Bu
 {
-	template<typename Core>
+	template<typename Shell, typename Core>
 	class SharedCore
 	{
-		typedef class SharedCore<Core> _SharedType;
+		typedef class SharedCore<Shell, Core> _SharedType;
 	public:
 		SharedCore() :
 			core( NULL ),
@@ -54,6 +54,18 @@ namespace Bu
 			return *iRefCount;
 		}
 
+		Shell clone() const
+		{
+			Shell s( dynamic_cast<const Shell &>(*this) );
+			s._hardCopy();
+			return s;
+		}
+
+		bool isCoreShared( const Shell &rOther ) const
+		{
+			return rOther.core == core;
+		}
+
 	protected:
 		Core *core;
 		void _hardCopy()
@@ -65,6 +77,20 @@ namespace Bu
 			Core *copy = _copyCore( core );
 			_deref();
 			core = copy;
+			iRefCount = new int( 1 );
+		}
+
+		/**
+		 * Reset core acts like a hard copy, except instead of providing a
+		 * standalone copy of the shared core, it provides a brand new core.
+		 *
+		 * Very useful in functions used to reset the state of an object.
+		 */
+		void _resetCore()
+		{
+			if( core )
+				_deref();
+			core = _allocateCore();
 			iRefCount = new int( 1 );
 		}
 
