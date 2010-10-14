@@ -26,9 +26,8 @@ void Bu::Parser::parse()
 {
 	int iCurNt = iRootNonTerminal;
 	Lexer::Token *ptCur = sLexer.peek()->nextToken();
-	//Lexer::Token *ptNext = sLexer.peek()->nextToken();
+	sio << "Token: " << sLexer.peek()->tokenToString( *ptCur ) << sio.nl;
 	selectProduction( iCurNt, ptCur );
-	sio << "Token: " << *ptCur << sio.nl;
 	
 	while( !sState.isEmpty() )
 	{
@@ -43,7 +42,7 @@ void Bu::Parser::parse()
 					advanceState();
 					delete ptCur;
 					ptCur = sLexer.peek()->nextToken();
-					sio << "Token: " << *ptCur << sio.nl;
+					sio << "Token: " << sLexer.peek()->tokenToString( *ptCur ) << sio.nl;
 				}
 				else
 				{
@@ -60,7 +59,7 @@ void Bu::Parser::parse()
 					sToken.push( ptCur );
 
 					ptCur = sLexer.peek()->nextToken();
-					sio << "Token: " << *ptCur << sio.nl;
+					sio << "Token: " << sLexer.peek()->tokenToString( *ptCur ) << sio.nl;
 				}
 				else
 				{
@@ -99,12 +98,15 @@ bool Bu::Parser::selectProduction( int iNt, Lexer::Token *ptCur )
 	{
 		if( (*i).isEmpty() )
 			continue;
+		sio << "-->(Attempting production " << iNt << ":" << j << ": "
+			<< (*i).first() << ")" << sio.nl;
 		if( (*i).first().eType == State::typeTerminal ||
 			(*i).first().eType == State::typeTerminalPush )
 		{
 			if( (*i).first().iIndex == ptCur->iToken )
 			{
 				sState.push( (*i).begin() );
+				sio.incIndent();
 				sio << "Pushing production " << j << " from nt " << iNt
 					<< sio.nl;
 				return true;
@@ -113,10 +115,12 @@ bool Bu::Parser::selectProduction( int iNt, Lexer::Token *ptCur )
 		else if( (*i).first().eType == State::typeNonTerminal )
 		{
 			sState.push( (*i).begin() );
+			sio.incIndent();
 			sio << "Pushing production " << j << " from nt " << iNt
 				<< " as test." << sio.nl;
 			if( !selectProduction( (*i).first().iIndex, ptCur ) )
 			{
+				sio.decIndent();
 				sState.pop();
 				sio << "Production " << j << " from nt " << iNt
 					<< " didn't work out." << sio.nl;
@@ -129,6 +133,7 @@ bool Bu::Parser::selectProduction( int iNt, Lexer::Token *ptCur )
 	}
 	if( nt.bCanSkip )
 		return true;
+	sio << "-->(Found nothing)" << sio.nl;
 	return false;
 }
 
@@ -140,6 +145,7 @@ void Bu::Parser::advanceState()
 	sState.peek()++;
 	if( !sState.peek() )
 	{
+		sio.decIndent();
 		sState.pop();
 		sio << "State advanced, End of production." << sio.nl;
 		return;

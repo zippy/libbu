@@ -29,9 +29,10 @@ namespace Bu
 
 			template<class t>
 			Token( TokenType iToken, const t &v ) :
-				iToken( iToken ),
-				vExtra( v )
+				iToken( iToken )//,
+//				vExtra( v )
 			{
+				vExtra = v;
 			}
 			TokenType iToken;
 			Bu::Variant vExtra;

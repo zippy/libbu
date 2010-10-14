@@ -31,7 +31,7 @@ namespace Bu
 			invalidStreamId,
 			protectedStream
 		};
-	subExceptionDeclEnd()
+	subExceptionDeclEnd();
 
 	/**
 	 * Myriad block-allocated stream multiplexing system.  This is a system for
@@ -132,6 +132,7 @@ namespace Bu
 
 		Bu::Array<int> getStreamIds();
 		int getStreamSize( int iId );
+		bool hasStream( int iId );
 
 		int getNumStreams();
 		int getBlockSize();

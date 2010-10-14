@@ -472,6 +472,18 @@ int Bu::Myriad::getStreamSize( int iId )
 	return findStream( iId )->iSize;
 }
 
+bool Bu::Myriad::hasStream( int iId )
+{
+	try
+	{
+		findStream( iId );
+		return true;
+	}catch(...)
+	{
+		return false;
+	}
+}
+
 Bu::MyriadStream Bu::Myriad::openStream( int iId )
 {
 	//sio << "Myriad:  Request to open stream: " << iId << sio.nl;
