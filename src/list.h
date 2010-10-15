@@ -16,6 +16,7 @@
 
 namespace Bu
 {
+	/** @cond DEVEL */
 	template<typename value>
 	struct ListLink
 	{
@@ -185,6 +186,7 @@ namespace Bu
 			}
 		}
 	};
+	/** @endcond */
 
 	/**
 	 * Linked list template container.  This class is similar to the stl list
@@ -197,14 +199,15 @@ namespace Bu
 	 *@param value (typename) The type of data to store in your list
 	 *@param valuealloc (typename) Memory Allocator for your value type
 	 *@param linkalloc (typename) Memory Allocator for the list links.
+	 *@extends SharedCore
 	 *@ingroup Containers
 	 */
 	template<typename value, typename valuealloc=std::allocator<value>,
 		typename linkalloc=std::allocator<struct ListLink<value> > >
-	class List : public SharedCore<
+	class List /** @cond */ : public SharedCore<
 				 List<value, valuealloc, linkalloc>,
 				 ListCore<value, valuealloc, linkalloc>
-				 >
+				 > /** @endcond */
 	{
 	private:
 		typedef struct ListLink<value> Link;
