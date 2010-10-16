@@ -6,8 +6,8 @@
  */
 
 #include "bu/ito.h"
-#include "bu/socket.h"
-#include "bu/serversocket.h"
+#include "bu/tcpsocket.h"
+#include "bu/tcpserversocket.h"
 #include <stdio.h>
 #include <unistd.h>
 
@@ -21,7 +21,7 @@ public:
 
 	virtual void run()
 	{
-		Bu::Socket c = s.accept( 45, 0 );
+		Bu::TcpSocket c = s.accept( 45, 0 );
 		printf("TstServer:  Accetped connection.\n"); fflush( stdout );
 		
 		sleep( 1 );
@@ -35,7 +35,7 @@ public:
 		c.close();
 	}
 
-	Bu::ServerSocket s;
+	Bu::TcpServerSocket s;
 };
 
 int main()
@@ -45,7 +45,7 @@ int main()
 	ts.start();
 
 	printf("main:  Connecting to server.\n"); fflush( stdout );
-	Bu::Socket s( "localhost", 55678 );
+	Bu::TcpSocket s( "localhost", 55678 );
 
 	printf("main:  Sending 4 bytes.\n"); fflush( stdout );
 	s.write( "aoeu", 4 );

@@ -11,8 +11,8 @@
 #include "bu/fstring.h"
 #include "bu/hash.h"
 #include "bu/array.h"
-#include "bu/socket.h"
-#include "bu/serversocket.h"
+#include "bu/tcpsocket.h"
+#include "bu/tcpserversocket.h"
 
 namespace Bu
 {
@@ -109,18 +109,18 @@ namespace Bu
 		virtual void onUninit() { };
 
 	private:
-		void read( Bu::Socket &s, Record &r );
-		void read( Bu::Socket &s, BeginRequestBody &b );
-		uint32_t readLen( Bu::Socket &s, uint16_t &uUsed );
-		void readPair( Bu::Socket &s, StrHash &hParams, uint16_t &uUsed );
+		void read( Bu::TcpSocket &s, Record &r );
+		void read( Bu::TcpSocket &s, BeginRequestBody &b );
+		uint32_t readLen( Bu::TcpSocket &s, uint16_t &uUsed );
+		void readPair( Bu::TcpSocket &s, StrHash &hParams, uint16_t &uUsed );
 
-		void write( Bu::Socket &s, Record r );
-		void write( Bu::Socket &s, EndRequestBody b );
+		void write( Bu::TcpSocket &s, Record r );
+		void write( Bu::TcpSocket &s, EndRequestBody b );
 
 		bool hasChannel( int iChan );
 
 	private:
-		Bu::ServerSocket *pSrv;
+		Bu::TcpServerSocket *pSrv;
 		bool bRunning;
 		Bu::Array<Channel *> aChannel;
 	};

@@ -22,6 +22,7 @@ namespace Bu
 	template<typename item, typename cmpfunc, typename itemalloc>
 	class Heap;
 
+	/** @cond DEVEL */
 	template<typename item, typename cmpfunc, typename itemalloc>
 	class HeapCore
 	{
@@ -183,6 +184,7 @@ namespace Bu
 		cmpfunc cmp;
 		itemalloc ia;
 	};
+	/** @endcond */
 
 	/**
 	 * A priority queue that allows for an unlimited number of priorities.  All

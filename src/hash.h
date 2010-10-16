@@ -54,6 +54,7 @@ namespace Bu
 		typename valuealloc, typename challoc>
 	class Hash;
 
+	/** @cond DEVEL */
 	template<typename key, typename value, typename sizecalc, typename keyalloc,
 		typename valuealloc, typename challoc >
 	class HashCore
@@ -399,6 +400,7 @@ namespace Bu
 		challoc ca;
 		sizecalc szCalc;
 	};
+	/** @endcond */
 
 	/**
 	 * Libbu++ Template Hash Table.  This is your average hash table, that uses

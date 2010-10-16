@@ -25,8 +25,8 @@
 
 namespace Bu
 {
-	class ServerSocket;
-	class Socket;
+	class TcpServerSocket;
+	class TcpSocket;
 	class Client;
 
 	/**
@@ -97,7 +97,7 @@ namespace Bu
 		int nTimeoutSec;
 		int nTimeoutUSec;
 		fd_set fdActive;
-		typedef Hash<int,ServerSocket *> SrvHash;
+		typedef Hash<int,TcpServerSocket *> SrvHash;
 		SrvHash hServers;
 		typedef Hash<int,Client *> ClientHash;
 		ClientHash hClients;

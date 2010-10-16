@@ -17,6 +17,7 @@ namespace Bu
 {
 	template<typename value, typename valuealloc> class RingBuffer;
 
+	/** @cond DEVEL */
 	template<typename value, typename valuealloc>
 	class RingBufferCore
 	{
@@ -119,6 +120,7 @@ namespace Bu
 		value *aData;
 		valuealloc va;
 	};
+	/** @endcond */
 
 	/**
 	 *@ingroup Containers

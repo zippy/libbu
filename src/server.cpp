@@ -8,9 +8,9 @@
 #include "bu/server.h"
 #include <errno.h>
 #include <unistd.h>
-#include "bu/serversocket.h"
+#include "bu/tcpserversocket.h"
 #include "bu/client.h"
-#include "bu/socket.h"
+#include "bu/tcpsocket.h"
 #include "bu/config.h"
 
 Bu::Server::Server() :
@@ -28,7 +28,7 @@ Bu::Server::~Server()
 
 void Bu::Server::addPort( int nPort, int nPoolSize )
 {
-	ServerSocket *s = new ServerSocket( nPort, nPoolSize );
+	TcpServerSocket *s = new TcpServerSocket( nPort, nPoolSize );
 	int nSocket = s->getSocket();
 	FD_SET( nSocket, &fdActive );
 	hServers.insert( nSocket, s );
@@ -36,7 +36,7 @@ void Bu::Server::addPort( int nPort, int nPoolSize )
 
 void Bu::Server::addPort( const FString &sAddr, int nPort, int nPoolSize )
 {
-	ServerSocket *s = new ServerSocket( sAddr, nPort, nPoolSize );
+	TcpServerSocket *s = new TcpServerSocket( sAddr, nPort, nPoolSize );
 	int nSocket = s->getSocket();
 	FD_SET( nSocket, &fdActive );
 	hServers.insert( nSocket, s );
@@ -75,7 +75,7 @@ void Bu::Server::scan()
 		{
 			if( hServers.has( j ) )
 			{
-				ServerSocket *pSrv = hServers.get( j );
+				TcpServerSocket *pSrv = hServers.get( j );
 				addClient( pSrv->accept(), pSrv->getPort() );
 			}
 			else
@@ -97,7 +97,7 @@ void Bu::Server::scan()
 				{
 					pClient->processOutput();
 				}
-				catch( Bu::SocketException &e )
+				catch( Bu::TcpSocketException &e )
 				{
 					closeClient( j );
 				}
@@ -136,7 +136,7 @@ void Bu::Server::addClient( int nSocket, int nPort )
 	FD_SET( nSocket, &fdActive );
 
 	Client *c = new Client(
-		new Bu::Socket( nSocket ),
+		new Bu::TcpSocket( nSocket ),
 		new SrvClientLinkFactory()
 		);
 	hClients.insert( nSocket, c );

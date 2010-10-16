@@ -5,17 +5,17 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/serversocket.h"
-#include "bu/socket.h"
+#include "bu/tcpserversocket.h"
+#include "bu/tcpsocket.h"
 #include <unistd.h>
 
 int main()
 {
-	Bu::ServerSocket sSrv( 9987 );
+	Bu::TcpServerSocket sSrv( 9987 );
 
-	Bu::Socket sSend("localhost", 9987 );
+	Bu::TcpSocket sSend("localhost", 9987 );
 
-	Bu::Socket sRecv( sSrv.accept() );
+	Bu::TcpSocket sRecv( sSrv.accept() );
 
 	printf("Connected sockets.\n");
 

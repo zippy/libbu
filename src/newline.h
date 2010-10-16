@@ -14,7 +14,7 @@ namespace Bu
 {
 	/**
 	 * Converts new-line characters from any standard convention into linefeeds
-	 * (\n) on reading, and converts them to either your OS's standard or a
+	 * (\\n) on reading, and converts them to either your OS's standard or a
 	 * specified standard, depending on how you construct the class.
 	 *
 	 * If you're reading in a text file, then this filter is practically

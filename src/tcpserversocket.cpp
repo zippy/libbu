@@ -21,13 +21,13 @@
 #include <sys/types.h>
 //#include <termios.h>
 #include <fcntl.h>
-#include "bu/serversocket.h"
+#include "bu/tcpserversocket.h"
 
 #include "bu/config.h"
 
-namespace Bu { subExceptionDef( ServerSocketException ) }
+namespace Bu { subExceptionDef( TcpServerSocketException ) }
 
-Bu::ServerSocket::ServerSocket( int nPort, int nPoolSize ) :
+Bu::TcpServerSocket::TcpServerSocket( int nPort, int nPoolSize ) :
 	nPort( nPort )
 {
 #ifdef WIN32
@@ -48,7 +48,7 @@ Bu::ServerSocket::ServerSocket( int nPort, int nPoolSize ) :
 	startServer( name, nPoolSize );
 }
 
-Bu::ServerSocket::ServerSocket(const FString &sAddr,int nPort, int nPoolSize) :
+Bu::TcpServerSocket::TcpServerSocket(const FString &sAddr,int nPort, int nPoolSize) :
 	nPort( nPort )
 {
 #ifdef WIN32
@@ -72,7 +72,7 @@ Bu::ServerSocket::ServerSocket(const FString &sAddr,int nPort, int nPoolSize) :
 	startServer( name, nPoolSize );
 }
 
-Bu::ServerSocket::ServerSocket( int nServer, bool bInit, int nPoolSize ) :
+Bu::TcpServerSocket::TcpServerSocket( int nServer, bool bInit, int nPoolSize ) :
 	nServer( nServer ),
 	nPort( 0 )
 {
@@ -95,7 +95,7 @@ Bu::ServerSocket::ServerSocket( int nServer, bool bInit, int nPoolSize ) :
 	}
 }
 
-Bu::ServerSocket::ServerSocket( const ServerSocket &rSrc )
+Bu::TcpServerSocket::TcpServerSocket( const TcpServerSocket &rSrc )
 {
 #ifdef WIN32
 	Bu::Winsock2::getInstance();
@@ -107,20 +107,20 @@ Bu::ServerSocket::ServerSocket( const ServerSocket &rSrc )
 	FD_SET( nServer, &fdActive );
 }
 
-Bu::ServerSocket::~ServerSocket()
+Bu::TcpServerSocket::~TcpServerSocket()
 {
 	if( nServer > -1 )
 		::close( nServer );
 }
 
-void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
+void Bu::TcpServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
 {
 	/* Create the socket. */
 	nServer = bu_socket( PF_INET, SOCK_STREAM, 0 );
 
 	if( nServer < 0 )
 	{
-		throw Bu::ServerSocketException("Couldn't create a listen socket.");
+		throw Bu::TcpServerSocketException("Couldn't create a listen socket.");
 	}
 	
 	int opt = 1;
@@ -135,16 +135,16 @@ void Bu::ServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
 	initServer( name, nPoolSize );
 }
 
-void Bu::ServerSocket::initServer( struct sockaddr_in &name, int nPoolSize )
+void Bu::TcpServerSocket::initServer( struct sockaddr_in &name, int nPoolSize )
 {
 	if( bu_bind( nServer, (struct sockaddr *) &name, sizeof(name) ) < 0 )
 	{
-		throw Bu::ServerSocketException("Couldn't bind to the listen socket.");
+		throw Bu::TcpServerSocketException("Couldn't bind to the listen socket.");
 	}
 
 	if( bu_listen( nServer, nPoolSize ) < 0 )
 	{
-		throw Bu::ServerSocketException(
+		throw Bu::TcpServerSocketException(
 			"Couldn't begin listening to the server socket."
 			);
 	}
@@ -154,12 +154,12 @@ void Bu::ServerSocket::initServer( struct sockaddr_in &name, int nPoolSize )
 	FD_SET( nServer, &fdActive );
 }
 
-int Bu::ServerSocket::getSocket()
+int Bu::TcpServerSocket::getSocket()
 {
 	return nServer;
 }
 
-int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
+int Bu::TcpServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 {
 	fd_set fdRead = fdActive;
 
@@ -171,7 +171,7 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 	if( TEMP_FAILURE_RETRY(
 		bu_select( nServer+1, &fdRead, NULL, NULL, &xT )) < 0 )
 	{
-		throw Bu::ServerSocketException(
+		throw Bu::TcpServerSocketException(
 			"Error scanning for new connections: %s", strerror( errno )
 			);
 	}
@@ -200,7 +200,7 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 #endif /* WIN32 */
 		if( nClient < 0 )
 		{
-			throw Bu::ServerSocketException(
+			throw Bu::TcpServerSocketException(
 				"Error accepting a new connection: %s", strerror( errno )
 				);
 		}
@@ -219,7 +219,7 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 			flags |= O_NONBLOCK;
 			if( fcntl( nClient, F_SETFL, flags ) < 0)
 			{
-				throw Bu::ServerSocketException(
+				throw Bu::TcpServerSocketException(
 					"Error setting option on client socket: %s",
 					strerror( errno )
 					);
@@ -242,7 +242,7 @@ int Bu::ServerSocket::accept( int nTimeoutSec, int nTimeoutUSec )
 	return -1;
 }
 
-int Bu::ServerSocket::getPort()
+int Bu::TcpServerSocket::getPort()
 {
 	return nPort;
 }

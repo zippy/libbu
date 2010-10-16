@@ -5,8 +5,8 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_SOCKET_H
-#define BU_SOCKET_H
+#ifndef BU_TCP_SOCKET_H
+#define BU_TCP_SOCKET_H
 
 #include <stdint.h>
 
@@ -16,7 +16,7 @@
 
 namespace Bu
 {
-	subExceptionDeclBegin( SocketException );
+	subExceptionDeclBegin( TcpSocketException );
 		enum {
 			cRead,
 			cWrite,
@@ -40,28 +40,29 @@ namespace Bu
 	 * Please note that there is a condition that will occur eventually (at
 	 * least on *nix systems) that will trigger a SIGPIPE condition.  This
 	 * will terminate your program immediately unless handled properly.  Most
-	 * people doing any connections with Socket will want to put this in their
-	 * program somewhere before they use it:
+	 * people doing any connections with TcpSocket will want to put this in
+	 * their program somewhere before they use it:
 	 *@code
 	 #include <signal.h>
 	 ...
 	 ...
 	 ...
-	 sigset( SIGPIPE, SIG_IGN ); // do this before you use a Bu::Socket
+	 sigset( SIGPIPE, SIG_IGN ); // do this before you use a Bu::TcpSocket
 	 @endcode
-	 * When this is done, Bu::Socket will simply throw a broken pipe exception
-	 * just like every other error condition, allowing your program to handle
-	 * it sanely.
+	 * When this is done, Bu::TcpSocket will simply throw a broken pipe
+	 * exception just like every other error condition, allowing your program
+	 * to handle it sanely.
 	 *
 	 *@ingroup Serving
 	 *@ingroup Streams
 	 */
-	class Socket : public Stream
+	class TcpSocket : public Stream
 	{
 	public:
-		Socket( int nSocket );
-		Socket( const FString &sAddr, int nPort, int nTimeout=30 );
-		virtual ~Socket();
+		TcpSocket( int nTcpSocket );
+		TcpSocket( const FString &sAddr, int nPort, int nTimeout=30,
+				bool bBlocking=true );
+		virtual ~TcpSocket();
 		
 		virtual void close();
 		//virtual void read();
@@ -101,9 +102,9 @@ namespace Bu
 		void setAddress();
 
 #ifdef WIN32
-		unsigned int nSocket;
+		unsigned int nTcpSocket;
 #else
-		int nSocket;
+		int nTcpSocket;
 #endif
 		bool bActive;
 		bool bBlocking;

@@ -17,6 +17,7 @@ namespace Bu
 {
 	class Formatter;
 	class Variant;
+	/** @cond DEVEL */
 	template<class t> class VariantType;
 
 	class VariantTypeRoot
@@ -92,7 +93,22 @@ namespace Bu
 	private:
 		t data;
 	};
+	/** @endcond */
 
+	/**
+	 * Store any data type and access it safely.  Variant gives you a way to
+	 * pass arbitrary data types around without having to worry about what
+	 * type a variable is.  It allows code to be easily extended and to manage
+	 * data without having to know what type it is ahead of time.
+	 *
+	 * Because of the generic method that this class was implemented it may seem
+	 * to have some drawbacks compared to other Variant classes you may have
+	 * seen, however it is fairly easy to get it to do just about anything you
+	 * may need.  It is also very low overhead.  On most compilers the class
+	 * itself has only 3 words of overhead + the size of the variable you store
+	 * in it.  And, since many parts of it are templatized they can often be
+	 * optimized quite a bit.
+	 */
 	class Variant
 	{
 	public:

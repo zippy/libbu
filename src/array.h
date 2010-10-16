@@ -20,6 +20,7 @@ namespace Bu
 	template<typename value, int inc, typename valuealloc>
 	class Array;
 
+	/** @cond DEVEL */
 	template<typename value, int inc, typename valuealloc>
 	class ArrayCore
 	{
@@ -107,6 +108,7 @@ namespace Bu
 		long iSize;
 		long iCapacity;
 	};
+	/** @endcond */
 
 	/**
 	 * Array type container, just like a normal array only flexible and keeps

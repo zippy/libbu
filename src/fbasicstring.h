@@ -25,6 +25,7 @@
 
 namespace Bu
 {
+	/** @cond DEVEL */
 	template< typename chr >
 	struct FStringChunk
 	{
@@ -166,6 +167,7 @@ namespace Bu
 			nLength += pNewChunk->nLength;
 		}
 	};
+	/** @endcond */
 
 	/**
 	 * Flexible String class.  This class was designed with string passing and

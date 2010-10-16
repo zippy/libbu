@@ -24,14 +24,14 @@ Bu::FastCgi::FastCgi() :
 	pSrv( NULL ),
 	bRunning( true )
 {
-	pSrv = new Bu::ServerSocket( STDIN_FILENO, false );
+	pSrv = new Bu::TcpServerSocket( STDIN_FILENO, false );
 }
 
 Bu::FastCgi::FastCgi( int iPort ) :
 	pSrv( NULL ),
 	bRunning( true )
 {
-	pSrv = new Bu::ServerSocket( iPort );
+	pSrv = new Bu::TcpServerSocket( iPort );
 }
 
 Bu::FastCgi::~FastCgi()
@@ -64,17 +64,17 @@ bool Bu::FastCgi::isEmbedded()
 #endif
 }
 
-void Bu::FastCgi::read( Bu::Socket &s, Bu::FastCgi::Record &r )
+void Bu::FastCgi::read( Bu::TcpSocket &s, Bu::FastCgi::Record &r )
 {
 	int iRead = s.read( &r, sizeof(Record) );
 	if( iRead != sizeof(Record) )
-		throw Bu::SocketException("Hey, the size %d is wrong for Record. (%s)",
+		throw Bu::TcpSocketException("Hey, the size %d is wrong for Record. (%s)",
 			iRead, strerror( errno ) );
 	r.uRequestId = ntohs( r.uRequestId );
 	r.uContentLength = ntohs( r.uContentLength );
 }
 
-void Bu::FastCgi::write( Bu::Socket &s, Bu::FastCgi::Record r )
+void Bu::FastCgi::write( Bu::TcpSocket &s, Bu::FastCgi::Record r )
 {
 //	sio << "Out -> " << r << sio.nl;
 	r.uRequestId = htons( r.uRequestId );
@@ -82,19 +82,19 @@ void Bu::FastCgi::write( Bu::Socket &s, Bu::FastCgi::Record r )
 	s.write( &r, sizeof(Record) );
 }
 
-void Bu::FastCgi::read( Bu::Socket &s, Bu::FastCgi::BeginRequestBody &b )
+void Bu::FastCgi::read( Bu::TcpSocket &s, Bu::FastCgi::BeginRequestBody &b )
 {
 	s.read( &b, sizeof(BeginRequestBody) );
 	b.uRole = ntohs( b.uRole );
 }
 
-void Bu::FastCgi::write( Bu::Socket &s, Bu::FastCgi::EndRequestBody b )
+void Bu::FastCgi::write( Bu::TcpSocket &s, Bu::FastCgi::EndRequestBody b )
 {
 	b.uStatus = htonl( b.uStatus );
 	s.write( &b, sizeof(b) );
 }
 
-uint32_t Bu::FastCgi::readLen( Bu::Socket &s, uint16_t &uRead )
+uint32_t Bu::FastCgi::readLen( Bu::TcpSocket &s, uint16_t &uRead )
 {
 	uint8_t uByte[4];
 	s.read( uByte, 1 );
@@ -107,7 +107,7 @@ uint32_t Bu::FastCgi::readLen( Bu::Socket &s, uint16_t &uRead )
 	return ((uByte[0]&0x7f)<<24)|(uByte[1]<<16)|(uByte[2]<<8)|(uByte[3]);
 }
 
-void Bu::FastCgi::readPair( Bu::Socket &s, StrHash &hParams, uint16_t &uRead )
+void Bu::FastCgi::readPair( Bu::TcpSocket &s, StrHash &hParams, uint16_t &uRead )
 {
 	uint32_t uName = readLen( s, uRead );
 	uint32_t uValue = readLen( s, uRead );
@@ -162,7 +162,7 @@ void Bu::FastCgi::run()
 		if( iSock < 0 )
 			continue;
 
-		Bu::Socket s( iSock );
+		Bu::TcpSocket s( iSock );
 		s.setBlocking( true );
 //		sio << "Got connection, blocking?  " << s.isBlocking() << sio.nl;
 		try
@@ -362,7 +362,7 @@ void Bu::FastCgi::run()
 				}
 			}
 		}
-		catch( Bu::SocketException &e )
+		catch( Bu::TcpSocketException &e )
 		{
 //			sio << "Bu::SocketException: " << e.what() << sio.nl <<
 //				"\tSocket open:  " << s.isOpen() << sio.nl;
