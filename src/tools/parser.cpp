@@ -151,10 +151,43 @@ private:
 
 void redAdd( Bu::Parser &p )
 {
+	Lexer::Token *a = p.popToken();
+	Lexer::Token *b = p.popToken();
+
+	sio << "Add!  " << b->vExtra.get<double>() << " + "
+		<< a->vExtra.get<double>() << sio.nl;
+
+	Lexer::Token *c = new Lexer::Token( tokNumber, 
+		b->vExtra.get<double>() + a->vExtra.get<double>()
+		);
+	p.pushToken( c );
+
+	delete a;
+	delete b;
+}
+
+void redSubtract( Bu::Parser &p )
+{
+	Lexer::Token *a = p.popToken();
+	Lexer::Token *b = p.popToken();
+
+	sio << "Subtract!  " << b->vExtra.get<double>() << " - "
+		<< a->vExtra.get<double>() << sio.nl;
+
+	Lexer::Token *c = new Lexer::Token( tokNumber, 
+		b->vExtra.get<double>() - a->vExtra.get<double>()
+		);
+	p.pushToken( c );
+
+	delete a;
+	delete b;
 }
 
 void redPrint( Bu::Parser &p )
 {
+	Lexer::Token *a = p.popToken();
+	sio << "Print! = " << a->vExtra.get<double>() << sio.nl;
+	delete a;
 }
 
 /* Basic grammer example:
@@ -170,14 +203,15 @@ void redPrint( Bu::Parser &p )
  * The problem is, that we can't actually make something left hand recursive,
  * so we break it into two exprs:
  *
- * expr': '(' expr ')'
+ * expr-sub1: '(' expr ')'
  *      | NUMBER
  *      ;
  *
- * expr: expr' expr''
+ * expr: expr-sub1 expr-sub2
  *     ;
  *
- * expr'': '+' expr
+ * expr-sub2: '+' expr
+ *       | '-' expr
  *       |
  *       ;
  *
@@ -191,8 +225,8 @@ int main( int argc, char *argv[] )
 	Parser p;
 
 	p.addNonTerminal("expr");
-	p.addNonTerminal("expr'");
-	p.addNonTerminal("expr''");
+	p.addNonTerminal("expr-sub1");
+	p.addNonTerminal("expr-sub2");
 	{
 		Parser::NonTerminal nt;
 		nt.addProduction(
@@ -215,10 +249,28 @@ int main( int argc, char *argv[] )
 			);
 		nt.addProduction(
 			Parser::Production(
+				Parser::State(
+					Parser::State::typeTerminal,
+					tokMinus
+					)
+				).append(
+				Parser::State(
+					Parser::State::typeNonTerminal,
+					p.getNonTerminalId("expr")
+					)
+				).append(
+				Parser::State(
+					Parser::State::typeReduction,
+					p.addReduction("subtract")
+					)
+				)
+			);
+		nt.addProduction(
+			Parser::Production(
 				)
 			);
 		nt.setCanSkip();
-		p.setNonTerminal("expr''", nt );
+		p.setNonTerminal("expr-sub2", nt );
 	}
 	{
 		Parser::NonTerminal nt;
@@ -230,7 +282,25 @@ int main( int argc, char *argv[] )
 					)
 				)
 			);
-		p.setNonTerminal("expr'", nt );
+		nt.addProduction(
+			Parser::Production(
+				Parser::State(
+					Parser::State::typeTerminal,
+					tokOpenParen
+					)
+				).append(
+				Parser::State(
+					Parser::State::typeNonTerminal,
+					p.getNonTerminalId("expr")
+					)
+				).append(
+				Parser::State(
+					Parser::State::typeTerminal,
+					tokCloseParen
+					)
+				)
+			);
+		p.setNonTerminal("expr-sub1", nt );
 	}
 	{
 		Parser::NonTerminal nt;
@@ -238,12 +308,12 @@ int main( int argc, char *argv[] )
 			Parser::Production(
 				Parser::State(
 					Parser::State::typeNonTerminal,
-					p.getNonTerminalId("expr'")
+					p.getNonTerminalId("expr-sub1")
 					)
 				).append(
 				Parser::State(
 					Parser::State::typeNonTerminal,
-					p.getNonTerminalId("expr''")
+					p.getNonTerminalId("expr-sub2")
 					)
 				)
 			);
@@ -275,6 +345,7 @@ int main( int argc, char *argv[] )
 	p.setRootNonTerminal("input");
 
 	p.setReduction("add", Bu::slot( &redAdd ) );
+	p.setReduction("subtract", Bu::slot( &redSubtract ) );
 	p.setReduction("print", Bu::slot( &redPrint ) );
 
 	p.pushLexer( new MathLexer( fIn ) );

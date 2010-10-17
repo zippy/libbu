@@ -34,6 +34,9 @@ namespace Bu
 		 */
 		void popLexer();
 
+		Lexer::Token *popToken();
+		void pushToken( Lexer::Token *pTok );
+
 		/**
 		 * Execute a parse.
 		 */
