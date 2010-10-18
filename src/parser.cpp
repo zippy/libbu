@@ -205,6 +205,11 @@ int Bu::Parser::getNonTerminalId( const Bu::FString &sName )
 	return hNonTerminalName.get( sName );
 }
 
+bool Bu::Parser::hasNonTerminal( const Bu::FString &sName )
+{
+	return hNonTerminalName.has( sName );
+}
+
 int Bu::Parser::addReduction( const Bu::FString &sName, const Reduction &r )
 {
 	int iId = aReduction.getSize();
@@ -229,6 +234,11 @@ void Bu::Parser::setReduction( const Bu::FString &sName, const Reduction &r )
 int Bu::Parser::getReductionId( const Bu::FString &sName )
 {
 	return hReductionName.get( sName );
+}
+
+bool Bu::Parser::hasReduction( const Bu::FString &sName )
+{
+	return hReductionName.has( sName );
 }
 
 //

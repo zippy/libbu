@@ -36,6 +36,10 @@ namespace Bu
 			}
 			TokenType iToken;
 			Bu::Variant vExtra;
+			int iStartCol;
+			int iStartRow;
+			int iEndCol;
+			int iEndRow;
 		};
 
 		virtual Token *nextToken()=0;
