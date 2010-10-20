@@ -1118,7 +1118,7 @@ namespace Bu
 		 */
 		chr *getStr()
 		{
-			if( core->pFirst == NULL )
+			if( core->pFirst == NULL || core->nLength == 0 )
 				return (chr *)"";
 
 			flatten();
@@ -1133,7 +1133,7 @@ namespace Bu
 		 */
 		const chr *getStr() const
 		{
-			if( core->pFirst == NULL )
+			if( core->pFirst == NULL || core->nLength == 0 )
 				return (chr *)"";
 
 			flatten();
@@ -1219,7 +1219,7 @@ namespace Bu
 		DEPRECATED
 		chr *c_str()
 		{
-			if( core->pFirst == NULL )
+			if( core->pFirst == NULL || core->nLength == 0 )
 				return NULL;
 
 			flatten();
@@ -1235,7 +1235,7 @@ namespace Bu
 		DEPRECATED
 		const chr *c_str() const
 		{
-			if( core->pFirst == NULL )
+			if( core->pFirst == NULL || core->nLength == 0 )
 				return NULL;
 
 			flatten();
@@ -1460,7 +1460,7 @@ namespace Bu
 		 */
 		bool operator==( const chr *pData ) const
 		{
-			if( core->pFirst == NULL ) {
+			if( core->pFirst == NULL || core->nLength == 0 ) {
 				if( pData == NULL )
 					return true;
 				if( pData[0] == (chr)0 )
@@ -1646,8 +1646,10 @@ namespace Bu
 
 		bool compareSub( const chr *pData, long nIndex, long nLen ) const
 		{
-			if( core->pFirst == NULL ) {
+			if( core->pFirst == NULL || core->nLength == 0 ) {
 				if( pData == NULL )
+					return true;
+				if( nLen == 0 )
 					return true;
 				if( pData[0] == (chr)0 )
 					return true;
@@ -1673,7 +1675,7 @@ namespace Bu
 
 		bool compareSub( const MyType &rData, long nIndex, long nLen ) const
 		{
-			if( core->pFirst == NULL || rData.core->pFirst == NULL ) 
+			if( core->pFirst == NULL || core->nLength == 0 || rData.core->pFirst == NULL || rData.core->nLength == 0 ) 
 				return false;
 			if( nLen < 0 )
 				nLen = rData.core->nLength;
@@ -1922,7 +1924,7 @@ namespace Bu
 
 		void trimBack( chr c )
 		{
-			if( core->pFirst == NULL )
+			if( core->pFirst == NULL || core->nLength == 0 )
 				return;
 			flatten();
 			for( ; core->pFirst->nLength > 0 && core->pFirst->pData[core->pFirst->nLength-1] == c; core->pFirst->nLength--, core->nLength-- ) { }
@@ -2018,7 +2020,7 @@ namespace Bu
 			if( isFlat() )
 				return;
 
-			if( core->pFirst == NULL )
+			if( core->pFirst == NULL || core->nLength == 0 )
 				return;
 
 			Chunk *pNew = core->newChunk( core->nLength );
