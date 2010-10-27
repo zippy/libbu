@@ -34,6 +34,12 @@ Bu::Variant::Variant( const Variant &v ) :
 	}
 }
 
+Bu::Variant::Variant( const char *t ) :
+	pCore( NULL )
+{
+	set( Bu::FString( t ) );
+}
+
 Bu::Variant::~Variant()
 {
 	if( pCore )

@@ -45,7 +45,11 @@ void Bu::OptParser::parse( int argc, char **argv )
 				{
 					sOpt.set( argv[j]+2 );
 				}
-				try
+				if( !hlOption.has( sOpt ) )
+				{
+					optionError( "--" + sOpt );
+				}
+				else
 				{
 					// Long param, cool, that's easy, first search for =
 					Option *pOpt = hlOption.get( sOpt );
@@ -71,18 +75,14 @@ void Bu::OptParser::parse( int argc, char **argv )
 						}
 						else if( sExtraParam.isSet() )
 						{
-							pOpt->pProxy->setValue( sExtraParam );
+							pOpt->pProxy->setValueFromStr( sExtraParam );
 						}
 						else if( argv[j+1] != '\0' )
 						{
-							pOpt->pProxy->setValue( argv[j+1] );
+							pOpt->pProxy->setValueFromStr( argv[j+1] );
 							j++;
 						}
 					}
-				}
-				catch( Bu::HashException &e )
-				{
-					optionError( "--" + sOpt );
 				}
 			}
 			else
@@ -90,7 +90,13 @@ void Bu::OptParser::parse( int argc, char **argv )
 				int iCPos;
 				for( iCPos = 1; argv[j][iCPos] != '\0'; iCPos++ )
 				{
-					try
+					if( !hsOption.has( argv[j][iCPos] ) )
+					{
+						Bu::FString sOpt("-");
+						sOpt += argv[j][iCPos];
+						optionError( sOpt );
+					}
+					else
 					{
 						Option *pOpt = hsOption.get( argv[j][iCPos] );
 						char buf[2] = {argv[j][iCPos], '\0'};
@@ -123,26 +129,20 @@ void Bu::OptParser::parse( int argc, char **argv )
 							}
 							else if( argv[j][iCPos+1] != '\0' )
 							{
-								pOpt->pProxy->setValue(
+								pOpt->pProxy->setValueFromStr(
 									argv[j]+iCPos+1
 									);
 								break;
 							}
 							else if( argv[j+1] )
 							{
-								pOpt->pProxy->setValue(
+								pOpt->pProxy->setValueFromStr(
 									argv[j+1]
 									);
 								j++;
 								break;
 							}
 						}
-					}
-					catch( Bu::HashException &e )
-					{
-						Bu::FString sOpt("-");
-						sOpt += argv[j][iCPos];
-						optionError( sOpt );
 					}
 				}
 			}
@@ -176,12 +176,12 @@ void Bu::OptParser::addOption( const Option &opt )
 		hlOption.insert( opt.sOpt, &lOption.last() );
 }
 
-void Bu::OptParser::setOverride( char cOpt, const Bu::FString &sOverride )
+void Bu::OptParser::setOverride( char cOpt, const Bu::Variant &sOverride )
 {
 	hsOption.get( cOpt )->sOverride = sOverride;
 }
 
-void Bu::OptParser::setOverride( const Bu::FString &sOpt, const Bu::FString &sOverride )
+void Bu::OptParser::setOverride( const Bu::FString &sOpt, const Bu::Variant &sOverride )
 {
 	hlOption.get( sOpt )->sOverride = sOverride;
 }

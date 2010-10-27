@@ -56,11 +56,11 @@ public:
 		addOption( iStream, 's', "stream", "Substream to work with.");
 		addOption( sSrc, "src", "Source file for copying into a Myriad file.");
 
-		setOverride( "create", "create" );
-		setOverride( "info", "info" );
-		setOverride( "new", "new" );
-		setOverride( "dump", "dump" );
-		setOverride( "put", "put" );
+		setOverride( "create", modeCreate );
+		setOverride( "info", modeInfo );
+		setOverride( "new", modeStreamNew );
+		setOverride( "dump", modeStreamDump );
+		setOverride( "put", modeStreamPut );
 
 		parse( argc, argv );
 	}
@@ -73,21 +73,9 @@ public:
 	Bu::FString sSrc;
 };
 
-Bu::Formatter &operator>>( Bu::Formatter &f, Mode &m )
+Bu::Formatter &operator>>( Bu::Formatter &f, Mode &e )
 {
-	Bu::FString sTok = f.readToken();
-	if( sTok == "create" )
-		m = modeCreate;
-	else if( sTok == "info" )
-		m = modeInfo;
-	else if( sTok == "new" )
-		m = modeStreamNew;
-	else if( sTok == "dump" )
-		m = modeStreamDump;
-	else if( sTok == "put" )
-		m = modeStreamPut;
-	else
-		m = modeNone;
+	sio << "Uh oh, the formatter was called..." << sio.nl;
 	return f;
 }
 

@@ -15,6 +15,7 @@
 #include "bu/array.h"
 #include "bu/membuf.h"
 #include "bu/formatter.h"
+#include "bu/variant.h"
 
 namespace Bu
 {
@@ -40,7 +41,8 @@ namespace Bu
 			_ValueProxy();
 			virtual ~_ValueProxy();
 
-			virtual void setValue( const Bu::FString & )=0;
+			virtual void setValueFromStr( const Bu::FString & )=0;
+			virtual void setValue( const Bu::Variant &vVar )=0;
 			virtual _ValueProxy *clone()=0;
 		};
 
@@ -57,11 +59,27 @@ namespace Bu
 			{
 			}
 
-			virtual void setValue( const Bu::FString &sVal )
+			virtual void setValueFromStr( const Bu::FString &sVal )
 			{
 				Bu::MemBuf mb( sVal );
 				Bu::Formatter f( mb );
 				f >> v;
+			}
+
+			virtual void setValue( const Bu::Variant &vVar )
+			{
+				if( vVar.getType() == typeid(ptype) )
+				{
+					v = vVar.get<ptype>();
+				}
+				else if( vVar.getType() == typeid(Bu::FString) )
+				{
+					setValueFromStr( vVar.get<Bu::FString>() );
+				}
+				else
+				{
+					setValueFromStr( vVar.toString() );
+				}
 			}
 			
 			virtual _ValueProxy *clone()
@@ -87,7 +105,7 @@ namespace Bu
 			Bu::FString sHelp;
 			OptionSignal sUsed;
 			_ValueProxy *pProxy;
-			Bu::FString sOverride;
+			Bu::Variant sOverride;
 			Bu::FString sHelpDefault;
 		};
 	
@@ -162,9 +180,9 @@ namespace Bu
 			addOption( sUsed, cOpt, "", sHelp );
 		}
 
-		void setOverride( char cOpt, const Bu::FString &sOverride );
+		void setOverride( char cOpt, const Bu::Variant &sOverride );
 		void setOverride( const Bu::FString &sOpt,
-				const Bu::FString &sOverride );
+				const Bu::Variant &sOverride );
 
 		void setHelpDefault( const Bu::FString &sOpt, const Bu::FString &sTxt );
 		

@@ -98,6 +98,7 @@ namespace Bu
 	public:
 		Variant();
 		Variant( const Variant &v );
+		Variant( const char *t );
 		template<class t>
 		Variant( const t &v ) :
 			pCore( new VariantType<t>() )

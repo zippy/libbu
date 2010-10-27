@@ -40,7 +40,7 @@ int Bu::UnitSuite::run( int argc, char *argv[] )
 	p.addOption( Bu::slot( this, &Bu::UnitSuite::onListCases ), 'l', "list",
 			"List available test cases." );
 	p.addOption( bCleanup, "no-cleanup", "Don't erase temp files.");
-	p.setOverride( "no-cleanup", "false" );
+	p.setOverride( "no-cleanup", false );
 	p.addHelpOption();
 	p.parse( argc, argv );
 
