@@ -160,6 +160,11 @@ size_t Bu::BZip2::read( void *pData, size_t nBytes )
 			if( bzState.avail_in == 0 )
 			{
 				nRead = rNext.read( pBuf, nBufSize );
+				if( nRead == 0 && rNext.isEos() )
+				{
+					throw Bu::ExceptionBase("Premature end of underlying "
+							"stream found reading bzip2 stream.");
+				}
 				bzState.next_in = pBuf;
 				bzState.avail_in = nRead;
 			}
