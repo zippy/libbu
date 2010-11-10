@@ -138,6 +138,9 @@ namespace Bu
 		int getBlockSize();
 		int getNumBlocks();
 		int getNumUsedBlocks();
+		int getTotalUsedBytes();
+		int getTotalUnusedBytes();
+		int getTotalUnusedBytes( int iFakeBlockSize );
 
 		/**
 		 * Syncronize the header data, etc. with the storage stream.  It's not

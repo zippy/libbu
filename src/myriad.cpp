@@ -510,6 +510,36 @@ int Bu::Myriad::getNumUsedBlocks()
 	return iUsed;
 }
 
+int Bu::Myriad::getTotalUsedBytes()
+{
+	int iTotalSize = 0;
+	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
+	{
+		iTotalSize += (*i)->iSize;
+	}
+	return iTotalSize;
+}
+
+int Bu::Myriad::getTotalUnusedBytes()
+{
+	int iTotalSize = (iBlocks-iUsed)*iBlockSize;
+	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
+	{
+		iTotalSize += iBlockSize - ((*i)->iSize%iBlockSize);
+	}
+	return iTotalSize;
+}
+
+int Bu::Myriad::getTotalUnusedBytes( int iFakeBlockSize )
+{
+	int iTotalSize = (iBlocks-iUsed)*iFakeBlockSize;
+	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
+	{
+		iTotalSize += iFakeBlockSize - ((*i)->iSize%iFakeBlockSize);
+	}
+	return iTotalSize;
+}
+
 Bu::Myriad::Stream *Bu::Myriad::findStream( int iId )
 {
 	for( StreamArray::iterator i = aStreams.begin(); i; i++ )

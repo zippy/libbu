@@ -22,6 +22,7 @@ enum Mode
 	modeStreamNew,
 	modeStreamDump,
 	modeStreamPut,
+	modeStreamGet,
 
 	modeNone
 };
@@ -43,9 +44,11 @@ public:
 		addOption( eMode, 'n', "new",
 				"Create a new sub-stream in a Myriad file.");
 		addOption( eMode, 'd', "dump",
-				"Read a stream from a Myriad file.");
+				"Display a hexdump of a stream from a Myriad file.");
+		addOption( eMode, "get",
+				"Get a file out of a Myriad stream (use --dst).");
 		addOption( eMode, "put",
-				"Put a file into a Myriad stream.");
+				"Put a file into a Myriad stream (usr --src).");
 		addHelpOption();
 
 		addHelpBanner("\nGeneral options:");
@@ -55,12 +58,15 @@ public:
 		addOption( sFile, 'f', "file", "Set the Myriad filename." );
 		addOption( iStream, 's', "stream", "Substream to work with.");
 		addOption( sSrc, "src", "Source file for copying into a Myriad file.");
+		addOption( sDst, "dst",
+				"Destination file for copying out of a Myriad file.");
 
 		setOverride( "create", modeCreate );
 		setOverride( "info", modeInfo );
 		setOverride( "new", modeStreamNew );
 		setOverride( "dump", modeStreamDump );
 		setOverride( "put", modeStreamPut );
+		setOverride( "get", modeStreamGet );
 
 		parse( argc, argv );
 	}
@@ -71,6 +77,7 @@ public:
 	int iStream;
 	Bu::FString sFile;
 	Bu::FString sSrc;
+	Bu::FString sDst;
 };
 
 Bu::Formatter &operator>>( Bu::Formatter &f, Mode &e )
@@ -114,7 +121,10 @@ int main( int argc, char *argv[] )
 					<< "  Blocks used:  " << m.getNumUsedBlocks() << " ("
 					<< m.getNumUsedBlocks()*100/m.getNumBlocks() << "%)"
 					<< sio.nl
-					<< "  Stream count: " << m.getNumStreams() << sio.nl;
+					<< "  Stream count: " << m.getNumStreams() << sio.nl
+					<< "  Used space:   " << m.getTotalUsedBytes() << sio.nl
+					<< "  Unused space: " << m.getTotalUnusedBytes() << sio.nl
+					<< "  % of files:   " << (double)(m.getNumBlocks()*m.getBlockSize())/(double)(m.getTotalUsedBytes() + m.getTotalUnusedBytes( 4096 ))*100.0 << sio.nl;
 				Bu::Array<int> aStreams = m.getStreamIds();
 				sio << "  Stream info:" << sio.nl;
 				for( Bu::Array<int>::iterator i = aStreams.begin(); i; i++ )
@@ -204,6 +214,30 @@ int main( int argc, char *argv[] )
 				while( !fIn.isEos() )
 				{
 					sOut.write( buf, fIn.read( buf, 1024 ) );
+				}
+			}
+			break;
+
+		case modeStreamGet:
+			if( !opts.sFile.isSet() )
+			{
+				sio << "Please specify a file manipulate." << sio.nl;
+				return 0;
+			}
+			else if( !opts.sDst.isSet() )
+			{
+				sio << "Please specify a destination file to write." << sio.nl;
+			}
+			else
+			{
+				File fIn( opts.sFile, File::Write|File::Read );
+				Myriad m( fIn );
+				MyriadStream sIn = m.openStream( opts.iStream );
+				File fOut( opts.sDst, File::Write|File::Create|File::Truncate );
+				char buf[1024];
+				while( !sIn.isEos() )
+				{
+					fOut.write( buf, sIn.read( buf, 1024 ) );
 				}
 			}
 			break;
