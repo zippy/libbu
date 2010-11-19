@@ -11,7 +11,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <stdlib.h> // for mkstemp
 #include <time.h>
 
 #include "bu/config.h"

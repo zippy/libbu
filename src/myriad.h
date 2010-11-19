@@ -46,7 +46,7 @@ namespace Bu
 	 * Header format is as follows:
 	 *
 	 * MMMMvBssssSSSS*
-	 * M = Magic number (FFC399BD)
+	 * M = Magic number (0AD3FA84)
 	 * v = version number
 	 * B = Bits per int
 	 * s = Blocksize in bytes

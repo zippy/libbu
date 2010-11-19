@@ -82,6 +82,22 @@ target "viewcsv"
 }
 
 //
+// This shouldn't be.  Basically, if you set a property on a top level target
+// that has children it seems like the items should apply to the children.
+// I'm honestly not 100% sure what the policy should be yet, but this seems like
+// I shouldn't have to do it this way.
+//
+target "src/tools/myriadfs.o"
+{
+	CXXFLAGS += "-D_FILE_OFFSET_BITS=64";
+}
+
+target "myriadfs"
+{
+	LDFLAGS += "-lfuse";
+}
+
+//
 // General Tests
 //
 
