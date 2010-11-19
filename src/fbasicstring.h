@@ -39,6 +39,42 @@ namespace Bu
 	template< typename chr, int nMinSize, typename chralloc,
 		typename chunkalloc> class FBasicString;
 
+	template<typename chr>
+	size_t strlen( const chr *pData )
+	{
+		for( size_t tLen = 0;; ++tLen )
+		{
+			if( pData[tLen] == (chr)0 )
+				return tLen;
+		}
+		return -1;
+	}
+
+	template<char>
+	size_t strlen( const char *pData )
+	{
+		return ::strlen( pData );
+	}
+
+	template<typename chr>
+	int strncmp( const chr *a, const chr *b, size_t iLen )
+	{
+		for( size_t iPos = 0; iPos < iLen; iPos++ )
+		{
+			if( a[iPos] != b[iPos] )
+			{
+				return a[iPos]-b[iPos];
+			}
+		}
+		return 0;
+	}
+
+	template<char>
+	int strncmp( const char *a, const char *b, size_t iLen )
+	{
+		return ::strncmp( a, b, iLen );
+	}
+
 	template<typename chr, int nMinSize, typename chralloc, typename chunkalloc>
 	struct FStringCore
 	{
@@ -1044,7 +1080,7 @@ namespace Bu
 		 */
 		void insert( long nPos, const chr *pData )
 		{
-			insert( nPos, pData, strlen( pData ) );
+			insert( nPos, pData, Bu::strlen( pData ) );
 		}
 
 		void remove( long nPos, long nLen )
@@ -1170,13 +1206,13 @@ namespace Bu
 			if( iStart < 0 )
 				iStart = 0;
 			if( iStart >= core->nLength )
-				return "";
+				return (const chr[]){(chr)0};
 			if( iSize < 0 )
 				iSize = core->nLength;
 			if( iStart+iSize > core->nLength )
 				iSize = core->nLength-iStart;
 			if( iSize == 0 )
-				return "";
+				return (const chr[]){(chr)0};
 
 			flatten();
 			MyType ret( core->pFirst->pData+iStart, iSize );
@@ -1438,11 +1474,11 @@ namespace Bu
 			wordexp_t result;
 
 			/* Expand the string for the program to run.  */
-			switch (wordexp (core->pFirst->pData, &result, 0))
+			switch (wordexp ((char *)core->pFirst->pData, &result, 0))
 			{
 				case 0:                       /* Successful.  */
 					{
-						set( result.we_wordv[0] );
+						set( (chr *)result.we_wordv[0] );
 						wordfree( &result );
 						return;
 					}
@@ -1954,7 +1990,7 @@ namespace Bu
 			long iLen = vsnprintf( NULL, 0, sFrmt, ap );
 			
 			Chunk *pNew = core->newChunk( iLen );
-			vsnprintf( pNew->pData, iLen+1, sFrmt, ap );
+			vsnprintf( (char *)pNew->pData, iLen+1, sFrmt, ap );
 			core->appendChunk( pNew );
 
 			va_end( ap );
@@ -1971,7 +2007,7 @@ namespace Bu
 			long iLen = vsnprintf( NULL, 0, sFrmt, ap );
 
 			Chunk *pNew = core->newChunk( iLen );
-			vsnprintf( pNew->pData, iLen+1, sFrmt, ap );
+			vsnprintf( (char *)pNew->pData, iLen+1, sFrmt, ap );
 			core->appendChunk( pNew );
 
 			va_end( ap );
@@ -1988,7 +2024,7 @@ namespace Bu
 			long iLen = vsnprintf( NULL, 0, sFrmt, ap );
 			
 			Chunk *pNew = core->newChunk( iLen );
-			vsnprintf( pNew->pData, iLen+1, sFrmt, ap );
+			vsnprintf( (char *)pNew->pData, iLen+1, sFrmt, ap );
 			core->prependChunk( pNew );
 
 			va_end( ap );
