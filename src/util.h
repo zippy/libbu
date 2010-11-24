@@ -39,6 +39,11 @@ namespace Bu
 		b = tmp;
 	}
 
+#ifdef WIN32
+	#warning: removing min and max win32 macros because of compile conflict
+	#undef min
+	#undef max
+#endif
 	/**
 	 * Finds the lesser of the two objects, objects passed in must be
 	 * less-than-comparable.
@@ -90,7 +95,7 @@ namespace Bu
 	{
 		return b<a?a:b;
 	}
-	
+
 	/**
 	 * Given three objects this finds the one between the other two.
 	 *@param a A value to test.
