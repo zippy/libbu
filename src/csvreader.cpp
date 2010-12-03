@@ -56,7 +56,10 @@ Bu::StrArray Bu::CsvReader::readLine()
 		{
 			i++;
 			if( !i )
+			{
+				aVals.append("");
 				break;
+			}
 			aVals.append( sDecode( i ) );
 		}
 		else
