@@ -1148,6 +1148,47 @@ namespace Bu
 			return lValues;
 		}
 
+		bool operator==( const MyType &rhs ) const
+		{
+			if( this == &rhs )
+				return true;
+			if( core == rhs.core )
+				return true;
+			if( core == NULL || rhs.core == NULL )
+				return false;
+			if( getSize() != rhs.getSize() )
+				return false;
+
+			for( uint32_t j = 0; j < core->nCapacity; j++ )
+			{
+				if( core->isFilled( j ) )
+				{
+					if( !core->isDeleted( j ) )
+					{
+						// Check to see if this key is in the other hash
+						if( rhs.has( core->aKeys[j] ) )
+						{
+							if( !(core->aValues[j] == rhs.get( core->aKeys[j]) ) )
+							{
+								return false;
+							}
+						}
+						else
+						{
+							return false;
+						}
+					}
+				}
+			}
+
+			return true;
+		}
+
+		bool operator!=( const MyType &rhs ) const
+		{
+			return !(*this == rhs);
+		}
+
 	protected:
 		virtual Core *_copyCore( Core *src )
 		{
