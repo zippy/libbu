@@ -7,9 +7,9 @@
 
 #include "bu/itoserver.h"
 #include <errno.h>
-#include "bu/serversocket.h"
+#include "bu/tcpserversocket.h"
 #include "bu/client.h"
-#include "bu/socket.h"
+#include "bu/tcpsocket.h"
 
 #include "bu/config.h"
 
@@ -41,7 +41,7 @@ Bu::ItoServer::~ItoServer()
 
 void Bu::ItoServer::addPort( int nPort, int nPoolSize )
 {
-	ServerSocket *s = new ServerSocket( nPort, nPoolSize );
+	TcpServerSocket *s = new TcpServerSocket( nPort, nPoolSize );
 	int nSocket = s->getSocket();
 	FD_SET( nSocket, &fdActive );
 	hServers.insert( nSocket, s );
@@ -49,7 +49,7 @@ void Bu::ItoServer::addPort( int nPort, int nPoolSize )
 
 void Bu::ItoServer::addPort( const FString &sAddr, int nPort, int nPoolSize )
 {
-	ServerSocket *s = new ServerSocket( sAddr, nPort, nPoolSize );
+	TcpServerSocket *s = new TcpServerSocket( sAddr, nPort, nPoolSize );
 	int nSocket = s->getSocket();
 	FD_SET( nSocket, &fdActive );
 	hServers.insert( nSocket, s );
@@ -92,7 +92,7 @@ void Bu::ItoServer::run()
 		{
 			if( FD_ISSET( i.getKey(), &fdRead ) )
 			{
-				ServerSocket *pSrv = i.getValue();
+				TcpServerSocket *pSrv = i.getValue();
 				addClient( pSrv->accept(), pSrv->getPort() );
 			}
 		}
@@ -126,7 +126,7 @@ Bu::ItoServer::ItoClient::ItoClient( ItoServer &rSrv, int iSocket, int iPort,
 	FD_SET( iSocket, &fdActive );
 
 	pClient = new Client(
-		new Bu::Socket( iSocket ),
+		new Bu::TcpSocket( iSocket ),
 		new SrvClientLinkFactory( rSrv )
 		);
 }

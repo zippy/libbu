@@ -5,8 +5,8 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_SERVER_SOCKET_H
-#define BU_SERVER_SOCKET_H
+#ifndef BU_TCP_SERVER_SOCKET_H
+#define BU_TCP_SERVER_SOCKET_H
 
 #include <stdint.h>
 #include "bu/fstring.h"
@@ -20,7 +20,7 @@
 
 namespace Bu
 {
-	subExceptionDecl( ServerSocketException );
+	subExceptionDecl( TcpServerSocketException );
 
 	/**
 	 * A single tcp/ip server socket.  When created the server socket will bind
@@ -34,14 +34,14 @@ namespace Bu
 	 *
 	 *@ingroup Serving
 	 */
-	class ServerSocket
+	class TcpServerSocket
 	{
 	public:
-		ServerSocket( int nPort, int nPoolSize=40 );
-		ServerSocket( const FString &sAddr, int nPort, int nPoolSize=40 );
-		ServerSocket( int nSocket, bool bInit, int nPoolSize=40 );
-		ServerSocket( const ServerSocket &rSrc );
-		virtual ~ServerSocket();
+		TcpServerSocket( int nPort, int nPoolSize=40 );
+		TcpServerSocket( const FString &sAddr, int nPort, int nPoolSize=40 );
+		TcpServerSocket( int nSocket, bool bInit, int nPoolSize=40 );
+		TcpServerSocket( const TcpServerSocket &rSrc );
+		virtual ~TcpServerSocket();
 
 		int accept( int nTimeoutSec=0, int nTimeoutUSec=0 );
 		int getSocket();

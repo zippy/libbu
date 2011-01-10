@@ -6,7 +6,7 @@
  */
 
 #include "bu/client.h"
-#include "bu/socket.h"
+#include "bu/tcpsocket.h"
 #include <stdlib.h>
 #include <errno.h>
 #include "bu/protocol.h"
@@ -16,7 +16,8 @@
 /** Read buffer size. */
 #define RBS		(1024*2)
 
-Bu::Client::Client( Bu::Socket *pSocket, class Bu::ClientLinkFactory *pfLink ) :
+Bu::Client::Client( Bu::TcpSocket *pSocket,
+		class Bu::ClientLinkFactory *pfLink ) :
 	pTopStream( pSocket ),
 	pSocket( pSocket ),
 	pProto( NULL ),
@@ -59,7 +60,7 @@ void Bu::Client::processInput()
 					break;
 			}
 		}
-		catch( Bu::SocketException &e )
+		catch( Bu::TcpSocketException &e )
 		{
 			pTopStream->close();
 			bWantsDisconnect = true;
@@ -195,7 +196,7 @@ long Bu::Client::getOutputSize()
 	return qbWrite.getSize();
 }
 
-const Bu::Socket *Bu::Client::getSocket() const
+const Bu::TcpSocket *Bu::Client::getSocket() const
 {
 	return pSocket;
 }

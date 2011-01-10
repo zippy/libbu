@@ -14,7 +14,7 @@ struct ShintCore
 {
 	int val;
 };
-class Shint : public Bu::SharedCore<struct ShintCore>
+class Shint : public Bu::SharedCore<Shint, struct ShintCore>
 {
 public:
 	Shint()

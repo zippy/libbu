@@ -14,7 +14,7 @@
 #include <sys/time.h>
 #include <errno.h>
 #include <fcntl.h>
-#include "bu/socket.h"
+#include "bu/tcpsocket.h"
 
 #include "bu/config.h"
 
@@ -29,10 +29,10 @@
 
 #define RBS (1024*2)
 
-namespace Bu { subExceptionDef( SocketException ) }
+namespace Bu { subExceptionDef( TcpSocketException ) }
 
-Bu::Socket::Socket( int nSocket ) :
-	nSocket( nSocket ),
+Bu::TcpSocket::TcpSocket( int nTcpSocket ) :
+	nTcpSocket( nTcpSocket ),
 	bActive( true ),
 	bBlocking( true )
 {
@@ -42,8 +42,9 @@ Bu::Socket::Socket( int nSocket ) :
 	setAddress();
 }
 
-Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout ) :
-	nSocket( 0 ),
+Bu::TcpSocket::TcpSocket( const Bu::FString &sAddr, int nPort, int nTimeout,
+		bool bBlocking ) :
+	nTcpSocket( 0 ),
 	bActive( false ),
 	bBlocking( true )
 {
@@ -52,9 +53,9 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout ) :
 #endif
 
 	/* Create the socket. */
-	nSocket = bu_socket( PF_INET, SOCK_STREAM, 0 );
+	nTcpSocket = bu_socket( PF_INET, SOCK_STREAM, 0 );
 	
-	if( nSocket < 0 )
+	if( nTcpSocket < 0 )
 	{
 		throw ExceptionBase("Couldn't create socket.\n");
 	}
@@ -78,12 +79,12 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout ) :
 			sAddr.getStr(), ibuf, &aiHints, &pAddr )) != 0 )
 		{
 			close();
-			throw Bu::SocketException("Couldn't resolve hostname %s (%s).\n",
+			throw Bu::TcpSocketException("Couldn't resolve hostname %s (%s).\n",
 				sAddr.getStr(), bu_gai_strerror(ret));
 		}
 
 		bu_connect(
-			nSocket,
+			nTcpSocket,
 			pAddr->ai_addr,
 			pAddr->ai_addrlen
 			);
@@ -101,17 +102,17 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout ) :
 		int retval;
 		
 		FD_ZERO(&rfds);
-		FD_SET(nSocket, &rfds);
+		FD_SET(nTcpSocket, &rfds);
 		FD_ZERO(&wfds);
-		FD_SET(nSocket, &wfds);
+		FD_SET(nTcpSocket, &wfds);
 		FD_ZERO(&efds);
-		FD_SET(nSocket, &efds);
+		FD_SET(nTcpSocket, &efds);
 
 		struct timeval tv;
 		tv.tv_sec = nTimeout;
 		tv.tv_usec = 0;
 		
-		retval = bu_select( nSocket+1, &rfds, &wfds, &efds, &tv );
+		retval = bu_select( nTcpSocket+1, &rfds, &wfds, &efds, &tv );
 
 		if( retval == 0 )
 		{
@@ -120,51 +121,54 @@ Bu::Socket::Socket( const Bu::FString &sAddr, int nPort, int nTimeout ) :
 		}
 		read( NULL, 0 ); // See if we can get any errors out of the way early.
 	}
+
+	if( bBlocking )
+		setBlocking( bBlocking );
 }
 
-Bu::Socket::~Socket()
+Bu::TcpSocket::~TcpSocket()
 {
 	close();
 }
 
-void Bu::Socket::close()
+void Bu::TcpSocket::close()
 {
 	if( bActive )
 	{
 #ifndef WIN32
-		fsync( nSocket );
+		fsync( nTcpSocket );
 #endif
 #ifdef WIN32
  #ifndef SHUT_RDWR
   #define SHUT_RDWR (SD_BOTH)
  #endif
 #endif
-		bu_shutdown( nSocket, SHUT_RDWR );
-		::close( nSocket );
+		bu_shutdown( nTcpSocket, SHUT_RDWR );
+		::close( nTcpSocket );
 	}
 	bActive = false;
 }
 
-size_t Bu::Socket::read( void *pBuf, size_t nBytes )
+size_t Bu::TcpSocket::read( void *pBuf, size_t nBytes )
 {
 	fd_set rfds;
 	FD_ZERO(&rfds);
-	FD_SET(nSocket, &rfds);
+	FD_SET(nTcpSocket, &rfds);
 	struct timeval tv = {0, 0};
-	if( bu_select( nSocket+1, &rfds, NULL, NULL, &tv ) < 0 )
+	if( bu_select( nTcpSocket+1, &rfds, NULL, NULL, &tv ) < 0 )
 	{
 		int iErr = errno;
 		close();
-		throw SocketException( SocketException::cRead, strerror(iErr) );
+		throw TcpSocketException( TcpSocketException::cRead, strerror(iErr) );
 	}
-	if( FD_ISSET( nSocket, &rfds ) || bBlocking )
+	if( FD_ISSET( nTcpSocket, &rfds ) || bBlocking )
 	{
 		int nRead = TEMP_FAILURE_RETRY( 
-			bu_recv( nSocket, (char *) pBuf, nBytes, 0 ) );
+			bu_recv( nTcpSocket, (char *) pBuf, nBytes, 0 ) );
 		if( nRead == 0 )
 		{
 			close();
-			throw SocketException( SocketException::cClosed, "Socket closed.");
+			throw TcpSocketException( TcpSocketException::cClosed, "TcpSocket closed.");
 		}
 		if( nRead < 0 )
 		{
@@ -176,14 +180,14 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 			if( errno == ENETRESET || errno == ECONNRESET )
 			{
 				close();
-				throw SocketException( SocketException::cClosed,
+				throw TcpSocketException( TcpSocketException::cClosed,
 					strerror(errno) );
 			}
 			if( errno == EAGAIN )
 				return 0;
 			int iErr = errno;
 			close();
-			throw SocketException( SocketException::cRead, strerror(iErr) );
+			throw TcpSocketException( TcpSocketException::cRead, strerror(iErr) );
 #endif
 		}
 		return nRead;
@@ -191,7 +195,7 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes )
 	return 0;
 }
 
-size_t Bu::Socket::read( void *pBuf, size_t nBytes,
+size_t Bu::TcpSocket::read( void *pBuf, size_t nBytes,
 		uint32_t nSec, uint32_t nUSec )
 {
 	struct timeval tv;
@@ -199,7 +203,7 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes,
 	
 	fd_set rfds;
 	FD_ZERO(&rfds);
-	FD_SET(nSocket, &rfds);
+	FD_SET(nTcpSocket, &rfds);
 
 #ifdef WIN32
 	DWORD dwStart = GetTickCount();
@@ -216,7 +220,7 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes,
 	{
 		tv.tv_sec = nSec;
 		tv.tv_usec = nUSec;
-		bu_select( nSocket+1, &rfds, NULL, NULL, &tv );
+		bu_select( nTcpSocket+1, &rfds, NULL, NULL, &tv );
 		nRead += read( ((char *)pBuf)+nRead, nBytes-nRead );
 		if( nRead >= nBytes )
 			break;
@@ -235,13 +239,13 @@ size_t Bu::Socket::read( void *pBuf, size_t nBytes,
 	return nRead;
 }
 
-size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
+size_t Bu::TcpSocket::write( const void *pBuf, size_t nBytes )
 {
 //#ifdef WIN32
 	int nWrote = TEMP_FAILURE_RETRY( 
-		bu_send( nSocket, (const char *) pBuf, nBytes, 0 ) );
+		bu_send( nTcpSocket, (const char *) pBuf, nBytes, 0 ) );
 //#else
-//	int nWrote = TEMP_FAILURE_RETRY( ::write( nSocket, pBuf, nBytes ) );
+//	int nWrote = TEMP_FAILURE_RETRY( ::write( nTcpSocket, pBuf, nBytes ) );
 //#endif
 	if( nWrote < 0 )
 	{
@@ -252,19 +256,19 @@ size_t Bu::Socket::write( const void *pBuf, size_t nBytes )
 #else
 		if( errno == EAGAIN ) return 0;
 #endif
-		throw SocketException( SocketException::cWrite, strerror(errno) );
+		throw TcpSocketException( TcpSocketException::cWrite, strerror(errno) );
 	}
 	return nWrote;
 }
 
-size_t Bu::Socket::write( const void *pBuf, size_t nBytes, uint32_t nSec, uint32_t nUSec )
+size_t Bu::TcpSocket::write( const void *pBuf, size_t nBytes, uint32_t nSec, uint32_t nUSec )
 {
 	struct timeval tv;
 	size_t nWrote = 0;
 	
 	fd_set wfds;
 	FD_ZERO(&wfds);
-	FD_SET(nSocket, &wfds);
+	FD_SET(nTcpSocket, &wfds);
 
 #ifdef WIN32
 	DWORD dwStart = GetTickCount();
@@ -281,7 +285,7 @@ size_t Bu::Socket::write( const void *pBuf, size_t nBytes, uint32_t nSec, uint32
 	{
 		tv.tv_sec = nSec;
 		tv.tv_usec = nUSec;
-		bu_select( nSocket+1, NULL, &wfds, NULL, &tv );
+		bu_select( nTcpSocket+1, NULL, &wfds, NULL, &tv );
 		nWrote += write( ((char *)pBuf)+nWrote, nBytes-nWrote );
 		if( nWrote >= nBytes )
 			break;
@@ -300,101 +304,101 @@ size_t Bu::Socket::write( const void *pBuf, size_t nBytes, uint32_t nSec, uint32
 	return nWrote;
 }
 
-long Bu::Socket::tell()
+long Bu::TcpSocket::tell()
 {
 	throw UnsupportedException();
 }
 
-void Bu::Socket::seek( long )
+void Bu::TcpSocket::seek( long )
 {
 	throw UnsupportedException();
 }
 
-void Bu::Socket::setPos( long )
+void Bu::TcpSocket::setPos( long )
 {
 	throw UnsupportedException();
 }
 
-void Bu::Socket::setPosEnd( long )
+void Bu::TcpSocket::setPosEnd( long )
 {
 	throw UnsupportedException();
 }
 
-bool Bu::Socket::isEos()
+bool Bu::TcpSocket::isEos()
 {
 	return !bActive;
 }
 
-bool Bu::Socket::canRead()
+bool Bu::TcpSocket::canRead()
 {
 	fd_set rfds;
 	FD_ZERO(&rfds);
-	FD_SET(nSocket, &rfds);
+	FD_SET(nTcpSocket, &rfds);
 	struct timeval tv = { 0, 0 };
-	int retval = bu_select( nSocket+1, &rfds, NULL, NULL, &tv );
+	int retval = bu_select( nTcpSocket+1, &rfds, NULL, NULL, &tv );
 	if( retval == -1 )
-		throw SocketException(
-			SocketException::cBadRead,
+		throw TcpSocketException(
+			TcpSocketException::cBadRead,
 			"Bad Read error"
 			);
 
-	if( !FD_ISSET( nSocket, &rfds ) )
+	if( !FD_ISSET( nTcpSocket, &rfds ) )
 		return false;
 	return true;
 }
 
-bool Bu::Socket::canWrite()
+bool Bu::TcpSocket::canWrite()
 {
 	fd_set wfds;
 	FD_ZERO(&wfds);
-	FD_SET(nSocket, &wfds);
+	FD_SET(nTcpSocket, &wfds);
 	struct timeval tv = { 0, 0 };
-	int retval = bu_select( nSocket+1, NULL, &wfds, NULL, &tv );
+	int retval = bu_select( nTcpSocket+1, NULL, &wfds, NULL, &tv );
 	if( retval == -1 )
-		throw SocketException(
-			SocketException::cBadRead,
+		throw TcpSocketException(
+			TcpSocketException::cBadRead,
 			"Bad Read error"
 			);
-	if( !FD_ISSET( nSocket, &wfds ) )
+	if( !FD_ISSET( nTcpSocket, &wfds ) )
 		return false;
 	return true;
 }
 
-bool Bu::Socket::isReadable()
+bool Bu::TcpSocket::isReadable()
 {
 	return true;
 }
 
-bool Bu::Socket::isWritable()
+bool Bu::TcpSocket::isWritable()
 {
 	return true;
 }
 
-bool Bu::Socket::isSeekable()
+bool Bu::TcpSocket::isSeekable()
 {
 	return false;
 }
 
-bool Bu::Socket::isBlocking()
+bool Bu::TcpSocket::isBlocking()
 {
 #ifndef WIN32
-	return ((fcntl( nSocket, F_GETFL, 0 ) & O_NONBLOCK) != O_NONBLOCK);
+	return ((fcntl( nTcpSocket, F_GETFL, 0 ) & O_NONBLOCK) != O_NONBLOCK);
 #else
 	return false;
 #endif
 }
 
-void Bu::Socket::setBlocking( bool bBlocking )
+void Bu::TcpSocket::setBlocking( bool bBlocking )
 {
 	this->bBlocking = bBlocking;
 #ifndef WIN32
 	if( bBlocking )
 	{
-		fcntl( nSocket, F_SETFL, fcntl( nSocket, F_GETFL, 0 ) & (~O_NONBLOCK) );
+		fcntl( nTcpSocket, F_SETFL, fcntl( nTcpSocket, F_GETFL, 0 ) & (~O_NONBLOCK) );
 	}
 	else
 	{
-		fcntl( nSocket, F_SETFL, fcntl( nSocket, F_GETFL, 0 ) | O_NONBLOCK );
+		fcntl( nTcpSocket, F_SETFL, fcntl( nTcpSocket, F_GETFL, 0 ) | O_NONBLOCK );
 	}
 #else
 	u_long iMode;
@@ -408,39 +412,39 @@ void Bu::Socket::setBlocking( bool bBlocking )
 	// socket based on the numerical value of iMode.
 	// If iMode = 0, blocking is enabled; 
 	// If iMode != 0, non-blocking mode is enabled.
-	bu_ioctlsocket(nSocket, FIONBIO, &iMode);
+	bu_ioctlsocket(nTcpSocket, FIONBIO, &iMode);
 #endif	
 }
 
-void Bu::Socket::setSize( long )
+void Bu::TcpSocket::setSize( long )
 {
 }
 
-void Bu::Socket::flush()
+void Bu::TcpSocket::flush()
 {
 }
 
-bool Bu::Socket::isOpen()
+bool Bu::TcpSocket::isOpen()
 {
 	return bActive;
 }
 
-void Bu::Socket::setAddress()
+void Bu::TcpSocket::setAddress()
 {
 	struct sockaddr_in addr;
 	socklen_t len = sizeof(addr);
 	addr.sin_family = AF_INET;
-	bu_getpeername( nSocket, (sockaddr *)(&addr), &len );
+	bu_getpeername( nTcpSocket, (sockaddr *)(&addr), &len );
 	sAddress = bu_inet_ntoa( addr.sin_addr );
 }
 
-Bu::FString Bu::Socket::getAddress() const
+Bu::FString Bu::TcpSocket::getAddress() const
 {
 	return sAddress;
 }
 
-Bu::Socket::operator int() const
+Bu::TcpSocket::operator int() const
 {
-	return nSocket;
+	return nTcpSocket;
 }
 

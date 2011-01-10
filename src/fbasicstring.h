@@ -25,6 +25,7 @@
 
 namespace Bu
 {
+	/** @cond DEVEL */
 	template< typename chr >
 	struct FStringChunk
 	{
@@ -34,10 +35,55 @@ namespace Bu
 	};
 
 #define cpy( dest, src, size ) Bu::memcpy( dest, src, size*sizeof(chr) )
+	
+	template< typename chr, int nMinSize, typename chralloc,
+		typename chunkalloc> class FBasicString;
+
+	template<typename chr>
+	size_t strlen( const chr *pData )
+	{
+		for( size_t tLen = 0;; ++tLen )
+		{
+			if( pData[tLen] == (chr)0 )
+				return tLen;
+		}
+		return -1;
+	}
+
+	template<char>
+	size_t strlen( const char *pData )
+	{
+		return ::strlen( pData );
+	}
+
+	template<typename chr>
+	int strncmp( const chr *a, const chr *b, size_t iLen )
+	{
+		for( size_t iPos = 0; iPos < iLen; iPos++ )
+		{
+			if( a[iPos] != b[iPos] )
+			{
+				return a[iPos]-b[iPos];
+			}
+		}
+		return 0;
+	}
+
+	template<char>
+	int strncmp( const char *a, const char *b, size_t iLen )
+	{
+		return ::strncmp( a, b, iLen );
+	}
 
 	template<typename chr, int nMinSize, typename chralloc, typename chunkalloc>
 	struct FStringCore
 	{
+	friend class FBasicString<chr, nMinSize, chralloc, chunkalloc>;
+	friend class SharedCore<
+		FBasicString<chr, nMinSize, chralloc, chunkalloc>,
+		FStringCore<chr, nMinSize, chralloc, chunkalloc>
+		>;
+	private:
 		typedef struct FStringCore<chr, nMinSize, chralloc, chunkalloc> MyType;
 		typedef struct FStringChunk<chr> Chunk;
 		FStringCore() :
@@ -157,6 +203,7 @@ namespace Bu
 			nLength += pNewChunk->nLength;
 		}
 	};
+	/** @endcond */
 
 	/**
 	 * Flexible String class.  This class was designed with string passing and
@@ -174,55 +221,24 @@ namespace Bu
 	 *@param chralloc (typename) Memory Allocator for chr
 	 *@param chunkalloc (typename) Memory Allocator for chr chunks
 	 */
-	template< typename chr, int nMinSize=256, typename chralloc=std::allocator<chr>, typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
-	class FBasicString : public SharedCore< FStringCore<chr, nMinSize, chralloc, chunkalloc> >
+	template< typename chr, int nMinSize=256,
+		typename chralloc=std::allocator<chr>,
+		typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
+	class FBasicString : public SharedCore<
+						 FBasicString<chr, nMinSize, chralloc, chunkalloc>,
+						 FStringCore<chr, nMinSize, chralloc, chunkalloc> >
 	{
 	protected:
 		typedef struct FStringChunk<chr> Chunk;
 		typedef struct FBasicString<chr, nMinSize, chralloc, chunkalloc> MyType;
 		typedef struct FStringCore<chr, nMinSize, chralloc, chunkalloc> Core;
 
-		using SharedCore< Core >::core;
-		using SharedCore< Core >::_hardCopy;
+		using SharedCore<MyType, Core >::core;
+		using SharedCore<MyType, Core >::_hardCopy;
 
-	public:
-		FBasicString()
-		{
-		}
-
-		FBasicString( const chr *pData )
-		{
-			append( pData );
-		}
-
-		FBasicString( const chr *pData, long nLength )
-		{
-			append( pData, nLength );
-		}
-
-		FBasicString( const MyType &rSrc ) :
-			SharedCore<Core>( rSrc )
-		{
-		}
-
-		FBasicString( const MyType &rSrc, long nLength )
-		{
-			append( rSrc, nLength );
-		}
-		
-		FBasicString( const MyType &rSrc, long nStart, long nLength )
-		{
-			append( rSrc, nStart, nLength );
-		}
-
-		FBasicString( long nSize )
-		{
-			core->pFirst = core->pLast = core->newChunk( nSize );
-			core->nLength = nSize;
-		}
-		
+	public: // Iterators
 		struct iterator;
-		struct const_iterator
+		typedef struct const_iterator
 		{
 			friend class FBasicString<chr, nMinSize, chralloc, chunkalloc>;
 			friend struct iterator;
@@ -243,7 +259,7 @@ namespace Bu
 			{
 			}
 			
-			const_iterator( const iterator &i ) :
+			const_iterator( const struct iterator &i ) :
 				pChunk( i.pChunk ),
 				iPos( i.iPos )
 			{
@@ -454,7 +470,7 @@ namespace Bu
 				}
 				return const_iterator( NULL, 0 );
 			}
-		};
+		} const_iterator;
 		
 		typedef struct iterator
 		{
@@ -702,11 +718,41 @@ namespace Bu
 			}
 		} iterator;
 
-		typedef struct const_iterator const_iterator;
+	public:
+		FBasicString()
+		{
+		}
 
-		//typedef chr *iterator;
-//		typedef const chr *const_iterator;
-		// typedef iterator const_iterator;
+		FBasicString( const chr *pData )
+		{
+			append( pData );
+		}
+
+		FBasicString( const chr *pData, long nLength )
+		{
+			append( pData, nLength );
+		}
+
+		FBasicString( const MyType &rSrc ) :
+			SharedCore<MyType, Core>( rSrc )
+		{
+		}
+
+		FBasicString( const MyType &rSrc, long nLength )
+		{
+			append( rSrc, nLength );
+		}
+		
+		FBasicString( const MyType &rSrc, long nStart, long nLength )
+		{
+			append( rSrc, nStart, nLength );
+		}
+
+		FBasicString( long nSize )
+		{
+			core->pFirst = core->pLast = core->newChunk( nSize );
+			core->nLength = nSize;
+		}
 
 		FBasicString( const const_iterator &s )
 		{
@@ -731,14 +777,8 @@ namespace Bu
 			if( !pData ) return;
 			long nLen;
 			for( nLen = 0; pData[nLen] != (chr)0; nLen++ ) { }
-			if( nLen == 0 )
-				return;
-		
-			Chunk *pNew = core->newChunk( nLen );
-			cpy( pNew->pData, pData, nLen );
 
-			_hardCopy();
-			core->appendChunk( pNew );
+			append( pData, 0, nLen );
 		}
 
 		/**
@@ -748,15 +788,7 @@ namespace Bu
 		 */
 		void append( const chr *pData, long nLen )
 		{
-			if( nLen == 0 )
-				return;
-
-			Chunk *pNew = core->newChunk( nLen );
-			
-			cpy( pNew->pData, pData, nLen );
-
-			_hardCopy();
-			core->appendChunk( pNew );
+			append( pData, 0, nLen );
 		}
 		
 		/**
@@ -767,15 +799,37 @@ namespace Bu
 		 */
 		void append( const chr *pData, long nStart, long nLen )
 		{
-			if( nLen == 0 )
+			if( !pData ) return;
+			if( nLen <= 0 )
 				return;
 
-			Chunk *pNew = core->newChunk( nLen );
-			
-			cpy( pNew->pData, pData+nStart, nLen );
+			pData += nStart;
 
 			_hardCopy();
-			core->appendChunk( pNew );
+	
+			if( core->pLast && core->pLast->nLength < nMinSize )
+			{
+				int nAmnt = nMinSize - core->pLast->nLength;
+				if( nAmnt > nLen )
+					nAmnt = nLen;
+				cpy(
+					core->pLast->pData+core->pLast->nLength,
+					pData,
+					nAmnt
+				   );
+				pData += nAmnt;
+				core->pLast->nLength += nAmnt;
+				nLen -= nAmnt;
+				core->nLength += nAmnt;
+			}
+
+			if( nLen > 0 )
+			{
+				Chunk *pNew = core->newChunk( nLen );
+				cpy( pNew->pData, pData, nLen );
+				core->appendChunk( pNew );
+//				core->nLength += nLen;
+			}
 		}
 
 		/**
@@ -804,7 +858,7 @@ namespace Bu
 		 */
 		void append( const MyType & sData )
 		{
-			append( sData.getStr(), sData.getSize() );
+			append( sData.getStr(), 0, sData.getSize() );
 		}
 		
 		/**
@@ -815,7 +869,7 @@ namespace Bu
 		 */
 		void append( const MyType & sData, long nLen )
 		{
-			append( sData.getStr(), nLen );
+			append( sData.getStr(), 0, nLen );
 		}
 		
 		/**
@@ -1029,7 +1083,7 @@ namespace Bu
 		 */
 		void insert( long nPos, const chr *pData )
 		{
-			insert( nPos, pData, strlen( pData ) );
+			insert( nPos, pData, Bu::strlen( pData ) );
 		}
 
 		void remove( long nPos, long nLen )
@@ -1155,13 +1209,13 @@ namespace Bu
 			if( iStart < 0 )
 				iStart = 0;
 			if( iStart >= core->nLength )
-				return "";
+				return (const chr[]){(chr)0};
 			if( iSize < 0 )
 				iSize = core->nLength;
 			if( iStart+iSize > core->nLength )
 				iSize = core->nLength-iStart;
 			if( iSize == 0 )
-				return "";
+				return (const chr[]){(chr)0};
 
 			flatten();
 			MyType ret( core->pFirst->pData+iStart, iSize );
@@ -1210,37 +1264,6 @@ namespace Bu
 					);
 				return ret;
 			}
-		}
-
-		/**
-		 * (std::string compatability) Get a pointer to the string array.
-		 *@returns (chr *) The string data.
-		 */
-		DEPRECATED
-		chr *c_str()
-		{
-			if( core->pFirst == NULL || core->nLength == 0 )
-				return NULL;
-
-			flatten();
-			_hardCopy();
-			core->pFirst->pData[core->nLength] = (chr)0;
-			return core->pFirst->pData;
-		}
-		
-		/**
-		 * (std::string compatability) Get a const pointer to the string array.
-		 *@returns (const chr *) The string data.
-		 */
-		DEPRECATED
-		const chr *c_str() const
-		{
-			if( core->pFirst == NULL || core->nLength == 0 )
-				return NULL;
-
-			flatten();
-			core->pFirst->pData[core->nLength] = (chr)0;
-			return core->pFirst->pData;
 		}
 
 		Bu::List<MyType> split( const chr c ) const
@@ -1423,11 +1446,11 @@ namespace Bu
 			wordexp_t result;
 
 			/* Expand the string for the program to run.  */
-			switch (wordexp (core->pFirst->pData, &result, 0))
+			switch (wordexp ((char *)core->pFirst->pData, &result, 0))
 			{
 				case 0:                       /* Successful.  */
 					{
-						set( result.we_wordv[0] );
+						set( (chr *)result.we_wordv[0] );
 						wordfree( &result );
 						return;
 					}
@@ -1941,7 +1964,7 @@ namespace Bu
 			long iLen = vsnprintf( NULL, 0, sFrmt, ap );
 			
 			Chunk *pNew = core->newChunk( iLen );
-			vsnprintf( pNew->pData, iLen+1, sFrmt, ap );
+			vsnprintf( (char *)pNew->pData, iLen+1, sFrmt, ap );
 			core->appendChunk( pNew );
 
 			va_end( ap );
@@ -1958,7 +1981,7 @@ namespace Bu
 			long iLen = vsnprintf( NULL, 0, sFrmt, ap );
 
 			Chunk *pNew = core->newChunk( iLen );
-			vsnprintf( pNew->pData, iLen+1, sFrmt, ap );
+			vsnprintf( (char *)pNew->pData, iLen+1, sFrmt, ap );
 			core->appendChunk( pNew );
 
 			va_end( ap );
@@ -1975,7 +1998,7 @@ namespace Bu
 			long iLen = vsnprintf( NULL, 0, sFrmt, ap );
 			
 			Chunk *pNew = core->newChunk( iLen );
-			vsnprintf( pNew->pData, iLen+1, sFrmt, ap );
+			vsnprintf( (char *)pNew->pData, iLen+1, sFrmt, ap );
 			core->prependChunk( pNew );
 
 			va_end( ap );

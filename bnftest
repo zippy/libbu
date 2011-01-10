@@ -1,0 +1,18 @@
+tokens = tokPlus tokMinus tokMult tokDivide tokOpenParen tokCloseParen
+	tokEquals tokNumber;
+
+input: input line
+	 |
+	 ;
+	 
+line: expr tokEquals {print}
+	;
+
+expr: expr tokPlus expr {add}
+	| expr tokMinus expr {subtract}
+	| expr tokMult expr {multiply}
+	| expr tokDivide expr {divide}
+	| tokOpenParen expr tokCloseParen
+	| [tokNumber]
+	;
+

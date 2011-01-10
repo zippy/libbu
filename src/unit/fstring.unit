@@ -339,4 +339,13 @@ suite FString
 		a = "This is a test.";
 		unitTest( a.replace("i", "ooo") == "Thooos ooos a test." );
 	}
+
+	test coreDerefBug1
+	{
+		Bu::FString a, b;
+		a = "bob";
+		a.setSize( 0 );
+		b = a;
+		b.getStr();
+	}
 }

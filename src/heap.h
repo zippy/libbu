@@ -13,76 +13,93 @@
 #include "bu/exceptionbase.h"
 #include "bu/util.h"
 #include "bu/queue.h"
+#include "bu/sharedcore.h"
 
 namespace Bu
 {
 	subExceptionDecl( HeapException );
 
-	/**
-	 * A priority queue that allows for an unlimited number of priorities.  All
-	 * objects enqueued must support less-than-comparison.  Then every time an
-	 * item is dequeued it is always the least item in the heap.  The heap
-	 * operates using a binary tree for storage, which allows most operations
-	 * to be very fast.  Enqueueing and dequeueing are both O(log(N)) operatoins
-	 * whereas peeking is constant time.
-	 *
-	 * This heap implementation allows iterating, however please note that any
-	 * enqueue or dequeue operation will invalidate the iterator and make it
-	 * unusable (if it still works, you shouldn't trust the results).  Also,
-	 * the items are not stored in memory in order, they are optomized into a
-	 * tree.  This means that the items will be in effectively random order
-	 * while iterating through them, and the order cannot be trusted.  Also,
-	 * modifying an item in the heap will not cause that item to be re-sorted.
-	 * If you want to change the position of an item in the heap you will have
-	 * to dequeue every item before it, dequeue that item, change it, and
-	 * re-enqueue all of the items removed.
-	 */
-	template<typename item, typename cmpfunc=__basicLTCmp<item>, typename itemalloc=std::allocator<item> >
-	class Heap : public Queue<item>
-	{
-	public:
-		Heap() :
-			iSize( 7 ),
-			iFill( 0 ),
-			aItem( ia.allocate( iSize ) )
-		{
-		}
-		
-		Heap( cmpfunc cmpin ) :
-			iSize( 7 ),
-			iFill( 0 ),
-			aItem( ia.allocate( iSize ) ),
-			cmp( cmpin )
-		{
-		}
+	template<typename item, typename cmpfunc, typename itemalloc>
+	class Heap;
 
-		Heap( int iInitialCapacity ) :
+	/** @cond DEVEL */
+	template<typename item, typename cmpfunc, typename itemalloc>
+	class HeapCore
+	{
+	friend class Heap<item, cmpfunc, itemalloc>;
+	friend class SharedCore<
+		Heap<item, cmpfunc, itemalloc>, HeapCore<item, cmpfunc, itemalloc>
+		>;
+	private:
+		HeapCore() :
 			iSize( 0 ),
 			iFill( 0 ),
 			aItem( NULL )
 		{
-			for( iSize = 1; iSize < iInitialCapacity; iSize=iSize*2+1 ) { }
-			aItem = ia.allocate( iSize );
 		}
-		
-		Heap( cmpfunc cmpin, int iInitialCapacity ) :
-			iSize( 0 ),
-			iFill( 0 ),
-			aItem( NULL ),
-			cmp( cmpin )
+
+		virtual ~HeapCore()
 		{
-			for( iSize = 1; iSize < iInitialCapacity; iSize=iSize*2+1 ) { }
+			clear();
+		}
+
+		void init()
+		{
+			if( iSize > 0 )
+				return;
+
+			iSize = 7;
+			iFill = 0;
 			aItem = ia.allocate( iSize );
 		}
 
-		virtual ~Heap()
+		void init( int iCap )
 		{
+			if( iSize > 0 )
+				return;
+
+			for( iSize = 1; iSize < iCap; iSize=iSize*2+1 ) { }
+			iFill = 0;
+			aItem = ia.allocate( iSize );
+		}
+
+		void clear()
+		{
+			if( iSize == 0 )
+				return;
+
 			for( int j = 0; j < iFill; j++ )
 				ia.destroy( &aItem[j] );
 			ia.deallocate( aItem, iSize );
 			aItem = NULL;
+			iSize = 0;
+			iFill = 0;
 		}
+		
+		void upSize()
+		{
+			if( iSize == 0 )
+			{
+				init();
+				return;
+			}
 
+			item *aNewItems = ia.allocate( iSize*2+1 );
+			//
+			// We cannot use a memcopy here because we don't know what kind
+			// of datastructures are being used, we have to copy them one at
+			// a time.
+			//
+			for( int j = 0; j < iFill; j++ )
+			{
+				ia.construct( &aNewItems[j], aItem[j] );
+				ia.destroy( &aItem[j] );
+			}
+			ia.deallocate( aItem, iSize );
+			aItem = aNewItems;
+			iSize = iSize*2+1;
+		}
+		
 		virtual void enqueue( const item &it )
 		{
 			item i = it; // TODO: This is a silly workaround, put the i item
@@ -126,20 +143,6 @@ namespace Bu
 			iFill++;
 		}
 
-		virtual item &peek()
-		{
-			if( iFill == 0 )
-				throw HeapException("Heap empty.");
-			return aItem[0];
-		}
-
-		virtual const item &peek() const
-		{
-			if( iFill == 0 )
-				throw HeapException("Heap empty.");
-			return aItem[0];
-		}
-
 		virtual item dequeue()
 		{
 			if( iFill == 0 )
@@ -174,14 +177,118 @@ namespace Bu
 			return iRet;
 		}
 
+	private:
+		int iSize;
+		int iFill;
+		item *aItem;
+		cmpfunc cmp;
+		itemalloc ia;
+	};
+	/** @endcond */
+
+	/**
+	 * A priority queue that allows for an unlimited number of priorities.  All
+	 * objects enqueued must support less-than-comparison.  Then every time an
+	 * item is dequeued it is always the least item in the heap.  The heap
+	 * operates using a binary tree for storage, which allows most operations
+	 * to be very fast.  Enqueueing and dequeueing are both O(log(N)) operatoins
+	 * whereas peeking is constant time.
+	 *
+	 * This heap implementation allows iterating, however please note that any
+	 * enqueue or dequeue operation will invalidate the iterator and make it
+	 * unusable (if it still works, you shouldn't trust the results).  Also,
+	 * the items are not stored in memory in order, they are optomized into a
+	 * tree.  This means that the items will be in effectively random order
+	 * while iterating through them, and the order cannot be trusted.  Also,
+	 * modifying an item in the heap will not cause that item to be re-sorted.
+	 * If you want to change the position of an item in the heap you will have
+	 * to dequeue every item before it, dequeue that item, change it, and
+	 * re-enqueue all of the items removed.
+	 */
+	template<typename item, typename cmpfunc=__basicLTCmp<item>, typename itemalloc=std::allocator<item> >
+	class Heap : public Queue<item>, public SharedCore<
+				 Heap<item, cmpfunc, itemalloc>,
+				 HeapCore<item, cmpfunc, itemalloc>
+				 >
+	{
+	private:
+		typedef class Heap<item,cmpfunc,itemalloc> MyType;
+		typedef class HeapCore<item,cmpfunc,itemalloc> Core;
+
+	protected:
+		using SharedCore<MyType, Core>::core;
+		using SharedCore<MyType, Core>::_hardCopy;
+		using SharedCore<MyType, Core>::_resetCore;
+		using SharedCore<MyType, Core>::_allocateCore;
+
+	public:
+		Heap()
+		{
+		}
+		
+		Heap( cmpfunc cmpin )
+		{
+			core->cmp = cmpin;
+		}
+
+		Heap( int iInitialCapacity )
+		{
+			core->init( iInitialCapacity );
+		}
+		
+		Heap( cmpfunc cmpin, int iInitialCapacity )
+		{
+			core->cmp = cmpin;
+			core->init( iInitialCapacity );
+		}
+
+		Heap( const MyType &rSrc ) :
+			SharedCore<MyType, Core>( rSrc )
+		{
+		}
+
+		virtual ~Heap()
+		{
+		}
+
+		virtual void enqueue( const item &it )
+		{
+			_hardCopy();
+
+			core->enqueue( it );
+		}
+
+		virtual item &peek()
+		{
+			_hardCopy();
+
+			if( core->iFill == 0 )
+				throw HeapException("Heap empty.");
+			return core->aItem[0];
+		}
+
+		virtual const item &peek() const
+		{
+			if( core->iFill == 0 )
+				throw HeapException("Heap empty.");
+			return core->aItem[0];
+		}
+
+		virtual item dequeue()
+		{
+			_hardCopy();
+
+			return core->dequeue();
+		}
+
 		virtual bool isEmpty() const
 		{
-			return (iFill==0);
+			return (core->iFill==0);
 		}
 
 		virtual int getSize() const
 		{
-			return iFill;
+			return core->iFill;
 		}
 
 		class iterator
@@ -201,7 +308,7 @@ namespace Bu
 			{
 				if( pHeap == NULL )
 					throw Bu::ExceptionBase("Iterator not initialized.");
-				if( iIndex < 0 || iIndex >= pHeap->iFill )
+				if( iIndex < 0 || iIndex >= pHeap->core->iFill )
 					throw Bu::ExceptionBase("Iterator out of bounds.");
 			}
 
@@ -230,12 +337,16 @@ namespace Bu
 
 			item &operator*()
 			{
-				return pHeap->aItem[iIndex];
+				pHeap->_hardCopy();
+
+				return pHeap->core->aItem[iIndex];
 			}
 
 			item *operator->()
 			{
-				return &(pHeap->aItem[iIndex]);
+				pHeap->_hardCopy();
+
+				return &(pHeap->core->aItem[iIndex]);
 			}
 
 			iterator &operator++()
@@ -260,7 +371,7 @@ namespace Bu
 			{
 				checkValid();
 				iIndex++;
-				if( iIndex >= pHeap->iFill )
+				if( iIndex >= pHeap->core->iFill )
 					iIndex = -1;
 
 				return *this;
@@ -279,7 +390,7 @@ namespace Bu
 				checkValid();
 				iterator ret( *this );
 				ret.iIndex += iDelta;
-				if( ret.iIndex >= pHeap->iFill )
+				if( ret.iIndex >= pHeap->core->iFill )
 					ret.iIndex = -1;
 				return ret;
 			}
@@ -294,12 +405,12 @@ namespace Bu
 				return ret;
 			}
 
-			operator bool()
+			operator bool() const
 			{
 				return iIndex != -1;
 			}
 
-			bool isValid()
+			bool isValid() const
 			{
 				return iIndex != -1;
 			}
@@ -328,7 +439,7 @@ namespace Bu
 			{
 				if( pHeap == NULL )
 					throw Bu::ExceptionBase("Iterator not initialized.");
-				if( iIndex < 0 || iIndex >= pHeap->iFill )
+				if( iIndex < 0 || iIndex >= pHeap->core->iFill )
 					throw Bu::ExceptionBase("Iterator out of bounds.");
 			}
 
@@ -363,19 +474,23 @@ namespace Bu
 
 			const item &operator*()
 			{
-				return pHeap->aItem[iIndex];
+				pHeap->_hardCopy();
+
+				return pHeap->core->aItem[iIndex];
 			}
 
 			const item *operator->()
 			{
-				return &(pHeap->aItem[iIndex]);
+				pHeap->_hardCopy();
+
+				return &(pHeap->core->aItem[iIndex]);
 			}
 
 			const_iterator &operator++()
 			{
 				checkValid();
 				iIndex++;
-				if( iIndex >= pHeap->iFill )
+				if( iIndex >= pHeap->core->iFill )
 					iIndex = -1;
 
 				return *this;
@@ -393,7 +508,7 @@ namespace Bu
 			{
 				checkValid();
 				iIndex++;
-				if( iIndex >= pHeap->iFill )
+				if( iIndex >= pHeap->core->iFill )
 					iIndex = -1;
 
 				return *this;
@@ -427,12 +542,12 @@ namespace Bu
 				return ret;
 			}
 
-			operator bool()
+			operator bool() const
 			{
 				return iIndex != -1;
 			}
 
-			bool isValid()
+			bool isValid() const
 			{
 				return iIndex != -1;
 			}
@@ -452,14 +567,14 @@ namespace Bu
 
 		iterator begin()
 		{
-			if( iFill == 0 )
+			if( core->iFill == 0 )
 				return end();
 			return iterator( this, 0 );
 		}
 
 		const_iterator begin() const
 		{
-			if( iFill == 0 )
+			if( core->iFill == 0 )
 				return end();
 			return const_iterator( this, 0 );
 		}
@@ -475,31 +590,22 @@ namespace Bu
 		}
 
 
-	private:
-		void upSize()
+	protected:
+		virtual Core *_copyCore( Core *src )
 		{
-			item *aNewItems = ia.allocate( iSize*2+1 );
-			//
-			// We cannot use a memcopy here because we don't know what kind
-			// of datastructures are being used, we have to copy them one at
-			// a time.
-			//
-			for( int j = 0; j < iFill; j++ )
-			{
-				ia.construct( &aNewItems[j], aItem[j] );
-				ia.destroy( &aItem[j] );
-			}
-			ia.deallocate( aItem, iSize );
-			aItem = aNewItems;
-			iSize = iSize*2+1;
-		}
+			Core *pRet = _allocateCore();
 
-	private:
-		int iSize;
-		int iFill;
-		item *aItem;
-		cmpfunc cmp;
-		itemalloc ia;
+			pRet->iSize = src->iSize;
+			pRet->iFill = src->iFill;
+			pRet->cmp = src->cmp;
+			pRet->aItem = pRet->ia.allocate( pRet->iSize );
+			for( int j = 0; j < pRet->iFill; j++ )
+			{
+				pRet->ia.construct( &pRet->aItem[j], src->aItem[j] );
+			}
+
+			return pRet;
+		}
 	};
 };
 

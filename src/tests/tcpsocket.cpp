@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include <bu/socket.h>
+#include <bu/tcpsocket.h>
 #include <bu/sio.h>
 
 #include <sys/time.h>
@@ -17,7 +17,7 @@ bool isUp()
 {
 	try
 	{
-		Socket s("xagasoft.com", 9898, 1 );
+		TcpSocket s("xagasoft.com", 9898, 1 );
 
 		char buf[5];
 		buf[s.read(buf, 2, 1, 0)] = '\0';

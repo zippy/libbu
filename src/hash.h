@@ -12,7 +12,8 @@
 #include "bu/exceptionbase.h"
 #include "bu/list.h"
 #include "bu/util.h"
-#include "archivebase.h"
+#include "bu/archivebase.h"
+#include "bu/sharedcore.h"
 
 #define bitsToBytes( n ) (n/32+(n%32>0 ? 1 : 0))
 
@@ -49,189 +50,23 @@ namespace Bu
 		}
 	};
 
-	template<typename key, typename value, typename sizecalc = __calcNextTSize_fast, typename keyalloc = std::allocator<key>, typename valuealloc = std::allocator<value>, typename challoc = std::allocator<uint32_t> >
+	template<typename key, typename value, typename sizecalc, typename keyalloc,
+		typename valuealloc, typename challoc>
 	class Hash;
 
-	template< typename key, typename _value, typename sizecalc = __calcNextTSize_fast, typename keyalloc = std::allocator<key>, typename valuealloc = std::allocator<_value>, typename challoc = std::allocator<uint32_t> >
-	struct HashProxy
+	/** @cond DEVEL */
+	template<typename key, typename value, typename sizecalc, typename keyalloc,
+		typename valuealloc, typename challoc >
+	class HashCore
 	{
-		friend class Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc>;
+	friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
+	friend class SharedCore<
+		Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>,
+		HashCore<key, value, sizecalc, keyalloc, valuealloc, challoc>
+		>;
 	private:
-		HashProxy( Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc> &h, const key *k, uint32_t nPos, uint32_t hash ) :
-			hsh( h ),
-			pKey( k ),
-			nPos( nPos ),
-			hash( hash ),
-			bFilled( false )
-		{
-		}
-
-		HashProxy( Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc> &h, uint32_t nPos, _value *pValue ) :
-			hsh( h ),
-			nPos( nPos ),
-			pValue( pValue ),
-			bFilled( true )
-		{
-		}
-
-		Hash<key, _value, sizecalc, keyalloc, valuealloc, challoc> &hsh;
-		const key *pKey;
-		uint32_t nPos;
-		_value *pValue;
-		uint32_t hash;
-		bool bFilled;
-
-	public:
-		/**
-		 * Cast operator for HashProxy.
-		 *@returns (value_type &) The value the HashProxy is pointing to.
-		 */
-		operator _value &()
-		{
-			if( bFilled == false )
-				throw HashException(
-						excodeNotFilled,
-						"No data assosiated with that key."
-						);
-			return *pValue;
-		}
-
-		/**
-		 * Direct function for retrieving a value out of the HashProxy.
-		 *@returns (value_type &) The value pointed to by this HashProxy.
-		 */
-		DEPRECATED
-		_value &value()
-		{
-			if( bFilled == false )
-				throw HashException(
-						excodeNotFilled,
-						"No data assosiated with that key."
-						);
-			return *pValue;
-		}
-		
-		/**
-		 * Direct function for retrieving a value out of the HashProxy.
-		 *@returns (value_type &) The value pointed to by this HashProxy.
-		 */
-		_value &getValue()
-		{
-			if( bFilled == false )
-				throw HashException(
-						excodeNotFilled,
-						"No data assosiated with that key."
-						);
-			return *pValue;
-		}
-
-		/**
-		 * Whether this HashProxy points to something real or not.
-		 */
-		bool isFilled()
-		{
-			return bFilled;
-		}
-
-		/**
-		 * Erase the data pointed to by this HashProxy.
-		 */
-		void erase()
-		{
-			if( bFilled )
-			{
-				hsh._erase( nPos );
-				hsh.onDelete();
-			}
-		}
-
-		/**
-		 * Assign data to this point in the hash table.
-		 *@param nval (value_type) the data to assign.
-		 */
-		_value operator=( _value nval )
-		{
-			if( bFilled )
-			{
-				hsh.va.destroy( &hsh.aValues[nPos] );
-				hsh.va.construct( &hsh.aValues[nPos], nval );
-				hsh.onUpdate();
-			}
-			else
-			{
-				hsh.fill( nPos, *pKey, nval, hash ); 
-				hsh.onInsert();
-			}
-
-			return nval;
-		}
-
-		/**
-		 * Pointer extraction operator. Access to members of data pointed to
-		 * 		by HashProxy.
-		 *@returns (value_type *)
-		 */
-		_value *operator->()
-		{
-			if( bFilled == false )
-				throw HashException(
-						excodeNotFilled,
-						"No data assosiated with that key."
-						);
-			return pValue;
-		}
-	};
-
-	/**
-	 * Libbu++ Template Hash Table.  This is your average hash table, that uses
-	 * template functions in order to do fast, efficient, generalized hashing.
-	 * It's pretty easy to use, and works well with all other libbu++ types so
-	 * far.
-	 *
-	 * In order to use it, I recommend the following for all basic usage:
-	 *@code
-	 // Define a Hash typedef with strings as keys and ints as values.
-	 typedef Bu::Hash<Bu::FString, int> StrIntHash;
-
-	 // Create one
-	 StrIntHash hInts;
-
-	 // Insert some integers
-	 hInts["one"] = 1;
-	 hInts["forty-two"] = 42;
-	 hInts.insert("forty two", 42 );
-
-	 // Get values out of the hash, the last two options are the most explicit,
-	 // and must be used if the hash's value type does not match what you're
-	 // comparing to exactly.
-	 if( hInts["one"] == 1 ) doSomething();
-	 if( hInts["forty-two"].value() == 42 ) doSomething();
-	 if( hInts.get("forty two") == 42 ) doSomething();
-
-	 // Iterate through the Hash
-	 for( StrIntHash::iterator i = hInts.begin(); i != hInts.end(); i++ )
-	 {
-	 	// i.getValue() works too
-	 	print("'%s' = %d\n", i.getKey().getStr(), (*i) );
-	 }
-	 												
-	 @endcode
-	 *@param key (typename) The datatype of the hashtable keys
-	 *@param value (typename) The datatype of the hashtable data
-	 *@param sizecalc (typename) Functor to compute new table size on rehash
-	 *@param keyalloc (typename) Memory allocator for hashtable keys
-	 *@param valuealloc (typename) Memory allocator for hashtable values
-	 *@param challoc (typename) Byte allocator for bitflags
-	 *@ingroup Containers
-	 */
-	template<typename key, typename value, typename sizecalc, typename keyalloc, typename valuealloc, typename challoc >
-	class Hash
-	{
-		friend struct HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc>;
-		typedef class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> MyType;
-	public:
-		Hash() :
-			nCapacity( 11 ),
+		HashCore() :
+			nCapacity( 0 ),
 			nFilled( 0 ),
 			nDeleted( 0 ),
 			bFilled( NULL ),
@@ -240,6 +75,19 @@ namespace Bu
 			aValues( NULL ),
 			aHashCodes( NULL )
 		{
+		}
+
+		virtual ~HashCore()
+		{
+			clear();
+		}
+
+		void init()
+		{
+			if( nCapacity > 0 )
+				return;
+
+			nCapacity = 11;
 			nKeysSize = bitsToBytes( nCapacity );
 			bFilled = ca.allocate( nKeysSize );
 			bDeleted = ca.allocate( nKeysSize );
@@ -250,687 +98,21 @@ namespace Bu
 			aValues = va.allocate( nCapacity );
 		}
 
-		Hash( const Hash &src ) :
-			nCapacity( src.nCapacity ),
-			nFilled( 0 ),
-			nDeleted( 0 ),
-			bFilled( NULL ),
-			bDeleted( NULL ),
-			aKeys( NULL ),
-			aValues( NULL ),
-			aHashCodes( NULL )
+		void clearBits()
 		{
-			nKeysSize = bitsToBytes( nCapacity );
-			bFilled = ca.allocate( nKeysSize );
-			bDeleted = ca.allocate( nKeysSize );
-			clearBits();
+			if( nCapacity == 0 )
+				return;
 
-			aHashCodes = ca.allocate( nCapacity );
-			aKeys = ka.allocate( nCapacity );
-			aValues = va.allocate( nCapacity );
-
-			for( uint32_t j = 0; j < src.nCapacity; j++ )
-			{
-				if( src.isFilled( j ) && !src.isDeleted( j ) )
-				{
-					insert( src.aKeys[j], src.aValues[j] );
-				}
-			}
-		}
-
-		/**
-		 * Hashtable assignment operator. Clears this hashtable and
-		 * copies RH into it.
-		 */
-		Hash &operator=( const Hash &src )
-		{
-			for( uint32_t j = 0; j < nCapacity; j++ )
-			{
-				if( isFilled( j ) && !isDeleted( j ) )
-				{
-					va.destroy( &aValues[j] );
-					ka.destroy( &aKeys[j] );
-				}
-			}
-			va.deallocate( aValues, nCapacity );
-			ka.deallocate( aKeys, nCapacity );
-			ca.deallocate( bFilled, nKeysSize );
-			ca.deallocate( bDeleted, nKeysSize );
-			ca.deallocate( aHashCodes, nCapacity );
-
-			nFilled = 0;
-			nDeleted = 0;
-			nCapacity = src.nCapacity;
-			nKeysSize = bitsToBytes( nCapacity );
-			bFilled = ca.allocate( nKeysSize );
-			bDeleted = ca.allocate( nKeysSize );
-			clearBits();
-
-			aHashCodes = ca.allocate( nCapacity );
-			aKeys = ka.allocate( nCapacity );
-			aValues = va.allocate( nCapacity );
-
-			for( uint32_t j = 0; j < src.nCapacity; j++ )
-			{
-				if( src.isFilled( j ) && !src.isDeleted( j ) )
-				{
-					insert( src.aKeys[j], src.aValues[j] );
-				}
-			}
-
-			return *this;
-		}
-
-		virtual ~Hash()
-		{
-			for( uint32_t j = 0; j < nCapacity; j++ )
-			{
-				if( isFilled( j ) )
-					if( !isDeleted( j ) )
-					{
-						va.destroy( &aValues[j] );
-						ka.destroy( &aKeys[j] );
-					}
-			}
-			va.deallocate( aValues, nCapacity );
-			ka.deallocate( aKeys, nCapacity );
-			ca.deallocate( bFilled, nKeysSize );
-			ca.deallocate( bDeleted, nKeysSize );
-			ca.deallocate( aHashCodes, nCapacity );
-		}
-
-		/**
-		 * Get the current hash table capacity. (Changes at re-hash)
-		 *@returns (uint32_t) The current capacity.
-		 */
-		uint32_t getCapacity() const
-		{
-			return nCapacity;
-		}
-
-		/**
-		 * Get the number of hash locations spoken for. (Including 
-		 * not-yet-cleaned-up deleted items.)
-		 *@returns (uint32_t) The current fill state.
-		 */
-		uint32_t getFill() const
-		{
-			return nFilled;
-		}
-
-		/**
-		 * Get the number of items stored in the hash table.
-		 *@returns (uint32_t) The number of items stored in the hash table.
-		 */
-		uint32_t getSize() const
-		{
-			return nFilled-nDeleted;
-		}
-
-		bool isEmpty() const
-		{
-			return (nFilled-nDeleted) == 0;
-		}
-
-		/**
-		 * Get the number of items which have been deleted, but not yet
-		 * cleaned up.
-		 *@returns (uint32_t) The number of deleted items.
-		 */
-		uint32_t getDeleted() const
-		{
-			return nDeleted;
-		}
-
-		/**
-		 * Hash table index operator
-		 *@param k (key_type) Key of data to be retrieved.
-		 *@returns (HashProxy) Proxy pointing to the data.
-		 */
-		virtual HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc> operator[]( const key &k )
-		{
-			uint32_t hash = __calcHashCode( k );
-			bool bFill;
-			uint32_t nPos = probe( hash, k, bFill );
-
-			if( bFill )
-			{
-				return HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc>( *this, nPos, &aValues[nPos] );
-			}
-			else
-			{
-				return HashProxy<key, value, sizecalc, keyalloc, valuealloc, challoc>( *this, &k, nPos, hash );
-			}
-		}
-
-		/**
-		 * Insert a value (v) under key (k) into the hash table
-		 *@param k (key_type) Key to list the value under.
-		 *@param v (value_type) Value to store in the hash table.
-		 */
-		virtual void insert( const key &k, const value &v )
-		{
-			uint32_t hash = __calcHashCode( k );
-			bool bFill;
-			uint32_t nPos = probe( hash, k, bFill );
-
-			if( bFill )
-			{
-				va.destroy( &aValues[nPos] );
-				va.construct( &aValues[nPos], v );
-				onUpdate();
-			}
-			else
-			{
-				fill( nPos, k, v, hash );
-				onInsert();
-			}
-		}
-
-		/**
-		 * Remove a value from the hash table.
-		 *@param k (key_type) The data under this key will be erased.
-		 */
-		virtual void erase( const key &k )
-		{
-			uint32_t hash = __calcHashCode( k );
-			bool bFill;
-			uint32_t nPos = probe( hash, k, bFill );
-
-			if( bFill )
-			{
-				_erase( nPos );
-				onDelete();
-			}
-		}
-
-		struct iterator;
-
-		/**
-		 * Remove a value from the hash pointed to from an iterator.
-		 *@param i (iterator &) The data to be erased.
-		 */
-		virtual void erase( struct iterator &i )
-		{
-			if( this != i.hsh )
-				throw HashException("This iterator didn't come from this Hash.");
-			if( isFilled( i.nPos ) && !isDeleted( i.nPos ) )
-			{
-				_erase( i.nPos );
-				onDelete();
-			}
-		}
-
-		/**
-		 * Remove all data from the hash table.
-		 */
-		virtual void clear()
-		{
-			for( uint32_t j = 0; j < nCapacity; j++ )
-			{
-				if( isFilled( j ) )
-					if( !isDeleted( j ) )
-					{
-						_erase( j );
-						onDelete();
-					}
-			}
-			
-			clearBits();
-		}
-
-		/**
-		 * Get an item of data from the hash table.
-		 *@param k (key_type) Key pointing to the data to be retrieved.
-		 *@returns (value_type &) The data pointed to by (k).
-		 */
-		virtual value &get( const key &k )
-		{
-			uint32_t hash = __calcHashCode( k );
-			bool bFill;
-			uint32_t nPos = probe( hash, k, bFill, false );
-
-			if( bFill )
-			{
-				return aValues[nPos];
-			}
-			else
-			{
-				throw HashException(
-						excodeNotFilled,
-						"No data assosiated with that key."
-						);
-			}
-		}
-		
-		/**
-		 * Get a const item of data from the hash table.
-		 *@param k (key_type) Key pointing to the data to be retrieved.
-		 *@returns (const value_type &) A const version of the data pointed
-		 *		to by (k).
-		 */
-		virtual const value &get( const key &k ) const
-		{
-			uint32_t hash = __calcHashCode( k );
-			bool bFill;
-			uint32_t nPos = probe( hash, k, bFill );
-
-			if( bFill )
-			{
-				return aValues[nPos];
-			}
-			else
-			{
-				throw HashException(
-						excodeNotFilled,
-						"No data assosiated with that key."
-						);
-			}
-		}
-
-		/**
-		 * Does the hash table contain an item under key (k).
-		 *@param k (key_type) The key to check.
-		 *@returns (bool) Whether there was an item in the hash under key (k).
-		 */
-		virtual bool has( const key &k )
-		{
-			bool bFill;
-			probe( __calcHashCode( k ), k, bFill, false );
-
-			return bFill;
-		}
-		
-		virtual bool has( const key &k ) const
-		{
-			bool bFill;
-			probe( __calcHashCode( k ), k, bFill );
-
-			return bFill;
-		}
-
-		/**
-		 * Iteration structure for iterating through the hash.
-		 */
-		typedef struct iterator
-		{
-			friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
-		private:
-			iterator( MyType *hsh ) :
-				hsh( hsh ),
-				nPos( 0 ),
-				bFinished( false )
-			{
-				nPos = hsh->getFirstPos( bFinished );
-			}
-			
-			iterator( MyType *hsh, bool bDone ) :
-				hsh( hsh ),
-				nPos( 0 ),
-				bFinished( bDone )
-			{
-			}
-
-			MyType *hsh;
-			uint32_t nPos;
-			bool bFinished;
-
-		public:
-			iterator( const iterator &i ) :
-				hsh( i.hsh ),
-				nPos( i.nPos ),
-				bFinished( i.bFinished )
-			{
-			}
-
-			iterator() :
-				hsh( NULL ),
-				nPos( NULL ),
-				bFinished( true )
-			{
-			}
-
-			DEPRECATED bool isActive() const
-			{
-				return !bFinished;
-			}
-
-			bool isValid() const
-			{
-				return !bFinished;
-			}
-
-			operator bool() const
-			{
-				return !bFinished;
-			}
-
-			/**
-			 * Iterator incrementation operator. Move the iterator forward.
-			 */
-			iterator operator++( int )
-			{
-				if( bFinished == false )
-					nPos = hsh->getNextPos( nPos, bFinished );
-
-				return *this;
-			}
-			
-			/**
-			 * Iterator incrementation operator. Move the iterator forward.
-			 */
-			iterator operator++()
-			{
-				if( bFinished == false )
-					nPos = hsh->getNextPos( nPos, bFinished );
-
-				return *this;
-			}
-
-			/**
-			 * Iterator equality comparison operator. Iterators the same?
-			 */
-			bool operator==( const iterator &oth ) const
-			{
-				if( bFinished != oth.bFinished )
-					return false;
-				if( bFinished == true )
-				{
-					return true;
-				}
-				else
-				{
-					if( oth.nPos == nPos )
-						return true;
-					return false;
-				}
-			}
-			
-			/**
-			 * Iterator not equality comparison operator. Not the same?
-			 */
-			bool operator!=( const iterator &oth ) const
-			{
-				return !(*this == oth );
-			}
-
-			/**
-			 * Iterator assignment operator.
-			 */
-			iterator operator=( const iterator &oth )
-			{
-				hsh = oth.hsh;
-				nPos = oth.nPos;
-				bFinished = oth.bFinished;
-				return *this;
-			}
-
-			/**
-			 * Iterator dereference operator... err.. get the value
-			 *@returns (value_type &) The value behind this iterator.
-			 */
-			value &operator *()
-			{
-				return hsh->getValueAtPos( nPos );
-			}
-
-			const value &operator *() const
-			{
-				return hsh->getValueAtPos( nPos );
-			}
-			
-			/**
-			 * Get the key behind this iterator.
-			 *@returns (key_type &) The key behind this iterator.
-			 */
-			key &getKey()
-			{
-				return hsh->getKeyAtPos( nPos );
-			}
-
-			/**
-			 * Get the value behind this iterator.
-			 *@returns (value_type &) The value behind this iterator.
-			 */
-			value &getValue()
-			{
-				return hsh->getValueAtPos( nPos );
-			}
-		} iterator;
-		
-		/**
-		 * Iteration structure for iterating through the hash (const).
-		 */
-		typedef struct const_iterator
-		{
-			friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
-		private:
-			const_iterator( const MyType *hsh ) :
-				hsh( hsh ),
-				nPos( 0 ),
-				bFinished( false )
-			{
-				nPos = hsh->getFirstPos( bFinished );
-			}
-			
-			const_iterator( const MyType *hsh, bool bDone ) :
-				hsh( hsh ),
-				nPos( 0 ),
-				bFinished( bDone )
-			{
-			}
-
-			const MyType *hsh;
-			uint32_t nPos;
-			bool bFinished;
-
-		public:
-			const_iterator() :
-				hsh( NULL ),
-				nPos( 0 ),
-				bFinished( true )
-			{
-			}
-
-			const_iterator( const const_iterator &src ) :
-				hsh( src.hsh ),
-				nPos( src.nPos ),
-				bFinished( src.bFinished )
-			{
-			}
-
-			const_iterator( const iterator &src ) :
-				hsh( src.hsh ),
-				nPos( src.nPos ),
-				bFinished( src.bFinished )
-			{
-			}
-
-			bool isValid() const
-			{
-				return !bFinished;
-			}
-
-			operator bool() const
-			{
-				return !bFinished;
-			}
-
-			/**
-			 * Iterator incrementation operator. Move the iterator forward.
-			 */
-			const_iterator operator++( int )
-			{
-				if( bFinished == false )
-					nPos = hsh->getNextPos( nPos, bFinished );
-
-				return *this;
-			}
-			
-			/**
-			 * Iterator incrementation operator. Move the iterator forward.
-			 */
-			const_iterator operator++()
-			{
-				if( bFinished == false )
-					nPos = hsh->getNextPos( nPos, bFinished );
-
-				return *this;
-			}
-
-			/**
-			 * Iterator equality comparison operator. Iterators the same?
-			 */
-			bool operator==( const const_iterator &oth ) const
-			{
-				if( bFinished != oth.bFinished )
-					return false;
-				if( bFinished == true )
-				{
-					return true;
-				}
-				else
-				{
-					if( oth.nPos == nPos )
-						return true;
-					return false;
-				}
-			}
-			
-			/**
-			 * Iterator not equality comparison operator. Not the same?
-			 */
-			bool operator!=( const const_iterator &oth ) const
-			{
-				return !(*this == oth );
-			}
-
-			/**
-			 * Iterator assignment operator.
-			 */
-			const_iterator operator=( const const_iterator &oth )
-			{
-				hsh = oth.hsh;
-				nPos = oth.nPos;
-				bFinished = oth.bFinished;
-				return *this;
-			}
-
-			/**
-			 * Iterator dereference operator... err.. get the value
-			 *@returns (value_type &) The value behind this iterator.
-			 */
-			const value &operator *() const
-			{
-				return hsh->getValueAtPos( nPos );
-			}
-			
-			/**
-			 * Get the key behind this iterator.
-			 *@returns (key_type &) The key behind this iterator.
-			 */
-			const key &getKey() const
-			{
-				return hsh->getKeyAtPos( nPos );
-			}
-
-			/**
-			 * Get the value behind this iterator.
-			 *@returns (value_type &) The value behind this iterator.
-			 */
-			const value &getValue() const
-			{
-				return hsh->getValueAtPos( nPos );
-			}
-		} const_iterator;
-
-		/**
-		 * Get an iterator pointing to the first item in the hash table.
-		 *@returns (iterator) An iterator pointing to the first item in the
-		 *		hash table.
-		 */
-		iterator begin()
-		{
-			return iterator( this );
-		}
-		
-		const_iterator begin() const
-		{
-			return const_iterator( this );
-		}
-		
-		/**
-		 * Get an iterator pointing to a point just past the last item in the
-		 * 		hash table.
-		 *@returns (iterator) An iterator pointing to a point just past the
-		 *		last item in the hash table.
-		 */
-		iterator end()
-		{
-			return iterator( this, true );
-		}
-		
-		const_iterator end() const
-		{
-			return const_iterator( this, true );
-		}
-
-		/**
-		 * Get a list of all the keys in the hash table.
-		 *@returns (std::list<key_type>) The list of keys in the hash table.
-		 */
-		Bu::List<key> getKeys() const
-		{
-			Bu::List<key> lKeys;
-
-			for( uint32_t j = 0; j < nCapacity; j++ )
-			{
-				if( isFilled( j ) )
-				{
-					if( !isDeleted( j ) )
-					{
-						lKeys.append( aKeys[j] );
-					}
-				}
-			}
-
-			return lKeys;
-		}
-		
-		Bu::List<value> getValues() const
-		{
-			Bu::List<value> lValues;
-
-			for( uint32_t j = 0; j < nCapacity; j++ )
-			{
-				if( isFilled( j ) )
-				{
-					if( !isDeleted( j ) )
-					{
-						lValues.append( aValues[j] );
-					}
-				}
-			}
-
-			return lValues;
-		}
-
-	protected:
-		virtual void onInsert() {}
-		virtual void onUpdate() {}
-		virtual void onDelete() {}
-		virtual void onReHash() {}
-
-		virtual void clearBits()
-		{
 			for( uint32_t j = 0; j < nKeysSize; j++ )
 			{
 				bFilled[j] = bDeleted[j] = 0;
 			}
 		}
 
-		virtual void fill( uint32_t loc, const key &k, const value &v, uint32_t hash )
+		void fill( uint32_t loc, const key &k, const value &v, uint32_t hash )
 		{
+			init();
+
 			bFilled[loc/32] |= (1<<(loc%32));
 			va.construct( &aValues[loc], v );
 			ka.construct( &aKeys[loc], k );
@@ -940,8 +122,11 @@ namespace Bu
 			//	nFilled, nDeleted, nCapacity );
 		}
 
-		virtual void _erase( uint32_t loc )
+		void _erase( uint32_t loc )
 		{
+			if( nCapacity == 0 )
+				return;
+
 			bDeleted[loc/32] |= (1<<(loc%32));
 			va.destroy( &aValues[loc] );
 			ka.destroy( &aKeys[loc] );
@@ -950,27 +135,35 @@ namespace Bu
 			//	nFilled, nDeleted, nCapacity );
 		}
 
-		virtual key &getKeyAtPos( uint32_t nPos )
+		key &getKeyAtPos( uint32_t nPos )
 		{
+			if( nPos >= nCapacity )
+				throw HashException("Referenced position invalid.");
 			return aKeys[nPos];
 		}
 		
-		virtual const key &getKeyAtPos( uint32_t nPos ) const
+		const key &getKeyAtPos( uint32_t nPos ) const
 		{
+			if( nPos >= nCapacity )
+				throw HashException("Referenced position invalid.");
 			return aKeys[nPos];
 		}
 		
-		virtual value &getValueAtPos( uint32_t nPos )
+		value &getValueAtPos( uint32_t nPos )
 		{
+			if( nPos >= nCapacity )
+				throw HashException("Referenced position invalid.");
 			return aValues[nPos];
 		}
 		
-		virtual const value &getValueAtPos( uint32_t nPos ) const
+		const value &getValueAtPos( uint32_t nPos ) const
 		{
+			if( nPos >= nCapacity )
+				throw HashException("Referenced position invalid.");
 			return aValues[nPos];
 		}
 
-		virtual uint32_t getFirstPos( bool &bFinished ) const
+		uint32_t getFirstPos( bool &bFinished ) const
 		{
 			for( uint32_t j = 0; j < nCapacity; j++ )
 			{
@@ -983,7 +176,7 @@ namespace Bu
 			return 0;
 		}
 
-		virtual uint32_t getNextPos( uint32_t nPos, bool &bFinished ) const
+		uint32_t getNextPos( uint32_t nPos, bool &bFinished ) const
 		{
 			for( uint32_t j = nPos+1; j < nCapacity; j++ )
 			{
@@ -998,6 +191,8 @@ namespace Bu
 
 		uint32_t probe( uint32_t hash, const key &k, bool &bFill, bool rehash=true )
 		{
+			init();
+
 			uint32_t nCur = hash%nCapacity;
 
 			// First we scan to see if the key is already there, abort if we
@@ -1029,7 +224,7 @@ namespace Bu
 			// rehash, then try again.
 			if( (isFilled( nCur ) || j == 32) && rehash == true )
 			{
-				reHash( szCalc(getCapacity(), getFill(), getDeleted()) );
+				reHash( szCalc( nCapacity, nFilled, nDeleted ) );
 
 				// This is potentially dangerous, and could cause an infinite loop.
 				// Be careful writing probe, eh?
@@ -1042,6 +237,9 @@ namespace Bu
 		
 		uint32_t probe( uint32_t hash, key k, bool &bFill ) const
 		{
+			if( nCapacity == 0 )
+				throw Bu::ExceptionBase("Probe in empty hash table.");
+
 			uint32_t nCur = hash%nCapacity;
 
 			// First we scan to see if the key is already there, abort if we
@@ -1070,6 +268,23 @@ namespace Bu
 
 			bFill = false;
 			return nCur;
+		}
+		
+		void insert( const key &k, const value &v )
+		{
+			uint32_t hash = __calcHashCode( k );
+			bool bFill;
+			uint32_t nPos = probe( hash, k, bFill );
+
+			if( bFill )
+			{
+				va.destroy( &aValues[nPos] );
+				va.construct( &aValues[nPos], v );
+			}
+			else
+			{
+				fill( nPos, k, v, hash );
+			}
 		}
 
 		void reHash( uint32_t nNewSize )
@@ -1129,17 +344,48 @@ namespace Bu
 			ca.deallocate( aOldHashCodes, nOldCapacity );
 		}
 
-		virtual bool isFilled( uint32_t loc ) const
+		bool isFilled( uint32_t loc ) const
 		{
+			if( loc >= nCapacity )
+				throw HashException("Referenced position invalid.");
 			return (bFilled[loc/32]&(1<<(loc%32)))!=0;
 		}
 
-		virtual bool isDeleted( uint32_t loc ) const
+		bool isDeleted( uint32_t loc ) const
 		{
+			if( loc >= nCapacity )
+				throw HashException("Referenced position invalid.");
 			return (bDeleted[loc/32]&(1<<(loc%32)))!=0;
 		}
 
-	protected:
+		void clear()
+		{
+			for( uint32_t j = 0; j < nCapacity; j++ )
+			{
+				if( isFilled( j ) )
+					if( !isDeleted( j ) )
+					{
+						va.destroy( &aValues[j] );
+						ka.destroy( &aKeys[j] );
+					}
+			}
+			va.deallocate( aValues, nCapacity );
+			ka.deallocate( aKeys, nCapacity );
+			ca.deallocate( bFilled, nKeysSize );
+			ca.deallocate( bDeleted, nKeysSize );
+			ca.deallocate( aHashCodes, nCapacity );
+			
+			bFilled = NULL;
+			bDeleted = NULL;
+			aKeys = NULL;
+			aValues = NULL;
+			aHashCodes = NULL;
+			
+			nCapacity = 0;
+			nFilled = 0;
+			nDeleted = 0;
+		}
+
 		uint32_t nCapacity;
 		uint32_t nFilled;
 		uint32_t nDeleted;
@@ -1153,6 +399,823 @@ namespace Bu
 		keyalloc ka;
 		challoc ca;
 		sizecalc szCalc;
+	};
+	/** @endcond */
+
+	/**
+	 * Libbu++ Template Hash Table.  This is your average hash table, that uses
+	 * template functions in order to do fast, efficient, generalized hashing.
+	 * It's pretty easy to use, and works well with all other libbu++ types so
+	 * far.
+	 *
+	 * In order to use it, I recommend the following for all basic usage:
+	 *@code
+	 // Define a Hash typedef with strings as keys and ints as values.
+	 typedef Bu::Hash<Bu::FString, int> StrIntHash;
+
+	 // Create one
+	 StrIntHash hInts;
+
+	 // Insert some integers
+	 hInts["one"] = 1;
+	 hInts["forty-two"] = 42;
+	 hInts.insert("forty two", 42 );
+
+	 // Get values out of the hash, the last two options are the most explicit,
+	 // and must be used if the hash's value type does not match what you're
+	 // comparing to exactly.
+	 if( hInts["one"] == 1 ) doSomething();
+	 if( hInts["forty-two"].value() == 42 ) doSomething();
+	 if( hInts.get("forty two") == 42 ) doSomething();
+
+	 // Iterate through the Hash
+	 for( StrIntHash::iterator i = hInts.begin(); i != hInts.end(); i++ )
+	 {
+	 	// i.getValue() works too
+	 	print("'%s' = %d\n", i.getKey().getStr(), (*i) );
+	 }
+	 												
+	 @endcode
+	 *@param key (typename) The datatype of the hashtable keys
+	 *@param value (typename) The datatype of the hashtable data
+	 *@param sizecalc (typename) Functor to compute new table size on rehash
+	 *@param keyalloc (typename) Memory allocator for hashtable keys
+	 *@param valuealloc (typename) Memory allocator for hashtable values
+	 *@param challoc (typename) Byte allocator for bitflags
+	 *@ingroup Containers
+	 */
+	template<typename key, typename value,
+		typename sizecalc = __calcNextTSize_fast,
+		typename keyalloc = std::allocator<key>,
+		typename valuealloc = std::allocator<value>,
+		typename challoc = std::allocator<uint32_t>
+		>
+	class Hash : public SharedCore<
+				 Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>,
+				 HashCore<key, value, sizecalc, keyalloc, valuealloc, challoc>
+				 >
+	{
+	private:
+		typedef class HashCore<key, value, sizecalc, keyalloc, valuealloc, challoc> Core;
+		typedef class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc> MyType;
+	protected:
+		using SharedCore<MyType, Core>::core;
+		using SharedCore<MyType, Core>::_hardCopy;
+		using SharedCore<MyType, Core>::_resetCore;
+		using SharedCore<MyType, Core>::_allocateCore;
+	
+	public:
+		Hash()
+		{
+		}
+
+		Hash( const MyType &src ) :
+			SharedCore<MyType, Core >( src )
+		{
+		}
+
+		virtual ~Hash()
+		{
+		}
+
+		/**
+		 * Get the current hash table capacity. (Changes at re-hash)
+		 *@returns (uint32_t) The current capacity.
+		 */
+		uint32_t getCapacity() const
+		{
+			return core->nCapacity;
+		}
+
+		/**
+		 * Get the number of hash locations spoken for. (Including 
+		 * not-yet-cleaned-up deleted items.)
+		 *@returns (uint32_t) The current fill state.
+		 */
+		uint32_t getFill() const
+		{
+			return core->nFilled;
+		}
+
+		/**
+		 * Get the number of items stored in the hash table.
+		 *@returns (uint32_t) The number of items stored in the hash table.
+		 */
+		uint32_t getSize() const
+		{
+			return core->nFilled-core->nDeleted;
+		}
+
+		bool isEmpty() const
+		{
+			return (core->nFilled-core->nDeleted) == 0;
+		}
+
+		/**
+		 * Get the number of items which have been deleted, but not yet
+		 * cleaned up.
+		 *@returns (uint32_t) The number of deleted items.
+		 */
+		uint32_t getDeleted() const
+		{
+			return core->nDeleted;
+		}
+
+		struct HashProxy
+		{
+		friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
+		private:
+			HashProxy( MyType &h, const key *k, uint32_t nPos, uint32_t hash ) :
+				hsh( h ),
+				pKey( k ),
+				nPos( nPos ),
+				hash( hash ),
+				bFilled( false )
+			{
+			}
+
+			HashProxy( MyType &h, uint32_t nPos, value *pValue ) :
+				hsh( h ),
+				nPos( nPos ),
+				pValue( pValue ),
+				bFilled( true )
+			{
+			}
+
+			MyType &hsh;
+			const key *pKey;
+			uint32_t nPos;
+			value *pValue;
+			uint32_t hash;
+			bool bFilled;
+
+		public:
+			/**
+			 * Cast operator for HashProxy.
+			 *@returns (value_type &) The value the HashProxy is pointing to.
+			 */
+			operator value &()
+			{
+				if( bFilled == false )
+					throw HashException(
+							excodeNotFilled,
+							"No data assosiated with that key."
+							);
+				return *pValue;
+			}
+
+			/**
+			 * Direct function for retrieving a value out of the HashProxy.
+			 *@returns (value_type &) The value pointed to by this HashProxy.
+			 */
+			value &getValue()
+			{
+				if( bFilled == false )
+					throw HashException(
+							excodeNotFilled,
+							"No data assosiated with that key."
+							);
+				return *pValue;
+			}
+
+			/**
+			 * Whether this HashProxy points to something real or not.
+			 */
+			bool isFilled()
+			{
+				return bFilled;
+			}
+
+			/**
+			 * Erase the data pointed to by this HashProxy.
+			 */
+			void erase()
+			{
+				if( bFilled )
+				{
+					hsh.core->_erase( nPos );
+				}
+			}
+
+			/**
+			 * Assign data to this point in the hash table.
+			 *@param nval (value_type) the data to assign.
+			 */
+			value operator=( value nval )
+			{
+				if( bFilled )
+				{
+					hsh.core->va.destroy( &hsh.core->aValues[nPos] );
+					hsh.core->va.construct( &hsh.core->aValues[nPos], nval );
+				}
+				else
+				{
+					hsh.core->fill( nPos, *pKey, nval, hash ); 
+				}
+
+				return nval;
+			}
+
+			/**
+			 * Pointer extraction operator. Access to members of data pointed to
+			 * 		by HashProxy.
+			 *@returns (value_type *)
+			 */
+			value *operator->()
+			{
+				if( bFilled == false )
+					throw HashException(
+							excodeNotFilled,
+							"No data assosiated with that key."
+							);
+				return pValue;
+			}
+		};
+
+		/**
+		 * Hash table index operator
+		 *@param k (key_type) Key of data to be retrieved.
+		 *@returns (HashProxy) Proxy pointing to the data.
+		 */
+		HashProxy operator[]( const key &k )
+		{
+			_hardCopy();
+
+			uint32_t hash = __calcHashCode( k );
+			bool bFill;
+			uint32_t nPos = core->probe( hash, k, bFill );
+
+			if( bFill )
+			{
+				return HashProxy( *this, nPos, &core->aValues[nPos] );
+			}
+			else
+			{
+				return HashProxy( *this, &k, nPos, hash );
+			}
+		}
+
+		/**
+		 * Insert a value (v) under key (k) into the hash table
+		 *@param k (key_type) Key to list the value under.
+		 *@param v (value_type) Value to store in the hash table.
+		 */
+		void insert( const key &k, const value &v )
+		{
+			_hardCopy();
+
+			core->insert( k, v );
+		}
+
+		/**
+		 * Remove a value from the hash table.
+		 *@param k (key_type) The data under this key will be erased.
+		 */
+		void erase( const key &k )
+		{
+			_hardCopy();
+
+			uint32_t hash = __calcHashCode( k );
+			bool bFill;
+			uint32_t nPos = core->probe( hash, k, bFill );
+
+			if( bFill )
+			{
+				core->_erase( nPos );
+			}
+		}
+
+		struct iterator;
+
+		/**
+		 * Remove a value from the hash pointed to from an iterator.
+		 *@param i (iterator &) The data to be erased.
+		 */
+		void erase( struct iterator &i )
+		{
+			if( this != i.hsh )
+				throw HashException("This iterator didn't come from this Hash.");
+			
+			_hardCopy();
+
+			if( core->isFilled( i.nPos ) && !core->isDeleted( i.nPos ) )
+			{
+				core->_erase( i.nPos );
+			}
+		}
+
+		/**
+		 * Remove all data from the hash table.
+		 */
+		virtual void clear()
+		{
+			_resetCore();
+		}
+
+		/**
+		 * Get an item of data from the hash table.
+		 *@param k (key_type) Key pointing to the data to be retrieved.
+		 *@returns (value_type &) The data pointed to by (k).
+		 */
+		value &get( const key &k )
+		{
+			_hardCopy();
+
+			uint32_t hash = __calcHashCode( k );
+			bool bFill;
+			uint32_t nPos = core->probe( hash, k, bFill, false );
+
+			if( bFill )
+			{
+				return core->aValues[nPos];
+			}
+			else
+			{
+				throw HashException(
+						excodeNotFilled,
+						"No data assosiated with that key."
+						);
+			}
+		}
+		
+		/**
+		 * Get a const item of data from the hash table.
+		 *@param k (key_type) Key pointing to the data to be retrieved.
+		 *@returns (const value_type &) A const version of the data pointed
+		 *		to by (k).
+		 */
+		const value &get( const key &k ) const
+		{
+			uint32_t hash = __calcHashCode( k );
+			bool bFill;
+			uint32_t nPos = core->probe( hash, k, bFill );
+
+			if( bFill )
+			{
+				return core->aValues[nPos];
+			}
+			else
+			{
+				throw HashException(
+						excodeNotFilled,
+						"No data assosiated with that key."
+						);
+			}
+		}
+
+		/**
+		 * Does the hash table contain an item under key (k).
+		 *@param k (key_type) The key to check.
+		 *@returns (bool) Whether there was an item in the hash under key (k).
+		 */
+		bool has( const key &k ) const
+		{
+			bool bFill;
+			core->probe( __calcHashCode( k ), k, bFill );
+
+			return bFill;
+		}
+
+		/**
+		 * Iteration structure for iterating through the hash.
+		 */
+		typedef struct iterator
+		{
+			friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
+		private:
+			iterator( MyType *hsh ) :
+				hsh( hsh ),
+				nPos( 0 ),
+				bFinished( false )
+			{
+				nPos = hsh->core->getFirstPos( bFinished );
+			}
+			
+			iterator( MyType *hsh, bool bDone ) :
+				hsh( hsh ),
+				nPos( 0 ),
+				bFinished( bDone )
+			{
+			}
+
+			MyType *hsh;
+			uint32_t nPos;
+			bool bFinished;
+
+		public:
+			iterator( const iterator &i ) :
+				hsh( i.hsh ),
+				nPos( i.nPos ),
+				bFinished( i.bFinished )
+			{
+			}
+
+			iterator() :
+				hsh( NULL ),
+				nPos( NULL ),
+				bFinished( true )
+			{
+			}
+
+			bool isValid() const
+			{
+				return !bFinished;
+			}
+
+			operator bool() const
+			{
+				return !bFinished;
+			}
+
+			/**
+			 * Iterator incrementation operator. Move the iterator forward.
+			 */
+			iterator operator++( int )
+			{
+				if( bFinished == false )
+					nPos = hsh->core->getNextPos( nPos, bFinished );
+
+				return *this;
+			}
+			
+			/**
+			 * Iterator incrementation operator. Move the iterator forward.
+			 */
+			iterator operator++()
+			{
+				if( bFinished == false )
+					nPos = hsh->core->getNextPos( nPos, bFinished );
+
+				return *this;
+			}
+
+			/**
+			 * Iterator equality comparison operator. Iterators the same?
+			 */
+			bool operator==( const iterator &oth ) const
+			{
+				if( bFinished != oth.bFinished )
+					return false;
+				if( bFinished == true )
+				{
+					return true;
+				}
+				else
+				{
+					if( oth.nPos == nPos )
+						return true;
+					return false;
+				}
+			}
+			
+			/**
+			 * Iterator not equality comparison operator. Not the same?
+			 */
+			bool operator!=( const iterator &oth ) const
+			{
+				return !(*this == oth );
+			}
+
+			/**
+			 * Iterator assignment operator.
+			 */
+			iterator operator=( const iterator &oth )
+			{
+				hsh = oth.hsh;
+				nPos = oth.nPos;
+				bFinished = oth.bFinished;
+				return *this;
+			}
+
+			/**
+			 * Iterator dereference operator... err.. get the value
+			 *@returns (value_type &) The value behind this iterator.
+			 */
+			value &operator *()
+			{
+				hsh->_hardCopy();
+				return hsh->core->getValueAtPos( nPos );
+			}
+
+			const value &operator *() const
+			{
+				return hsh->core->getValueAtPos( nPos );
+			}
+			
+			/**
+			 * Get the key behind this iterator.
+			 *@returns (key_type &) The key behind this iterator.
+			 */
+			const key &getKey() const
+			{
+				return hsh->core->getKeyAtPos( nPos );
+			}
+
+			/**
+			 * Get the value behind this iterator.
+			 *@returns (value_type &) The value behind this iterator.
+			 */
+			value &getValue()
+			{
+				hsh->_hardCopy();
+				return hsh->core->getValueAtPos( nPos );
+			}
+
+			/**
+			 * Get the value behind this iterator.
+			 *@returns (value_type &) The value behind this iterator.
+			 */
+			const value &getValue() const
+			{
+				return hsh->core->getValueAtPos( nPos );
+			}
+		} iterator;
+		
+		/**
+		 * Iteration structure for iterating through the hash (const).
+		 */
+		typedef struct const_iterator
+		{
+			friend class Hash<key, value, sizecalc, keyalloc, valuealloc, challoc>;
+		private:
+			const_iterator( const MyType *hsh ) :
+				hsh( hsh ),
+				nPos( 0 ),
+				bFinished( false )
+			{
+				nPos = hsh->core->getFirstPos( bFinished );
+			}
+			
+			const_iterator( const MyType *hsh, bool bDone ) :
+				hsh( hsh ),
+				nPos( 0 ),
+				bFinished( bDone )
+			{
+			}
+
+			const MyType *hsh;
+			uint32_t nPos;
+			bool bFinished;
+
+		public:
+			const_iterator() :
+				hsh( NULL ),
+				nPos( 0 ),
+				bFinished( true )
+			{
+			}
+
+			const_iterator( const const_iterator &src ) :
+				hsh( src.hsh ),
+				nPos( src.nPos ),
+				bFinished( src.bFinished )
+			{
+			}
+
+			const_iterator( const iterator &src ) :
+				hsh( src.hsh ),
+				nPos( src.nPos ),
+				bFinished( src.bFinished )
+			{
+			}
+
+			bool isValid() const
+			{
+				return !bFinished;
+			}
+
+			operator bool() const
+			{
+				return !bFinished;
+			}
+
+			/**
+			 * Iterator incrementation operator. Move the iterator forward.
+			 */
+			const_iterator operator++( int )
+			{
+				if( bFinished == false )
+					nPos = hsh->core->getNextPos( nPos, bFinished );
+
+				return *this;
+			}
+			
+			/**
+			 * Iterator incrementation operator. Move the iterator forward.
+			 */
+			const_iterator operator++()
+			{
+				if( bFinished == false )
+					nPos = hsh->core->getNextPos( nPos, bFinished );
+
+				return *this;
+			}
+
+			/**
+			 * Iterator equality comparison operator. Iterators the same?
+			 */
+			bool operator==( const const_iterator &oth ) const
+			{
+				if( bFinished != oth.bFinished )
+					return false;
+				if( bFinished == true )
+				{
+					return true;
+				}
+				else
+				{
+					if( oth.nPos == nPos )
+						return true;
+					return false;
+				}
+			}
+			
+			/**
+			 * Iterator not equality comparison operator. Not the same?
+			 */
+			bool operator!=( const const_iterator &oth ) const
+			{
+				return !(*this == oth );
+			}
+
+			/**
+			 * Iterator assignment operator.
+			 */
+			const_iterator operator=( const const_iterator &oth )
+			{
+				hsh = oth.hsh;
+				nPos = oth.nPos;
+				bFinished = oth.bFinished;
+				return *this;
+			}
+
+			/**
+			 * Iterator dereference operator... err.. get the value
+			 *@returns (value_type &) The value behind this iterator.
+			 */
+			const value &operator *() const
+			{
+				return hsh->core->getValueAtPos( nPos );
+			}
+			
+			/**
+			 * Get the key behind this iterator.
+			 *@returns (key_type &) The key behind this iterator.
+			 */
+			const key &getKey() const
+			{
+				return hsh->core->getKeyAtPos( nPos );
+			}
+
+			/**
+			 * Get the value behind this iterator.
+			 *@returns (value_type &) The value behind this iterator.
+			 */
+			const value &getValue() const
+			{
+				return hsh->core->getValueAtPos( nPos );
+			}
+		} const_iterator;
+
+		/**
+		 * Get an iterator pointing to the first item in the hash table.
+		 *@returns (iterator) An iterator pointing to the first item in the
+		 *		hash table.
+		 */
+		iterator begin()
+		{
+			return iterator( this );
+		}
+		
+		const_iterator begin() const
+		{
+			return const_iterator( this );
+		}
+		
+		/**
+		 * Get an iterator pointing to a point just past the last item in the
+		 * 		hash table.
+		 *@returns (iterator) An iterator pointing to a point just past the
+		 *		last item in the hash table.
+		 */
+		iterator end()
+		{
+			return iterator( this, true );
+		}
+		
+		const_iterator end() const
+		{
+			return const_iterator( this, true );
+		}
+
+		/**
+		 * Get a list of all the keys in the hash table.
+		 *@returns (std::list<key_type>) The list of keys in the hash table.
+		 */
+		Bu::List<key> getKeys() const
+		{
+			Bu::List<key> lKeys;
+
+			for( uint32_t j = 0; j < core->nCapacity; j++ )
+			{
+				if( core->isFilled( j ) )
+				{
+					if( !core->isDeleted( j ) )
+					{
+						lKeys.append( core->aKeys[j] );
+					}
+				}
+			}
+
+			return lKeys;
+		}
+		
+		Bu::List<value> getValues() const
+		{
+			Bu::List<value> lValues;
+
+			for( uint32_t j = 0; j < core->nCapacity; j++ )
+			{
+				if( core->isFilled( j ) )
+				{
+					if( !core->isDeleted( j ) )
+					{
+						lValues.append( core->aValues[j] );
+					}
+				}
+			}
+
+			return lValues;
+		}
+
+		bool operator==( const MyType &rhs ) const
+		{
+			if( this == &rhs )
+				return true;
+			if( core == rhs.core )
+				return true;
+			if( core == NULL || rhs.core == NULL )
+				return false;
+			if( getSize() != rhs.getSize() )
+				return false;
+
+			for( uint32_t j = 0; j < core->nCapacity; j++ )
+			{
+				if( core->isFilled( j ) )
+				{
+					if( !core->isDeleted( j ) )
+					{
+						// Check to see if this key is in the other hash
+						if( rhs.has( core->aKeys[j] ) )
+						{
+							if( !(core->aValues[j] == rhs.get( core->aKeys[j]) ) )
+							{
+								return false;
+							}
+						}
+						else
+						{
+							return false;
+						}
+					}
+				}
+			}
+
+			return true;
+		}
+
+		bool operator!=( const MyType &rhs ) const
+		{
+			return !(*this == rhs);
+		}
+
+	protected:
+		virtual Core *_copyCore( Core *src )
+		{
+			Core *pRet = _allocateCore();
+
+			pRet->nFilled = 0;
+			pRet->nDeleted = 0;
+			pRet->nCapacity = src->nCapacity;
+			pRet->nKeysSize = bitsToBytes( pRet->nCapacity );
+			pRet->bFilled = pRet->ca.allocate( pRet->nKeysSize );
+			pRet->bDeleted = pRet->ca.allocate( pRet->nKeysSize );
+			pRet->clearBits();
+
+			pRet->aHashCodes = pRet->ca.allocate( pRet->nCapacity );
+			pRet->aKeys = pRet->ka.allocate( pRet->nCapacity );
+			pRet->aValues = pRet->va.allocate( pRet->nCapacity );
+
+			for( uint32_t j = 0; j < src->nCapacity; j++ )
+			{
+				if( src->isFilled( j ) && !src->isDeleted( j ) )
+				{
+					pRet->insert( src->aKeys[j], src->aValues[j] );
+				}
+			}
+
+			return pRet;
+		}
 	};
 	
 	template<typename T> uint32_t __calcHashCode( const T &k )

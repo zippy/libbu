@@ -83,7 +83,7 @@ namespace Bu
 			}
 		}
 
-		virtual void unload( obtype *pObj, const keytype &key )
+		virtual void unload( obtype *pObj, const keytype & )
 		{
 			delete pObj;
 		}

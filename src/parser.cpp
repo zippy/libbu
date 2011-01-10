@@ -22,16 +22,25 @@ void Bu::Parser::popLexer()
 	delete sLexer.peekPop();
 }
 
+Lexer::Token *Bu::Parser::popToken()
+{
+	return sToken.peekPop();
+}
+
+void Bu::Parser::pushToken( Lexer::Token *pTok )
+{
+	sToken.push( pTok );
+}
+
 void Bu::Parser::parse()
 {
 	int iCurNt = iRootNonTerminal;
 	Lexer::Token *ptCur = sLexer.peek()->nextToken();
-	sio << "Token: " << sLexer.peek()->tokenToString( *ptCur ) << sio.nl;
+	sio << "Token(a): " << sLexer.peek()->tokenToString( *ptCur ) << sio.nl;
 	selectProduction( iCurNt, ptCur );
 	
 	while( !sState.isEmpty() )
 	{
-		sio << "Currently: " << *sState.peek() << sio.nl;
 		switch( (*sState.peek()).eType )
 		{
 			case State::typeTerminal:
@@ -42,7 +51,7 @@ void Bu::Parser::parse()
 					advanceState();
 					delete ptCur;
 					ptCur = sLexer.peek()->nextToken();
-					sio << "Token: " << sLexer.peek()->tokenToString( *ptCur ) << sio.nl;
+					sio << "Token(b): " << sLexer.peek()->tokenToString( *ptCur ) << sio.nl;
 				}
 				else
 				{
@@ -59,7 +68,7 @@ void Bu::Parser::parse()
 					sToken.push( ptCur );
 
 					ptCur = sLexer.peek()->nextToken();
-					sio << "Token: " << sLexer.peek()->tokenToString( *ptCur ) << sio.nl;
+					sio << "Token(c): " << sLexer.peek()->tokenToString( *ptCur ) << sio.nl;
 				}
 				else
 				{
@@ -72,7 +81,7 @@ void Bu::Parser::parse()
 					<< (*sState.peek()).iIndex << sio.nl;
 				{
 					int iNt = (*sState.peek()).iIndex;
-					advanceState();
+					sio << "Current state: " << *sState.peek() << sio.nl;
 					if( !selectProduction( iNt, ptCur ) )
 					{
 						throw Bu::ExceptionBase("Error parsing code.");
@@ -132,7 +141,11 @@ bool Bu::Parser::selectProduction( int iNt, Lexer::Token *ptCur )
 		}
 	}
 	if( nt.bCanSkip )
+	{
+		sio << "Nothing matches, skipping non-terminal." << sio.nl;
+		advanceState();
 		return true;
+	}
 	sio << "-->(Found nothing)" << sio.nl;
 	return false;
 }
@@ -148,6 +161,7 @@ void Bu::Parser::advanceState()
 		sio.decIndent();
 		sState.pop();
 		sio << "State advanced, End of production." << sio.nl;
+		advanceState();
 		return;
 	}
 	sio << "State advanced, now: " << *(sState.peek()) << sio.nl;
@@ -191,6 +205,11 @@ int Bu::Parser::getNonTerminalId( const Bu::FString &sName )
 	return hNonTerminalName.get( sName );
 }
 
+bool Bu::Parser::hasNonTerminal( const Bu::FString &sName )
+{
+	return hNonTerminalName.has( sName );
+}
+
 int Bu::Parser::addReduction( const Bu::FString &sName, const Reduction &r )
 {
 	int iId = aReduction.getSize();
@@ -215,6 +234,11 @@ void Bu::Parser::setReduction( const Bu::FString &sName, const Reduction &r )
 int Bu::Parser::getReductionId( const Bu::FString &sName )
 {
 	return hReductionName.get( sName );
+}
+
+bool Bu::Parser::hasReduction( const Bu::FString &sName )
+{
+	return hReductionName.has( sName );
 }
 
 //

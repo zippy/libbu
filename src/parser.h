@@ -34,6 +34,9 @@ namespace Bu
 		 */
 		void popLexer();
 
+		Lexer::Token *popToken();
+		void pushToken( Lexer::Token *pTok );
+
 		/**
 		 * Execute a parse.
 		 */
@@ -88,11 +91,13 @@ namespace Bu
 		int addNonTerminal( const Bu::FString &sName );
 		void setNonTerminal( const Bu::FString &sName, NonTerminal &nt );
 		int getNonTerminalId( const Bu::FString &sName );
+		bool hasNonTerminal( const Bu::FString &sName );
 
 		int addReduction( const Bu::FString &sName, const Reduction &r );
 		int addReduction( const Bu::FString &sName );
 		void setReduction( const Bu::FString &sName, const Reduction &r );
 		int getReductionId( const Bu::FString &sName );
+		bool hasReduction( const Bu::FString &sName );
 
 	private:
 		bool selectProduction( int iNt, Lexer::Token *ptCur );

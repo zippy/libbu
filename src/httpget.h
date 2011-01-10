@@ -11,7 +11,7 @@
 #include "bu/stream.h"
 #include "bu/fstring.h"
 #include "bu/url.h"
-#include "bu/socket.h"
+#include "bu/tcpsocket.h"
 #include "bu/hash.h"
 
 namespace Bu
@@ -52,7 +52,7 @@ namespace Bu
 	private:
 		Bu::Url uSrc;
 		Bu::FString sMethod;
-		Bu::Socket sSrv;
+		Bu::TcpSocket sSrv;
 		typedef Bu::Hash<Bu::FString,Bu::FString> MimeHash;
 		MimeHash hMimeIn;
 		MimeHash hMimeOut;

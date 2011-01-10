@@ -84,4 +84,17 @@ suite Hash
 			printf(" - \"%s\" = %d\n", i.getKey().getStr(), i.getValue() );
 		} */
 	}
+
+	test copy
+	{
+		StrIntHash h;
+		h.insert("hello", 55 );
+		h.insert("goodbye", -1812 );
+
+		StrIntHash h2 = h;
+		unitTest( h2.isCoreShared( h ) );
+
+		StrIntHash h3 = h.clone();
+		unitTest( !h3.isCoreShared( h ) );
+	}
 }

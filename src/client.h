@@ -17,7 +17,7 @@ namespace Bu
 {
 	class Protocol;
 	class Stream;
-	class Socket;
+	class TcpSocket;
 	class ClientLinkFactory;
 
 	/**
@@ -26,7 +26,7 @@ namespace Bu
 	class Client : public Bu::Stream
 	{
 	public:
-		Client( Bu::Socket *pSocket, Bu::ClientLinkFactory *pfLink );
+		Client( Bu::TcpSocket *pSocket, Bu::ClientLinkFactory *pfLink );
 		virtual ~Client();
 
 		void processInput();
@@ -58,7 +58,7 @@ namespace Bu
 		void close();
 		void tick();
 
-		const Bu::Socket *getSocket() const;
+		const Bu::TcpSocket *getSocket() const;
 
 		void disconnect();
 		bool wantsDisconnect();
@@ -117,7 +117,7 @@ namespace Bu
 		typedef Bu::List<Bu::Stream *> FilterList;
 		FilterList lFilts;
 		Bu::Stream *pTopStream;
-		Bu::Socket *pSocket;
+		Bu::TcpSocket *pSocket;
 		Bu::Protocol *pProto;
 		Bu::QueueBuf qbRead;
 		Bu::QueueBuf qbWrite;
