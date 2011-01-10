@@ -236,44 +236,8 @@ namespace Bu
 		using SharedCore<MyType, Core >::core;
 		using SharedCore<MyType, Core >::_hardCopy;
 
-	public:
-		FBasicString()
-		{
-		}
-
-		FBasicString( const chr *pData )
-		{
-			append( pData );
-		}
-
-		FBasicString( const chr *pData, long nLength )
-		{
-			append( pData, nLength );
-		}
-
-		FBasicString( const MyType &rSrc ) :
-			SharedCore<MyType, Core>( rSrc )
-		{
-		}
-
-		FBasicString( const MyType &rSrc, long nLength )
-		{
-			append( rSrc, nLength );
-		}
-		
-		FBasicString( const MyType &rSrc, long nStart, long nLength )
-		{
-			append( rSrc, nStart, nLength );
-		}
-
-		FBasicString( long nSize )
-		{
-			core->pFirst = core->pLast = core->newChunk( nSize );
-			core->nLength = nSize;
-		}
-		
-		struct iterator;
-		struct const_iterator
+	public: // Iterators
+		typedef struct const_iterator
 		{
 			friend class FBasicString<chr, nMinSize, chralloc, chunkalloc>;
 			friend struct iterator;
@@ -505,7 +469,7 @@ namespace Bu
 				}
 				return const_iterator( NULL, 0 );
 			}
-		};
+		} const_iterator;
 		
 		typedef struct iterator
 		{
@@ -753,11 +717,41 @@ namespace Bu
 			}
 		} iterator;
 
-		typedef struct const_iterator const_iterator;
+	public:
+		FBasicString()
+		{
+		}
 
-		//typedef chr *iterator;
-//		typedef const chr *const_iterator;
-		// typedef iterator const_iterator;
+		FBasicString( const chr *pData )
+		{
+			append( pData );
+		}
+
+		FBasicString( const chr *pData, long nLength )
+		{
+			append( pData, nLength );
+		}
+
+		FBasicString( const MyType &rSrc ) :
+			SharedCore<MyType, Core>( rSrc )
+		{
+		}
+
+		FBasicString( const MyType &rSrc, long nLength )
+		{
+			append( rSrc, nLength );
+		}
+		
+		FBasicString( const MyType &rSrc, long nStart, long nLength )
+		{
+			append( rSrc, nStart, nLength );
+		}
+
+		FBasicString( long nSize )
+		{
+			core->pFirst = core->pLast = core->newChunk( nSize );
+			core->nLength = nSize;
+		}
 
 		FBasicString( const const_iterator &s )
 		{
@@ -784,7 +778,13 @@ namespace Bu
 			for( nLen = 0; pData[nLen] != (chr)0; nLen++ ) { }
 			if( nLen == 0 )
 				return;
-		
+	
+			if( core->pLast->nLength < nMinSize )
+			{
+				// Put things here, good things
+				// yeah...spare space block mapping
+			}
+
 			Chunk *pNew = core->newChunk( nLen );
 			cpy( pNew->pData, pData, nLen );
 
@@ -1261,37 +1261,6 @@ namespace Bu
 					);
 				return ret;
 			}
-		}
-
-		/**
-		 * (std::string compatability) Get a pointer to the string array.
-		 *@returns (chr *) The string data.
-		 */
-		DEPRECATED
-		chr *c_str()
-		{
-			if( core->pFirst == NULL )
-				return NULL;
-
-			flatten();
-			_hardCopy();
-			core->pFirst->pData[core->nLength] = (chr)0;
-			return core->pFirst->pData;
-		}
-		
-		/**
-		 * (std::string compatability) Get a const pointer to the string array.
-		 *@returns (const chr *) The string data.
-		 */
-		DEPRECATED
-		const chr *c_str() const
-		{
-			if( core->pFirst == NULL )
-				return NULL;
-
-			flatten();
-			core->pFirst->pData[core->nLength] = (chr)0;
-			return core->pFirst->pData;
 		}
 
 		Bu::List<MyType> split( const chr c ) const
