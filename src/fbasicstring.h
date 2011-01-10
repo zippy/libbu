@@ -237,6 +237,7 @@ namespace Bu
 		using SharedCore<MyType, Core >::_hardCopy;
 
 	public: // Iterators
+		struct iterator;
 		typedef struct const_iterator
 		{
 			friend class FBasicString<chr, nMinSize, chralloc, chunkalloc>;
@@ -258,7 +259,7 @@ namespace Bu
 			{
 			}
 			
-			const_iterator( const iterator &i ) :
+			const_iterator( const struct iterator &i ) :
 				pChunk( i.pChunk ),
 				iPos( i.iPos )
 			{
@@ -776,20 +777,8 @@ namespace Bu
 			if( !pData ) return;
 			long nLen;
 			for( nLen = 0; pData[nLen] != (chr)0; nLen++ ) { }
-			if( nLen == 0 )
-				return;
-	
-			if( core->pLast->nLength < nMinSize )
-			{
-				// Put things here, good things
-				// yeah...spare space block mapping
-			}
 
-			Chunk *pNew = core->newChunk( nLen );
-			cpy( pNew->pData, pData, nLen );
-
-			_hardCopy();
-			core->appendChunk( pNew );
+			append( pData, 0, nLen );
 		}
 
 		/**
@@ -799,15 +788,7 @@ namespace Bu
 		 */
 		void append( const chr *pData, long nLen )
 		{
-			if( nLen == 0 )
-				return;
-
-			Chunk *pNew = core->newChunk( nLen );
-			
-			cpy( pNew->pData, pData, nLen );
-
-			_hardCopy();
-			core->appendChunk( pNew );
+			append( pData, 0, nLen );
 		}
 		
 		/**
@@ -818,15 +799,37 @@ namespace Bu
 		 */
 		void append( const chr *pData, long nStart, long nLen )
 		{
-			if( nLen == 0 )
+			if( !pData ) return;
+			if( nLen <= 0 )
 				return;
 
-			Chunk *pNew = core->newChunk( nLen );
-			
-			cpy( pNew->pData, pData+nStart, nLen );
+			pData += nStart;
 
 			_hardCopy();
-			core->appendChunk( pNew );
+	
+			if( core->pLast && core->pLast->nLength < nMinSize )
+			{
+				int nAmnt = nMinSize - core->pLast->nLength;
+				if( nAmnt > nLen )
+					nAmnt = nLen;
+				cpy(
+					core->pLast->pData+core->pLast->nLength,
+					pData,
+					nAmnt
+				   );
+				pData += nAmnt;
+				core->pLast->nLength += nAmnt;
+				nLen -= nAmnt;
+				core->nLength += nAmnt;
+			}
+
+			if( nLen > 0 )
+			{
+				Chunk *pNew = core->newChunk( nLen );
+				cpy( pNew->pData, pData, nLen );
+				core->appendChunk( pNew );
+//				core->nLength += nLen;
+			}
 		}
 
 		/**
@@ -855,7 +858,7 @@ namespace Bu
 		 */
 		void append( const MyType & sData )
 		{
-			append( sData.getStr(), sData.getSize() );
+			append( sData.getStr(), 0, sData.getSize() );
 		}
 		
 		/**
@@ -866,7 +869,7 @@ namespace Bu
 		 */
 		void append( const MyType & sData, long nLen )
 		{
-			append( sData.getStr(), nLen );
+			append( sData.getStr(), 0, nLen );
 		}
 		
 		/**
