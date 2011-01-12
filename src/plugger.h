@@ -8,14 +8,17 @@
 #ifndef BU_PLUGGER_H
 #define BU_PLUGGER_H
 
-#ifndef WIN32 //yeah, this one is going to take some work...
-
 #include "bu/hash.h"
 #include "bu/list.h"
-#include <dlfcn.h>
 #include "bu/exceptionbase.h"
 #include "bu/fstring.h"
 #include <stddef.h>
+
+#ifdef WIN32
+# include <windows.h>
+#else
+# include <dlfcn.h>
+#endif
 
 namespace Bu
 {
@@ -34,7 +37,11 @@ namespace Bu
 	typedef struct PluginReg
 	{
 		bool bBuiltin;
+#ifdef WIN32
+		HMODULE dlHandle;
+#else
 		void *dlHandle;
+#endif
 		PluginInfo *pInfo;
 	} PluginReg;
 
@@ -69,6 +76,20 @@ namespace Bu
 			(void (*)( void * ))(destroy ##classname) };					\
 	}
 
+//
+// This is probably the main interface to use, I'll describe it some here...
+//   structname - The name of the structure, this is what you have to pass to
+//                register.  Depending on how you build your dll/so files this
+//                will need to be unique (generally not)
+//   pluginname - This is what will be used by the plugin system to refer to
+//                your plugin once it's loaded.  This should be unique, but not
+//                a string
+//   classname  - The name of the class that is the plugin
+//   baseclass  - The name of the base class that is the parent of the plugin
+//   name       - The name of the author of this class (or company)
+//   ver        - an integer version number for the plugin
+//   rev        - an integer revision number for the plugin
+//
 #define PluginInterface3( structname, pluginname, classname, baseclass, name, ver, rev ) \
 	extern "C" {															\
 		baseclass *create ##classname()										\
@@ -85,6 +106,38 @@ namespace Bu
 			(void (*)( void * ))(destroy ##classname) };					\
 	}
 
+	/**
+	 * A complete dynamic plugin manager system.  This will allow you to design
+	 * and use plugins that are compiled into your program and dynamically
+	 * linked to your program interchangably.  It works on windows and on *nix
+	 * and bsd type systems (anything that supports dlopen).  Basically you
+	 * create a base class that will be the basic interface of your plugins.
+	 * Then you create some classes that inherit from it, and use the
+	 * PluginInterface3 macro to create the required data structures for it.
+	 *
+	 * Once you have plugins you can create a Plugger, by passing in the base
+	 * class as it's template parameter.  Once it's created, you can register
+	 * plugins.  To register a plugin that is builtin, you just need to pass
+	 * a pointer to it's interface structure to the registerBuiltinPlugin
+	 * function.  To register a plugin that is in a shared object or dll file
+	 * you just pass the filename (with path, probably), and the name of the
+	 * structure to load and you're all set.
+	 *
+	 * To instantiate an object from a plugin simply call instantiate with the
+	 * name of the plugin as specified in the interface macro.  To destroy an
+	 * object crated with the plugger do not delete it, instead pass it into
+	 * Plugger's destroy function.
+	 *
+	 * Any objects not destroyed when the plugger is deleted will be destroyed
+	 * automatically.
+	 *
+	 * It is important to note that some systems (linux at least) partition off
+	 * the memory allocated by objects linked in at run time into a seperate
+	 * segment that, while it can be accessed by the main program, cannot be
+	 * safely or reliably freed by the main program.  With that in mind it is
+	 * a good idea to free all memory allocated by a plugin object in the plugin
+	 * object and not allow the calling program to delete it.
+	 */
 	template<class T>
 	class Plugger
 	{
@@ -111,7 +164,11 @@ namespace Bu
 			{
 				if( (*i)->bBuiltin == false )
 				{
+#ifdef WIN32
+					FreeLibrary( (*i)->dlHandle );
+#else
 					dlclose( (*i)->dlHandle );
+#endif
 				}
 				delete (*i);
 			}
@@ -129,32 +186,42 @@ namespace Bu
 				const Bu::FString &sPluginName )
 		{
 			PluginReg *pReg;
-			try {
-				pReg = (PluginReg *)hPlugin[sPluginName];
-				hPlugin.erase( sPluginName );
-				dlclose( pReg->dlHandle );
-				delete pReg;
-				pReg = NULL;
-			} catch( Bu::HashException &e )
-			{
-			}
+			if( hPlugin.has( sPluginName ) )
+				throw Bu::ExceptionBase("A plugin with name '%s' is already "
+					"loaded.", sPluginName.getStr() );
 
 			pReg = new PluginReg;
 
 			pReg->bBuiltin = false;
+#ifdef WIN32
+			pReg->dlHandle = LoadLibrary( sFName.getStr() );
+			if( pReg->dlHandle == NULL )
+			{
+				throw PluginException( 1, "Error opening %s: %s", sFName.getStr(),
+						"unknown error, fix this for windows" );
+			}
+			pReg->pInfo = (PluginInfo *)GetProcAddress( pReg->dlHandle,
+					sPluginName.getStr() );
+			if( pReg->pInfo == NULL )
+			{
+				throw PluginException( 2, "Error mapping %s: %s", sFName.getStr(),
+						"unknown error, fix this for windows" );
+			}
+#else
 			pReg->dlHandle = dlopen( sFName.getStr(), RTLD_NOW );
 			if( pReg->dlHandle == NULL )
 			{
-				throw PluginException( 1, "Error on %s: %s", sFName.getStr(),
+				throw PluginException( 1, "Error opening %s: %s", sFName.getStr(),
 						dlerror() );
 			}
 			pReg->pInfo = (PluginInfo *)dlsym( pReg->dlHandle,
 					sPluginName.getStr() );
 			if( pReg->pInfo == NULL )
 			{
-				throw PluginException( 2, "Error on %s: %s", sFName.getStr(),
+				throw PluginException( 2, "Error mapping %s: %s", sFName.getStr(),
 						dlerror() );
 			}
+#endif
 			hPlugin.insert( pReg->pInfo->sID, pReg );
 		}
 
@@ -195,7 +262,11 @@ namespace Bu
 			{
 				if( (*i)->bBuiltin == false )
 				{
+#ifdef WIN32
+					FreeLibrary( (*i)->dlHandle );
+#else
 					dlclose( (*i)->dlHandle );
+#endif
 				}
 				delete (*i);
 			}
@@ -212,7 +283,5 @@ namespace Bu
 		InstHash hObj;
 	};
 }
-
-#endif //#ifndef WIN32 //yeah, this one is going to take some work...
 
 #endif
