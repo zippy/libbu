@@ -89,6 +89,8 @@ namespace Bu
 		static char scode[15];
 		static char *gai_strerror( int iCode );
 	};
+
+	Bu::FString getLastWinError();
 };
 
 #ifdef FD_ISSET

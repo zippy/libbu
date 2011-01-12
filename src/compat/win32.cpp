@@ -162,5 +162,27 @@ int Bu::Winsock2::__WSAFDIsSet( SOCKET s, fd_set *set ) {
 	return (*Bu::Winsock2::_fnptr___WSAFDIsSet)( s, set );
 }
 
+Bu::FString Bu::getLastWinError()
+{
+    LPVOID lpMsgBuf;
+    DWORD dw = GetLastError(); 
+
+    FormatMessageA(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+        FORMAT_MESSAGE_FROM_SYSTEM |
+        FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL,
+        dw,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPSTR) &lpMsgBuf,
+        0, NULL );
+
+	Bu::FString sRet( (char *)lpMsgBuf );
+
+    LocalFree(lpMsgBuf);
+
+	return sRet;
+}
+
 #endif
 

@@ -14,6 +14,8 @@
 #include "bu/fstring.h"
 #include <stddef.h>
 
+#include "bu/config.h"
+
 #ifdef WIN32
 # include <windows.h>
 #else
@@ -197,29 +199,29 @@ namespace Bu
 			pReg->dlHandle = LoadLibrary( sFName.getStr() );
 			if( pReg->dlHandle == NULL )
 			{
-				throw PluginException( 1, "Error opening %s: %s", sFName.getStr(),
-						"unknown error, fix this for windows" );
+				throw PluginException( 1, "Error opening %s: %s",
+					sFName.getStr(), Bu::getLastWinError().getStr() );
 			}
 			pReg->pInfo = (PluginInfo *)GetProcAddress( pReg->dlHandle,
 					sPluginName.getStr() );
 			if( pReg->pInfo == NULL )
 			{
-				throw PluginException( 2, "Error mapping %s: %s", sFName.getStr(),
-						"unknown error, fix this for windows" );
+				throw PluginException( 2, "Error mapping %s: %s",
+					sFName.getStr(), Bu::getLastWinError().getStr() );
 			}
 #else
 			pReg->dlHandle = dlopen( sFName.getStr(), RTLD_NOW );
 			if( pReg->dlHandle == NULL )
 			{
-				throw PluginException( 1, "Error opening %s: %s", sFName.getStr(),
-						dlerror() );
+				throw PluginException( 1, "Error opening %s: %s",
+					sFName.getStr(), dlerror() );
 			}
 			pReg->pInfo = (PluginInfo *)dlsym( pReg->dlHandle,
 					sPluginName.getStr() );
 			if( pReg->pInfo == NULL )
 			{
-				throw PluginException( 2, "Error mapping %s: %s", sFName.getStr(),
-						dlerror() );
+				throw PluginException( 2, "Error mapping %s: %s",
+					sFName.getStr(), dlerror() );
 			}
 #endif
 			hPlugin.insert( pReg->pInfo->sID, pReg );
