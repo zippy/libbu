@@ -14,6 +14,8 @@ namespace Bu
 {
 	/**
 	 * Class for easily calculating MD5 sums of just about any data.
+	 * This code is based on some public domain code written by Colin Plumb in
+	 * 1993.
 	 *@author Mike Buland
 	 */
 	class Md5 : public Bu::CryptoHash
@@ -36,13 +38,16 @@ namespace Bu
 		/**
 		 * Compute one block of input data.
 		 */
-		void compBlock( long *x, uint32_t *lsum );
+		void compBlock( uint32_t *lsum, uint32_t *x );
 		void compCap( uint32_t *sumout );
+
+		void _addData( uint8_t *target, int &iCurFill, const void *sData,
+				int iSize );
+		void _toLittleEndian( uint8_t *buf, uint32_t count );
 		
-		uint32_t inbuf[16];
-		uint32_t iFill;
+		uint8_t inbuf[64];
 		uint32_t sum[4];
-		uint64_t iBytes;
+		uint32_t uBits[2];
 	};
 };
 
