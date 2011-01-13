@@ -36,12 +36,12 @@ namespace Bu
 		/**
 		 * Compute one block of input data.
 		 */
-		void compBlock( long *x, long *lsum );
-		void compCap( long *sumout );
+		void compBlock( long *x, uint32_t *lsum );
+		void compCap( uint32_t *sumout );
 		
-		long inbuf[16];
-		long iFill;
-		long sum[4];
+		uint32_t inbuf[16];
+		uint32_t iFill;
+		uint32_t sum[4];
 		uint64_t iBytes;
 	};
 };

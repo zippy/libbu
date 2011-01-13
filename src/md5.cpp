@@ -13,29 +13,7 @@
 
 
 // This performs a wrapping bitwise shift, kinda' fun!
-
-#define bit_roll( num, cnt ) \
-	(((num) << (cnt)) | (((num) >> (32 - (cnt))) & ~(-1<<(cnt))))
-
-//#define md5_cmn( q, a, b, x, s, t ) (bit_roll((a + q + x + t), s) + b)
-
-// The following are handy wrappers for the cmn function
-#define md5_ff( a, b, c, d, x, s, t ) \
-	(md5_cmn((b & c) | ((~b) & d), a, b, x, s, t))
-
-#define md5_gg( a, b, c, d, x, s, t ) \
-	(md5_cmn((b & d) | (c & (~d)), a, b, x, s, t))
-
-#define md5_hh( a, b, c, d, x, s, t ) \
-	(md5_cmn(b ^ c ^ d, a, b, x, s, t))
-
-#define md5_ii( a, b, c, d, x, s, t ) \
-	(md5_cmn(c ^ (b | (~d)), a, b, x, s, t))
-
-inline long md5_cmn( long q, long a, long b, long x, long s, long t )
-{
-	return bit_roll((a + q + x + t), s) + b;
-}
+#define bitRoll( val, amnt )  ((val<<(amnt)) | (val>>(32-(amnt))))
 
 Bu::Md5::Md5()
 {
@@ -50,10 +28,10 @@ void Bu::Md5::reset()
 {
 	// These are the magic seed numbers...
 
-	sum[0] = 1732584193;
-	sum[1] = -271733879;
-	sum[2] = -1732584194;
-	sum[3] =  271733878;
+	sum[0] = 0x67452301U;
+	sum[1] = 0xEFCDAB89U;
+	sum[2] = 0x98BADCFEU;
+	sum[3] = 0x10325476U;
 
 	iBytes = 0;
 	memset( inbuf, 0, 4*16 );
