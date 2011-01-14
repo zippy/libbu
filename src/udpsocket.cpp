@@ -87,18 +87,19 @@ size_t Bu::UdpSocket::read( void *pBuf, size_t nBytes )
 }
 
 size_t Bu::UdpSocket::read( void *pBuf, size_t nBytes,
-		uint32_t nSec, uint32_t nUSec=0 )
+		uint32_t nSec, uint32_t nUSec )
 {
 }
 
 size_t Bu::UdpSocket::write( const void *pBuf, size_t nBytes )
 {
-	return sendto( iUdpSocket, pBuf, nBytes, 0,
-		(struct sockaddr *)&name, size );
+// name, the destination address, needs to be a class variable...
+//	return sendto( iUdpSocket, pBuf, nBytes, 0,
+//		(struct sockaddr *)&name, size );
 }
 
 size_t Bu::UdpSocket::write( const void *pBuf, size_t nBytes,
-		uint32_t nSec, uint32_t nUSec=0 )
+		uint32_t nSec, uint32_t nUSec )
 {
 }
 
@@ -154,7 +155,7 @@ bool Bu::UdpSocket::isBlocking()
 {
 }
 
-void Bu::UdpSocket::setBlocking( bool bBlocking=true )
+void Bu::UdpSocket::setBlocking( bool bBlocking )
 {
 }
 
