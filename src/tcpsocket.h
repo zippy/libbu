@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 
+#include "bu/config.h"
 #include "bu/stream.h"
 #include "bu/fstring.h"
 #include "bu/exceptionbase.h"
@@ -66,18 +67,18 @@ namespace Bu
 		
 		virtual void close();
 		//virtual void read();
-		virtual size_t read( void *pBuf, size_t nBytes );
-		virtual size_t read( void *pBuf, size_t nBytes,
+		virtual size read( void *pBuf, size nBytes );
+		virtual size read( void *pBuf, size nBytes,
 				uint32_t nSec, uint32_t nUSec=0 );
-		virtual size_t write( const void *pBuf, size_t nBytes );
-		virtual size_t write( const void *pBuf, size_t nBytes,
+		virtual size write( const void *pBuf, size nBytes );
+		virtual size write( const void *pBuf, size nBytes,
 				uint32_t nSec, uint32_t nUSec=0 );
 		using Stream::write;
 
-		virtual long tell();
-		virtual void seek( long offset );
-		virtual void setPos( long pos );
-		virtual void setPosEnd( long pos );
+		virtual size tell();
+		virtual void seek( size offset );
+		virtual void setPos( size pos );
+		virtual void setPosEnd( size pos );
 		virtual bool isEos();
 		virtual bool isOpen();
 
@@ -93,10 +94,14 @@ namespace Bu
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
 
-		virtual void setSize( long iSize );
+		virtual void setSize( size iSize );
 
 		Bu::FString getAddress() const;
 		operator int() const;
+
+		virtual size getSize() const;
+		virtual size getBlockSize() const;
+		virtual Bu::FString getLocation() const;
 
 	private:
 		void setAddress();

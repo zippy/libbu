@@ -28,9 +28,9 @@ void Bu::MemBuf::close()
 {
 }
 
-size_t Bu::MemBuf::read( void *pBuf, size_t nBytes )
+size Bu::MemBuf::read( void *pBuf, size nBytes )
 {
-	if( (size_t)sBuf.getSize()-(size_t)nPos < nBytes )
+	if( (size)sBuf.getSize()-(size)nPos < nBytes )
 		nBytes = sBuf.getSize()-nPos;
 
 	memcpy( pBuf, sBuf.getStr()+nPos, nBytes );
@@ -39,7 +39,7 @@ size_t Bu::MemBuf::read( void *pBuf, size_t nBytes )
 	return nBytes;
 }
 	
-size_t Bu::MemBuf::write( const void *pBuf, size_t nBytes )
+size Bu::MemBuf::write( const void *pBuf, size nBytes )
 {
 	if( nPos == sBuf.getSize() )
 	{
@@ -52,7 +52,7 @@ size_t Bu::MemBuf::write( const void *pBuf, size_t nBytes )
 	{
 		// Trickier, we must do this in two parts, overwrite, then append
 		// Frist, overwrite.
-		size_t iOver = sBuf.getSize() - nPos;
+		size iOver = sBuf.getSize() - nPos;
 		if( iOver > nBytes )
 			iOver = nBytes;
 		memcpy( sBuf.getStr()+nPos, pBuf, iOver );
@@ -66,26 +66,26 @@ size_t Bu::MemBuf::write( const void *pBuf, size_t nBytes )
 	}
 }
 
-long Bu::MemBuf::tell()
+size Bu::MemBuf::tell()
 {
 	return nPos;
 }
 
-void Bu::MemBuf::seek( long offset )
+void Bu::MemBuf::seek( size offset )
 {
 	nPos += offset;
 	if( nPos < 0 ) nPos = 0;
 	else if( nPos > sBuf.getSize() ) nPos = sBuf.getSize();
 }
 
-void Bu::MemBuf::setPos( long pos )
+void Bu::MemBuf::setPos( size pos )
 {
 	nPos = pos;
 	if( nPos < 0 ) nPos = 0;
 	else if( nPos > sBuf.getSize() ) nPos = sBuf.getSize();
 }
 
-void Bu::MemBuf::setPosEnd( long pos )
+void Bu::MemBuf::setPosEnd( size pos )
 {
 	nPos = sBuf.getSize()-pos;
 	if( nPos < 0 ) nPos = 0;
@@ -140,7 +140,7 @@ void Bu::MemBuf::setBlocking( bool )
 {
 }
 
-void Bu::MemBuf::setSize( long iSize )
+void Bu::MemBuf::setSize( size iSize )
 {
 	if( iSize < 0 )
 		iSize = 0;

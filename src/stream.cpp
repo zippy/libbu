@@ -30,7 +30,7 @@ Bu::FString Bu::Stream::readLine()
 	}
 }
 
-size_t Bu::Stream::write( const Bu::FString &sBuf )
+Bu::size Bu::Stream::write( const Bu::FString &sBuf )
 {
 	return write( sBuf.getStr(), sBuf.getSize() );
 }

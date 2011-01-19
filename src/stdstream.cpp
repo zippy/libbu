@@ -20,30 +20,30 @@ void Bu::StdStream::close()
 {
 }
 
-size_t Bu::StdStream::read( void *pBuf, size_t nBytes )
+Bu::size Bu::StdStream::read( void *pBuf, Bu::size nBytes )
 {
 	return fread( pBuf, 1, nBytes, stdin );
 }
 
-size_t Bu::StdStream::write( const void *pBuf, size_t nBytes )
+Bu::size Bu::StdStream::write( const void *pBuf, Bu::size nBytes )
 {
 	return fwrite( pBuf, 1, nBytes, stdout );
 }
 
-long Bu::StdStream::tell()
+Bu::size Bu::StdStream::tell()
 {
 	return 0;
 }
 
-void Bu::StdStream::seek( long )
+void Bu::StdStream::seek( Bu::size )
 {
 }
 
-void Bu::StdStream::setPos( long )
+void Bu::StdStream::setPos( Bu::size )
 {
 }
 
-void Bu::StdStream::setPosEnd( long )
+void Bu::StdStream::setPosEnd( Bu::size )
 {
 }
 
@@ -96,7 +96,7 @@ void Bu::StdStream::setBlocking( bool )
 {
 }
 
-void Bu::StdStream::setSize( long )
+void Bu::StdStream::setSize( Bu::size )
 {
 }
 

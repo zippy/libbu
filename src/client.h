@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 
+#include "bu/config.h"
 #include "bu/fstring.h"
 #include "bu/queuebuf.h"
 

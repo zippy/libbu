@@ -23,13 +23,13 @@ namespace Bu
 		virtual ~StdStream();
 
 		virtual void close();
-		virtual size_t read( void *pBuf, size_t nBytes );
-		virtual size_t write( const void *pBuf, size_t nBytes );
+		virtual size read( void *pBuf, size nBytes );
+		virtual size write( const void *pBuf, size nBytes );
 		using Stream::write;
-		virtual long tell();
-		virtual void seek( long offset );
-		virtual void setPos( long pos );
-		virtual void setPosEnd( long pos );
+		virtual size tell();
+		virtual void seek( size offset );
+		virtual void setPos( size pos );
+		virtual void setPosEnd( size pos );
 		virtual bool isEos();
 		virtual bool isOpen();
 		virtual void flush();
@@ -40,7 +40,7 @@ namespace Bu
 		virtual bool isSeekable();
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
-		virtual void setSize( long iSize );
+		virtual void setSize( size iSize );
 	};
 }
 

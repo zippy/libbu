@@ -15,4 +15,6 @@
 #include "bu/compat/osx.h"
 #include "bu/compat/linux.h"
 
+#include "bu/extratypes.h"
+
 #endif
