@@ -7,3 +7,11 @@
 
 #include "bu/utfstring.h"
 
+Bu::UtfString::UtfString()
+{
+}
+
+Bu::UtfString::~UtfString()
+{
+}
+

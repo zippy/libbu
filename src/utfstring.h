@@ -8,10 +8,21 @@
 #ifndef BU_UTF_STRING_H
 #define BU_UTF_STRING_H
 
+#include "bu/string.h"
+
 namespace Bu
 {
 	class UtfString
 	{
+	public:
+		UtfString();
+		virtual ~UtfString();
+
+		typedef uint32_t point;
+
+	private:
+		typedef BasicString<uint16_t> RawString;
+		RawString rsStore;
 	};
 };
 
