@@ -1,7 +1,12 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 /**
- * This is the default.bld file for libbu++, it pretty much handles everything
- * libbu++ related, kinda' cool, eh?  It can completely replace the old build
- * and actually does a better job with a number of things.
+ * This is just like default.bld, but for mingw...crazy, eh?
  */
 
 CXXFLAGS += "-ggdb -W -Wall";

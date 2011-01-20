@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -436,8 +436,6 @@ void Bu::TcpSocket::setAddress()
 	addr.sin_family = AF_INET;
 	bu_getpeername( nTcpSocket, (sockaddr *)(&addr), &len );
 	sAddress = bu_inet_ntoa( addr.sin_addr );
-
-	printf("%d\n", IP_MTU );
 }
 
 Bu::String Bu::TcpSocket::getAddress() const
@@ -457,10 +455,11 @@ Bu::size Bu::TcpSocket::getSize() const
 
 Bu::size Bu::TcpSocket::getBlockSize() const
 {
-
+	return 1500; //TODO: Fix this, it's stupid.
 }
 
 Bu::String Bu::TcpSocket::getLocation() const
 {
+	return getAddress();
 }
 

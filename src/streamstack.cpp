@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #include "bu/streamstack.h"
 
 Bu::StreamStack::StreamStack()
@@ -72,49 +79,49 @@ void Bu::StreamStack::close()
 	lFilts.first()->close();
 }
 
-size_t Bu::StreamStack::read( void *pBuf, size_t nBytes )
+Bu::size Bu::StreamStack::read( void *pBuf, Bu::size nBytes )
 {
 	checkStack();
 
 	return lFilts.first()->read( pBuf, nBytes );
 }
 
-size_t Bu::StreamStack::write( const void *pBuf, size_t nBytes )
+Bu::size Bu::StreamStack::write( const void *pBuf, Bu::size nBytes )
 {
 	checkStack();
 
 	return lFilts.first()->write( pBuf, nBytes );
 }
 
-size_t Bu::StreamStack::write( const Bu::String &sBuf )
+Bu::size Bu::StreamStack::write( const Bu::String &sBuf )
 {
 	checkStack();
 
 	return lFilts.first()->write( sBuf );
 }
 
-long Bu::StreamStack::tell()
+Bu::size Bu::StreamStack::tell()
 {
 	checkStack();
 
 	return lFilts.first()->tell();
 }
 
-void Bu::StreamStack::seek( long offset )
+void Bu::StreamStack::seek( Bu::size offset )
 {
 	checkStack();
 
 	lFilts.first()->seek( offset );
 }
 
-void Bu::StreamStack::setPos( long pos )
+void Bu::StreamStack::setPos( Bu::size pos )
 {
 	checkStack();
 
 	lFilts.first()->setPos( pos );
 }
 
-void Bu::StreamStack::setPosEnd( long pos )
+void Bu::StreamStack::setPosEnd( Bu::size pos )
 {
 	checkStack();
 
@@ -191,14 +198,35 @@ void Bu::StreamStack::setBlocking( bool bBlocking )
 	lFilts.first()->setBlocking( bBlocking );
 }
 
-void Bu::StreamStack::setSize( long iSize )
+void Bu::StreamStack::setSize( Bu::size iSize )
 {
 	checkStack();
 
 	lFilts.first()->setSize( iSize );
 }
 
-inline void Bu::StreamStack::checkStack()
+Bu::size Bu::StreamStack::getSize() const
+{
+	checkStack();
+	
+	return lFilts.first()->getSize();
+}
+
+Bu::size Bu::StreamStack::getBlockSize() const
+{
+	checkStack();
+
+	return lFilts.first()->getBlockSize();
+}
+
+Bu::String Bu::StreamStack::getLocation() const
+{
+	checkStack();
+
+	return lFilts.first()->getLocation();
+}
+
+inline void Bu::StreamStack::checkStack() const
 {
 	if( lFilts.isEmpty() )
 		throw Bu::ExceptionBase("StreamStack is empty.");

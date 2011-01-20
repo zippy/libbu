@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -21,19 +21,19 @@ void Bu::NewLine::start()
 {
 }
 
-size_t Bu::NewLine::stop()
+Bu::size Bu::NewLine::stop()
 {
 	return 0;
 }
 
-size_t Bu::NewLine::read( void *pBufV, size_t iAmnt )
+Bu::size Bu::NewLine::read( void *pBufV, Bu::size iAmnt )
 {
-	size_t iTotal = 0;
-	size_t iOffset = 0;
-	size_t iRead = rNext.read( pBufV, iAmnt );
+	Bu::size iTotal = 0;
+	Bu::size iOffset = 0;
+	Bu::size iRead = rNext.read( pBufV, iAmnt );
 	char *pBuf = (char *)pBufV;
 
-	for( size_t i = 0; i < iRead; i++ )
+	for( Bu::size i = 0; i < iRead; i++ )
 	{
 		if( pBuf[i] == '\r' )
 		{
@@ -61,7 +61,7 @@ size_t Bu::NewLine::read( void *pBufV, size_t iAmnt )
 	return iTotal;
 }
 
-size_t Bu::NewLine::write( const void *, size_t )
+Bu::size Bu::NewLine::write( const void *, Bu::size )
 {
 	return 0;
 }

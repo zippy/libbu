@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -35,21 +35,21 @@ namespace Bu
 
 		//Bu::String &getInput();
 		//Bu::String &getOutput();
-		size_t write( const Bu::String &sData );
-		size_t write( const void *pData, size_t nBytes );
-		size_t write( int8_t nData );
-		size_t write( int16_t nData );
-		size_t write( int32_t nData );
-		size_t write( int64_t nData );
-		size_t write( uint8_t nData );
-		size_t write( uint16_t nData );
-		size_t write( uint32_t nData );
-		size_t write( uint64_t nData );
-		size_t read( void *pData, size_t nBytes );
-		size_t peek( void *pData, int nBytes, int nOffset=0 );
+		Bu::size write( const Bu::String &sData );
+		Bu::size write( const void *pData, Bu::size nBytes );
+		Bu::size write( int8_t nData );
+		Bu::size write( int16_t nData );
+		Bu::size write( int32_t nData );
+		Bu::size write( int64_t nData );
+		Bu::size write( uint8_t nData );
+		Bu::size write( uint16_t nData );
+		Bu::size write( uint32_t nData );
+		Bu::size write( uint64_t nData );
+		Bu::size read( void *pData, Bu::size nBytes );
+		Bu::size peek( void *pData, int nBytes, int nOffset=0 );
 //		void seek( int nBytes );
-		long getInputSize();
-		long getOutputSize();
+		Bu::size getInputSize();
+		Bu::size getOutputSize();
 
 		void setProtocol( Protocol *pProto );
 		Bu::Protocol *getProtocol();
@@ -99,10 +99,10 @@ namespace Bu
 		 * These are required to qualify as a stream, I dunno how many will
 		 * be implemented.
 		 */
-		virtual long tell();
-		virtual void seek( long offset );
-		virtual void setPos( long pos );
-		virtual void setPosEnd( long pos );
+		virtual Bu::size tell();
+		virtual void seek( Bu::size offset );
+		virtual void setPos( Bu::size pos );
+		virtual void setPosEnd( Bu::size pos );
 		virtual bool isEos();
 		virtual void flush();
 		virtual bool canRead();
@@ -112,7 +112,10 @@ namespace Bu
 		virtual bool isSeekable();
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
-		virtual void setSize( long iSize );
+		virtual void setSize( Bu::size iSize );
+		virtual size getSize() const;
+		virtual size getBlockSize() const;
+		virtual Bu::String getLocation() const;
 
 	private:
 		typedef Bu::List<Bu::Stream *> FilterList;

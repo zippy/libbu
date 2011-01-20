@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -37,7 +37,7 @@ void Bu::QueueBuf::close()
 	iReadOffset = iWriteOffset = iTotalSize = 0;
 }
 
-size_t Bu::QueueBuf::read( void *pRawBuf, size_t nBytes )
+Bu::size Bu::QueueBuf::read( void *pRawBuf, Bu::size nBytes )
 {
 	if( nBytes <= 0 )
 		return 0;
@@ -45,7 +45,7 @@ size_t Bu::QueueBuf::read( void *pRawBuf, size_t nBytes )
 	if( lBlocks.isEmpty() )
 		return 0;
 
-	size_t iLeft = nBytes;
+	Bu::size iLeft = nBytes;
 	char *pBuf = (char *)pRawBuf;
 
 	while( iLeft > 0 && iTotalSize > 0 )
@@ -60,7 +60,7 @@ size_t Bu::QueueBuf::read( void *pRawBuf, size_t nBytes )
 			iReadOffset = 0;
 		}
 		char *pBlock = lBlocks.first();
-		size_t iCopy = iBlockSize-iReadOffset;
+		Bu::size iCopy = iBlockSize-iReadOffset;
 		if( iLeft < iCopy )
 			iCopy = iLeft;
 		if( iTotalSize < iCopy )
@@ -76,12 +76,12 @@ size_t Bu::QueueBuf::read( void *pRawBuf, size_t nBytes )
 	return nBytes - iLeft;
 }
 
-size_t Bu::QueueBuf::peek( void *pBuf, size_t nBytes )
+Bu::size Bu::QueueBuf::peek( void *pBuf, Bu::size nBytes )
 {
 	return peek( pBuf, nBytes, 0 );
 }
 
-size_t Bu::QueueBuf::peek( void *pRawBuf, size_t nBytes, size_t nSkip )
+Bu::size Bu::QueueBuf::peek( void *pRawBuf, Bu::size nBytes, Bu::size nSkip )
 {
 	if( nBytes <= 0 )
 		return 0;
@@ -89,11 +89,11 @@ size_t Bu::QueueBuf::peek( void *pRawBuf, size_t nBytes, size_t nSkip )
 	if( lBlocks.isEmpty() )
 		return 0;
 
-	size_t iLeft = nBytes;
+	Bu::size iLeft = nBytes;
 	char *pBuf = (char *)pRawBuf;
 
 	int iTmpReadOffset = iReadOffset + nSkip;
-	size_t iTmpRemSize = iTotalSize;
+	Bu::size iTmpRemSize = iTotalSize;
 	BlockList::iterator iBlock = lBlocks.begin();
 	while( iTmpReadOffset > iBlockSize )
 	{
@@ -112,7 +112,7 @@ size_t Bu::QueueBuf::peek( void *pRawBuf, size_t nBytes, size_t nSkip )
 			iTmpReadOffset = 0;
 		}
 		char *pBlock = *iBlock;
-		size_t iCopy = iBlockSize-iTmpReadOffset;
+		Bu::size iCopy = iBlockSize-iTmpReadOffset;
 		if( iLeft < iCopy )
 			iCopy = iLeft;
 		if( iTmpRemSize < iCopy )
@@ -129,7 +129,7 @@ size_t Bu::QueueBuf::peek( void *pRawBuf, size_t nBytes, size_t nSkip )
 	return nBytes - iLeft;
 }
 
-size_t Bu::QueueBuf::write( const void *pRawBuf, size_t nBytes )
+Bu::size Bu::QueueBuf::write( const void *pRawBuf, Bu::size nBytes )
 {
 	if( nBytes <= 0 )
 		return 0;
@@ -139,7 +139,7 @@ size_t Bu::QueueBuf::write( const void *pRawBuf, size_t nBytes )
 		addBlock();
 		iWriteOffset = 0;
 	}
-	size_t iLeft = nBytes;
+	Bu::size iLeft = nBytes;
 	const char *pBuf = (const char *)pRawBuf;
 
 	while( iLeft > 0 )
@@ -150,7 +150,7 @@ size_t Bu::QueueBuf::write( const void *pRawBuf, size_t nBytes )
 			iWriteOffset = 0;
 		}
 		char *pBlock = lBlocks.last();
-		size_t iCopy = iBlockSize-iWriteOffset;
+		Bu::size iCopy = iBlockSize-iWriteOffset;
 		if( iLeft < iCopy )
 			iCopy = iLeft;
 		memcpy( pBlock+iWriteOffset, pBuf, iCopy );
@@ -165,17 +165,17 @@ size_t Bu::QueueBuf::write( const void *pRawBuf, size_t nBytes )
 	return nBytes;
 }
 
-long Bu::QueueBuf::tell()
+Bu::size Bu::QueueBuf::tell()
 {
 	return -1;
 }
 
-void Bu::QueueBuf::seek( long iAmnt )
+void Bu::QueueBuf::seek( Bu::size iAmnt )
 {
 	if( iAmnt <= 0 )
 		return;
 
-	if( (size_t)iAmnt >= iTotalSize )
+	if( (Bu::size)iAmnt >= iTotalSize )
 	{
 //		sio << "seek: clear all data (" << iAmnt << ">=" << iTotalSize
 //			<< ")." << sio.nl;
@@ -193,11 +193,11 @@ void Bu::QueueBuf::seek( long iAmnt )
 	}
 }
 
-void Bu::QueueBuf::setPos( long )
+void Bu::QueueBuf::setPos( Bu::size )
 {
 }
 
-void Bu::QueueBuf::setPosEnd( long )
+void Bu::QueueBuf::setPosEnd( Bu::size )
 {
 }
 
@@ -249,8 +249,23 @@ void Bu::QueueBuf::setBlocking( bool )
 {
 }
 
-void Bu::QueueBuf::setSize( long )
+void Bu::QueueBuf::setSize( Bu::size )
 {
+}
+
+Bu::size Bu::QueueBuf::getSize() const
+{
+	return iTotalSize;
+}
+
+Bu::size Bu::QueueBuf::getBlockSize() const
+{
+	return iBlockSize;
+}
+
+Bu::String Bu::QueueBuf::getLocation() const
+{
+	return "";
 }
 
 void Bu::QueueBuf::addBlock()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -147,6 +147,21 @@ void Bu::MemBuf::setSize( size iSize )
 	sBuf.setSize( iSize );
 	if( nPos > iSize )
 		nPos = iSize;
+}
+
+Bu::size Bu::MemBuf::getSize() const
+{
+	return sBuf.getSize();
+}
+
+Bu::size Bu::MemBuf::getBlockSize() const
+{
+	return sBuf.getSize();
+}
+
+Bu::String Bu::MemBuf::getLocation() const
+{
+	return "";
 }
 
 Bu::String &Bu::MemBuf::getString()

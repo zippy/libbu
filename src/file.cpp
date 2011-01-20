@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -59,12 +59,12 @@ void Bu::File::close()
 	}
 }
 
-size_t Bu::File::read( void *pBuf, size_t nBytes )
+Bu::size Bu::File::read( void *pBuf, Bu::size nBytes )
 {
 	if( fd < 0 )
 		throw FileException("File not open.");
 
-	ssize_t iRead = ::read( fd, pBuf, nBytes );
+	Bu::size iRead = ::read( fd, pBuf, nBytes );
 	if( iRead == 0 )
 		bEos = true;
 	else if( iRead == -1 && errno == EAGAIN )
@@ -74,18 +74,18 @@ size_t Bu::File::read( void *pBuf, size_t nBytes )
 	return iRead;
 }
 
-size_t Bu::File::write( const void *pBuf, size_t nBytes )
+Bu::size Bu::File::write( const void *pBuf, Bu::size nBytes )
 {
 	if( fd < 0 )
 		throw FileException("File not open.");
 
-	ssize_t iWrote = ::write( fd, pBuf, nBytes );
+	Bu::size iWrote = ::write( fd, pBuf, nBytes );
 	if( iWrote < 0 )
 		throw FileException( errno, "%s", strerror( errno ) );
 	return iWrote;
 }
 
-long Bu::File::tell()
+Bu::size Bu::File::tell()
 {
 	if( fd < 0 )
 		throw FileException("File not open.");
@@ -93,7 +93,7 @@ long Bu::File::tell()
 	return lseek( fd, 0, SEEK_CUR );
 }
 
-void Bu::File::seek( long offset )
+void Bu::File::seek( Bu::size offset )
 {
 	if( fd < 0 )
 		throw FileException("File not open.");
@@ -102,7 +102,7 @@ void Bu::File::seek( long offset )
 	bEos = false;
 }
 
-void Bu::File::setPos( long pos )
+void Bu::File::setPos( Bu::size pos )
 {
 	if( fd < 0 )
 		throw FileException("File not open.");
@@ -111,7 +111,7 @@ void Bu::File::setPos( long pos )
 	bEos = false;
 }
 
-void Bu::File::setPosEnd( long pos )
+void Bu::File::setPosEnd( Bu::size pos )
 {
 	if( fd < 0 )
 		throw FileException("File not open.");
@@ -218,13 +218,32 @@ Bu::File Bu::File::tempFile( Bu::String &sName )
 			" iterations.");
 }
 
-void Bu::File::setSize( long iSize )
+void Bu::File::setSize( Bu::size iSize )
 {
 #ifdef WIN32
 	chsize( fd, iSize );
 #else
 	ftruncate( fd, iSize );
 #endif
+}
+
+Bu::size Bu::File::getSize() const
+{
+	struct stat st;
+	fstat( fd, &st );
+	return st.st_size;
+}
+
+Bu::size Bu::File::getBlockSize() const
+{
+	struct stat st;
+	fstat( fd, &st );
+	return st.st_blksize;
+}
+
+Bu::String Bu::File::getLocation() const
+{
+	return "to be implemented";
 }
 
 #ifndef WIN32

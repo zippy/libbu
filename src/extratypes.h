@@ -1,7 +1,16 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #ifndef EXTRA_TYPES_H
 #define EXTRA_TYPES_H
 
 #include "bu/config.h"
+
+#include <stdint.h>
 
 namespace Bu
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -46,13 +46,13 @@ void Bu::MyriadStream::close()
 {
 }
 
-size_t Bu::MyriadStream::read( void *pBuf, size_t nBytes )
+Bu::size Bu::MyriadStream::read( void *pBuf, Bu::size nBytes )
 {
 #ifdef MYRIAD_STREAM_DEBUG
 	sio << "MyriadStream: read: " << __LINE__ << ": Started, asked to read " << nBytes << "b."
 		<< sio.nl;
 #endif
-	if( nBytes > (size_t)pStream->iSize-iPos )
+	if( nBytes > (Bu::size)pStream->iSize-iPos )
 		nBytes = pStream->iSize-iPos;
 	if( nBytes <= 0 )
 		return 0;
@@ -109,7 +109,7 @@ size_t Bu::MyriadStream::read( void *pBuf, size_t nBytes )
 	return nBytes;
 }
 
-size_t Bu::MyriadStream::write( const void *pBuf, size_t nBytes )
+Bu::size Bu::MyriadStream::write( const void *pBuf, Bu::size nBytes )
 {
 	if( nBytes <= 0 )
 		return 0;
@@ -215,22 +215,22 @@ size_t Bu::MyriadStream::write( const void *pBuf, size_t nBytes )
 	return nBytes;
 }
 
-long Bu::MyriadStream::tell()
+Bu::size Bu::MyriadStream::tell()
 {
 	return iPos;
 }
 
-void Bu::MyriadStream::seek( long offset )
+void Bu::MyriadStream::seek( Bu::size offset )
 {
 	iPos += offset;
 }
 
-void Bu::MyriadStream::setPos( long pos )
+void Bu::MyriadStream::setPos( Bu::size pos )
 {
 	iPos = pos;
 }
 
-void Bu::MyriadStream::setPosEnd( long pos )
+void Bu::MyriadStream::setPosEnd( Bu::size pos )
 {
 	iPos = pStream->iSize-pos;
 }
@@ -283,12 +283,29 @@ void Bu::MyriadStream::setBlocking( bool /*bBlocking*/ )
 {
 }
 
-void Bu::MyriadStream::setSize( long iSize )
+void Bu::MyriadStream::setSize( Bu::size iSize )
 {
 	if( iSize < 0 )
 		iSize = 0;
 	rMyriad.setStreamSize( pStream, iSize );
 	if( iPos > iSize )
 		iPos = iSize;
+}
+
+Bu::size Bu::MyriadStream::getSize() const
+{
+	return pStream->iSize;
+}
+
+Bu::size Bu::MyriadStream::getBlockSize() const
+{
+	return rMyriad.getBlockSize();
+}
+
+Bu::String Bu::MyriadStream::getLocation() const
+{
+	Bu::String s;
+	s.format("%d", pStream->iId );
+	return s;
 }
 

@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #include "bu/nullstream.h"
 
 Bu::NullStream::NullStream() :
@@ -15,7 +22,7 @@ void Bu::NullStream::close()
 	sRead = sWrote = 0;
 }
 
-size_t Bu::NullStream::read( void *pBuf, size_t nBytes )
+Bu::size Bu::NullStream::read( void *pBuf, Bu::size nBytes )
 {
 	memset( pBuf, 0, nBytes );
 	sRead += nBytes;
@@ -28,26 +35,26 @@ Bu::String Bu::NullStream::readLine()
 	return Bu::String("\0", 1 );
 }
 
-size_t Bu::NullStream::write( const void *, size_t nBytes )
+Bu::size Bu::NullStream::write( const void *, Bu::size nBytes )
 {
 	sWrote += nBytes;
 	return nBytes;
 }
 
-long Bu::NullStream::tell()
+Bu::size Bu::NullStream::tell()
 {
 	return sRead + sWrote;
 }
 
-void Bu::NullStream::seek( long )
+void Bu::NullStream::seek( Bu::size )
 {
 }
 
-void Bu::NullStream::setPos( long )
+void Bu::NullStream::setPos( Bu::size )
 {
 }
 
-void Bu::NullStream::setPosEnd( long )
+void Bu::NullStream::setPosEnd( Bu::size )
 {
 }
 
@@ -99,7 +106,22 @@ void Bu::NullStream::setBlocking( bool )
 {
 }
 
-void Bu::NullStream::setSize( long )
+void Bu::NullStream::setSize( Bu::size )
 {
+}
+
+Bu::size Bu::NullStream::getSize() const
+{
+	return 0;
+}
+
+Bu::size Bu::NullStream::getBlockSize() const
+{
+	return 0;
+}
+
+Bu::String Bu::NullStream::getLocation() const
+{
+	return "";
 }
 

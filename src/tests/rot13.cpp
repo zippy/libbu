@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -28,21 +28,21 @@ public:
 	{
 	}
 
-	virtual size_t stop()
+	virtual Bu::size stop()
 	{
 		return 0;
 	}
 
-	virtual size_t read( void *pBuf, size_t nBytes )
+	virtual Bu::size read( void *pBuf, Bu::size nBytes )
 	{
 		return rNext.read( pBuf, nBytes );
 	}
 	
-	virtual size_t write( const void *pBuf, size_t nBytes )
+	virtual Bu::size write( const void *pBuf, Bu::size nBytes )
 	{
 		const char *cBuf = (const char *)pBuf;
 		char *buf = new char[nBytes];
-		for( size_t j = 0; j < nBytes; j++ )
+		for( Bu::size j = 0; j < nBytes; j++ )
 		{
 			if( cBuf[j] >= 'a' && cBuf[j] <= 'z' )
 				buf[j] = (cBuf[j]-'a'+13)%26+'a';
