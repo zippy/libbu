@@ -26,7 +26,7 @@ void Bu::MultiServer::addProtocol( Bu::Protocol *(*proc)(), int iPort,
 	addPort( iPort, nPoolSize );
 }
 
-void Bu::MultiServer::addProtocol( Protocol *(*proc)(), const FString &sAddr,
+void Bu::MultiServer::addProtocol( Protocol *(*proc)(), const String &sAddr,
 	int iPort, int nPoolSize )
 {
 	hProtos[iPort] = proc;

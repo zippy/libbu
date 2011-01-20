@@ -8,7 +8,7 @@
 #ifndef BU_UUID_H
 #define BU_UUID_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
@@ -19,8 +19,8 @@ namespace Bu
 		Uuid( const Uuid &src );
 		virtual ~Uuid();
 
-		Bu::FString toRawString();
-		Bu::FString toString();
+		Bu::String toRawString();
+		Bu::String toString();
 
 		static Uuid gen();
 		static Uuid genV1();

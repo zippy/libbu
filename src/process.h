@@ -12,7 +12,7 @@
 #include <sys/types.h>
 
 #include "bu/stream.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {

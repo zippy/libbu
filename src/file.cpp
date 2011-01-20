@@ -17,7 +17,7 @@
 
 namespace Bu { subExceptionDef( FileException ) }
 
-Bu::File::File( const Bu::FString &sName, int iFlags ) :
+Bu::File::File( const Bu::String &sName, int iFlags ) :
 	fd( -1 ),
 	bEos( true )
 {
@@ -187,7 +187,7 @@ void Bu::File::setBlocking( bool bBlocking )
 #endif
 }
 
-Bu::File Bu::File::tempFile( Bu::FString &sName )
+Bu::File Bu::File::tempFile( Bu::String &sName )
 {
 	uint32_t iX;
 	iX = time( NULL ) + getpid();

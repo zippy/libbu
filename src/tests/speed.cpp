@@ -5,7 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include <sys/time.h>
 
 template<typename a>
@@ -50,9 +50,9 @@ void fullTest( tst t )
 
 int main()
 {
-	Bu::FString str;
+	Bu::String str;
 	for( int j = 0; j < 500; j++ )
 		str.append("Hey, this is a test string.  It will be reapeated many, many times.  How's that?");
-	fullTest( tstCopy<Bu::FString>( str ) );
+	fullTest( tstCopy<Bu::String>( str ) );
 }
 

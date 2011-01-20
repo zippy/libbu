@@ -8,7 +8,7 @@
 #ifndef BU_XML_READER_H
 #define BU_XML_READER_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/exceptionbase.h"
 
 namespace Bu
@@ -27,8 +27,8 @@ namespace Bu
 		Stream &rInput;
 		int iCurToken;
 		int iNextToken;
-		Bu::FString sBuf;
-		Bu::FString sStr;
+		Bu::String sBuf;
+		Bu::String sStr;
 		bool bIgnoreWS;
 		typedef struct StreamPos
 		{

@@ -26,10 +26,10 @@ namespace Bu
 		virtual ~Md5();
 
 		virtual void reset();
-		virtual void setSalt( const Bu::FString &sSalt );
+		virtual void setSalt( const Bu::String &sSalt );
 		virtual void addData( const void *sData, int iSize );
 		using Bu::CryptoHash::addData;
-		virtual FString getResult();
+		virtual String getResult();
 		virtual void writeResult( Bu::Stream &sOut );
 
 	private:

@@ -29,7 +29,7 @@ namespace Bu
 		virtual ~MultiServer();
 
 		void addProtocol( Protocol *(*proc)(), int iPort, int nPoolSize=40 );
-		void addProtocol( Protocol *(*proc)(), const FString &sAddr, int iPort,
+		void addProtocol( Protocol *(*proc)(), const String &sAddr, int iPort,
 				int nPoolSize=40 );
 		
 		void scan()

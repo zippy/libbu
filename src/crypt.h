@@ -8,12 +8,12 @@
 #ifndef BU_CRYPT_H
 #define BU_CRYPT_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
-	FString cryptPass( const Bu::FString &sPass, const Bu::FString &sSalt );
-	FString cryptPass( const Bu::FString &sPass );
+	String cryptPass( const Bu::String &sPass, const Bu::String &sSalt );
+	String cryptPass( const Bu::String &sPass );
 };
 
 #endif

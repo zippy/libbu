@@ -25,7 +25,7 @@ void Bu::Protocol::onNewData( Bu::Client * )
 {
 }
 
-void Bu::Protocol::onMessage( Bu::Client *, const Bu::FString & )
+void Bu::Protocol::onMessage( Bu::Client *, const Bu::String & )
 {
 }
 

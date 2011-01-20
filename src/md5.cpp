@@ -60,7 +60,7 @@ void Bu::Md5::reset()
 	iFill = 0;
 }
 
-void Bu::Md5::setSalt( const Bu::FString & /*sSalt*/ )
+void Bu::Md5::setSalt( const Bu::String & /*sSalt*/ )
 {
 }
 
@@ -84,11 +84,11 @@ void Bu::Md5::addData( const void *sVData, int iSize )
 	iBytes += iSize;
 }
 
-Bu::FString Bu::Md5::getResult()
+Bu::String Bu::Md5::getResult()
 {
 	long lsum[4];
 	compCap( lsum );
-	return Bu::FString( (const char *)lsum, 4*4 );
+	return Bu::String( (const char *)lsum, 4*4 );
 }
 
 void Bu::Md5::writeResult( Bu::Stream &sOut )

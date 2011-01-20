@@ -36,7 +36,7 @@ public:
 		printf("New dim = (%dx%d)\n", iWidth, iHeight );
 	}
 
-	virtual void gotLine( Bu::FString &sLine )
+	virtual void gotLine( Bu::String &sLine )
 	{
 		printf("Line: \"%s\"\n", sLine.getStr() );
 		write("\n\r", 2 );

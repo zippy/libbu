@@ -6,14 +6,14 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/hash.h"
 
 #include <stdio.h>
 
-typedef Bu::Hash<Bu::FString, int> StrIntHash;
-typedef Bu::Hash<Bu::FString, Bu::FString> StrStrHash;
-typedef Bu::Hash<int, Bu::FString> IntStrHash;
+typedef Bu::Hash<Bu::String, int> StrIntHash;
+typedef Bu::Hash<Bu::String, Bu::String> StrStrHash;
+typedef Bu::Hash<int, Bu::String> IntStrHash;
 
 suite Hash
 {
@@ -24,7 +24,7 @@ suite Hash
 		for(int i=1;i<10000;i++)
 		{
 			sprintf(buf,"%d",i);
-			Bu::FString sTmp(buf);
+			Bu::String sTmp(buf);
 			h[sTmp] = i;
 			unitTest( h.has(sTmp) );
 		}

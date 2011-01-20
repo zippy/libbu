@@ -14,7 +14,7 @@ Bu::TafProperty::TafProperty( const Bu::TafProperty &rSrc ) :
 {
 }
 
-Bu::TafProperty::TafProperty( const Bu::FString &sName, const Bu::FString &sValue ) :
+Bu::TafProperty::TafProperty( const Bu::String &sName, const Bu::String &sValue ) :
 	TafNode( typeProperty ),
 	sName( sName ),
 	sValue( sValue )
@@ -25,12 +25,12 @@ Bu::TafProperty::~TafProperty()
 {
 }
 
-const Bu::FString &Bu::TafProperty::getName() const
+const Bu::String &Bu::TafProperty::getName() const
 {
 	return sName;
 }
 
-const Bu::FString &Bu::TafProperty::getValue() const
+const Bu::String &Bu::TafProperty::getValue() const
 {
 	return sValue;
 }

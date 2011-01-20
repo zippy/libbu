@@ -12,7 +12,7 @@
 
 #include "bu/config.h"
 #include "bu/stream.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/exceptionbase.h"
 
 namespace Bu
@@ -61,7 +61,7 @@ namespace Bu
 	{
 	public:
 		TcpSocket( int nTcpSocket );
-		TcpSocket( const FString &sAddr, int nPort, int nTimeout=30,
+		TcpSocket( const String &sAddr, int nPort, int nTimeout=30,
 				bool bBlocking=true );
 		virtual ~TcpSocket();
 		
@@ -96,12 +96,12 @@ namespace Bu
 
 		virtual void setSize( size iSize );
 
-		Bu::FString getAddress() const;
+		Bu::String getAddress() const;
 		operator int() const;
 
 		virtual size getSize() const;
 		virtual size getBlockSize() const;
-		virtual Bu::FString getLocation() const;
+		virtual Bu::String getLocation() const;
 
 	private:
 		void setAddress();
@@ -113,8 +113,8 @@ namespace Bu
 #endif
 		bool bActive;
 		bool bBlocking;
-		FString sReadBuf;
-		FString sAddress;
+		String sReadBuf;
+		String sAddress;
 	};
 }
 

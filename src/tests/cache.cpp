@@ -14,7 +14,7 @@
 
 #include "bu/cache.h"
 #include "bu/file.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/cachecalc.h"
 
 class Bob
@@ -90,7 +90,7 @@ public:
 		writeNum("bobcache/last", cLastId );
 	}
 
-	long readNum( const Bu::FString &sFile )
+	long readNum( const Bu::String &sFile )
 	{
 		TRACE( sFile );
 		Bu::File f( sFile, Bu::File::Read );
@@ -99,13 +99,13 @@ public:
 		return strtol( buf, NULL, 0 );
 	}
 
-	void writeNum( const Bu::FString &sFile, long num )
+	void writeNum( const Bu::String &sFile, long num )
 	{
 		TRACE( sFile, num );
 		Bu::File f( sFile,
 			Bu::File::Write|Bu::File::Create|Bu::File::Truncate
 			);
-		Bu::FString s;
+		Bu::String s;
 		s.format("%d", num );
 		f.write( s );
 	}
@@ -126,7 +126,7 @@ public:
 	virtual Bob *load( const long &key )
 	{
 		TRACE( key );
-		Bu::FString sDest;
+		Bu::String sDest;
 		sDest.format("bobcache/%d", key );
 		return  new Bob( readNum( sDest ) );
 	}
@@ -134,7 +134,7 @@ public:
 	virtual void unload( Bob *pObj, const long &key )
 	{
 		TRACE( pObj, key );
-		Bu::FString sDest;
+		Bu::String sDest;
 		sDest.format("bobcache/%d", key );
 		writeNum( sDest, pObj->getInt() );
 		delete pObj;
@@ -144,7 +144,7 @@ public:
 	{
 		TRACE( rSrc );
 		long id = ++cLastId;
-		Bu::FString sDest;
+		Bu::String sDest;
 		sDest.format("bobcache/%d", id );
 		writeNum( sDest, rSrc->getInt() );
 		return id;
@@ -153,7 +153,7 @@ public:
 	virtual void destroy( Bob *pObj, const long &key )
 	{
 		TRACE( pObj, key );
-		Bu::FString sDest;
+		Bu::String sDest;
 		sDest.format("bobcache/%d", key );
 		if( !access( sDest.getStr(), F_OK ) )
 			unlink( sDest.getStr() );
@@ -163,7 +163,7 @@ public:
 	virtual void destroy( const long &key )
 	{
 		TRACE( pObj, key );
-		Bu::FString sDest;
+		Bu::String sDest;
 		sDest.format("bobcache/%d", key );
 		if( !access( sDest.getStr(), F_OK ) )
 			unlink( sDest.getStr() );

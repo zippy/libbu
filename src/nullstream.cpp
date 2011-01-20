@@ -22,10 +22,10 @@ size_t Bu::NullStream::read( void *pBuf, size_t nBytes )
 	return nBytes;
 }
 
-Bu::FString Bu::NullStream::readLine()
+Bu::String Bu::NullStream::readLine()
 {
 	sRead++;
-	return Bu::FString("\0", 1 );
+	return Bu::String("\0", 1 );
 }
 
 size_t Bu::NullStream::write( const void *, size_t nBytes )

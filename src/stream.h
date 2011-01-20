@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
@@ -53,7 +53,7 @@ namespace Bu
 		 * data in a non-blocking stream.
 		 *@returns The line read, not including newline character.
 		 */
-		virtual Bu::FString readLine();
+		virtual Bu::String readLine();
 
 		/**
 		 * Write data to the stream.
@@ -63,7 +63,7 @@ namespace Bu
 		 */
 		virtual size write( const void *pBuf, size iBytes ) = 0;
 
-		virtual size write( const Bu::FString &sBuf );
+		virtual size write( const Bu::String &sBuf );
 
 		/**
 		 * Get the current position in the stream.
@@ -185,7 +185,7 @@ namespace Bu
 		 * it may give you an ip address, etc.  If it isn't supported, an empty
 		 * string may be returned.
 		 */
-		virtual Bu::FString getLocation() const = 0;
+		virtual Bu::String getLocation() const = 0;
 
 	private:
 

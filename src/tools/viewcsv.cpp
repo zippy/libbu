@@ -38,7 +38,7 @@ public:
 		return 0;
 	}
 
-	Bu::FString sFileIn;
+	Bu::String sFileIn;
 	bool bHeader;
 };
 
@@ -245,10 +245,10 @@ public:
 		setHeaderRow( !bHeaderRow );
 	}
 
-	Bu::FString prompt( const Bu::FString &sPrompt )
+	Bu::String prompt( const Bu::String &sPrompt )
 	{
 		int maxx, maxy;
-		Bu::FString sStr;
+		Bu::String sStr;
 
 		RegEx re( sPrompt );
 
@@ -292,7 +292,7 @@ public:
 		sysCaret.reset();
 	}
 
-	void findNext( const Bu::FString &sTerm )
+	void findNext( const Bu::String &sTerm )
 	{
 		RegEx re( sTerm );
 
@@ -398,7 +398,7 @@ int main( int argc, char *argv[] )
 	CsvView view( doc );
 	view.setHeaderRow( opt.bHeader );
 
-	Bu::FString sSearchTerm;
+	Bu::String sSearchTerm;
 
 	bool bRun = true;
 	do

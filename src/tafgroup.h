@@ -10,13 +10,13 @@
 
 #include <stdint.h>
 #include "bu/tafnode.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/hash.h"
 #include "bu/list.h"
 
 namespace Bu
 {
-	typedef Bu::List<Bu::FString> StrList;
+	typedef Bu::List<Bu::String> StrList;
 	class TafProperty;
 	class TafComment;
 	/**
@@ -26,42 +26,42 @@ namespace Bu
 	class TafGroup : public TafNode
 	{
 	public:
-		typedef Bu::List<Bu::FString> PropList;
-		typedef Bu::Hash<Bu::FString, PropList> PropHash;
+		typedef Bu::List<Bu::String> PropList;
+		typedef Bu::Hash<Bu::String, PropList> PropHash;
 		typedef Bu::List<class Bu::TafGroup *> GroupList;
-		typedef Bu::Hash<Bu::FString, GroupList> GroupHash;
+		typedef Bu::Hash<Bu::String, GroupList> GroupHash;
 		typedef Bu::List<class Bu::TafNode *> NodeList;
 
 		TafGroup( const TafGroup &rSrc );
-		TafGroup( const Bu::FString &sName );
+		TafGroup( const Bu::String &sName );
 		virtual ~TafGroup();
 
-		const Bu::FString &getName() const;
-		void setName( const Bu::FString &sName );
+		const Bu::String &getName() const;
+		void setName( const Bu::String &sName );
 
-		bool hasProperty( const Bu::FString &sName ) const;
-		const Bu::FString &getProperty( const Bu::FString &sName ) const;
-		const Bu::FString &getProperty( const Bu::FString &sName,
-			const Bu::FString &sDef ) const;
-		const PropList &getProperties( const Bu::FString &sName ) const;
-		bool hasChild( const Bu::FString &sName ) const;
-		const TafGroup *getChild( const Bu::FString &sName ) const;
-		const GroupList &getChildren( const Bu::FString &sName ) const;
+		bool hasProperty( const Bu::String &sName ) const;
+		const Bu::String &getProperty( const Bu::String &sName ) const;
+		const Bu::String &getProperty( const Bu::String &sName,
+			const Bu::String &sDef ) const;
+		const PropList &getProperties( const Bu::String &sName ) const;
+		bool hasChild( const Bu::String &sName ) const;
+		const TafGroup *getChild( const Bu::String &sName ) const;
+		const GroupList &getChildren( const Bu::String &sName ) const;
 		TafNode *addChild( TafNode *pNode );
 		TafGroup *addChild( TafGroup *pNode );
 		TafProperty *addChild( TafProperty *pNode );
 		TafComment *addChild( TafComment *pNode );
-		TafGroup *addGroup( const Bu::FString &sName );
+		TafGroup *addGroup( const Bu::String &sName );
 		TafProperty *addProperty(
-			const Bu::FString &sName, const Bu::FString &sValue );
+			const Bu::String &sName, const Bu::String &sValue );
 		const NodeList &getChildren() const;
-		const TafGroup *getChildByPath( const Bu::FString &sPath ) const;
+		const TafGroup *getChildByPath( const Bu::String &sPath ) const;
 		const TafGroup *getChildByPath( StrList lPath ) const;
-		const Bu::FString &getByPath( const Bu::FString &sPath ) const;
-		const Bu::FString &getByPath( StrList lPath ) const;
+		const Bu::String &getByPath( const Bu::String &sPath ) const;
+		const Bu::String &getByPath( StrList lPath ) const;
 
 	private:
-		Bu::FString sName;
+		Bu::String sName;
 		PropHash hProp;
 		GroupHash hChildren;
 		NodeList lChildren;

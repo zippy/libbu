@@ -25,10 +25,10 @@ Bu::MiniMacro::~MiniMacro()
 {
 }
 
-Bu::FString Bu::MiniMacro::parse( const Bu::FString &sIn )
+Bu::String Bu::MiniMacro::parse( const Bu::String &sIn )
 {
 	bContinue = true;
-	Bu::FString sOut;
+	Bu::String sOut;
 	for( sCur = sIn.getStr(); *sCur && bContinue; sCur++ )
 	{
 		if( *sCur == '{' )
@@ -66,16 +66,16 @@ Bu::FString Bu::MiniMacro::parse( const Bu::FString &sIn )
 	return sOut;
 }
 
-Bu::FString Bu::MiniMacro::parseRepl()
+Bu::String Bu::MiniMacro::parseRepl()
 {
-	Bu::FString sOut;
+	Bu::String sOut;
 	bool bIsFirst = true;
 	for( const char *sNext = sCur;;)
 	{
 		for(; *sNext != ':' && *sNext != '}' && *sNext != '\0'; sNext++ ) { }
 		if( *sNext == '\0' )
 			break;
-		Bu::FString sName( sCur, (ptrdiff_t)sNext-(ptrdiff_t)sCur );
+		Bu::String sName( sCur, (ptrdiff_t)sNext-(ptrdiff_t)sCur );
 		if( bIsFirst )
 		{
 			sOut = hVars[sName];
@@ -101,21 +101,21 @@ Bu::FString Bu::MiniMacro::parseRepl()
 	return sOut;
 }
 
-Bu::FString Bu::MiniMacro::parseCond()
+Bu::String Bu::MiniMacro::parseCond()
 {
-	Bu::FString sOut;
+	Bu::String sOut;
 	//printf("%20s\n", sCur );
 	return sOut;
 }
 
-Bu::FString Bu::MiniMacro::parseCmd()
+Bu::String Bu::MiniMacro::parseCmd()
 {
-	Bu::FString sOut;
+	Bu::String sOut;
 	const char *sNext = sCur;
 	for(; *sNext != ':' && *sNext != '}' && *sNext != '\0'; sNext++ ) { }
 	if( *sNext != '\0' )
 	{
-		Bu::FString sName( sCur, (ptrdiff_t)sNext-(ptrdiff_t)sCur );
+		Bu::String sName( sCur, (ptrdiff_t)sNext-(ptrdiff_t)sCur );
 		if( sName == "end" )
 		{
 			sCur = sNext;
@@ -138,20 +138,20 @@ Bu::FString Bu::MiniMacro::parseCmd()
 	return sOut;
 }
 
-Bu::FString Bu::MiniMacro::callFunc(
-	const Bu::FString &sIn, const Bu::FString &sFunc )
+Bu::String Bu::MiniMacro::callFunc(
+	const Bu::String &sIn, const Bu::String &sFunc )
 {
 	int i = sFunc.findIdx('(');
 	if( i < 0 )
 		throw Bu::ExceptionBase("That doesn't look like a function call");
-	Bu::FString sName( sFunc.getStr(), i );
+	Bu::String sName( sFunc.getStr(), i );
 	StrList lsParams;
 	for( const char *s = sFunc.getStr()+i+1; *s && *s != ')'; s++ )
 	{
 		for(; *s == ' ' || *s == '\t' || *s == '\r' || *s == '\n'; s++ ) { }
 		const char *sNext;
 		for( sNext = s; *sNext && *sNext != ')' && *sNext != ','; sNext++ ) { }
-		Bu::FString p( s, (ptrdiff_t)sNext-(ptrdiff_t)s );
+		Bu::String p( s, (ptrdiff_t)sNext-(ptrdiff_t)s );
 		lsParams.append( p );
 		sNext++;
 		s = sNext;
@@ -160,17 +160,17 @@ Bu::FString Bu::MiniMacro::callFunc(
 }
 
 void Bu::MiniMacro::addVar(
-	const Bu::FString &sName, const Bu::FString &sValue )
+	const Bu::String &sName, const Bu::String &sValue )
 {
 	hVars.insert( sName, sValue );
 }
 
-bool Bu::MiniMacro::hasVar( const Bu::FString &sName )
+bool Bu::MiniMacro::hasVar( const Bu::String &sName )
 {
 	return hVars.has( sName );
 }
 
-const Bu::FString &Bu::MiniMacro::getVar( const Bu::FString &sName )
+const Bu::String &Bu::MiniMacro::getVar( const Bu::String &sName )
 {
 	return hVars.get( sName );
 }

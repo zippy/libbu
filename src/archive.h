@@ -111,7 +111,7 @@ namespace Bu
 		void readID( const void *ptr, uint32_t id );
 
 		template<typename t>
-		void setProp( const Bu::FString &sId, const t &val )
+		void setProp( const Bu::String &sId, const t &val )
 		{
 			if( !hProps.has( sId ) )
 			{
@@ -121,7 +121,7 @@ namespace Bu
 		}
 
 		template<typename t>
-		t getProp( const Bu::FString &sId )
+		t getProp( const Bu::String &sId )
 		{
 			return hProps.get( sId );
 		}
@@ -131,7 +131,7 @@ namespace Bu
 		uint32_t nNextID;
 		Hash<uint32_t,uint32_t> hPtrID;
 		Hash<uint32_t,List<void **> > hPtrDest;
-		Hash<Bu::FString, Variant> hProps;
+		Hash<Bu::String, Variant> hProps;
 	};
 }
 

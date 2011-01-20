@@ -9,7 +9,7 @@
 #define BU_TCP_SERVER_SOCKET_H
 
 #include <stdint.h>
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/exceptionbase.h"
 
 #ifdef WIN32
@@ -38,7 +38,7 @@ namespace Bu
 	{
 	public:
 		TcpServerSocket( int nPort, int nPoolSize=40 );
-		TcpServerSocket( const FString &sAddr, int nPort, int nPoolSize=40 );
+		TcpServerSocket( const String &sAddr, int nPort, int nPoolSize=40 );
 		TcpServerSocket( int nSocket, bool bInit, int nPoolSize=40 );
 		TcpServerSocket( const TcpServerSocket &rSrc );
 		virtual ~TcpServerSocket();

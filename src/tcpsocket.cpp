@@ -42,7 +42,7 @@ Bu::TcpSocket::TcpSocket( int nTcpSocket ) :
 	setAddress();
 }
 
-Bu::TcpSocket::TcpSocket( const Bu::FString &sAddr, int nPort, int nTimeout,
+Bu::TcpSocket::TcpSocket( const Bu::String &sAddr, int nPort, int nTimeout,
 		bool bBlocking ) :
 	nTcpSocket( 0 ),
 	bActive( false ),
@@ -440,7 +440,7 @@ void Bu::TcpSocket::setAddress()
 	printf("%d\n", IP_MTU );
 }
 
-Bu::FString Bu::TcpSocket::getAddress() const
+Bu::String Bu::TcpSocket::getAddress() const
 {
 	return sAddress;
 }
@@ -460,7 +460,7 @@ Bu::size Bu::TcpSocket::getBlockSize() const
 
 }
 
-Bu::FString Bu::TcpSocket::getLocation() const
+Bu::String Bu::TcpSocket::getLocation() const
 {
 }
 

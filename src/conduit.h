@@ -9,7 +9,7 @@
 #define BU_CONDUIT_H
 
 #include "bu/stream.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {

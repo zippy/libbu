@@ -444,9 +444,9 @@ long Bu::BitString::getHighestOrderBitPos()
 	return -1;
 }
 
-Bu::FString Bu::BitString::toString()
+Bu::String Bu::BitString::toString()
 {
-	Bu::FString sRet;
+	Bu::String sRet;
 	for( int j = iBits-1; j >= 0; j-- )
 		sRet.append( getBit( j )?'1':'0' );
 	return sRet;

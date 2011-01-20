@@ -103,13 +103,13 @@ namespace Bu
 			unsigned short bTokenize : 1;
 		} Fmt;
 
-		void write( const Bu::FString &sStr );
+		void write( const Bu::String &sStr );
 		void write( const void *sStr, int iLen );
-		void writeAligned( const Bu::FString &sStr );
+		void writeAligned( const Bu::String &sStr );
 		void writeAligned( const char *sStr, int iLen );
 
 		void read( void *sStr, int iLen );
-		Bu::FString readToken();
+		Bu::String readToken();
 
 		void incIndent();
 		void decIndent();
@@ -199,7 +199,7 @@ namespace Bu
 		template<typename type>
 		void ffmt( type f )
 		{
-			Bu::FString fTmp;
+			Bu::String fTmp;
 			fTmp.format("%f", f );
 //			writeAligned("**make floats work**");
 			writeAligned( fTmp );
@@ -207,7 +207,7 @@ namespace Bu
 		}
 		
 		template<typename type>
-		void iparse( type &i, const Bu::FString &sBuf )
+		void iparse( type &i, const Bu::String &sBuf )
 		{
 			if( !sBuf.isSet() )
 				return;
@@ -233,7 +233,7 @@ namespace Bu
 		}
 		
 		template<typename type>
-		void uparse( type &i, const Bu::FString &sBuf )
+		void uparse( type &i, const Bu::String &sBuf )
 		{
 			if( !sBuf.isSet() )
 				return;
@@ -257,7 +257,7 @@ namespace Bu
 		}
 		
 		template<typename type>
-		void fparse( type &f, const Bu::FString &sBuf )
+		void fparse( type &f, const Bu::String &sBuf )
 		{
 			sscanf( sBuf.getStr(), "%f", &f );
 			usedFormat();
@@ -288,7 +288,7 @@ namespace Bu
 	Formatter &operator<<( Formatter &f, Formatter::Special s );
 	Formatter &operator<<( Formatter &f, const char *sStr );
 	Formatter &operator<<( Formatter &f, char *sStr );
-	Formatter &operator<<( Formatter &f, const Bu::FString &sStr );
+	Formatter &operator<<( Formatter &f, const Bu::String &sStr );
 	Formatter &operator<<( Formatter &f, signed char c );
 	Formatter &operator<<( Formatter &f, char c );
 	Formatter &operator<<( Formatter &f, unsigned char c );
@@ -305,7 +305,7 @@ namespace Bu
 	Formatter &operator<<( Formatter &f, long double flt );
 	Formatter &operator<<( Formatter &f, bool b );
 
-	Formatter &operator>>( Formatter &f, Bu::FString &sStr );
+	Formatter &operator>>( Formatter &f, Bu::String &sStr );
 	Formatter &operator>>( Formatter &f, signed char &c );
 	Formatter &operator>>( Formatter &f, char &c );
 	Formatter &operator>>( Formatter &f, unsigned char &c );

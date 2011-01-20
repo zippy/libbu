@@ -105,7 +105,7 @@ suite Archive
 		MemBuf mb;
 		{
 			Archive ar( mb, Archive::save );
-			FString sStr("This is a test string.");
+			String sStr("This is a test string.");
 			List<int> lList;
 			lList.append( 10 );
 			lList.append( 20 );
@@ -118,7 +118,7 @@ suite Archive
 		mb.setPos( 0 );
 		{
 			Archive ar( mb, Archive::load );
-			FString sStr;
+			String sStr;
 			List<int> lList;
 			ar >> sStr;
 			ar >> lList;
@@ -138,7 +138,7 @@ suite Archive
 		MemBuf mb;
 		{
 			Archive ar( mb, Archive::save );
-			FString sStr("This is a test string.");
+			String sStr("This is a test string.");
 			Array<int> lArray;
 			lArray.append( 10 );
 			lArray.append( 20 );
@@ -151,7 +151,7 @@ suite Archive
 		mb.setPos( 0 );
 		{
 			Archive ar( mb, Archive::load );
-			FString sStr;
+			String sStr;
 			Array<int> lArray;
 			ar >> sStr;
 			ar >> lArray;
@@ -171,7 +171,7 @@ suite Archive
 		MemBuf mb;
 		{
 			Archive ar( mb, Archive::save );
-			Array<FString> lArray;
+			Array<String> lArray;
 			lArray.append( "10" );
 			lArray.append( "20" );
 			lArray.append( "30" );
@@ -182,10 +182,10 @@ suite Archive
 		mb.setPos( 0 );
 		{
 			Archive ar( mb, Archive::load );
-			Array<FString> lArray;
+			Array<String> lArray;
 			ar >> lArray;
 			unitTest( lArray.getSize() == 4 );
-			Array<FString>::iterator i = lArray.begin();
+			Array<String>::iterator i = lArray.begin();
 			unitTest( *i == "10" ); i++;
 			unitTest( *i == "20" ); i++;
 			unitTest( *i == "30" ); i++;

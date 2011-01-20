@@ -15,15 +15,15 @@ Bu::CryptoHash::~CryptoHash()
 {
 }
 
-void Bu::CryptoHash::addData( const Bu::FString &sData )
+void Bu::CryptoHash::addData( const Bu::String &sData )
 {
 	addData( sData.getStr(), sData.getSize() );
 }
 
-Bu::FString Bu::CryptoHash::getHexResult()
+Bu::String Bu::CryptoHash::getHexResult()
 {
-	Bu::FString sResult = getResult();
-	Bu::FString sRet( 2*sResult.getSize() );
+	Bu::String sResult = getResult();
+	Bu::String sRet( 2*sResult.getSize() );
 	static const char hex_tab[] = {"0123456789abcdef"};
 
 	int k = 0;

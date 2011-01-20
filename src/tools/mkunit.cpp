@@ -15,7 +15,7 @@ public:
 	{
 	}
 
-	Bu::FString sName;
+	Bu::String sName;
 	bool bExpectPass;
 };
 typedef Bu::List<Test> TestList;
@@ -23,7 +23,7 @@ typedef Bu::List<Test> TestList;
 class Suite
 {
 public:
-	Bu::FString sName;
+	Bu::String sName;
 	TestList lTest;
 };
 //typedef Bu::List<Suite> SuiteList;
@@ -66,7 +66,7 @@ Bu::Formatter &operator<<( Bu::Formatter &f, const Suite &s )
 class Parser
 {
 public:
-	Parser( const Bu::FString &sFile ) :
+	Parser( const Bu::String &sFile ) :
 		sIn( sFile ),
 		fIn( sFile, File::Read ),
 		bIn( fIn ),
@@ -99,10 +99,10 @@ public:
 		return cBuf;
 	}
 	
-	TokType nextToken( Variant &v, Bu::FString &sWsOut, int &iLineStart,
+	TokType nextToken( Variant &v, Bu::String &sWsOut, int &iLineStart,
 			int &iCharStart )
 	{
-		Bu::FString sTok, sWs;
+		Bu::String sTok, sWs;
 	
 		char buf;
 		try
@@ -307,7 +307,7 @@ public:
 	void firstPass()
 	{
 		Variant v;
-		Bu::FString sWs;
+		Bu::String sWs;
 		int iL, iC;
 		for(;;)
 		{
@@ -322,7 +322,7 @@ public:
 						if( nextToken( v, sWs, iL, iC ) != tokFluff )
 							throw Bu::ExceptionBase("%d:%d: Expected string "
 								"following suite.", iL, iC );
-						s.sName = v.get<Bu::FString>();
+						s.sName = v.get<Bu::String>();
 						if( nextToken( v, sWs, iL, iC ) != tokChar ||
 							v.get<char>() != '{' )
 							throw Bu::ExceptionBase("%d:%d: Expected {, got "
@@ -346,7 +346,7 @@ public:
 									throw Bu::ExceptionBase("%d:%d: Expected "
 										"string following test.", iL, iC );
 								Test t;
-								t.sName = v.get<Bu::FString>();
+								t.sName = v.get<Bu::String>();
 								if( nextToken( v, sWs, iL, iC ) != tokBlock )
 									throw Bu::ExceptionBase("%d:%d: Expected "
 										"{...} block.",
@@ -380,7 +380,7 @@ public:
 		}
 	}
 
-	void secondPass( const Bu::FString &sOut )
+	void secondPass( const Bu::String &sOut )
 	{
 		File fOut( sOut, File::WriteNew );
 		Formatter f( fOut );
@@ -393,7 +393,7 @@ public:
 		iChar = 0;
 		bool bHasIncluded = false;
 
-		Bu::FString sWs;
+		Bu::String sWs;
 		Variant v;
 		int iL, iC;
 		for(;;)
@@ -408,7 +408,7 @@ public:
 						if( nextToken( v, sWs, iL, iC ) != tokFluff )
 							throw Bu::ExceptionBase("%d:%d: Expected string "
 								"following suite.", iL, iC );
-						s.sName = v.get<Bu::FString>();
+						s.sName = v.get<Bu::String>();
 						if( nextToken( v, sWs, iL, iC ) != tokChar ||
 							v.get<char>() != '{' )
 							throw Bu::ExceptionBase("%d:%d: Expected {",
@@ -421,7 +421,7 @@ public:
 							bHasIncluded = true;
 						}
 
-						Bu::FString sClass = "_UnitSuite_" + s.sName;
+						Bu::String sClass = "_UnitSuite_" + s.sName;
 						f << "class " << sClass
 							<< " : public Bu::UnitSuite" << f.nl
 							<< "{" << f.nl << "public:" << f.nl
@@ -441,7 +441,7 @@ public:
 					}
 					else if( t == tokEof )
 					{
-						Bu::FString sClass = "_UnitSuite_" + s.sName;
+						Bu::String sClass = "_UnitSuite_" + s.sName;
 						f << sWs << f.nl << "int main( int argc, char *argv[] )"
 							<< f.nl << "{" << f.nl << "\treturn " << sClass
 							<< "().run( argc, argv );" << f.nl << "}" << f.nl;
@@ -458,7 +458,7 @@ public:
 					{
 						case tokFluff:
 							fOut.write( sWs );
-							fOut.write( v.get<Bu::FString>() );
+							fOut.write( v.get<Bu::String>() );
 							break;
 
 						case tokTest:
@@ -468,7 +468,7 @@ public:
 									throw Bu::ExceptionBase("%d:%d: Expected "
 										"string following test.", iL, iC );
 								Test t;
-								t.sName = v.get<Bu::FString>();
+								t.sName = v.get<Bu::String>();
 								if( nextToken( v, sWs, iL, iC ) != tokBlock )
 									throw Bu::ExceptionBase("%d:%d: Expected "
 										"{...} block.",
@@ -499,7 +499,7 @@ public:
 							fOut.write( sWs );
 							f << f.nl << "#line " << iL << " \"" << sIn
 								<< "\"" << f.nl;
-							fOut.write( v.get<Bu::FString>() );
+							fOut.write( v.get<Bu::String>() );
 
 							break;
 
@@ -521,7 +521,7 @@ public:
 	}
 
 private:
-	Bu::FString sIn;
+	Bu::String sIn;
 	File fIn;
 	Buffer bIn;
 	char cBuf;

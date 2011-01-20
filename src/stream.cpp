@@ -15,9 +15,9 @@ Bu::Stream::~Stream()
 {
 }
 
-Bu::FString Bu::Stream::readLine()
+Bu::String Bu::Stream::readLine()
 {
-	Bu::FString sRet;
+	Bu::String sRet;
 	
 	for(;;)
 	{
@@ -30,7 +30,7 @@ Bu::FString Bu::Stream::readLine()
 	}
 }
 
-Bu::size Bu::Stream::write( const Bu::FString &sBuf )
+Bu::size Bu::Stream::write( const Bu::String &sBuf )
 {
 	return write( sBuf.getStr(), sBuf.getSize() );
 }

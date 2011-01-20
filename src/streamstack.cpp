@@ -86,7 +86,7 @@ size_t Bu::StreamStack::write( const void *pBuf, size_t nBytes )
 	return lFilts.first()->write( pBuf, nBytes );
 }
 
-size_t Bu::StreamStack::write( const Bu::FString &sBuf )
+size_t Bu::StreamStack::write( const Bu::String &sBuf )
 {
 	checkStack();
 

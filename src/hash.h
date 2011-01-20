@@ -411,7 +411,7 @@ namespace Bu
 	 * In order to use it, I recommend the following for all basic usage:
 	 *@code
 	 // Define a Hash typedef with strings as keys and ints as values.
-	 typedef Bu::Hash<Bu::FString, int> StrIntHash;
+	 typedef Bu::Hash<Bu::String, int> StrIntHash;
 
 	 // Create one
 	 StrIntHash hInts;

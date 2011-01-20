@@ -26,10 +26,10 @@ namespace Bu
 		~Sha1();
 
 		virtual void reset();
-		virtual void setSalt( const Bu::FString &sSalt );
+		virtual void setSalt( const Bu::String &sSalt );
 		virtual void addData( const void *sData, int iSize );
 		using CryptoHash::addData;
-		virtual FString getResult();
+		virtual String getResult();
 		virtual void writeResult( Stream &sOut );
 
 		void update( const char* data, int num );

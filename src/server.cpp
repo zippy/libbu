@@ -34,7 +34,7 @@ void Bu::Server::addPort( int nPort, int nPoolSize )
 	hServers.insert( nSocket, s );
 }
 
-void Bu::Server::addPort( const FString &sAddr, int nPort, int nPoolSize )
+void Bu::Server::addPort( const String &sAddr, int nPort, int nPoolSize )
 {
 	TcpServerSocket *s = new TcpServerSocket( sAddr, nPort, nPoolSize );
 	int nSocket = s->getSocket();
@@ -153,7 +153,7 @@ Bu::Server::SrvClientLink::~SrvClientLink()
 {
 }
 
-void Bu::Server::SrvClientLink::sendMessage( const Bu::FString &sMsg )
+void Bu::Server::SrvClientLink::sendMessage( const Bu::String &sMsg )
 {
 	pClient->onMessage( sMsg );
 }

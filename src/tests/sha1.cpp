@@ -28,8 +28,8 @@ int main( int argc, char *argv[] )
 				break;
 		}
 
-		Bu::FString sRes = m.getResult();
-		for( Bu::FString::iterator i = sRes.begin(); i; i++ )
+		Bu::String sRes = m.getResult();
+		for( Bu::String::iterator i = sRes.begin(); i; i++ )
 		{
 			sio << Fmt::hex(2,false) << (int)(unsigned char)(*i);
 		}

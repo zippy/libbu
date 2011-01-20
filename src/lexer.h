@@ -44,7 +44,7 @@ namespace Bu
 
 		virtual Token *nextToken()=0;
 
-		virtual Bu::FString tokenToString( const Token &t );
+		virtual Bu::String tokenToString( const Token &t );
 	};
 };
 

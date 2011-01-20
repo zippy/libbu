@@ -8,7 +8,7 @@
 #ifndef BU_CACHE_STORE_FILES_H
 #define BU_CACHE_STORE_FILES_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/file.h"
 #include "bu/cachestore.h"
 #include "bu/archive.h"
@@ -53,7 +53,7 @@ namespace Bu
 	class CacheStoreFiles : public CacheStore<keytype, obtype>
 	{
 	public:
-		CacheStoreFiles( const Bu::FString &sPrefix ) :
+		CacheStoreFiles( const Bu::String &sPrefix ) :
 			sPrefix( sPrefix )
 		{
 			if( access( sPrefix.getStr(), W_OK|R_OK|X_OK ) )
@@ -138,7 +138,7 @@ namespace Bu
 			Bu::MemBuf mb;
 			Bu::Formatter f( mb );
 			f << sPrefix << "/";
-			Bu::FString sBase = mb.getString();
+			Bu::String sBase = mb.getString();
 			f << key;
 
 			if( sBase == mb.getString() )
@@ -199,7 +199,7 @@ namespace Bu
 		}
 
 	private:
-		Bu::FString sPrefix;
+		Bu::String sPrefix;
 	};
 
 };

@@ -6,7 +6,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/xmlreader.h"
 #include "bu/membuf.h"
 
@@ -14,7 +14,7 @@ suite Xml
 {
 	test declaration
 	{
-		Bu::FString sXml("<?xml ?> <hi />");
+		Bu::String sXml("<?xml ?> <hi />");
 		Bu::MemBuf buf( sXml );
 		Bu::XmlReader xr( buf );
 	}

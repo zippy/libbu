@@ -16,7 +16,7 @@
 
 namespace Bu { subExceptionDef( FifoException ) }
 
-Bu::Fifo::Fifo( const Bu::FString &sName, int iFlags, mode_t mAcc ) :
+Bu::Fifo::Fifo( const Bu::String &sName, int iFlags, mode_t mAcc ) :
 	iFlags( iFlags ),
 	iIn( -1 ),
 	iOut( -1 )

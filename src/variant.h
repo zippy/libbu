@@ -8,7 +8,7 @@
 #ifndef BU_VARIANT_H
 #define BU_VARIANT_H
 
-#include <bu/fstring.h>
+#include <bu/string.h>
 #include <typeinfo>
 #include <bu/membuf.h>
 #include <bu/formatter.h>
@@ -26,7 +26,7 @@ namespace Bu
 		VariantTypeRoot();
 		virtual ~VariantTypeRoot();
 
-		virtual Bu::FString toString() const=0;
+		virtual Bu::String toString() const=0;
 		virtual const std::type_info &getType() const=0;
 		virtual VariantTypeRoot *clone() const=0;
 	};
@@ -65,7 +65,7 @@ namespace Bu
 			return data;
 		}
 
-		virtual Bu::FString toString() const
+		virtual Bu::String toString() const
 		{
 			MemBuf mb;
 			Formatter f( mb );
@@ -124,7 +124,7 @@ namespace Bu
 		virtual ~Variant();
 
 		bool isSet() const;
-		Bu::FString toString() const;
+		Bu::String toString() const;
 		const std::type_info &getType() const;
 
 		Variant &operator=( const Variant &rhs );
@@ -228,8 +228,8 @@ namespace Bu
 
 	Bu::Formatter &operator<<( Bu::Formatter &f, const Variant &v );
 
-	template<> Bu::FString VariantType<int>::toString() const;
-	template<> Bu::FString VariantType<bool>::toString() const;
+	template<> Bu::String VariantType<int>::toString() const;
+	template<> Bu::String VariantType<bool>::toString() const;
 };
 
 #endif

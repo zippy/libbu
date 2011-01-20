@@ -14,7 +14,7 @@
 	#include <sys/select.h>
 #endif
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/list.h"
 
 #include "bu/clientlink.h"
@@ -56,7 +56,7 @@ namespace Bu
 		virtual ~Server();
 
 		void addPort( int nPort, int nPoolSize=40 );
-		void addPort( const FString &sAddr, int nPort, int nPoolSize=40 );
+		void addPort( const String &sAddr, int nPort, int nPoolSize=40 );
 
 		virtual void scan();
 		void setTimeout( int nTimeoutSec, int nTimeoutUSec=0 );
@@ -79,7 +79,7 @@ namespace Bu
 			SrvClientLink( Bu::Client *pClient );
 			virtual ~SrvClientLink();
 
-			virtual void sendMessage( const Bu::FString &sMsg );
+			virtual void sendMessage( const Bu::String &sMsg );
 
 		private:
 			Bu::Client *pClient;

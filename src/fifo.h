@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 #include "bu/stream.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/exceptionbase.h"
 
 namespace Bu
@@ -27,7 +27,7 @@ namespace Bu
 	class Fifo : public Bu::Stream
 	{
 	public:
-		Fifo( const Bu::FString &sName, int iFlags, mode_t mAcc=-1 );
+		Fifo( const Bu::String &sName, int iFlags, mode_t mAcc=-1 );
 		virtual ~Fifo();
 
 		virtual void close();

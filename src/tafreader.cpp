@@ -6,7 +6,7 @@
  */
 
 #include "bu/taf.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/stream.h"
 
 #include <stdlib.h>
@@ -34,7 +34,7 @@ Bu::TafGroup *Bu::TafReader::readGroup()
 		throw TafException("%d:%d: Expected '{' got '%c'.", iLine, iCol, c );
 	next();
 	ws();
-	FString sName = readStr();
+	String sName = readStr();
 	TafGroup *pGroup = new TafGroup( sName );
 	try
 	{
@@ -88,7 +88,7 @@ void Bu::TafReader::groupContent( Bu::TafGroup *pGroup )
 
 Bu::TafProperty *Bu::TafReader::readProperty()
 {
-	FString sName = readStr();
+	String sName = readStr();
 	ws();
 	if( c != '=' )
 	{
@@ -96,14 +96,14 @@ Bu::TafProperty *Bu::TafReader::readProperty()
 		return new Bu::TafProperty( "", sName );
 	}
 	next();
-	FString sValue = readStr();
+	String sValue = readStr();
 	return new Bu::TafProperty( sName, sValue );
 	//printf("  %s = %s\n", sName.getStr(), sValue.getStr() );
 }
 
 Bu::TafComment *Bu::TafReader::readComment( bool bEOL )
 {
-	FString sCmnt;
+	String sCmnt;
 	next();
 	if( bEOL )
 	{
@@ -140,10 +140,10 @@ Bu::TafComment *Bu::TafReader::readComment( bool bEOL )
 	return new TafComment( sCmnt, bEOL );
 }
 
-Bu::FString Bu::TafReader::readStr()
+Bu::String Bu::TafReader::readStr()
 {
 	ws();
-	FString s;
+	String s;
 	if( c == '"' )
 	{
 		next();

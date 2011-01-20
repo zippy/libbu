@@ -9,11 +9,11 @@
 #define BU_MINI_MACRO_H
 
 #include "bu/hash.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
-	typedef Bu::Hash<Bu::FString, Bu::FString> StrHash;
+	typedef Bu::Hash<Bu::String, Bu::String> StrHash;
 	/**
 	 * A processor for Libbu++ brand Mini Macros.  These are really simple, but
 	 * still fairly flexible.  It's mainly text replacement, but with a few
@@ -67,34 +67,34 @@ namespace Bu
 		MiniMacro( const StrHash &sVarSrc );
 		virtual ~MiniMacro();
 
-		Bu::FString parse( const Bu::FString &sIn );
-		void addVar( const Bu::FString &sName, const Bu::FString &sValue );
-		bool hasVar( const Bu::FString &sName );
-		const Bu::FString &getVar( const Bu::FString &sName );
+		Bu::String parse( const Bu::String &sIn );
+		void addVar( const Bu::String &sName, const Bu::String &sValue );
+		bool hasVar( const Bu::String &sName );
+		const Bu::String &getVar( const Bu::String &sName );
 		const StrHash &getVars();
 		int getPosition();
 
 	private:
 		const char *sCur;
-		Bu::FString parseRepl();
-		Bu::FString parseCond();
-		Bu::FString parseCmd();
-		Bu::FString callFunc(
-			const Bu::FString &sIn, const Bu::FString &sFunc );
+		Bu::String parseRepl();
+		Bu::String parseCond();
+		Bu::String parseCmd();
+		Bu::String callFunc(
+			const Bu::String &sIn, const Bu::String &sFunc );
 
 		StrHash hVars;
 		bool bContinue;
 		int iLastPos;
 
 	public:
-		typedef Bu::List<Bu::FString> StrList;
+		typedef Bu::List<Bu::String> StrList;
 		class Func
 		{
 		public:
 			Func(){}
 			virtual ~Func(){}
-			virtual Bu::FString call(
-				const Bu::FString &sIn, StrList &lsParam )=0;
+			virtual Bu::String call(
+				const Bu::String &sIn, StrList &lsParam )=0;
 		};
 
 		class FuncToUpper : public Func
@@ -102,10 +102,10 @@ namespace Bu
 		public:
 			FuncToUpper(){}
 			virtual ~FuncToUpper(){}
-			virtual Bu::FString call(
-				const Bu::FString &sIn, StrList & )
+			virtual Bu::String call(
+				const Bu::String &sIn, StrList & )
 			{
-				Bu::FString sOut( sIn );
+				Bu::String sOut( sIn );
 				sOut.toUpper();
 				return sOut;
 			}
@@ -116,17 +116,17 @@ namespace Bu
 		public:
 			FuncToLower(){}
 			virtual ~FuncToLower(){}
-			virtual Bu::FString call(
-				const Bu::FString &sIn, StrList & )
+			virtual Bu::String call(
+				const Bu::String &sIn, StrList & )
 			{
-				Bu::FString sOut( sIn );
+				Bu::String sOut( sIn );
 				sOut.toLower();
 				return sOut;
 			}
 		};
 		
 	private:
-		typedef Bu::Hash<Bu::FString,class Func *> FuncHash;
+		typedef Bu::Hash<Bu::String,class Func *> FuncHash;
 		FuncHash hFuncs;
 	};
 };

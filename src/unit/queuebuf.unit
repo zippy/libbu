@@ -30,7 +30,7 @@ suite QueueBuf
 		unitTest( qb.read( buf, 7 ) == 0 );
 	}
 
-	void QBUF_RANDSTR( Bu::FString &fill, unsigned int iSize )
+	void QBUF_RANDSTR( Bu::String &fill, unsigned int iSize )
 	{
 		char c;
 		for( unsigned int i=0; i<iSize; ++i )
@@ -44,7 +44,7 @@ suite QueueBuf
 	{
 		srandom(time(NULL));
 		Bu::QueueBuf qb;
-		Bu::FString sTmp;
+		Bu::String sTmp;
 		char buf[4096];
 
 		for( int i=0; i<200; ++i )
@@ -65,12 +65,12 @@ suite QueueBuf
 			printf("%02x",(int)(uint8_t)s[i]);
 	}
 
-	void QBUF_HASH( Bu::FString &fill, const char *s, int iSize )
+	void QBUF_HASH( Bu::String &fill, const char *s, int iSize )
 	{
 		Bu::Md5 hash;
 		hash.reset();
 		hash.addData( s, iSize );
-		const Bu::FString &sTmp = hash.getResult();
+		const Bu::String &sTmp = hash.getResult();
 		fill.append( sTmp.getStr(), 16 );
 	}
 
@@ -78,8 +78,8 @@ suite QueueBuf
 	{
 		srandom(time(NULL));
 		Bu::QueueBuf qb;
-		Bu::FString sTmp;
-		Bu::FString sTmp2;
+		Bu::String sTmp;
+		Bu::String sTmp2;
 		char buf[4096];
 
 		for( int i=0; i<200; ++i )

@@ -114,14 +114,14 @@ void Bu::FastCgi::readPair( Bu::TcpSocket &s, StrHash &hParams, uint16_t &uRead 
 	uRead += uName + uValue;
 	unsigned char *sName = new unsigned char[uName];
 	s.read( sName, uName );
-	Bu::FString fsName( (char *)sName, uName );
+	Bu::String fsName( (char *)sName, uName );
 	delete[] sName;
 
 	if( uValue > 0 )
 	{
 		unsigned char *sValue = new unsigned char[uValue];
 		s.read( sValue, uValue );
-		Bu::FString fsValue( (char *)sValue, uValue );
+		Bu::String fsValue( (char *)sValue, uValue );
 		hParams.insert( fsName, fsValue );
 		delete[] sValue;
 	}
@@ -305,8 +305,8 @@ void Bu::FastCgi::run()
 							mStdOut, mStdErr
 							);
 
-						Bu::FString &sStdOut = mStdOut.getString();
-						Bu::FString &sStdErr = mStdErr.getString();
+						Bu::String &sStdOut = mStdOut.getString();
+						Bu::String &sStdErr = mStdErr.getString();
 
 						Record rOut;
 						memset( &rOut, 0, sizeof(rOut) );

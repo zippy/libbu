@@ -47,7 +47,7 @@ void Bu::ItoServer::addPort( int nPort, int nPoolSize )
 	hServers.insert( nSocket, s );
 }
 
-void Bu::ItoServer::addPort( const FString &sAddr, int nPort, int nPoolSize )
+void Bu::ItoServer::addPort( const String &sAddr, int nPort, int nPoolSize )
 {
 	TcpServerSocket *s = new TcpServerSocket( sAddr, nPort, nPoolSize );
 	int nSocket = s->getSocket();
@@ -163,7 +163,7 @@ void Bu::ItoServer::ItoClient::run()
 		while( !qMsg.isEmpty() )
 		{
 			imProto.lock();
-			Bu::FString *pMsg = qMsg.dequeue();
+			Bu::String *pMsg = qMsg.dequeue();
 			pClient->onMessage( *pMsg );
 			delete pMsg;
 			pClient->processOutput();
@@ -205,7 +205,7 @@ Bu::ItoServer::SrvClientLink::~SrvClientLink()
 {
 }
 
-void Bu::ItoServer::SrvClientLink::sendMessage( const Bu::FString &sMsg )
+void Bu::ItoServer::SrvClientLink::sendMessage( const Bu::String &sMsg )
 {
 	if( !pClient->imProto.trylock() )
 	{
@@ -215,7 +215,7 @@ void Bu::ItoServer::SrvClientLink::sendMessage( const Bu::FString &sMsg )
 	}
 	else
 	{
-		Bu::FString *pMsg = new Bu::FString( sMsg );
+		Bu::String *pMsg = new Bu::String( sMsg );
 		pClient->qMsg.enqueue( pMsg );
 	}
 }

@@ -106,7 +106,7 @@ namespace Bu
 		virtual size_t read( void *pBuf, size_t nBytes );
 		virtual size_t write( const void *pBuf, size_t nBytes );
 
-		virtual size_t write( const Bu::FString &sBuf );
+		virtual size_t write( const Bu::String &sBuf );
 		virtual long tell();
 		virtual void seek( long offset );
 		virtual void setPos( long pos );

@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 #include "bu/list.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/file.h"
 #include "bu/array.h"
 
@@ -63,7 +63,7 @@ namespace Bu
 
 		int run( int argc=0, char *argv[]=NULL );
 
-		Bu::File tempFile( Bu::FString &sFileName );
+		Bu::File tempFile( Bu::String &sFileName );
 
 		typedef void (UnitSuite::*Test)();
 
@@ -71,12 +71,12 @@ namespace Bu
 		{
 		public:
 			Failed() : str(""), bFile( false ) { }
-			Failed( const FString &s ) : str( s ), bFile( false ) { }
-			Failed( const FString &s, const FString &sFile, int nLine ) :
+			Failed( const String &s ) : str( s ), bFile( false ) { }
+			Failed( const String &s, const String &sFile, int nLine ) :
 				str( s ), sFile( sFile ), nLine( nLine ), bFile( true ) { }
 
-			FString str;
-			FString sFile;
+			String str;
+			String sFile;
 			int nLine;
 			bool bFile;
 		};
@@ -93,8 +93,8 @@ namespace Bu
 		};
 		
 	protected:
-		void add( Test fTest, const Bu::FString &sName, Expect e=expectPass );
-		void setName( const FString &sName );
+		void add( Test fTest, const Bu::String &sName, Expect e=expectPass );
+		void setName( const String &sName );
 
 		void dispProgress();
 		void setStepCount( int iSteps );
@@ -102,23 +102,23 @@ namespace Bu
 		void setProgress( int iAmnt );
 
 	private:
-		int onListCases( Bu::Array<Bu::FString> aParam );
+		int onListCases( Bu::Array<Bu::String> aParam );
 
 	private:
 		typedef struct TestInfo
 		{
-			FString sName;
+			String sName;
 			Test fTest;
 			Expect eExpect;
 		} TestInfo;
 
 		typedef Bu::List<TestInfo> TestList;
 		TestList lTests;
-		FString sSuiteName;
+		String sSuiteName;
 
 		int iOptions;
 
-		typedef Bu::List<Bu::FString> StrList;
+		typedef Bu::List<Bu::String> StrList;
 		StrList lFileCleanup;
 		int iNameWidth;
 		int iStepCount;

@@ -14,7 +14,7 @@
 	#include <sys/select.h>
 #endif
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/list.h"
 #include "bu/ito.h"
 #include "bu/itomutex.h"
@@ -59,7 +59,7 @@ namespace Bu
 		virtual ~ItoServer();
 
 		void addPort( int nPort, int nPoolSize=40 );
-		void addPort( const FString &sAddr, int nPort, int nPoolSize=40 );
+		void addPort( const String &sAddr, int nPort, int nPoolSize=40 );
 
 		//void scan();
 		void setTimeout( int nTimeoutSec, int nTimeoutUSec=0 );
@@ -82,7 +82,7 @@ namespace Bu
 					int nTimeoutSec, int nTimeoutUSec );
 			virtual ~ItoClient();
 
-			typedef ItoQueue<Bu::FString *> StringQueue;
+			typedef ItoQueue<Bu::String *> StringQueue;
 			StringQueue qMsg;
 
 		protected:
@@ -105,7 +105,7 @@ namespace Bu
 			SrvClientLink( ItoClient *pClient );
 			virtual ~SrvClientLink();
 
-			virtual void sendMessage( const Bu::FString &sMsg );
+			virtual void sendMessage( const Bu::String &sMsg );
 
 		private:
 			ItoClient *pClient;

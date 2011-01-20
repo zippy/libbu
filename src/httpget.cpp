@@ -7,7 +7,7 @@
 
 #include "bu/httpget.h"
 
-Bu::HttpGet::HttpGet( const Bu::Url &uSrc, const Bu::FString &sMethod ) :
+Bu::HttpGet::HttpGet( const Bu::Url &uSrc, const Bu::String &sMethod ) :
 	uSrc( uSrc ),
 	sMethod( sMethod ),
 	sSrv( uSrc.getHost(), uSrc.getPort() )

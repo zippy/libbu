@@ -25,12 +25,12 @@ Bu::Uuid::~Uuid()
 {
 }
 
-Bu::FString Bu::Uuid::toRawString()
+Bu::String Bu::Uuid::toRawString()
 {
-	return Bu::FString( (char *)data, 16 );
+	return Bu::String( (char *)data, 16 );
 }
 
-Bu::FString Bu::Uuid::toString()
+Bu::String Bu::Uuid::toString()
 {
 	Bu::MemBuf mb;
 	Bu::Formatter f( mb );

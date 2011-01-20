@@ -6,11 +6,11 @@
  */
 
 #include <iostream>
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 int main()
 {
-	Bu::FString s("Hey there, dude.\n");
+	Bu::String s("Hey there, dude.\n");
 
 //	std::cout << s << 5;
 }

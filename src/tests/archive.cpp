@@ -7,7 +7,7 @@
 
 #include "bu/archive.h"
 #include "bu/file.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 using namespace Bu;
 
@@ -16,7 +16,7 @@ int main()
 	File f("test.dat", File::WriteNew );
 	Archive ar( f, Archive::save );
 
-	Bu::FString s("Hello there");
+	Bu::String s("Hello there");
 	ar << s;
 
 	ar.setProp("hi", 45 );

@@ -14,7 +14,7 @@ Bu::TafComment::TafComment( const Bu::TafComment &rSrc ) :
 {
 }
 
-Bu::TafComment::TafComment( const Bu::FString &sText, bool bEOL ) :
+Bu::TafComment::TafComment( const Bu::String &sText, bool bEOL ) :
 	TafNode( typeComment ),
 	sText( sText ),
 	bEOL( bEOL )
@@ -25,7 +25,7 @@ Bu::TafComment::~TafComment()
 {
 }
 
-const Bu::FString &Bu::TafComment::getText() const
+const Bu::String &Bu::TafComment::getText() const
 {
 	return sText;
 }

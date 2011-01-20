@@ -73,7 +73,7 @@ void Bu::MiniCron::poll()
 	}
 }
 
-Bu::MiniCron::JobId Bu::MiniCron::addJob( const Bu::FString &sName,
+Bu::MiniCron::JobId Bu::MiniCron::addJob( const Bu::String &sName,
 		Bu::MiniCron::CronSignal sigJob, const Bu::MiniCron::Timer &t )
 {
 	JobId jid = jidNext++;
@@ -86,7 +86,7 @@ Bu::MiniCron::JobId Bu::MiniCron::addJob( const Bu::FString &sName,
 	return jid;
 }
 
-Bu::MiniCron::JobId Bu::MiniCron::addJobOnce( const Bu::FString &sName,
+Bu::MiniCron::JobId Bu::MiniCron::addJobOnce( const Bu::String &sName,
 		Bu::MiniCron::CronSignal sigJob, const Bu::MiniCron::Timer &t )
 {
 	JobId jid = jidNext++;
@@ -132,7 +132,7 @@ Bu::MiniCron::JobInfoList Bu::MiniCron::getJobInfo()
 	return lRet;
 }
 
-Bu::MiniCron::Job::Job( const Bu::FString &sName, JobId jid, bool bRepeat ) :
+Bu::MiniCron::Job::Job( const Bu::String &sName, JobId jid, bool bRepeat ) :
 	sName( sName ),
 	pTimer( NULL ),
 	bContinue( bRepeat ),
@@ -202,12 +202,12 @@ time_t Bu::MiniCron::Job::getNextRunTime() const
 	return tNextRun;
 }
 
-Bu::FString Bu::MiniCron::Job::getName() const
+Bu::String Bu::MiniCron::Job::getName() const
 {
 	return sName;
 }
 
-Bu::MiniCron::JobInfo::JobInfo( const Bu::FString &sName, JobId jid,
+Bu::MiniCron::JobInfo::JobInfo( const Bu::String &sName, JobId jid,
 		time_t tNext ) :
 	sName( sName ),
 	jid( jid ),
@@ -249,7 +249,7 @@ time_t Bu::MiniCron::TimerInterval::nextTime()
 	return tRet;
 }
 
-Bu::MiniCron::TimerBasic::TimerBasic( const Bu::FString &s ) :
+Bu::MiniCron::TimerBasic::TimerBasic( const Bu::String &s ) :
 	tLast( -1 ),
 	sSpec( s )
 {
@@ -264,7 +264,7 @@ time_t Bu::MiniCron::TimerBasic::nextTime()
 	if( tLast == -1 )
 		tLast = time( NULL );
 
-	Bu::FString::const_iterator i = sSpec.begin();
+	Bu::String::const_iterator i = sSpec.begin();
 	switch( lex( i ) )
 	{
 		case tokDaily:
@@ -343,19 +343,19 @@ time_t Bu::MiniCron::TimerBasic::nextTime()
 }
 
 Bu::MiniCron::TimerBasic::Token Bu::MiniCron::TimerBasic::lex(
-		Bu::FString::const_iterator &i )
+		Bu::String::const_iterator &i )
 {
 	if( !i )
 	{
 		return tokEos;
 	}
 
-	Bu::FString::const_iterator b = i;
+	Bu::String::const_iterator b = i;
 
 	for(; b && (*b == ' ' || *b == '\t'); b++ ) { i = b+1; }
 	for(; b && *b != ' ' && *b != '\t'; b++ ) { }
 
-	Bu::FString sTok( i, b );
+	Bu::String sTok( i, b );
 	i = b;
 
 	if( sTok == "daily" )
@@ -412,7 +412,7 @@ Bu::MiniCron::TimerBasic::Token Bu::MiniCron::TimerBasic::lex(
 	return tokErr;
 }
 
-int Bu::MiniCron::TimerBasic::lexInt( Bu::FString::const_iterator &i )
+int Bu::MiniCron::TimerBasic::lexInt( Bu::String::const_iterator &i )
 {
 	Token t = lex( i );
 	if( t == tokEos )

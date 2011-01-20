@@ -6,7 +6,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/file.h"
 #include "bu/myriad.h"
 #include "bu/myriadstream.h"
@@ -56,7 +56,7 @@ Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const VerifyObject &vo )
 	{
 		int iRand = random()%128;
 //		ar << iRand;
-		Bu::FString sDat( iRand );
+		Bu::String sDat( iRand );
 		for( int j = 0; j < iRand; j++ )
 			sDat[j] = (char)((uint8_t)(random()%256));
 		ar << sDat;
@@ -64,7 +64,7 @@ Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const VerifyObject &vo )
 		sum.addData( sDat.getStr(), iRand );
 		vo.iBytesWritten += 4 + iRand;
 	}
-	Bu::FString sRes = sum.getResult();
+	Bu::String sRes = sum.getResult();
 	ar << sRes;
 	vo.iBytesWritten += 4 + sRes.getSize();
 	return ar;
@@ -79,13 +79,13 @@ Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, VerifyObject &vo )
 	{
 		int iRand;
 //		ar >> iRand;
-		Bu::FString sStr;
+		Bu::String sStr;
 		ar >> sStr;
 		iRand = sStr.getSize();
 		sum.addData( &iRand, 4 );
 		sum.addData( sStr.getStr(), iRand );
 	}
-	Bu::FString sSum;
+	Bu::String sSum;
 	ar >> sSum;
 	unitTest( sSum == sum.getResult() );
 	int iTooMuch;
@@ -104,7 +104,7 @@ suite Myriad
 {
 	test setSize
 	{
-		FString sFileName("myriad-XXXXXXX");
+		String sFileName("myriad-XXXXXXX");
 
 		File fMyriad = tempFile( sFileName );
 		Myriad m( fMyriad, 32 );
@@ -194,7 +194,7 @@ suite Myriad
 
 	test stressGrow
 	{
-		FString sFileName("myriad-XXXXXXX");
+		String sFileName("myriad-XXXXXXX");
 
 		File fMyriad = tempFile( sFileName );
 		Myriad m( fMyriad );
@@ -256,7 +256,7 @@ suite Myriad
 	
 	test stressTruncate
 	{
-		FString sFileName("myriad-XXXXXXX");
+		String sFileName("myriad-XXXXXXX");
 
 		File fMyriad = tempFile( sFileName );
 		Myriad m( fMyriad );
@@ -289,7 +289,7 @@ suite Myriad
 	
 	test stressTruncate2
 	{
-		FString sFileName("myriad-XXXXXXX");
+		String sFileName("myriad-XXXXXXX");
 
 		Array<int> aStream;
 
@@ -329,7 +329,7 @@ suite Myriad
 
 	test stressArchive
 	{
-		FString sFileName("myriad-XXXXXX");
+		String sFileName("myriad-XXXXXX");
 		Array<int> aStream;
 		
 		srandom( 2096 );

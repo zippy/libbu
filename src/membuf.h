@@ -12,7 +12,7 @@
 
 #include "bu/config.h"
 #include "bu/stream.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
@@ -24,7 +24,7 @@ namespace Bu
 	{
 	public:
 		MemBuf();
-		MemBuf( const Bu::FString &str );
+		MemBuf( const Bu::String &str );
 		virtual ~MemBuf();
 
 		virtual void close();
@@ -48,11 +48,11 @@ namespace Bu
 		virtual void setBlocking( bool bBlocking=true );
 		virtual void setSize( size iSize );
 
-		Bu::FString &getString();
-		void setString( const Bu::FString &sNewData );
+		Bu::String &getString();
+		void setString( const Bu::String &sNewData );
 
 	private:
-		Bu::FString sBuf;
+		Bu::String sBuf;
 		size nPos;
 	};
 }

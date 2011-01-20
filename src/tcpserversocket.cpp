@@ -48,7 +48,7 @@ Bu::TcpServerSocket::TcpServerSocket( int nPort, int nPoolSize ) :
 	startServer( name, nPoolSize );
 }
 
-Bu::TcpServerSocket::TcpServerSocket(const FString &sAddr,int nPort, int nPoolSize) :
+Bu::TcpServerSocket::TcpServerSocket(const String &sAddr,int nPort, int nPoolSize) :
 	nPort( nPort )
 {
 #ifdef WIN32

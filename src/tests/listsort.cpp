@@ -7,7 +7,7 @@
 
 #include <bu/list.h>
 #include <bu/sio.h>
-#include <bu/fstring.h>
+#include <bu/string.h>
 
 using namespace Bu;
 
@@ -25,7 +25,7 @@ int main()
 	il.sortI( cmp );
 	*/
 
-	FString a("Soggy"), b("Sam");
+	String a("Soggy"), b("Sam");
 
 	if( a < b )
 	{
@@ -36,7 +36,7 @@ int main()
 		sio << "Good" << sio.nl;
 	}
 
-	typedef List<FString> StrList;
+	typedef List<String> StrList;
 
 	StrList lNames;
 

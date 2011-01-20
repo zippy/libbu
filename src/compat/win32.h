@@ -18,7 +18,7 @@ extern "C"
 }
 #endif
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/singleton.h"
 
 #ifndef TEMP_FAILURE_RETRY

@@ -273,7 +273,7 @@ bool Bu::ProtocolTelnet::isCanonical()
 	return bCanonical;
 }
 
-void Bu::ProtocolTelnet::write( const Bu::FString &sData )
+void Bu::ProtocolTelnet::write( const Bu::String &sData )
 {
 	write( sData.getStr(), sData.getSize() );
 }

@@ -8,7 +8,7 @@
 #ifndef BU_CACHE_STORE_MYRIAD_H
 #define BU_CACHE_STORE_MYRIAD_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/stream.h"
 #include "bu/myriad.h"
 #include "bu/cachestore.h"

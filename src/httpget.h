@@ -9,7 +9,7 @@
 #define BU_HTTP_GET_H
 
 #include "bu/stream.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/url.h"
 #include "bu/tcpsocket.h"
 #include "bu/hash.h"
@@ -19,7 +19,7 @@ namespace Bu
 	class HttpGet : public Bu::Stream
 	{
 	public:
-		HttpGet( const Bu::Url &uSrc, const Bu::FString &sMethod="GET" );
+		HttpGet( const Bu::Url &uSrc, const Bu::String &sMethod="GET" );
 		virtual ~HttpGet();
 
 		void get();
@@ -51,9 +51,9 @@ namespace Bu
 
 	private:
 		Bu::Url uSrc;
-		Bu::FString sMethod;
+		Bu::String sMethod;
 		Bu::TcpSocket sSrv;
-		typedef Bu::Hash<Bu::FString,Bu::FString> MimeHash;
+		typedef Bu::Hash<Bu::String,Bu::String> MimeHash;
 		MimeHash hMimeIn;
 		MimeHash hMimeOut;
 	};

@@ -75,9 +75,9 @@ public:
 	int iBlockSize;
 	int iPreallocate;
 	int iStream;
-	Bu::FString sFile;
-	Bu::FString sSrc;
-	Bu::FString sDst;
+	Bu::String sFile;
+	Bu::String sSrc;
+	Bu::String sDst;
 };
 
 Bu::Formatter &operator>>( Bu::Formatter &f, Mode &e )

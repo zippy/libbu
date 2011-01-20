@@ -38,7 +38,7 @@ void Bu::Sha1::reset()
 	uTotalBytes = 0;
 }
 
-void Bu::Sha1::setSalt( const Bu::FString & /*sSalt*/ )
+void Bu::Sha1::setSalt( const Bu::String & /*sSalt*/ )
 {
 }
 
@@ -73,7 +73,7 @@ void Bu::Sha1::addData( const void *sDataRaw, int iSize )
 	}
 }
 
-Bu::FString Bu::Sha1::getResult()
+Bu::String Bu::Sha1::getResult()
 {
 	// save the message size
 	uint32_t totalBitsL = uTotalBytes << 3;
@@ -102,7 +102,7 @@ Bu::FString Bu::Sha1::getResult()
 	// finish the final block
 	addData( (char*)footer, iNeededZeros + 8 );
 
-	Bu::FString sRet( 20 );
+	Bu::String sRet( 20 );
 
 	unsigned char *digest = (unsigned char *)sRet.getStr();
 

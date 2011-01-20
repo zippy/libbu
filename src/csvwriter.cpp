@@ -36,7 +36,7 @@ Bu::CsvWriter::~CsvWriter()
 
 void Bu::CsvWriter::writeLine( const StrArray &aStrs )
 {
-	Bu::FString sBuf;
+	Bu::String sBuf;
 	for( StrArray::const_iterator i = aStrs.begin(); i; i++ )
 	{
 		if( i != aStrs.begin() )
@@ -48,12 +48,12 @@ void Bu::CsvWriter::writeLine( const StrArray &aStrs )
 	sOut.write( sBuf );
 }
 
-Bu::FString Bu::CsvWriter::encodeExcel( const Bu::FString &sIn )
+Bu::String Bu::CsvWriter::encodeExcel( const Bu::String &sIn )
 {
 	if( sIn.find('\"') )
 	{
-		Bu::FString sOut = "\"";
-		for( Bu::FString::const_iterator i = sIn.begin(); i; i++ )
+		Bu::String sOut = "\"";
+		for( Bu::String::const_iterator i = sIn.begin(); i; i++ )
 		{
 			if( *i == '\"' )
 				sOut += "\"\"";
@@ -65,10 +65,10 @@ Bu::FString Bu::CsvWriter::encodeExcel( const Bu::FString &sIn )
 	return sIn;
 }
 
-Bu::FString Bu::CsvWriter::encodeC( const Bu::FString &sIn )
+Bu::String Bu::CsvWriter::encodeC( const Bu::String &sIn )
 {
-	Bu::FString sOut = "";
-	for( Bu::FString::const_iterator i = sIn.begin(); i; i++ )
+	Bu::String sOut = "";
+	for( Bu::String::const_iterator i = sIn.begin(); i; i++ )
 	{
 		if( *i == ',' )
 			sOut += "\\,";

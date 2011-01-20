@@ -12,7 +12,7 @@
 #include <sys/types.h>
 
 #include "bu/stream.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/exceptionbase.h"
 
 namespace Bu
@@ -26,7 +26,7 @@ namespace Bu
 	class File : public Bu::Stream
 	{
 	public:
-		File( const Bu::FString &sName, int iFlags );
+		File( const Bu::String &sName, int iFlags );
 		File( int fd );
 		virtual ~File();
 
@@ -75,12 +75,12 @@ namespace Bu
 		/**
 		 * Create a temp file and return its handle.  The file is opened 
 		 * Read/Write.
-		 *@param sName (Bu::FString) Give in the form: "/tmp/tmpfileXXXXXXXX"
+		 *@param sName (Bu::String) Give in the form: "/tmp/tmpfileXXXXXXXX"
 		 *		It will alter your (sName) setting the 'X's to random
 		 *		characters.
 		 *@returns (Bu::File) A file object representing your temp file.
 		 */
-		static Bu::File tempFile( Bu::FString &sName );
+		static Bu::File tempFile( Bu::String &sName );
 
 #ifndef WIN32
 		/**

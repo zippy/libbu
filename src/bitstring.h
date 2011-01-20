@@ -9,7 +9,7 @@
 #define BU_BITSTRING_H
 
 #include "bu/util.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
@@ -203,7 +203,7 @@ namespace Bu
 		 */
 		long toLong( long iStart = 0, long iSize = 32 );
 
-		Bu::FString toString();
+		Bu::String toString();
 
 		//operators
 		BitString &operator=( const BitString &xSrc );

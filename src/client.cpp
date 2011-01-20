@@ -109,12 +109,12 @@ void Bu::Client::clearProtocol()
 	pProto = NULL;
 }
 /*
-Bu::FString &Bu::Client::getInput()
+Bu::String &Bu::Client::getInput()
 {
 	return sReadBuf;
 }
 
-Bu::FString &Bu::Client::getOutput()
+Bu::String &Bu::Client::getOutput()
 {
 	return sWriteBuf;
 }
@@ -126,7 +126,7 @@ bool Bu::Client::isOpen()
 	return pTopStream->isOpen();
 }
 
-size_t Bu::Client::write( const Bu::FString &sData )
+size_t Bu::Client::write( const Bu::String &sData )
 {
 	return qbWrite.write( sData.getStr(), sData.getSize() );
 }
@@ -221,7 +221,7 @@ Bu::ClientLink *Bu::Client::getLink()
 	return pfLink->createLink( this );
 }
 
-void Bu::Client::onMessage( const Bu::FString &sMsg )
+void Bu::Client::onMessage( const Bu::String &sMsg )
 {
 	if( pProto )
 		pProto->onMessage( this, sMsg );

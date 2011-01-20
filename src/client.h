@@ -11,7 +11,7 @@
 #include <stdint.h>
 
 #include "bu/config.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/queuebuf.h"
 
 namespace Bu
@@ -33,9 +33,9 @@ namespace Bu
 		void processInput();
 		void processOutput();
 
-		//Bu::FString &getInput();
-		//Bu::FString &getOutput();
-		size_t write( const Bu::FString &sData );
+		//Bu::String &getInput();
+		//Bu::String &getOutput();
+		size_t write( const Bu::String &sData );
 		size_t write( const void *pData, size_t nBytes );
 		size_t write( int8_t nData );
 		size_t write( int16_t nData );
@@ -66,7 +66,7 @@ namespace Bu
 
 		class ClientLink *getLink();
 
-		void onMessage( const Bu::FString &sMsg );
+		void onMessage( const Bu::String &sMsg );
 
 		bool hasOutput() { return qbWrite.getSize() > 0; }
 		bool hasInput() { return qbRead.getSize() > 0; }

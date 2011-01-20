@@ -19,7 +19,7 @@ Bu::RegEx::RegEx() :
 {
 }
 
-Bu::RegEx::RegEx( const Bu::FString &sSrc ) :
+Bu::RegEx::RegEx( const Bu::String &sSrc ) :
 	pRegEx( NULL ),
 	bCompiled( false ),
 	paSubStr( NULL )
@@ -37,7 +37,7 @@ Bu::RegEx::~RegEx()
 	}
 }
 
-void Bu::RegEx::compile( const Bu::FString &sSrc )
+void Bu::RegEx::compile( const Bu::String &sSrc )
 {
 	if( bCompiled )
 	{
@@ -54,7 +54,7 @@ void Bu::RegEx::compile( const Bu::FString &sSrc )
 		size_t length = regerror( nErr, re, NULL, 0 );
 		char *buffer = new char[length];
 		(void) regerror( nErr, re, buffer, length );
-		Bu::FString s( buffer );
+		Bu::String s( buffer );
 		delete[] buffer;
 		throw "???"; // BuildException( s.getStr() );
 	}
@@ -70,7 +70,7 @@ int Bu::RegEx::getNumSubStrings()
 	return nSubStr;
 }
 
-bool Bu::RegEx::execute( const Bu::FString &sSrc )
+bool Bu::RegEx::execute( const Bu::String &sSrc )
 {
 	sTest = sSrc;
 	if( regexec( re, sSrc.getStr(), nSubStr, aSubStr, 0 ) )
@@ -84,10 +84,10 @@ void Bu::RegEx::getSubStringRange( int nIndex, int &iStart, int &iEnd )
 	iEnd = aSubStr[nIndex].rm_eo;
 }
 
-Bu::FString Bu::RegEx::getSubString( int nIndex )
+Bu::String Bu::RegEx::getSubString( int nIndex )
 {
 //	regmatch_t *Subs = aSubStr;
-	return Bu::FString(
+	return Bu::String(
 		sTest.getStr()+aSubStr[nIndex].rm_so,
 		aSubStr[nIndex].rm_eo - aSubStr[nIndex].rm_so
 		);

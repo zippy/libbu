@@ -9,7 +9,7 @@
 #define BU_TAF_NODE_H
 
 #include <stdint.h>
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/hash.h"
 #include "bu/exceptionbase.h"
 

@@ -32,9 +32,9 @@ void Bu::OptParser::parse( int argc, char **argv )
 				for( iEPos = 2; argv[j][iEPos] != '\0' &&
 					 argv[j][iEPos] != '='; iEPos++ ) { }
 
-				Bu::FString sOpt;
+				Bu::String sOpt;
 				int iCount = argc-j;
-				Bu::FString sExtraParam;
+				Bu::String sExtraParam;
 				if( argv[j][iEPos] == '=' )
 				{
 					sOpt.set( argv[j]+2, iEPos-2 );
@@ -92,7 +92,7 @@ void Bu::OptParser::parse( int argc, char **argv )
 				{
 					if( !hsOption.has( argv[j][iCPos] ) )
 					{
-						Bu::FString sOpt("-");
+						Bu::String sOpt("-");
 						sOpt += argv[j][iCPos];
 						optionError( sOpt );
 					}
@@ -181,17 +181,17 @@ void Bu::OptParser::setOverride( char cOpt, const Bu::Variant &sOverride )
 	hsOption.get( cOpt )->sOverride = sOverride;
 }
 
-void Bu::OptParser::setOverride( const Bu::FString &sOpt, const Bu::Variant &sOverride )
+void Bu::OptParser::setOverride( const Bu::String &sOpt, const Bu::Variant &sOverride )
 {
 	hlOption.get( sOpt )->sOverride = sOverride;
 }
 
-void Bu::OptParser::setHelpDefault( const Bu::FString &sOpt, const Bu::FString &sTxt )
+void Bu::OptParser::setHelpDefault( const Bu::String &sOpt, const Bu::String &sTxt )
 {
 	hlOption.get( sOpt )->sHelpDefault = sTxt;
 }
 
-void Bu::OptParser::addHelpOption( char c, const Bu::FString &s, const Bu::FString &sHelp )
+void Bu::OptParser::addHelpOption( char c, const Bu::String &s, const Bu::String &sHelp )
 {
 	Option o;
 	o.sUsed = slot( this, &OptParser::optHelp );
@@ -201,7 +201,7 @@ void Bu::OptParser::addHelpOption( char c, const Bu::FString &s, const Bu::FStri
 	addOption( o );
 }
 
-void Bu::OptParser::addHelpBanner( const Bu::FString &sText, bool bFormatted )
+void Bu::OptParser::addHelpBanner( const Bu::String &sText, bool bFormatted )
 {
 	Banner b;
 	b.sText = sText;
@@ -290,7 +290,7 @@ int Bu::OptParser::optHelp( StrArray /*aParams*/ )
 	return 0;
 }
 
-void Bu::OptParser::optionError( const Bu::FString &sOption )
+void Bu::OptParser::optionError( const Bu::String &sOption )
 {
 	sio << "Unregcognized option discovered: " << sOption << sio.nl << sio.nl;
 	exit( 1 );
@@ -301,11 +301,11 @@ void Bu::OptParser::setNonOption( OptionSignal sSignal )
 	sNonOption = sSignal;
 }
 
-Bu::FString Bu::OptParser::format( const Bu::FString &sIn, int iWidth,
+Bu::String Bu::OptParser::format( const Bu::String &sIn, int iWidth,
 		int iIndent )
 {
-	Bu::FString sOut;
-	Bu::FString sIndent;
+	Bu::String sOut;
+	Bu::String sIndent;
 	for( int j = 0; j < iIndent; j++ )
 		sIndent.append(" ", 1);
 	bool bFirst = true;
@@ -314,8 +314,8 @@ Bu::FString Bu::OptParser::format( const Bu::FString &sIn, int iWidth,
 	int iPrevLineLen;
 	int iLineLen = 0;
 	char c;
-	Bu::FString::const_iterator iLastSpace, iStart;
-	for( Bu::FString::const_iterator i = iLastSpace = iStart = sIn.begin(); i; i++ )
+	Bu::String::const_iterator iLastSpace, iStart;
+	for( Bu::String::const_iterator i = iLastSpace = iStart = sIn.begin(); i; i++ )
 	{
 		c = *i;
 		if( *i == ' ' )
@@ -346,7 +346,7 @@ Bu::FString Bu::OptParser::format( const Bu::FString &sIn, int iWidth,
 			float fFill = 0.0;
 			int iSubSpaceCount = 0;
 			float fAdd = ((float)iExtraSpaces/(float)iSpaceCount);
-			for( Bu::FString::const_iterator k = iStart; k != iLastSpace; k++ )
+			for( Bu::String::const_iterator k = iStart; k != iLastSpace; k++ )
 			{
 				sOut += *k;
 				if( *k == ' ' )

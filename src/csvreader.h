@@ -8,19 +8,19 @@
 #ifndef BU_CSV_READER_H
 #define BU_CSV_READER_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/array.h"
 #include "bu/signals.h"
 
 namespace Bu
 {
 	class Stream;
-	typedef Bu::Array<Bu::FString> StrArray;
+	typedef Bu::Array<Bu::String> StrArray;
 
 	class CsvReader
 	{
 	public:
-		typedef Bu::Signal1<Bu::FString, Bu::FString::iterator &> DecodeSignal;
+		typedef Bu::Signal1<Bu::String, Bu::String::iterator &> DecodeSignal;
 		enum Style
 		{
 			styleExcel, ///< Excel style quotes around things that need em
@@ -37,8 +37,8 @@ namespace Bu
 		Stream &sIn;
 		DecodeSignal sDecode;
 
-		static Bu::FString decodeExcel( Bu::FString::iterator &i );
-		static Bu::FString decodeC( Bu::FString::iterator &i );
+		static Bu::String decodeExcel( Bu::String::iterator &i );
+		static Bu::String decodeC( Bu::String::iterator &i );
 	};
 };
 

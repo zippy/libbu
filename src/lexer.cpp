@@ -18,7 +18,7 @@ Bu::Lexer::Token::Token( Bu::Lexer::TokenType iToken ) :
 {
 }
 
-Bu::FString Bu::Lexer::tokenToString( const Bu::Lexer::Token &t )
+Bu::String Bu::Lexer::tokenToString( const Bu::Lexer::Token &t )
 {
 	Bu::MemBuf mb;
 	Bu::Formatter f( mb );

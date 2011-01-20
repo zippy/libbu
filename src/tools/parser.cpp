@@ -118,7 +118,7 @@ public:
 				case '8':
 				case '9':
 					{
-						Bu::FString sTmp;
+						Bu::String sTmp;
 						sTmp += b;
 						qbIn.seek( 1 );
 						for(;;)

@@ -9,7 +9,7 @@
 #define BU_TAF_READER_H
 
 #include <stdint.h>
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
@@ -38,7 +38,7 @@ namespace Bu
 		void ws();
 		bool isws();
 		void next();
-		Bu::FString readStr();
+		Bu::String readStr();
 		void rawread( char *c );
 		char c, la;
 		Bu::Stream &sIn;

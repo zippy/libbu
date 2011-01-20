@@ -21,15 +21,15 @@ namespace Bu
 	{
 	public:
 		TafProperty( const Bu::TafProperty &rSrc );
-		TafProperty( const Bu::FString &sName, const Bu::FString &sValue );
+		TafProperty( const Bu::String &sName, const Bu::String &sValue );
 		virtual ~TafProperty();
 
-		const Bu::FString &getName() const;
-		const Bu::FString &getValue() const;
+		const Bu::String &getName() const;
+		const Bu::String &getValue() const;
 
 	private:
-		Bu::FString sName;
-		Bu::FString sValue;
+		Bu::String sName;
+		Bu::String sValue;
 	};
 }
 

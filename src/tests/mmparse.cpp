@@ -6,7 +6,7 @@
  */
 
 #include "bu/minimacro.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 int main()
 {

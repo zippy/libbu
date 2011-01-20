@@ -8,7 +8,7 @@
 #ifndef BU_OPT_PARSER_H
 #define BU_OPT_PARSER_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/list.h"
 #include "bu/hash.h"
 #include "bu/signals.h"
@@ -19,7 +19,7 @@
 
 namespace Bu
 {
-	typedef Bu::Array<Bu::FString> StrArray;
+	typedef Bu::Array<Bu::String> StrArray;
 
 	/**
 	 * POSIX/Gnu style command line parser.  Handles long and short options in
@@ -41,7 +41,7 @@ namespace Bu
 			_ValueProxy();
 			virtual ~_ValueProxy();
 
-			virtual void setValueFromStr( const Bu::FString & )=0;
+			virtual void setValueFromStr( const Bu::String & )=0;
 			virtual void setValue( const Bu::Variant &vVar )=0;
 			virtual _ValueProxy *clone()=0;
 		};
@@ -59,7 +59,7 @@ namespace Bu
 			{
 			}
 
-			virtual void setValueFromStr( const Bu::FString &sVal )
+			virtual void setValueFromStr( const Bu::String &sVal )
 			{
 				Bu::MemBuf mb( sVal );
 				Bu::Formatter f( mb );
@@ -72,9 +72,9 @@ namespace Bu
 				{
 					v = vVar.get<ptype>();
 				}
-				else if( vVar.getType() == typeid(Bu::FString) )
+				else if( vVar.getType() == typeid(Bu::String) )
 				{
-					setValueFromStr( vVar.get<Bu::FString>() );
+					setValueFromStr( vVar.get<Bu::String>() );
 				}
 				else
 				{
@@ -101,23 +101,23 @@ namespace Bu
 			virtual ~Option();
 
 			char cOpt;
-			Bu::FString sOpt;
-			Bu::FString sHelp;
+			Bu::String sOpt;
+			Bu::String sHelp;
 			OptionSignal sUsed;
 			_ValueProxy *pProxy;
 			Bu::Variant sOverride;
-			Bu::FString sHelpDefault;
+			Bu::String sHelpDefault;
 		};
 	
 	private:
 		typedef Bu::List<Option> OptionList;
 		typedef Bu::Hash<char, Option *> ShortOptionHash;
-		typedef Bu::Hash<Bu::FString, Option *> LongOptionHash;
+		typedef Bu::Hash<Bu::String, Option *> LongOptionHash;
 		
 		class Banner
 		{
 		public:
-			Bu::FString sText;
+			Bu::String sText;
 			bool bFormatted;
 			OptionList::const_iterator iAfter;
 		};
@@ -133,8 +133,8 @@ namespace Bu
 		void addOption( const Option &opt );
 		
 		template<typename vtype>
-		void addOption( vtype &var, char cOpt, const Bu::FString &sOpt,
-				const Bu::FString &sHelp )
+		void addOption( vtype &var, char cOpt, const Bu::String &sOpt,
+				const Bu::String &sHelp )
 		{
 			Option o;
 			o.cOpt = cOpt;
@@ -145,20 +145,20 @@ namespace Bu
 		}
 		
 		template<typename vtype>
-		void addOption( vtype &var, const Bu::FString &sOpt,
-				const Bu::FString &sHelp )
+		void addOption( vtype &var, const Bu::String &sOpt,
+				const Bu::String &sHelp )
 		{
 			addOption( var, '\0', sOpt, sHelp );
 		}
 		
 		template<typename vtype>
-		void addOption( vtype &var, char cOpt, const Bu::FString &sHelp )
+		void addOption( vtype &var, char cOpt, const Bu::String &sHelp )
 		{
 			addOption( var, cOpt, "", sHelp );
 		}
 
-		void addOption( OptionSignal sUsed, char cOpt, const Bu::FString &sOpt,
-				const Bu::FString &sHelp )
+		void addOption( OptionSignal sUsed, char cOpt, const Bu::String &sOpt,
+				const Bu::String &sHelp )
 		{
 			Option o;
 			o.cOpt = cOpt;
@@ -168,27 +168,27 @@ namespace Bu
 			addOption( o );
 		}
 		
-		void addOption( OptionSignal sUsed, const Bu::FString &sOpt,
-				const Bu::FString &sHelp )
+		void addOption( OptionSignal sUsed, const Bu::String &sOpt,
+				const Bu::String &sHelp )
 		{
 			addOption( sUsed, '\0', sOpt, sHelp );
 		}
 		
 		void addOption( OptionSignal sUsed, char cOpt,
-				const Bu::FString &sHelp )
+				const Bu::String &sHelp )
 		{
 			addOption( sUsed, cOpt, "", sHelp );
 		}
 
 		void setOverride( char cOpt, const Bu::Variant &sOverride );
-		void setOverride( const Bu::FString &sOpt,
+		void setOverride( const Bu::String &sOpt,
 				const Bu::Variant &sOverride );
 
-		void setHelpDefault( const Bu::FString &sOpt, const Bu::FString &sTxt );
+		void setHelpDefault( const Bu::String &sOpt, const Bu::String &sTxt );
 		
-		void addHelpOption( char c='h', const Bu::FString &s="help",
-				const Bu::FString &sHelp="This help." );
-		void addHelpBanner( const Bu::FString &sText, bool bFormatted=true );
+		void addHelpOption( char c='h', const Bu::String &s="help",
+				const Bu::String &sHelp="This help." );
+		void addHelpBanner( const Bu::String &sText, bool bFormatted=true );
 
 		int optHelp( StrArray aParams );
 
@@ -200,12 +200,12 @@ namespace Bu
 		 * been handled by an option, and isn't an option (starts with - or --).
 		 * To change this behaviour call 
 		 */
-		virtual void optionError( const Bu::FString &sOption );
+		virtual void optionError( const Bu::String &sOption );
 
 		void setNonOption( OptionSignal sSignal );
 
 	private:
-		Bu::FString format( const Bu::FString &sIn, int iWidth, int iIndent );
+		Bu::String format( const Bu::String &sIn, int iWidth, int iIndent );
 
 		OptionList lOption;
 		ShortOptionHash hsOption;

@@ -72,7 +72,7 @@ public:
 
 	int iBob;
 	float dBob;
-	Bu::FString sVar;
+	Bu::String sVar;
 };
 
 int main( int argc, char *argv[] )

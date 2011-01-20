@@ -8,7 +8,7 @@
 #ifndef BU_REG_EX_H
 #define BU_REG_EX_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 #include <stdint.h>
 
@@ -18,22 +18,22 @@ namespace Bu
 	{
 	public:
 		RegEx();
-		RegEx( const Bu::FString &sSrc );
+		RegEx( const Bu::String &sSrc );
 		virtual ~RegEx();
 
-		void compile( const Bu::FString &sSrc );
+		void compile( const Bu::String &sSrc );
 		int getNumSubStrings();
-		bool execute( const Bu::FString &sSrc );
+		bool execute( const Bu::String &sSrc );
 		void getSubStringRange( int nIndex, int &iStart, int &iEnd );
-		Bu::FString getSubString( int nIndex );
-		const Bu::FString &getSource()
+		Bu::String getSubString( int nIndex );
+		const Bu::String &getSource()
 		{
 			return sSrc;
 		}
 
 	private:
-		Bu::FString sSrc;
-		Bu::FString sTest;
+		Bu::String sSrc;
+		Bu::String sTest;
 		void *pRegEx;
 		bool bCompiled;
 		int nSubStr;

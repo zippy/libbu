@@ -6,29 +6,29 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 #include <dirent.h>
 
-suite FString
+suite String
 {
 	test compare1
 	{
-		Bu::FString b("Bob");
+		Bu::String b("Bob");
 		unitTest( !(b == "Bobo") );
 		unitTest( b == "Bob" );
 	}
 
 	test compare2
 	{
-		Bu::FString b("Bobo");
+		Bu::String b("Bobo");
 		unitTest( !(b == "Bob") );
 		unitTest( b == "Bobo" );
 	}
 
 	test appendSingle
 	{
-		Bu::FString b;
+		Bu::String b;
 		for( char l = 'a'; l < 'g'; l++ )
 			b += l;
 		unitTest( b == "abcdef" );
@@ -37,8 +37,8 @@ suite FString
 
 	test shared1
 	{
-		Bu::FString a("Hey there");
-		Bu::FString b( a );
+		Bu::String a("Hey there");
+		Bu::String b( a );
 		unitTest( a.getConstStr() == b.getConstStr() );
 		b += " guy";
 		unitTest( a.getConstStr() != b.getConstStr() );
@@ -48,7 +48,7 @@ suite FString
 
 	test insert
 	{
-		Bu::FString a("abcd");
+		Bu::String a("abcd");
 		a.insert( 2, "-!-", 3 );
 		unitTest( a == "ab-!-cd" );
 		
@@ -67,7 +67,7 @@ suite FString
 
 	test remove
 	{
-		Bu::FString a("abHEYcd");
+		Bu::String a("abHEYcd");
 		a.remove( 2, 3 );
 		unitTest( a == "abcd" );
 		a.remove( 2, 5 );
@@ -79,42 +79,42 @@ suite FString
 
 	test add1
 	{
-		Bu::FString a("hi there");
-		Bu::FString b(", yeah!");
-		Bu::FString c = a + b;
+		Bu::String a("hi there");
+		Bu::String b(", yeah!");
+		Bu::String c = a + b;
 
 		unitTest( c == "hi there, yeah!" );
 	}
 
 	test add2
 	{
-		Bu::FString a("hi there");
-		Bu::FString c = a + ", yeah!";
+		Bu::String a("hi there");
+		Bu::String c = a + ", yeah!";
 
 		unitTest( c == "hi there, yeah!" );
 	}
 
 	test add3
 	{
-		Bu::FString a("hi there");
-		Bu::FString b(", yeah!");
-		Bu::FString c = a + ", Mr. Man" + b;
+		Bu::String a("hi there");
+		Bu::String b(", yeah!");
+		Bu::String c = a + ", Mr. Man" + b;
 
 		unitTest( c == "hi there, Mr. Man, yeah!" );
 	}
 
 	test add4
 	{
-		Bu::FString b(", yeah!");
-		Bu::FString c = "hi there" + b;
+		Bu::String b(", yeah!");
+		Bu::String c = "hi there" + b;
 
 		unitTest( c == "hi there, yeah!" );
 	}
 
 	test add5
 	{
-		Bu::FString b;
-		Bu::FString c = "sup?";
+		Bu::String b;
+		Bu::String c = "sup?";
 		b += "hey, " + c;
 		
 		unitTest( b == "hey, sup?" );
@@ -122,17 +122,17 @@ suite FString
 
 	test add6
 	{
-		Bu::FString a("Hello");
+		Bu::String a("Hello");
 		char b[256] = {"Dude"};
-		Bu::FString c = a + "/" + b;
+		Bu::String c = a + "/" + b;
 
 		unitTest( c == "Hello/Dude" );
 	}
 
 	test add7
 	{
-		const Bu::FString a("hello ");
-		Bu::FString b(" how ");
+		const Bu::String a("hello ");
+		Bu::String b(" how ");
 		unitTest( a == "hello " );
 		unitTest( a + "dude" == "hello dude" );
 		unitTest( a + "dude" + b + "are you?" == "hello dude how are you?" );
@@ -140,16 +140,16 @@ suite FString
 
 	test subStr1
 	{
-		Bu::FString a("abcdefghijklmnop");
-		Bu::FString::iterator i = a.find('f');
-		unitTest( a.getSubStr( i, Bu::FString::iterator() ) == "fghijklmnop" );
-		Bu::FString::iterator j = i.find('l');
+		Bu::String a("abcdefghijklmnop");
+		Bu::String::iterator i = a.find('f');
+		unitTest( a.getSubStr( i, Bu::String::iterator() ) == "fghijklmnop" );
+		Bu::String::iterator j = i.find('l');
 		unitTest( a.getSubStr( i, j ) == "fghijk" );
 	}
 
 	test compareSub1
 	{
-		Bu::FString a("just a string.");
+		Bu::String a("just a string.");
 		unitTest( a.compareSub("a ", 5, 2) == true );
 		unitTest( a.compareSub("string.aoeu", 7, 11 ) == false );
 		unitTest( a.compareSub("string.aoeu", 7, 3 ) == true );
@@ -157,17 +157,17 @@ suite FString
 
 	test compareSub2
 	{
-		Bu::FString a("just a string.");
-		unitTest( a.compareSub(Bu::FString("a "), 5, 2) == true );
-		unitTest( a.compareSub(Bu::FString("string.aoeu"), 7, 11 ) == false );
-		unitTest( a.compareSub(Bu::FString("string.aoeu"), 7, 3 ) == true );
+		Bu::String a("just a string.");
+		unitTest( a.compareSub(Bu::String("a "), 5, 2) == true );
+		unitTest( a.compareSub(Bu::String("string.aoeu"), 7, 11 ) == false );
+		unitTest( a.compareSub(Bu::String("string.aoeu"), 7, 3 ) == true );
 	}
 
 	test iterator1
 	{
-		Bu::FString a("This is a test.");
-		Bu::FString b;
-		for( Bu::FString::iterator i = a.begin(); i; i++ )
+		Bu::String a("This is a test.");
+		Bu::String b;
+		for( Bu::String::iterator i = a.begin(); i; i++ )
 		{
 			b += *i;
 		}
@@ -176,10 +176,10 @@ suite FString
 
 	test iterator2
 	{
-		Bu::FString a("This is a test.");
-		Bu::FString b("--This is a test.");
-		Bu::FString::iterator ai = a.begin();
-		Bu::FString::iterator bi = b.begin();
+		Bu::String a("This is a test.");
+		Bu::String b("--This is a test.");
+		Bu::String::iterator ai = a.begin();
+		Bu::String::iterator bi = b.begin();
 		unitTest( ai.compare( bi ) == false );
 		unitTest( bi.compare( ai ) == false );
 		bi++; bi++;
@@ -189,10 +189,10 @@ suite FString
 
 	test iterator3
 	{
-		Bu::FString a("1234honour");
-		Bu::FString b("--1234ueje");
-		Bu::FString::iterator ai = a.begin();
-		Bu::FString::iterator bi = b.begin();
+		Bu::String a("1234honour");
+		Bu::String b("--1234ueje");
+		Bu::String::iterator ai = a.begin();
+		Bu::String::iterator bi = b.begin();
 		unitTest( ai.compare( bi, 4 ) == false );
 		unitTest( bi.compare( ai, 4 ) == false );
 		bi++; bi++;
@@ -205,8 +205,8 @@ suite FString
 
 	test iterator4
 	{
-		Bu::FString a("1234aoeu");
-		Bu::FString::iterator ai = a.begin();
+		Bu::String a("1234aoeu");
+		Bu::String::iterator ai = a.begin();
 		unitTest( ai.compare("1234") == false );
 		unitTest( ai.compare("1234aoeu") == true );
 		unitTest( ai.compare("1234aoeuee") == false );
@@ -214,8 +214,8 @@ suite FString
 
 	test iterator5
 	{
-		Bu::FString a("1234aoeu");
-		Bu::FString::iterator ai = a.begin();
+		Bu::String a("1234aoeu");
+		Bu::String::iterator ai = a.begin();
 		unitTest( ai.compare("1234", 4) == true );
 		unitTest( ai.compare("1234aoeu", 8) == true );
 		unitTest( ai.compare("1234aoeuee", 10) == false );
@@ -223,9 +223,9 @@ suite FString
 
 	test iterator6
 	{
-		Bu::FString a("just ->this part");
-		Bu::FString b;
-		Bu::FString::iterator s = a.begin();
+		Bu::String a("just ->this part");
+		Bu::String b;
+		Bu::String::iterator s = a.begin();
 		for(; s; s++ )
 		{
 			if( *s == '>' )
@@ -239,7 +239,7 @@ suite FString
 
 		b.append( s );
 
-		Bu::FString c;
+		Bu::String c;
 		c.set( b.begin() );
 
 		// This is here because the comparison operator used to cause flattening.
@@ -249,9 +249,9 @@ suite FString
 
 	test iterator7
 	{
-		Bu::FString a("just [this] part");
-		Bu::FString b;
-		Bu::FString::iterator s = a.begin();
+		Bu::String a("just [this] part");
+		Bu::String b;
+		Bu::String::iterator s = a.begin();
 		for(; s; s++ )
 		{
 			if( *s == '[' )
@@ -260,7 +260,7 @@ suite FString
 				break;
 			}
 		}
-		Bu::FString::iterator e = s;
+		Bu::String::iterator e = s;
 		for(; e; e++ )
 		{
 			if( *e == ']' )
@@ -273,9 +273,9 @@ suite FString
 
 		b.append( s, e );
 
-		for( Bu::FString::iterator i = b.begin(); i;)
+		for( Bu::String::iterator i = b.begin(); i;)
 		{
-			Bu::FString::iterator k = i;
+			Bu::String::iterator k = i;
 			k++;
 			if( !k )
 			{
@@ -284,12 +284,12 @@ suite FString
 			}
 			i = k;
 		}
-		Bu::FString l;
+		Bu::String l;
 		l.set( b.begin() );
 		unitTest( l == "thisthisthisthi" );
-		for( Bu::FString::iterator i = b.begin(); i;)
+		for( Bu::String::iterator i = b.begin(); i;)
 		{
-			Bu::FString::iterator k = i;
+			Bu::String::iterator k = i;
 			k++;
 			if( !k )
 			{
@@ -304,7 +304,7 @@ suite FString
 
 	test isSet1
 	{
-		Bu::FString bob;
+		Bu::String bob;
 
 		unitTest( bob.isSet() == false );
 		bob = "something";
@@ -315,7 +315,7 @@ suite FString
 
 	test swap1
 	{
-		Bu::FString a, b;
+		Bu::String a, b;
 		a = "Goodbye";
 		b = "Hello";
 		Bu::swap( a, b );
@@ -325,7 +325,7 @@ suite FString
 
 	test swap2
 	{
-		Bu::FString a, b;
+		Bu::String a, b;
 		a = "Goodbye";
 		b = "Hello";
 		std::swap( a, b );
@@ -335,14 +335,14 @@ suite FString
 
 	test replace1
 	{
-		Bu::FString a;
+		Bu::String a;
 		a = "This is a test.";
 		unitTest( a.replace("i", "ooo") == "Thooos ooos a test." );
 	}
 
 	test coreDerefBug1
 	{
-		Bu::FString a, b;
+		Bu::String a, b;
 		a = "bob";
 		a.setSize( 0 );
 		b = a;

@@ -5,12 +5,12 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include <stdio.h>
 
 int main()
 {
-	Bu::FString s;
+	Bu::String s;
 
 	s.format("%d, %f, \'%s\'", 144, 12.5, "bob" );
 

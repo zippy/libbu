@@ -41,12 +41,12 @@ Bu::StrArray Bu::CsvReader::readLine()
 {
 	Bu::StrArray aVals;
 
-	Bu::FString sLine = sIn.readLine();
+	Bu::String sLine = sIn.readLine();
 
 	if( !sLine.isSet() )
 		return Bu::StrArray();
 
-	Bu::FString::iterator i = sLine.begin();
+	Bu::String::iterator i = sLine.begin();
 
 	aVals.append( sDecode( i ) );
 
@@ -73,9 +73,9 @@ Bu::StrArray Bu::CsvReader::readLine()
 	return aVals;
 }
 
-Bu::FString Bu::CsvReader::decodeExcel( Bu::FString::iterator &i )
+Bu::String Bu::CsvReader::decodeExcel( Bu::String::iterator &i )
 {
-	Bu::FString sRet;
+	Bu::String sRet;
 
 	for(; i && (*i == ' ' || *i == '\t'); i++ ) { }
 	
@@ -123,7 +123,7 @@ Bu::FString Bu::CsvReader::decodeExcel( Bu::FString::iterator &i )
 	return sRet;
 }
 
-Bu::FString Bu::CsvReader::decodeC( Bu::FString::iterator & )
+Bu::String Bu::CsvReader::decodeC( Bu::String::iterator & )
 {
 	return "";
 }

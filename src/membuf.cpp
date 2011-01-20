@@ -14,7 +14,7 @@ Bu::MemBuf::MemBuf() :
 {
 }
 
-Bu::MemBuf::MemBuf( const Bu::FString &str ) :
+Bu::MemBuf::MemBuf( const Bu::String &str ) :
 	sBuf( str ),
 	nPos( 0 )
 {
@@ -149,12 +149,12 @@ void Bu::MemBuf::setSize( size iSize )
 		nPos = iSize;
 }
 
-Bu::FString &Bu::MemBuf::getString()
+Bu::String &Bu::MemBuf::getString()
 {
 	return sBuf;
 }
 
-void Bu::MemBuf::setString( const Bu::FString &sNewData )
+void Bu::MemBuf::setString( const Bu::String &sNewData )
 {
 	sBuf = sNewData;
 	nPos = 0;

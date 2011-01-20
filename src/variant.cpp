@@ -9,7 +9,7 @@
 
 namespace Bu
 {
-	Formatter &operator<<( Formatter &f, const FString &s );
+	Formatter &operator<<( Formatter &f, const String &s );
 };
 
 Bu::VariantTypeRoot::VariantTypeRoot()
@@ -37,7 +37,7 @@ Bu::Variant::Variant( const Variant &v ) :
 Bu::Variant::Variant( const char *t ) :
 	pCore( NULL )
 {
-	set( Bu::FString( t ) );
+	set( Bu::String( t ) );
 }
 
 Bu::Variant::~Variant()
@@ -54,7 +54,7 @@ bool Bu::Variant::isSet() const
 	return pCore != NULL;
 }
 
-Bu::FString Bu::Variant::toString() const
+Bu::String Bu::Variant::toString() const
 {
 	if( !pCore )
 		return "***NO DATA***";
@@ -90,14 +90,14 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::Variant &v )
 	return f << v.toString();
 }
 
-template<> Bu::FString Bu::VariantType<int>::toString() const
+template<> Bu::String Bu::VariantType<int>::toString() const
 {
-	Bu::FString s;
+	Bu::String s;
 	s.format("%d", data );
 	return s;
 }
 
-template<> Bu::FString Bu::VariantType<bool>::toString() const
+template<> Bu::String Bu::VariantType<bool>::toString() const
 {
 	return data?"true":"false";
 }

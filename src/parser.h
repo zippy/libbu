@@ -1,7 +1,7 @@
 #ifndef BU_PARSER_H
 #define BU_PARSER_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/list.h"
 #include "bu/array.h"
 #include "bu/hash.h"
@@ -43,7 +43,7 @@ namespace Bu
 		void parse();
 
 		void setRootNonTerminal( int iRoot );
-		void setRootNonTerminal( const Bu::FString &sRoot );
+		void setRootNonTerminal( const Bu::String &sRoot );
 
 		typedef Bu::Signal1<void, Parser &> Reduction;
 
@@ -87,17 +87,17 @@ namespace Bu
 			bool bCanSkip;
 		};
 
-		int addNonTerminal( const Bu::FString &sName, NonTerminal &nt );
-		int addNonTerminal( const Bu::FString &sName );
-		void setNonTerminal( const Bu::FString &sName, NonTerminal &nt );
-		int getNonTerminalId( const Bu::FString &sName );
-		bool hasNonTerminal( const Bu::FString &sName );
+		int addNonTerminal( const Bu::String &sName, NonTerminal &nt );
+		int addNonTerminal( const Bu::String &sName );
+		void setNonTerminal( const Bu::String &sName, NonTerminal &nt );
+		int getNonTerminalId( const Bu::String &sName );
+		bool hasNonTerminal( const Bu::String &sName );
 
-		int addReduction( const Bu::FString &sName, const Reduction &r );
-		int addReduction( const Bu::FString &sName );
-		void setReduction( const Bu::FString &sName, const Reduction &r );
-		int getReductionId( const Bu::FString &sName );
-		bool hasReduction( const Bu::FString &sName );
+		int addReduction( const Bu::String &sName, const Reduction &r );
+		int addReduction( const Bu::String &sName );
+		void setReduction( const Bu::String &sName, const Reduction &r );
+		int getReductionId( const Bu::String &sName );
+		bool hasReduction( const Bu::String &sName );
 
 	private:
 		bool selectProduction( int iNt, Lexer::Token *ptCur );
@@ -108,7 +108,7 @@ namespace Bu
 		typedef Bu::List<Lexer::Token *> TokenStack;
 		typedef Bu::List<Production::const_iterator> StateStack;
 		typedef Bu::Array<Reduction> ReductionArray;
-		typedef Bu::Hash<Bu::FString,int> NameIndexHash;
+		typedef Bu::Hash<Bu::String,int> NameIndexHash;
 		typedef Bu::Array<NonTerminal> NonTerminalArray;
 
 		LexerStack sLexer;

@@ -24,7 +24,7 @@ public:
 
 	void write()
 	{
-		Bu::FString s;
+		Bu::String s;
 		time_t tNow = time( NULL );
 		s = ctime( &tNow );
 		long lSize = s.getSize()-1;
@@ -34,7 +34,7 @@ public:
 
 	void read()
 	{
-		Bu::FString s;
+		Bu::String s;
 		long lSize;
 		rStream.read( &lSize, sizeof(long) );
 		s.setSize( lSize );

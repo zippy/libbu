@@ -8,7 +8,7 @@
 #ifndef BU_CLIENT_LINK_H
 #define BU_CLIENT_LINK_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
@@ -18,7 +18,7 @@ namespace Bu
 		ClientLink();
 		virtual ~ClientLink();
 
-		virtual void sendMessage( const Bu::FString &sMsg )=0;
+		virtual void sendMessage( const Bu::String &sMsg )=0;
 	};
 };
 
