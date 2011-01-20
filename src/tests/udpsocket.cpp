@@ -17,7 +17,7 @@ int main( int argc, char *argv[] )
 			char buf[1501];
 			int iRead = udp.read( buf, 1500 );
 			buf[iRead] = '\0';
-			sio << "Read(" << iRead << "): '" << buf << "'";
+			sio << "Read(" << iRead << "): '" << buf << "'" << sio.nl;
 		}
 	}
 	else if( argv[1][0] == 'b' )
