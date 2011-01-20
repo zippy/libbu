@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/atom.h"
 #include "bu/sptr.h"
 
@@ -15,8 +15,8 @@ public:
 	Person(){};
 	virtual ~Person(){};
 
-	Bu::Atom<Bu::FString> sFirstName;
-	Bu::Atom<Bu::FString> sLastName;
+	Bu::Atom<Bu::String> sFirstName;
+	Bu::Atom<Bu::String> sLastName;
 };
 
 typedef Bu::SPtr<Person> PersonPtr;
@@ -45,7 +45,7 @@ int main()
 	Swap(one, two);
 */
 
-	Bu::Atom<Bu::FString> sOne, sTwo;
+	Bu::Atom<Bu::String> sOne, sTwo;
 	sOne = "Hello";
 	sTwo = sOne;
 

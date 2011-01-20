@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -22,22 +22,22 @@ void Bu::Filter::close()
 	rNext.close();
 }
 
-long Bu::Filter::tell()
+Bu::size Bu::Filter::tell()
 {
 	return rNext.tell();
 }
 
-void Bu::Filter::seek( long offset )
+void Bu::Filter::seek( Bu::size offset )
 {
 	rNext.seek( offset );
 }
 
-void Bu::Filter::setPos( long pos )
+void Bu::Filter::setPos( Bu::size pos )
 {
 	rNext.setPos( pos );
 }
 
-void Bu::Filter::setPosEnd( long pos )
+void Bu::Filter::setPosEnd( Bu::size pos )
 {
 	rNext.setPosEnd( pos );
 }
@@ -87,12 +87,27 @@ void Bu::Filter::setBlocking( bool bBlocking )
 	rNext.setBlocking( bBlocking );
 }
 
-void Bu::Filter::setSize( long )
+void Bu::Filter::setSize( Bu::size )
 {
 }
 
 void Bu::Filter::flush()
 {
 	rNext.flush();
+}
+
+Bu::size Bu::Filter::getSize() const
+{
+	return rNext.getSize();
+}
+
+Bu::size Bu::Filter::getBlockSize() const
+{
+	return rNext.getBlockSize();
+}
+
+Bu::String Bu::Filter::getLocation() const
+{
+	return rNext.getLocation();
 }
 

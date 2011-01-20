@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -69,7 +69,7 @@ void Bu::Logger::log( uint32_t nLevel, const char *sFile, const char *sFunction,
 #endif
 }
 
-void Bu::Logger::setFormat( const Bu::FString &str )
+void Bu::Logger::setFormat( const Bu::String &str )
 {
 	sLogFormat = "";
 
@@ -93,7 +93,7 @@ void Bu::Logger::setFormat( const Bu::FString &str )
 		if( *s == '%' )
 		{
 			sLogFormat += '%';
-			Bu::FString sBuf;
+			Bu::String sBuf;
 			for(;;)
 			{
 				s++;
@@ -166,10 +166,10 @@ void Bu::Logger::hexDump( uint32_t nLevel, const char *sFile,
 	log( nLevel, sFile, sFunction, nLine, "Displaying %ld bytes of %s.", nDataLen, lpName );
 	const unsigned char *pData = (const unsigned char *)pDataV;
 	int j = 0;
-	Bu::FString sBorder;
+	Bu::String sBorder;
 	for( int l = 0; l < 8*3+2*8+2+5; l++ ) sBorder += ((l!=11&&l!=37)?("-"):("+"));
 	log( nLevel, sFile, sFunction, nLine, sBorder.getStr() );
-	Bu::FString sLine;
+	Bu::String sLine;
 	for(;;)
 	{
 		{

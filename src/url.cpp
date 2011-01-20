@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -21,7 +21,7 @@ Bu::Url::Url()
 {
 }
 
-Bu::Url::Url( const Bu::FString &sUrl )
+Bu::Url::Url( const Bu::String &sUrl )
 {
 	parseUrl( sUrl );
 }
@@ -30,22 +30,22 @@ Bu::Url::~Url()
 {
 }
 
-void Bu::Url::parseUrl( const Bu::FString &sUrl )
+void Bu::Url::parseUrl( const Bu::String &sUrl )
 {
 	clear();
 
-	Bu::FString::const_iterator i = sUrl.begin();
+	Bu::String::const_iterator i = sUrl.begin();
 	parseProtocol( i );
 	parseUserPass( i );
 	parseHost( i );
 	parsePath( i );
 }
 
-Bu::FString Bu::Url::decode( const Bu::FString &sStr )
+Bu::String Bu::Url::decode( const Bu::String &sStr )
 {
-	Bu::FString sRet;
+	Bu::String sRet;
 	char buf[3] = {0, 0, 0};
-	for( Bu::FString::const_iterator i = sStr.begin(); i; i++ )
+	for( Bu::String::const_iterator i = sStr.begin(); i; i++ )
 	{
 		if( *i == '+' )
 		{
@@ -67,10 +67,10 @@ Bu::FString Bu::Url::decode( const Bu::FString &sStr )
 	return sRet;
 }
 
-Bu::FString Bu::Url::encode( const Bu::FString &sStr )
+Bu::String Bu::Url::encode( const Bu::String &sStr )
 {
-	Bu::FString sRet;
-	for( Bu::FString::const_iterator i = sStr.begin(); i; i++ )
+	Bu::String sRet;
+	for( Bu::String::const_iterator i = sStr.begin(); i; i++ )
 	{
 		if( *i == ' ' )
 		{
@@ -96,17 +96,17 @@ Bu::FString Bu::Url::encode( const Bu::FString &sStr )
 	return sRet;
 }
 
-void Bu::Url::parseProtocol( Bu::FString::const_iterator &i )
+void Bu::Url::parseProtocol( Bu::String::const_iterator &i )
 {
-	Bu::FString::const_iterator s = i.find("://", 3);
+	Bu::String::const_iterator s = i.find("://", 3);
 	if( !s )
 		throw Bu::ExceptionBase("No :// in url");
-	Bu::FString sTmp( i, s );
+	Bu::String sTmp( i, s );
 	setProtocol( sTmp );
 	i = s + 3;
 }
 
-void Bu::Url::setProtocol( const Bu::FString &sNewProto, bool bAutoSetPort )
+void Bu::Url::setProtocol( const Bu::String &sNewProto, bool bAutoSetPort )
 {
 	sProtocol = sNewProto;
 #ifndef WIN32
@@ -121,13 +121,13 @@ void Bu::Url::setProtocol( const Bu::FString &sNewProto, bool bAutoSetPort )
 #endif
 }
 
-void Bu::Url::parseUserPass( Bu::FString::const_iterator &i )
+void Bu::Url::parseUserPass( Bu::String::const_iterator &i )
 {
-	Bu::FString::const_iterator s = i.find('@');
+	Bu::String::const_iterator s = i.find('@');
 	if( !s )
 		return;
 
-	Bu::FString::const_iterator p = i.find(':');
+	Bu::String::const_iterator p = i.find(':');
 	if( p )
 	{
 		sUser.set( i, p );
@@ -141,9 +141,9 @@ void Bu::Url::parseUserPass( Bu::FString::const_iterator &i )
 	i = s + 1;
 }
 
-void Bu::Url::parseHost( Bu::FString::const_iterator &i )
+void Bu::Url::parseHost( Bu::String::const_iterator &i )
 {
-	Bu::FString::const_iterator s = i;
+	Bu::String::const_iterator s = i;
 	for( ; s && *s != '/'; s++ )
 	{
 		if( *s == ':' )
@@ -151,7 +151,7 @@ void Bu::Url::parseHost( Bu::FString::const_iterator &i )
 			sHost.set( i, s );
 			i = s + 1;
 			s = i.find('/');
-			Bu::FString sPort( i, s );
+			Bu::String sPort( i, s );
 			iPort = strtol( sPort.getStr(), NULL, 10 );
 			i = s;
 			return;
@@ -161,17 +161,17 @@ void Bu::Url::parseHost( Bu::FString::const_iterator &i )
 	i = s;
 }
 
-void Bu::Url::parsePath( const Bu::FString &sPath )
+void Bu::Url::parsePath( const Bu::String &sPath )
 {
-	Bu::FString::const_iterator i = sPath.begin();
+	Bu::String::const_iterator i = sPath.begin();
 	parsePath( i );
 }
 
-void Bu::Url::parsePath( Bu::FString::const_iterator &i )
+void Bu::Url::parsePath( Bu::String::const_iterator &i )
 {
 	if( i )
 	{
-		Bu::FString::const_iterator s = i.find('?');
+		Bu::String::const_iterator s = i.find('?');
 		sPath.set( i, s );
 		i = s + 1;
 		if( s )
@@ -185,17 +185,17 @@ void Bu::Url::parsePath( Bu::FString::const_iterator &i )
 	}
 }
 
-void Bu::Url::parseParams( const Bu::FString &sQuery )
+void Bu::Url::parseParams( const Bu::String &sQuery )
 {
-	Bu::FString::const_iterator i = sQuery.begin();
+	Bu::String::const_iterator i = sQuery.begin();
 	parseParams( i );
 }
 
-void Bu::Url::parseParams( Bu::FString::const_iterator &i )
+void Bu::Url::parseParams( Bu::String::const_iterator &i )
 {
 	bool bName = true;
-	Bu::FString sName, sValue;
-	for( Bu::FString::const_iterator s = i; s; s++ )
+	Bu::String sName, sValue;
+	for( Bu::String::const_iterator s = i; s; s++ )
 	{
 		if( bName )
 		{
@@ -239,7 +239,7 @@ void Bu::Url::parseParams( Bu::FString::const_iterator &i )
 	}
 }
 
-void Bu::Url::addParam( const Bu::FString &n, const Bu::FString &v )
+void Bu::Url::addParam( const Bu::String &n, const Bu::String &v )
 {
 	lParam.append( Param( n, v ) );
 }
@@ -254,9 +254,9 @@ void Bu::Url::clear()
 	iPort.clear();
 }
 
-Bu::FString Bu::Url::getFullPath() const
+Bu::String Bu::Url::getFullPath() const
 {
-	Bu::FString sBuf = sPath;
+	Bu::String sBuf = sPath;
 	if( !lParam.isEmpty() )
 	{
 		for( ParamList::const_iterator i = lParam.begin(); i; i++ )
@@ -277,9 +277,9 @@ Bu::FString Bu::Url::getFullPath() const
 	return sBuf;
 }
 
-Bu::FString Bu::Url::getUrl() const
+Bu::String Bu::Url::getUrl() const
 {
-	Bu::FString sBuf = sProtocol + "://" + sHost + getFullPath();
+	Bu::String sBuf = sProtocol + "://" + sHost + getFullPath();
 	return sBuf;
 }
 

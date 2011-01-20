@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -12,7 +12,7 @@
 #include <sys/types.h>
 
 #include "bu/stream.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/exceptionbase.h"
 
 namespace Bu
@@ -26,19 +26,19 @@ namespace Bu
 	class File : public Bu::Stream
 	{
 	public:
-		File( const Bu::FString &sName, int iFlags );
+		File( const Bu::String &sName, int iFlags );
 		File( int fd );
 		virtual ~File();
 
 		virtual void close();
-		virtual size_t read( void *pBuf, size_t nBytes );
-		virtual size_t write( const void *pBuf, size_t nBytes );
+		virtual Bu::size read( void *pBuf, Bu::size nBytes );
+		virtual Bu::size write( const void *pBuf, Bu::size nBytes );
 		using Stream::write;
 
-		virtual long tell();
-		virtual void seek( long offset );
-		virtual void setPos( long pos );
-		virtual void setPosEnd( long pos );
+		virtual Bu::size tell();
+		virtual void seek( Bu::size offset );
+		virtual void setPos( Bu::size pos );
+		virtual void setPosEnd( Bu::size pos );
 		virtual bool isEos();
 		virtual bool isOpen();
 
@@ -70,17 +70,21 @@ namespace Bu
 								/// Same as Write|Create|Truncate
 		};
 
-		virtual void setSize( long iSize );
+		virtual void setSize( Bu::size iSize );
+
+		virtual size getSize() const;
+		virtual size getBlockSize() const;
+		virtual Bu::String getLocation() const;
 
 		/**
 		 * Create a temp file and return its handle.  The file is opened 
 		 * Read/Write.
-		 *@param sName (Bu::FString) Give in the form: "/tmp/tmpfileXXXXXXXX"
+		 *@param sName (Bu::String) Give in the form: "/tmp/tmpfileXXXXXXXX"
 		 *		It will alter your (sName) setting the 'X's to random
 		 *		characters.
 		 *@returns (Bu::File) A file object representing your temp file.
 		 */
-		static Bu::File tempFile( Bu::FString &sName );
+		static Bu::File tempFile( Bu::String &sName );
 
 #ifndef WIN32
 		/**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -21,15 +21,15 @@ namespace Bu
 	{
 	public:
 		TafProperty( const Bu::TafProperty &rSrc );
-		TafProperty( const Bu::FString &sName, const Bu::FString &sValue );
+		TafProperty( const Bu::String &sName, const Bu::String &sValue );
 		virtual ~TafProperty();
 
-		const Bu::FString &getName() const;
-		const Bu::FString &getValue() const;
+		const Bu::String &getName() const;
+		const Bu::String &getValue() const;
 
 	private:
-		Bu::FString sName;
-		Bu::FString sValue;
+		Bu::String sName;
+		Bu::String sValue;
 	};
 }
 

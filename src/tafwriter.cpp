@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -88,10 +88,10 @@ void Bu::TafWriter::writeComment( const Bu::TafComment *pComment )
 	}
 }
 
-void Bu::TafWriter::writeString( const Bu::FString &str )
+void Bu::TafWriter::writeString( const Bu::String &str )
 {
 	sOut.write("\"", 1 );
-	for( Bu::FString::const_iterator s = str.begin(); s != str.end(); s++ )
+	for( Bu::String::const_iterator s = str.begin(); s != str.end(); s++ )
 	{
 		if( *s == '\"' )
 			sOut.write("\\\"", 2 );

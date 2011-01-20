@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -27,10 +27,10 @@ public:
 	}
 
 	virtual int onRequest( const StrHash &hParams,
-		const Bu::FString &sStdIn, Bu::Stream &sStdOut,
+		const Bu::String &sStdIn, Bu::Stream &sStdOut,
 		Bu::Stream &/*sStdErr*/ )
 	{
-		Bu::FString sOut("Content-Type: text/html\r\n\r\n");
+		Bu::String sOut("Content-Type: text/html\r\n\r\n");
 		sOut += "<html><body><h1>Environment:</h1><ul>";
 		for( StrHash::const_iterator i = hParams.begin(); i; i++ )
 		{
@@ -44,8 +44,8 @@ public:
 		sOut += "</li></ul>";
 		sOut += "<h1>Stdin:</h1>";
 		sOut.formatAppend("%d bytes<pre>", sStdIn.getSize() );
-		Bu::FString sL, sR;
-		for( Bu::FString::const_iterator i = sStdIn.begin();
+		Bu::String sL, sR;
+		for( Bu::String::const_iterator i = sStdIn.begin();
 			i; i++ )
 		{
 			sL.formatAppend("%02X ",

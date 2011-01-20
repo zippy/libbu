@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -158,14 +158,14 @@ int Bu::UnitSuite::run( int argc, char *argv[] )
 	return 0;
 }
 
-Bu::File Bu::UnitSuite::tempFile( Bu::FString &sFileName )
+Bu::File Bu::UnitSuite::tempFile( Bu::String &sFileName )
 {
 	Bu::File f = Bu::File::tempFile( sFileName );
 	lFileCleanup.append( sFileName );
 	return f;
 }
 
-void Bu::UnitSuite::add( Test fTest, const Bu::FString &sName, Expect e )
+void Bu::UnitSuite::add( Test fTest, const Bu::String &sName, Expect e )
 {
 	TestInfo ti;
 	ti.sName = sName;
@@ -173,7 +173,7 @@ void Bu::UnitSuite::add( Test fTest, const Bu::FString &sName, Expect e )
 	long index = ti.sName.rfindIdx("::");
 	if( index != -1 )
 	{
-		FString tmp = sSuiteName;
+		String tmp = sSuiteName;
 		tmp += ti.sName.getStr()+index;
 		ti.sName = tmp;
 	}
@@ -183,7 +183,7 @@ void Bu::UnitSuite::add( Test fTest, const Bu::FString &sName, Expect e )
 		iNameWidth = ti.sName.getSize();
 }
 
-void Bu::UnitSuite::setName( const FString &sName )
+void Bu::UnitSuite::setName( const String &sName )
 {
 	sSuiteName = sName;
 }

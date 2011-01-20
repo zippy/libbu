@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -26,10 +26,10 @@ namespace Bu
 		~Sha1();
 
 		virtual void reset();
-		virtual void setSalt( const Bu::FString &sSalt );
+		virtual void setSalt( const Bu::String &sSalt );
 		virtual void addData( const void *sData, int iSize );
 		using CryptoHash::addData;
-		virtual FString getResult();
+		virtual String getResult();
 		virtual void writeResult( Stream &sOut );
 
 		void update( const char* data, int num );

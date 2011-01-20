@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -27,10 +27,10 @@ namespace Bu
 		virtual ~NewLine();
 
 		virtual void start();
-		virtual size_t stop();
+		virtual Bu::size stop();
 
-		virtual size_t read( void *pBuf, size_t iAmnt );
-		virtual size_t write( const void *pBuf, size_t iAmnt );
+		virtual Bu::size read( void *pBuf, Bu::size iAmnt );
+		virtual Bu::size write( const void *pBuf, Bu::size iAmnt );
 
 	private:
 		bool bExChar;

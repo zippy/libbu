@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #ifndef BU_LEXER_H
 #define BU_LEXER_H
 
@@ -44,7 +51,7 @@ namespace Bu
 
 		virtual Token *nextToken()=0;
 
-		virtual Bu::FString tokenToString( const Token &t );
+		virtual Bu::String tokenToString( const Token &t );
 	};
 };
 

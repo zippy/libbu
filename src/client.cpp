@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -40,7 +40,7 @@ Bu::Client::~Client()
 void Bu::Client::processInput()
 {
 	char buf[RBS];
-	size_t nRead, nTotal=0;
+	Bu::size nRead, nTotal=0;
 
 	for(;;)
 	{
@@ -109,12 +109,12 @@ void Bu::Client::clearProtocol()
 	pProto = NULL;
 }
 /*
-Bu::FString &Bu::Client::getInput()
+Bu::String &Bu::Client::getInput()
 {
 	return sReadBuf;
 }
 
-Bu::FString &Bu::Client::getOutput()
+Bu::String &Bu::Client::getOutput()
 {
 	return sWriteBuf;
 }
@@ -126,72 +126,72 @@ bool Bu::Client::isOpen()
 	return pTopStream->isOpen();
 }
 
-size_t Bu::Client::write( const Bu::FString &sData )
+Bu::size Bu::Client::write( const Bu::String &sData )
 {
 	return qbWrite.write( sData.getStr(), sData.getSize() );
 }
 
-size_t Bu::Client::write( const void *pData, size_t nBytes )
+Bu::size Bu::Client::write( const void *pData, Bu::size nBytes )
 {
 	return qbWrite.write( pData, nBytes );
 }
 
-size_t Bu::Client::write( int8_t nData )
+Bu::size Bu::Client::write( int8_t nData )
 {
 	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-size_t Bu::Client::write( int16_t nData )
+Bu::size Bu::Client::write( int16_t nData )
 {
 	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-size_t Bu::Client::write( int32_t nData )
+Bu::size Bu::Client::write( int32_t nData )
 {
 	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-size_t Bu::Client::write( int64_t nData )
+Bu::size Bu::Client::write( int64_t nData )
 {
 	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-size_t Bu::Client::write( uint8_t nData )
+Bu::size Bu::Client::write( uint8_t nData )
 {
 	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-size_t Bu::Client::write( uint16_t nData )
+Bu::size Bu::Client::write( uint16_t nData )
 {
 	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-size_t Bu::Client::write( uint32_t nData )
+Bu::size Bu::Client::write( uint32_t nData )
 {
 	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-size_t Bu::Client::write( uint64_t nData )
+Bu::size Bu::Client::write( uint64_t nData )
 {
 	return qbWrite.write( (const char *)&nData, sizeof(nData) );
 }
 
-size_t Bu::Client::read( void *pData, size_t nBytes )
+Bu::size Bu::Client::read( void *pData, Bu::size nBytes )
 {
 	return qbRead.read( pData, nBytes );
 }
 
-size_t Bu::Client::peek( void *pData, int nBytes, int nOffset )
+Bu::size Bu::Client::peek( void *pData, int nBytes, int nOffset )
 {
 	return qbRead.peek( pData, nBytes, nOffset );
 }
 
-long Bu::Client::getInputSize()
+Bu::size Bu::Client::getInputSize()
 {
 	return qbRead.getSize();
 }
 
-long Bu::Client::getOutputSize()
+Bu::size Bu::Client::getOutputSize()
 {
 	return qbWrite.getSize();
 }
@@ -221,7 +221,7 @@ Bu::ClientLink *Bu::Client::getLink()
 	return pfLink->createLink( this );
 }
 
-void Bu::Client::onMessage( const Bu::FString &sMsg )
+void Bu::Client::onMessage( const Bu::String &sMsg )
 {
 	if( pProto )
 		pProto->onMessage( this, sMsg );
@@ -233,22 +233,22 @@ void Bu::Client::tick()
 		pProto->onTick( this );
 }
 
-long Bu::Client::tell()
+Bu::size Bu::Client::tell()
 {
 	return 0;
 }
 
-void Bu::Client::seek( long offset )
+void Bu::Client::seek( Bu::size offset )
 {
 	return qbRead.seek( offset );
 }
 
-void Bu::Client::setPos( long )
+void Bu::Client::setPos( Bu::size )
 {
 	throw Bu::ExceptionBase();
 }
 
-void Bu::Client::setPosEnd( long )
+void Bu::Client::setPosEnd( Bu::size )
 {
 	throw Bu::ExceptionBase();
 }
@@ -298,8 +298,23 @@ void Bu::Client::setBlocking( bool )
 	throw Bu::ExceptionBase();
 }
 
-void Bu::Client::setSize( long )
+void Bu::Client::setSize( Bu::size )
 {
 	throw Bu::ExceptionBase();
+}
+
+Bu::size Bu::Client::getSize() const
+{
+	return 0;
+}
+
+Bu::size Bu::Client::getBlockSize() const
+{
+	return pSocket->getBlockSize();
+}
+
+Bu::String Bu::Client::getLocation() const
+{
+	return pSocket->getLocation();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -133,7 +133,7 @@ void Bu::Process::close()
 	}
 }
 
-size_t Bu::Process::read( void *pBuf, size_t nBytes )
+Bu::size Bu::Process::read( void *pBuf, Bu::size nBytes )
 {
 	if( bStdOutEos )
 		return 0;
@@ -145,7 +145,7 @@ size_t Bu::Process::read( void *pBuf, size_t nBytes )
 		throw Bu::ExceptionBase( strerror( errno ) );
 	if( FD_ISSET( iStdOut, &rfds ) || bBlocking )
 	{
-		ssize_t nRead = TEMP_FAILURE_RETRY( ::read( iStdOut, pBuf, nBytes ) );
+		Bu::size nRead = TEMP_FAILURE_RETRY( ::read( iStdOut, pBuf, nBytes ) );
 		if( nRead == 0 )
 		{
 			bStdOutEos = true;
@@ -163,7 +163,7 @@ size_t Bu::Process::read( void *pBuf, size_t nBytes )
 	return 0;
 }
 
-size_t Bu::Process::readErr( void *pBuf, size_t nBytes )
+Bu::size Bu::Process::readErr( void *pBuf, Bu::size nBytes )
 {
 	if( bStdErrEos )
 		return 0;
@@ -175,7 +175,7 @@ size_t Bu::Process::readErr( void *pBuf, size_t nBytes )
 		throw Bu::ExceptionBase( strerror( errno ) );
 	if( FD_ISSET( iStdErr, &rfds ) || bBlocking )
 	{
-		ssize_t nRead = TEMP_FAILURE_RETRY( ::read( iStdErr, pBuf, nBytes ) );
+		Bu::size nRead = TEMP_FAILURE_RETRY( ::read( iStdErr, pBuf, nBytes ) );
 		if( nRead == 0 )
 		{
 			bStdErrEos = true;
@@ -193,25 +193,25 @@ size_t Bu::Process::readErr( void *pBuf, size_t nBytes )
 	return 0;
 }
 
-size_t Bu::Process::write( const void *pBuf, size_t nBytes )
+Bu::size Bu::Process::write( const void *pBuf, Bu::size nBytes )
 {
 	return TEMP_FAILURE_RETRY( ::write( iStdIn, pBuf, nBytes ) );
 }
 
-long Bu::Process::tell()
+Bu::size Bu::Process::tell()
 {
 	return 0;
 }
 
-void Bu::Process::seek( long )
+void Bu::Process::seek( Bu::size )
 {
 }
 
-void Bu::Process::setPos( long )
+void Bu::Process::setPos( Bu::size )
 {
 }
 
-void Bu::Process::setPosEnd( long )
+void Bu::Process::setPosEnd( Bu::size )
 {
 }
 
@@ -278,8 +278,23 @@ void Bu::Process::setBlocking( bool bBlocking )
 	this->bBlocking = bBlocking;
 }
 
-void Bu::Process::setSize( long )
+void Bu::Process::setSize( Bu::size )
 {
+}
+
+Bu::size Bu::Process::getBlockSize() const
+{
+	return 0;
+}
+
+Bu::size Bu::Process::getSize() const
+{
+	return 0;
+}
+
+Bu::String Bu::Process::getLocation() const
+{
+	return "";
 }
 
 void Bu::Process::select( bool &bStdOut, bool &bStdErr )

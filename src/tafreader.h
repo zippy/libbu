@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -9,7 +9,7 @@
 #define BU_TAF_READER_H
 
 #include <stdint.h>
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
@@ -38,7 +38,7 @@ namespace Bu
 		void ws();
 		bool isws();
 		void next();
-		Bu::FString readStr();
+		Bu::String readStr();
 		void rawread( char *c );
 		char c, la;
 		Bu::Stream &sIn;

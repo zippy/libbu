@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -17,7 +17,7 @@
 #include "bu/stack.h"
 #include "bu/exceptionbase.h"
 #include "bu/hash.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
@@ -41,8 +41,8 @@ namespace Bu
 			virtual prec operator()( prec )=0;
 		};
 
-		typedef Hash<Bu::FString, prec> varHash;
-		typedef Hash<Bu::FString, Func *> funcHash;
+		typedef Hash<Bu::String, prec> varHash;
+		typedef Hash<Bu::String, Func *> funcHash;
 
 		Formula()
 		{
@@ -57,7 +57,7 @@ namespace Bu
 			}
 		}
 
-		prec run( const Bu::FString &sFormulaSrc )
+		prec run( const Bu::String &sFormulaSrc )
 		{
 			if( sFormulaSrc.isEmpty() )
 				throw FormulaException("Empty formula, nothing to do.");
@@ -158,7 +158,7 @@ namespace Bu
 
 		Bu::Stack<symType> sOper;
 		Bu::Stack<prec> sValue;
-		Bu::Stack<Bu::FString> sFunc;
+		Bu::Stack<Bu::String> sFunc;
 
 	private:
 		symType getPrec( symType nOper )

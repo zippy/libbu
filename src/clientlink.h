@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -8,7 +8,7 @@
 #ifndef BU_CLIENT_LINK_H
 #define BU_CLIENT_LINK_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
@@ -18,7 +18,7 @@ namespace Bu
 		ClientLink();
 		virtual ~ClientLink();
 
-		virtual void sendMessage( const Bu::FString &sMsg )=0;
+		virtual void sendMessage( const Bu::String &sMsg )=0;
 	};
 };
 

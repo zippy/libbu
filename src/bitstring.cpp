@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -444,9 +444,9 @@ long Bu::BitString::getHighestOrderBitPos()
 	return -1;
 }
 
-Bu::FString Bu::BitString::toString()
+Bu::String Bu::BitString::toString()
 {
-	Bu::FString sRet;
+	Bu::String sRet;
 	for( int j = iBits-1; j >= 0; j-- )
 		sRet.append( getBit( j )?'1':'0' );
 	return sRet;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -64,7 +64,7 @@ void Bu::Base64::start()
 {
 }
 
-size_t Bu::Base64::stop()
+Bu::size Bu::Base64::stop()
 {
 //	if( eMode |= Encode )
 	{
@@ -89,11 +89,11 @@ size_t Bu::Base64::stop()
 //	}
 }
 
-size_t Bu::Base64::read( void *pBuf, size_t nBytes )
+Bu::size Bu::Base64::read( void *pBuf, Bu::size nBytes )
 {
 	if( bEosIn == true && iRPos == iChars )
 		return 0;
-	size_t sIn = 0;
+	Bu::size sIn = 0;
 	char buf[4];
 	while( sIn < nBytes )
 	{
@@ -153,11 +153,11 @@ size_t Bu::Base64::read( void *pBuf, size_t nBytes )
 	return sIn;
 }
 
-size_t Bu::Base64::write( const void *pBuf, size_t nBytes )
+Bu::size Bu::Base64::write( const void *pBuf, Bu::size nBytes )
 {
-	size_t sOut = 0;
+	Bu::size sOut = 0;
 	char outBuf[4];
-	for( size_t j = 0; j < nBytes; j++ )
+	for( Bu::size j = 0; j < nBytes; j++ )
 	{
 		iBuf |= (((uint8_t *)pBuf)[j])<<((2-iBPos++)*8);
 		if( iBPos == 3 )

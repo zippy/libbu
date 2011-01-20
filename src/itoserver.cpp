@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -47,7 +47,7 @@ void Bu::ItoServer::addPort( int nPort, int nPoolSize )
 	hServers.insert( nSocket, s );
 }
 
-void Bu::ItoServer::addPort( const FString &sAddr, int nPort, int nPoolSize )
+void Bu::ItoServer::addPort( const String &sAddr, int nPort, int nPoolSize )
 {
 	TcpServerSocket *s = new TcpServerSocket( sAddr, nPort, nPoolSize );
 	int nSocket = s->getSocket();
@@ -163,7 +163,7 @@ void Bu::ItoServer::ItoClient::run()
 		while( !qMsg.isEmpty() )
 		{
 			imProto.lock();
-			Bu::FString *pMsg = qMsg.dequeue();
+			Bu::String *pMsg = qMsg.dequeue();
 			pClient->onMessage( *pMsg );
 			delete pMsg;
 			pClient->processOutput();
@@ -205,7 +205,7 @@ Bu::ItoServer::SrvClientLink::~SrvClientLink()
 {
 }
 
-void Bu::ItoServer::SrvClientLink::sendMessage( const Bu::FString &sMsg )
+void Bu::ItoServer::SrvClientLink::sendMessage( const Bu::String &sMsg )
 {
 	if( !pClient->imProto.trylock() )
 	{
@@ -215,7 +215,7 @@ void Bu::ItoServer::SrvClientLink::sendMessage( const Bu::FString &sMsg )
 	}
 	else
 	{
-		Bu::FString *pMsg = new Bu::FString( sMsg );
+		Bu::String *pMsg = new Bu::String( sMsg );
 		pClient->qMsg.enqueue( pMsg );
 	}
 }

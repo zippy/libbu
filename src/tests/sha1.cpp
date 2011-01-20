@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -28,8 +28,8 @@ int main( int argc, char *argv[] )
 				break;
 		}
 
-		Bu::FString sRes = m.getResult();
-		for( Bu::FString::iterator i = sRes.begin(); i; i++ )
+		Bu::String sRes = m.getResult();
+		for( Bu::String::iterator i = sRes.begin(); i; i++ )
 		{
 			sio << Fmt::hex(2,false) << (int)(unsigned char)(*i);
 		}

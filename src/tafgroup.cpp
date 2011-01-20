@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -32,7 +32,7 @@ Bu::TafGroup::TafGroup( const TafGroup &rSrc ) :
 	}
 }
 
-Bu::TafGroup::TafGroup( const Bu::FString &sName ) :
+Bu::TafGroup::TafGroup( const Bu::String &sName ) :
 	TafNode( typeGroup ),
 	sName( sName )
 {
@@ -46,12 +46,12 @@ Bu::TafGroup::~TafGroup()
 	}
 }
 
-const Bu::FString &Bu::TafGroup::getName() const
+const Bu::String &Bu::TafGroup::getName() const
 {
 	return sName;
 }
 
-void Bu::TafGroup::setName( const Bu::FString &sName )
+void Bu::TafGroup::setName( const Bu::String &sName )
 {
 	this->sName = sName;
 }
@@ -102,23 +102,23 @@ Bu::TafComment *Bu::TafGroup::addChild( TafComment *pNode )
 	return pNode;
 }
 
-Bu::TafGroup *Bu::TafGroup::addGroup( const Bu::FString &sName )
+Bu::TafGroup *Bu::TafGroup::addGroup( const Bu::String &sName )
 {
 	return addChild( new TafGroup( sName ) );
 }
 
 Bu::TafProperty *Bu::TafGroup::addProperty(
-	const Bu::FString &sName, const Bu::FString &sValue )
+	const Bu::String &sName, const Bu::String &sValue )
 {
 	return addChild( new TafProperty( sName, sValue ) );
 }
 
-bool Bu::TafGroup::hasChild( const Bu::FString &sName ) const
+bool Bu::TafGroup::hasChild( const Bu::String &sName ) const
 {
 	return hChildren.has( sName );
 }
 
-const Bu::TafGroup::GroupList &Bu::TafGroup::getChildren( const Bu::FString &sName ) const
+const Bu::TafGroup::GroupList &Bu::TafGroup::getChildren( const Bu::String &sName ) const
 {
 	try {
 		return hChildren.get( sName );
@@ -134,7 +134,7 @@ const Bu::TafGroup::NodeList &Bu::TafGroup::getChildren() const
 	return lChildren;
 }
 
-const Bu::TafGroup *Bu::TafGroup::getChild( const Bu::FString &sName ) const
+const Bu::TafGroup *Bu::TafGroup::getChild( const Bu::String &sName ) const
 {
 	try {
 		return hChildren.get( sName ).first();
@@ -145,12 +145,12 @@ const Bu::TafGroup *Bu::TafGroup::getChild( const Bu::FString &sName ) const
 	}
 }
 
-bool Bu::TafGroup::hasProperty( const Bu::FString &sName ) const
+bool Bu::TafGroup::hasProperty( const Bu::String &sName ) const
 {
 	return hProp.has( sName );
 }
 
-const Bu::TafGroup::PropList &Bu::TafGroup::getProperties( const Bu::FString &sName ) const
+const Bu::TafGroup::PropList &Bu::TafGroup::getProperties( const Bu::String &sName ) const
 {
 	try {
 		return hProp.get( sName );
@@ -161,7 +161,7 @@ const Bu::TafGroup::PropList &Bu::TafGroup::getProperties( const Bu::FString &sN
 	}
 }
 
-const Bu::FString &Bu::TafGroup::getProperty( const Bu::FString &sName ) const
+const Bu::String &Bu::TafGroup::getProperty( const Bu::String &sName ) const
 {
 	try {
 		return hProp.get( sName ).first();
@@ -172,8 +172,8 @@ const Bu::FString &Bu::TafGroup::getProperty( const Bu::FString &sName ) const
 	}	
 }
 
-const Bu::FString &Bu::TafGroup::getProperty( const Bu::FString &sName,
-	const Bu::FString &sDef ) const
+const Bu::String &Bu::TafGroup::getProperty( const Bu::String &sName,
+	const Bu::String &sDef ) const
 {
 	try
 	{
@@ -186,7 +186,7 @@ const Bu::FString &Bu::TafGroup::getProperty( const Bu::FString &sName,
 }
 
 const Bu::TafGroup *Bu::TafGroup::getChildByPath(
-		const Bu::FString &sPath ) const
+		const Bu::String &sPath ) const
 {
 	return getChildByPath( sPath.split('/') );
 }
@@ -203,12 +203,12 @@ const Bu::TafGroup *Bu::TafGroup::getChildByPath( Bu::StrList lPath ) const
 	return cur;
 }
 
-const Bu::FString &Bu::TafGroup::getByPath( const Bu::FString &sPath ) const
+const Bu::String &Bu::TafGroup::getByPath( const Bu::String &sPath ) const
 {
 	return getByPath( sPath.split('/') );
 }
 
-const Bu::FString &Bu::TafGroup::getByPath( Bu::StrList lPath ) const
+const Bu::String &Bu::TafGroup::getByPath( Bu::StrList lPath ) const
 {
 	const Bu::TafGroup *cur = this;
 

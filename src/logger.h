@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -9,7 +9,7 @@
 #define BU_LOGGER_H
 
 #include "bu/singleton.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
@@ -78,7 +78,7 @@ namespace Bu
 	public:
 		void log( uint32_t nLevel, const char *sFile, const char *sFunction, int nLine, const char *sFormat, ...);
 
-		void setFormat( const Bu::FString &str );
+		void setFormat( const Bu::String &str );
 		void setMask( uint32_t n );
 		void setLevel( uint32_t n );
 		uint32_t getMask();
@@ -86,7 +86,7 @@ namespace Bu
 		void hexDump( uint32_t nLevel, const char *sFile, const char *sFunction, int nLine, const void *pData, long nDataLen, const char *lpName );
 
 	private:
-		Bu::FString sLogFormat;
+		Bu::String sLogFormat;
 		uint32_t nLevelMask;
 	};
 }

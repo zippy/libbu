@@ -1,16 +1,16 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
  */
 
-#include <bu/fstring.h>
+#include <bu/string.h>
 #include <bu/hash.h>
 
 int main()
 {
-	Bu::Hash<Bu::FString, int> hCmd;
+	Bu::Hash<Bu::String, int> hCmd;
 
 	hCmd.insert("help", 5 );
 	hCmd.insert("exit", 5 );

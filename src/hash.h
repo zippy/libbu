@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -411,7 +411,7 @@ namespace Bu
 	 * In order to use it, I recommend the following for all basic usage:
 	 *@code
 	 // Define a Hash typedef with strings as keys and ints as values.
-	 typedef Bu::Hash<Bu::FString, int> StrIntHash;
+	 typedef Bu::Hash<Bu::String, int> StrIntHash;
 
 	 // Create one
 	 StrIntHash hInts;

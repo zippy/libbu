@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_F_BASIC_STRING_H
-#define BU_F_BASIC_STRING_H
+#ifndef BU_STRING_H
+#define BU_STRING_H
 
 #include <stdint.h>
 #include <memory>
@@ -27,17 +27,15 @@ namespace Bu
 {
 	/** @cond DEVEL */
 	template< typename chr >
-	struct FStringChunk
+	struct StringChunk
 	{
 		long nLength;
 		chr *pData;
-		FStringChunk *pNext;
+		StringChunk *pNext;
 	};
 
-#define cpy( dest, src, size ) Bu::memcpy( dest, src, size*sizeof(chr) )
-	
 	template< typename chr, int nMinSize, typename chralloc,
-		typename chunkalloc> class FBasicString;
+		typename chunkalloc> class BasicString;
 
 	template<typename chr>
 	size_t strlen( const chr *pData )
@@ -76,24 +74,24 @@ namespace Bu
 	}
 
 	template<typename chr, int nMinSize, typename chralloc, typename chunkalloc>
-	struct FStringCore
+	struct StringCore
 	{
-	friend class FBasicString<chr, nMinSize, chralloc, chunkalloc>;
+	friend class BasicString<chr, nMinSize, chralloc, chunkalloc>;
 	friend class SharedCore<
-		FBasicString<chr, nMinSize, chralloc, chunkalloc>,
-		FStringCore<chr, nMinSize, chralloc, chunkalloc>
+		BasicString<chr, nMinSize, chralloc, chunkalloc>,
+		StringCore<chr, nMinSize, chralloc, chunkalloc>
 		>;
 	private:
-		typedef struct FStringCore<chr, nMinSize, chralloc, chunkalloc> MyType;
-		typedef struct FStringChunk<chr> Chunk;
-		FStringCore() :
+		typedef struct StringCore<chr, nMinSize, chralloc, chunkalloc> MyType;
+		typedef struct StringChunk<chr> Chunk;
+		StringCore() :
 			nLength( 0 ),
 			pFirst( NULL ),
 			pLast( NULL )
 		{
 		}
 
-		FStringCore( const MyType &rSrc ) :
+		StringCore( const MyType &rSrc ) :
 			nLength( rSrc.nLength ),
 			pFirst( NULL ),
 			pLast( NULL ),
@@ -111,14 +109,14 @@ namespace Bu
 				int iPos = 0;
 				while( pLink != NULL )
 				{
-					cpy( pFirst->pData+iPos, pLink->pData, pLink->nLength );
+					memcpy( pFirst->pData+iPos, pLink->pData, pLink->nLength );
 					iPos += pLink->nLength;
 					pLink = pLink->pNext;
 				}
 			}
 		}
 
-		virtual ~FStringCore()
+		virtual ~StringCore()
 		{
 			clear();
 		}
@@ -172,7 +170,7 @@ namespace Bu
 			pNew->pNext = pSrc->pNext;
 			pNew->nLength = pSrc->nLength;
 			pNew->pData = aChr.allocate( pSrc->nLength+1 );
-			cpy( pNew->pData, pSrc->pData, pSrc->nLength );
+			memcpy( pNew->pData, pSrc->pData, pSrc->nLength );
 			pNew->pData[pNew->nLength] = (chr)0;
 			return pNew;
 		}
@@ -214,7 +212,7 @@ namespace Bu
 	 * internal ref-counting means that if you pass strings around between
 	 * functions there's almost no overhead in time or memory since a reference
 	 * is created and no data is actually copied.  This also means that you
-	 * never need to put any FBasicString into a ref-counting container class.
+	 * never need to put any BasicString into a ref-counting container class.
 	 *
 	 *@param chr (typename) Type of character (i.e. char)
 	 *@param nMinSize (int) Chunk size (default: 256)
@@ -223,15 +221,15 @@ namespace Bu
 	 */
 	template< typename chr, int nMinSize=256,
 		typename chralloc=std::allocator<chr>,
-		typename chunkalloc=std::allocator<struct FStringChunk<chr> > >
-	class FBasicString : public SharedCore<
-						 FBasicString<chr, nMinSize, chralloc, chunkalloc>,
-						 FStringCore<chr, nMinSize, chralloc, chunkalloc> >
+		typename chunkalloc=std::allocator<struct StringChunk<chr> > >
+	class BasicString : public SharedCore<
+						 BasicString<chr, nMinSize, chralloc, chunkalloc>,
+						 StringCore<chr, nMinSize, chralloc, chunkalloc> >
 	{
 	protected:
-		typedef struct FStringChunk<chr> Chunk;
-		typedef struct FBasicString<chr, nMinSize, chralloc, chunkalloc> MyType;
-		typedef struct FStringCore<chr, nMinSize, chralloc, chunkalloc> Core;
+		typedef struct StringChunk<chr> Chunk;
+		typedef struct BasicString<chr, nMinSize, chralloc, chunkalloc> MyType;
+		typedef struct StringCore<chr, nMinSize, chralloc, chunkalloc> Core;
 
 		using SharedCore<MyType, Core >::core;
 		using SharedCore<MyType, Core >::_hardCopy;
@@ -240,7 +238,7 @@ namespace Bu
 		struct iterator;
 		typedef struct const_iterator
 		{
-			friend class FBasicString<chr, nMinSize, chralloc, chunkalloc>;
+			friend class BasicString<chr, nMinSize, chralloc, chunkalloc>;
 			friend struct iterator;
 		private:
 			const_iterator( Chunk *pChunk, int iPos ) :
@@ -474,7 +472,7 @@ namespace Bu
 		
 		typedef struct iterator
 		{
-			friend class FBasicString<chr, nMinSize, chralloc, chunkalloc>;
+			friend class BasicString<chr, nMinSize, chralloc, chunkalloc>;
 			friend struct const_iterator;
 		private:
 			iterator( Chunk *pChunk, int iPos ) :
@@ -719,52 +717,52 @@ namespace Bu
 		} iterator;
 
 	public:
-		FBasicString()
+		BasicString()
 		{
 		}
 
-		FBasicString( const chr *pData )
+		BasicString( const chr *pData )
 		{
 			append( pData );
 		}
 
-		FBasicString( const chr *pData, long nLength )
+		BasicString( const chr *pData, long nLength )
 		{
 			append( pData, nLength );
 		}
 
-		FBasicString( const MyType &rSrc ) :
+		BasicString( const MyType &rSrc ) :
 			SharedCore<MyType, Core>( rSrc )
 		{
 		}
 
-		FBasicString( const MyType &rSrc, long nLength )
+		BasicString( const MyType &rSrc, long nLength )
 		{
 			append( rSrc, nLength );
 		}
 		
-		FBasicString( const MyType &rSrc, long nStart, long nLength )
+		BasicString( const MyType &rSrc, long nStart, long nLength )
 		{
 			append( rSrc, nStart, nLength );
 		}
 
-		FBasicString( long nSize )
+		BasicString( long nSize )
 		{
 			core->pFirst = core->pLast = core->newChunk( nSize );
 			core->nLength = nSize;
 		}
 
-		FBasicString( const const_iterator &s )
+		BasicString( const const_iterator &s )
 		{
 			append( s );
 		}
 
-		FBasicString( const const_iterator &s, const const_iterator &e )
+		BasicString( const const_iterator &s, const const_iterator &e )
 		{
 			append( s, e );
 		}
 
-		virtual ~FBasicString()
+		virtual ~BasicString()
 		{
 		}
 
@@ -812,7 +810,7 @@ namespace Bu
 				int nAmnt = nMinSize - core->pLast->nLength;
 				if( nAmnt > nLen )
 					nAmnt = nLen;
-				cpy(
+				memcpy(
 					core->pLast->pData+core->pLast->nLength,
 					pData,
 					nAmnt
@@ -826,7 +824,7 @@ namespace Bu
 			if( nLen > 0 )
 			{
 				Chunk *pNew = core->newChunk( nLen );
-				cpy( pNew->pData, pData, nLen );
+				memcpy( pNew->pData, pData, nLen );
 				core->appendChunk( pNew );
 //				core->nLength += nLen;
 			}
@@ -852,8 +850,8 @@ namespace Bu
 		}
 
 		/**
-		 * Append another FString to this one.
-		 *@param sData (MyType &) The FString to append.
+		 * Append another String to this one.
+		 *@param sData (MyType &) The String to append.
 		 *@todo This function can be made much faster by not using getStr()
 		 */
 		void append( const MyType & sData )
@@ -862,8 +860,8 @@ namespace Bu
 		}
 		
 		/**
-		 * Append another FString to this one.
-		 *@param sData (MyType &) The FString to append.
+		 * Append another String to this one.
+		 *@param sData (MyType &) The String to append.
 		 *@param nLen How much data to append.
 		 *@todo This function can be made much faster by not using getStr()
 		 */
@@ -873,8 +871,8 @@ namespace Bu
 		}
 		
 		/**
-		 * Append another FString to this one.
-		 *@param sData (MyType &) The FString to append.
+		 * Append another String to this one.
+		 *@param sData (MyType &) The String to append.
 		 *@param nStart Start position in sData to start copying from.
 		 *@param nLen How much data to append.
 		 *@todo This function can be made much faster by not using getStr()
@@ -887,9 +885,9 @@ namespace Bu
 		}
 		
 		/**
-		 * Append data to this FString using the passed in iterator as a base.
+		 * Append data to this String using the passed in iterator as a base.
 		 * The iterator is const, it is not changed.
-		 *@param s Iterator from any compatible FBasicString to copy data from.
+		 *@param s Iterator from any compatible BasicString to copy data from.
 		 */
 		void append( const const_iterator &s )
 		{
@@ -898,7 +896,7 @@ namespace Bu
 			Chunk *pSrc = s.pChunk;
 
 			Chunk *pNew = core->newChunk( pSrc->nLength-s.iPos );
-			cpy( pNew->pData, pSrc->pData+s.iPos, pSrc->nLength-s.iPos );
+			memcpy( pNew->pData, pSrc->pData+s.iPos, pSrc->nLength-s.iPos );
 
 			_hardCopy();
 			core->appendChunk( pNew );
@@ -910,9 +908,9 @@ namespace Bu
 		}
 
 		/**
-		 * Append data to this FString using the passed in iterator as a base.
+		 * Append data to this String using the passed in iterator as a base.
 		 * The iterator is const, it is not changed.
-		 *@param s Iterator from any compatible FBasicString to copy data from.
+		 *@param s Iterator from any compatible BasicString to copy data from.
 		 */
 		void append( const iterator &s ) // I get complaints without this one
 		{
@@ -920,11 +918,11 @@ namespace Bu
 		}
 
 		/**
-		 * Append data to this FString using the passed in iterator as a base,
+		 * Append data to this String using the passed in iterator as a base,
 		 * and copy data until the ending iterator is reached.  The character
 		 * at the ending iterator is not copied.
 		 * The iterators are const, they are not changed.
-		 *@param s Iterator from any compatible FBasicString to copy data from.
+		 *@param s Iterator from any compatible BasicString to copy data from.
 		 *@param e Iterator to stop copying at.
 		 */
 		void append( const const_iterator &s, const const_iterator &e )
@@ -941,7 +939,7 @@ namespace Bu
 			{
 				// Simple case, they're the same chunk
 				Chunk *pNew = core->newChunk( e.iPos-s.iPos );
-				cpy( pNew->pData, s.pChunk->pData+s.iPos, e.iPos-s.iPos );
+				memcpy( pNew->pData, s.pChunk->pData+s.iPos, e.iPos-s.iPos );
 				core->appendChunk( pNew );
 			}
 			else
@@ -949,7 +947,7 @@ namespace Bu
 				// A little trickier, scan the blocks...
 				Chunk *pSrc = s.pChunk;
 				Chunk *pNew = core->newChunk( pSrc->nLength-s.iPos );
-				cpy( pNew->pData, pSrc->pData+s.iPos, pSrc->nLength-s.iPos );
+				memcpy( pNew->pData, pSrc->pData+s.iPos, pSrc->nLength-s.iPos );
 				core->appendChunk( pNew );
 
 				while( (pSrc = pSrc->pNext) != e.pChunk )
@@ -958,14 +956,14 @@ namespace Bu
 				}
 
 				pNew = core->newChunk( e.iPos );
-				cpy( pNew->pData, pSrc->pData, e.iPos );
+				memcpy( pNew->pData, pSrc->pData, e.iPos );
 				core->appendChunk( pNew );
 			}
 		}
 		
 		/**
-		 * Prepend another FString to this one.
-		 *@param sData (MyType &) The FString to prepend.
+		 * Prepend another String to this one.
+		 *@param sData (MyType &) The String to prepend.
 		 *@todo This function can be made much faster by not using getStr()
 		 */
 		void prepend( const MyType & sData )
@@ -987,7 +985,7 @@ namespace Bu
 			for( nLen = 0; pData[nLen] != (chr)0; nLen++ ) { }
 			
 			Chunk *pNew = core->newChunk( nLen );
-			cpy( pNew->pData, pData, nLen );
+			memcpy( pNew->pData, pData, nLen );
 
 			core->prependChunk( pNew );
 		}
@@ -1001,7 +999,7 @@ namespace Bu
 		{
 			Chunk *pNew = core->newChunk( nLen );
 			
-			cpy( pNew->pData, pData, nLen );
+			memcpy( pNew->pData, pData, nLen );
 
 			_hardCopy();
 			core->prependChunk( pNew );
@@ -1037,9 +1035,9 @@ namespace Bu
 				Chunk *p1 = core->newChunk( nPos );
 				Chunk *p2 = core->newChunk( nLen );
 				Chunk *p3 = core->newChunk( core->nLength-nPos );
-				cpy( p1->pData, core->pFirst->pData, nPos );
-				cpy( p2->pData, pData, nLen );
-				cpy( p3->pData, core->pFirst->pData+nPos, core->nLength-nPos );
+				memcpy( p1->pData, core->pFirst->pData, nPos );
+				memcpy( p2->pData, pData, nLen );
+				memcpy( p3->pData, core->pFirst->pData+nPos, core->nLength-nPos );
 				core->clear();
 				core->appendChunk( p1 );
 				core->appendChunk( p2 );
@@ -1063,8 +1061,8 @@ namespace Bu
 				_hardCopy();
 				Chunk *p1 = core->newChunk( nPos );
 				Chunk *p3 = core->newChunk( core->nLength-nPos );
-				cpy( p1->pData, core->pFirst->pData, nPos );
-				cpy( p3->pData, core->pFirst->pData+nPos, core->nLength-nPos );
+				memcpy( p1->pData, core->pFirst->pData, nPos );
+				memcpy( p3->pData, core->pFirst->pData+nPos, core->nLength-nPos );
 				core->clear();
 				core->appendChunk( p1 );
 				for( Chunk *pChnk = str.core->pFirst; pChnk;
@@ -1148,7 +1146,7 @@ namespace Bu
 			long nNewLen = (nNewSize<core->nLength)?(nNewSize):(core->nLength);
 			if( core->nLength > 0 )
 			{
-				cpy( pNew->pData, core->pFirst->pData, nNewLen );
+				memcpy( pNew->pData, core->pFirst->pData, nNewLen );
 				core->aChr.deallocate( core->pFirst->pData, core->pFirst->nLength+1 );
 				core->aChunk.deallocate( core->pFirst, 1 );
 			}
@@ -1282,8 +1280,8 @@ namespace Bu
 		}
 
 		/**
-		 * Plus equals operator for FString.
-		 *@param pData (const chr *) The data to append to your FString.
+		 * Plus equals operator for String.
+		 *@param pData (const chr *) The data to append to your String.
 		 */
 		MyType &operator+=( const chr *pData )
 		{
@@ -1293,8 +1291,8 @@ namespace Bu
 		}
 		
 		/**
-		 * Plus equals operator for FString.
-		 *@param rSrc (const MyType &) The FString to append to your FString.
+		 * Plus equals operator for String.
+		 *@param rSrc (const MyType &) The String to append to your String.
 		 */
 		MyType &operator+=( const MyType &rSrc )
 		{
@@ -1311,8 +1309,8 @@ namespace Bu
 		}
 
 		/**
-		 * Plus equals operator for FString.
-		 *@param cData (const chr) The character to append to your FString.
+		 * Plus equals operator for String.
+		 *@param cData (const chr) The character to append to your String.
 		 */
 		MyType &operator+=( const chr cData )
 		{
@@ -1335,7 +1333,7 @@ namespace Bu
 		/**
 		 * Assignment operator.
 		 *@param pData (const chr *) The character array to append to your
-		 *		FString.
+		 *		String.
 		 */
 		MyType &operator=( const chr *pData )
 		{
@@ -1366,8 +1364,8 @@ namespace Bu
 		}
 
 		/**
-		 * Reset your FString to this character array.
-		 *@param pData (const chr *) The character array to set your FString to.
+		 * Reset your String to this character array.
+		 *@param pData (const chr *) The character array to set your String to.
 		 */
 		void set( const chr *pData )
 		{
@@ -1376,8 +1374,8 @@ namespace Bu
 		}
 
 		/**
-		 * Reset your FString to this character array.
-		 *@param pData (const chr *) The character array to set your FString to.
+		 * Reset your String to this character array.
+		 *@param pData (const chr *) The character array to set your String to.
 		 *@param nSize (long) The length of the inputted character array.
 		 */
 		void set( const chr *pData, long nSize )
@@ -1467,7 +1465,7 @@ namespace Bu
 
 		/**
 		 * Assignment operator.
-		 *@param rSrc (const MyType &) The FString to set your FString to.
+		 *@param rSrc (const MyType &) The String to set your String to.
 		 */
 	/*	MyType &operator=( const MyType &rSrc )
 		{
@@ -1478,7 +1476,7 @@ namespace Bu
 		
 		/**
 		 * Equals comparison operator.
-		 *@param pData (const chr *) The character array to compare your FString
+		 *@param pData (const chr *) The character array to compare your String
 		 *		to.
 		 */
 		bool operator==( const chr *pData ) const
@@ -1508,7 +1506,7 @@ namespace Bu
 		
 		/**
 		 * Equals comparison operator.
-		 *@param pData (const MyType &) The FString to compare your FString to.
+		 *@param pData (const MyType &) The String to compare your String to.
 		 */
 		bool operator==( const MyType &pData ) const
 		{
@@ -1538,7 +1536,7 @@ namespace Bu
 
 		/**
 		 * Not equals comparison operator.
-		 *@param pData (const chr *) The character array to compare your FString
+		 *@param pData (const chr *) The character array to compare your String
 		 *		to.
 		 */
 		bool operator!=(const chr *pData ) const
@@ -1548,7 +1546,7 @@ namespace Bu
 		
 		/**
 		 * Not equals comparison operator.
-		 *@param pData (const MyType &) The FString to compare your FString to.
+		 *@param pData (const MyType &) The String to compare your String to.
 		 */
 		bool operator!=(const MyType &pData ) const
 		{
@@ -1939,7 +1937,7 @@ namespace Bu
 			long nNewLen = core->nLength - nAmnt;
 			flatten();
 			Chunk *pNew = core->newChunk( nNewLen );
-			cpy( pNew->pData, core->pFirst->pData+nAmnt, nNewLen );
+			memcpy( pNew->pData, core->pFirst->pData+nAmnt, nNewLen );
 			_hardCopy();
 			core->clear();
 			core->appendChunk( pNew );
@@ -2051,7 +2049,7 @@ namespace Bu
 			Chunk *i = core->pFirst;
 			for(;;)
 			{
-				cpy( pos, i->pData, i->nLength );
+				memcpy( pos, i->pData, i->nLength );
 				pos += i->nLength;
 				i = i->pNext;
 				if( i == NULL )
@@ -2069,15 +2067,15 @@ namespace Bu
 		}
 	};
 	
-	template<class T> FBasicString<T> operator+( const T *pLeft, const FBasicString<T> &rRight )
+	template<class T> BasicString<T> operator+( const T *pLeft, const BasicString<T> &rRight )
 	{
-		Bu::FBasicString<T> ret( pLeft );
+		Bu::BasicString<T> ret( pLeft );
 		ret.append( rRight );
 		return ret;
 	}
 
 	template<class chr, int b, class c, class d>
-	ArchiveBase &operator<<( ArchiveBase &ar, const FBasicString<chr, b, c, d> &s )
+	ArchiveBase &operator<<( ArchiveBase &ar, const BasicString<chr, b, c, d> &s )
 	{
 		long n = s.getSize();
 		ar << n;
@@ -2086,7 +2084,7 @@ namespace Bu
 	}
 
 	template<class chr, int b, class c, class d>
-	ArchiveBase &operator>>( ArchiveBase &ar, FBasicString<chr, b, c, d> &s )
+	ArchiveBase &operator>>( ArchiveBase &ar, BasicString<chr, b, c, d> &s )
 	{
 		long n;
 		ar >> n;
@@ -2094,8 +2092,38 @@ namespace Bu
 		ar.read( s.getStr(), n );
 		return ar;
 	}
-}
 
-#undef cpy
+	typedef BasicString<char> String;
+
+	template<typename T>
+	uint32_t __calcHashCode( const T &k );
+
+	template<typename T>
+	bool __cmpHashKeys( const T &a, const T &b );
+
+	template<> uint32_t __calcHashCode<String>( const String &k );
+	template<> bool __cmpHashKeys<String>(
+		const String &a, const String &b );
+	
+	template<typename t> void __tracer_format( const t &v );
+	template<> void __tracer_format<String>( const String &v );
+
+	bool &operator<<( bool &dst, const String &sIn );
+	uint8_t &operator<<( uint8_t &dst, const String &sIn );
+	int8_t &operator<<( int8_t &dst, const String &sIn );
+	char &operator<<( char &dst, const String &sIn );
+	uint16_t &operator<<( uint16_t &dst, const String &sIn );
+	int16_t &operator<<( int16_t &dst, const String &sIn );
+	uint32_t &operator<<( uint32_t &dst, const String &sIn );
+	int32_t &operator<<( int32_t &dst, const String &sIn );
+	uint64_t &operator<<( uint64_t &dst, const String &sIn );
+	int64_t &operator<<( int64_t &dst, const String &sIn );
+	float &operator<<( float &dst, const String &sIn );
+	double &operator<<( double &dst, const String &sIn );
+	long double &operator<<( long double &dst, const String &sIn );
+	Bu::String &operator<<( Bu::String &dst, const String &sIn );
+
+	typedef Bu::List<String> StringList;
+};
 
 #endif

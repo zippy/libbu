@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -10,7 +10,7 @@
 
 #include "bu/formatter.h"
 #include "bu/heap.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/file.h"
 
 typedef struct num
@@ -38,15 +38,15 @@ typedef struct num
 	}
 } num;
 
-void printHeap( Bu::Heap<Bu::FString> &h, int j )
+void printHeap( Bu::Heap<Bu::String> &h, int j )
 {
 //	return;
-	Bu::FString sFName;
+	Bu::String sFName;
 	sFName.format("graph-step-%02d.dot", j );
 	Bu::File fOut( sFName, Bu::File::WriteNew );
 	Bu::Formatter f( fOut );
 	f << "Graph step: " << j << ", total size: " << h.getSize() << f.nl;
-	for( Bu::Heap<Bu::FString>::iterator i = h.begin(); i; i++ )
+	for( Bu::Heap<Bu::String>::iterator i = h.begin(); i; i++ )
 	{
 		f << *i << f.nl;
 	}
@@ -73,7 +73,7 @@ int main()
 	}
 	printf("\n");
 */
-	Bu::Heap<Bu::FString> hStr;
+	Bu::Heap<Bu::String> hStr;
 	int j = 0;
 
 	hStr.enqueue("George");
@@ -100,7 +100,7 @@ int main()
 	}
 	printf("\n");
 
-	Bu::List<Bu::FString> lStr;
+	Bu::List<Bu::String> lStr;
 
 	lStr.insertSorted("George");
 	lStr.insertSorted("George");
@@ -110,7 +110,7 @@ int main()
 	lStr.insertSorted("Brianna");
 	lStr.insertSorted("Kate");
 	lStr.insertSorted("Soggy");
-	for( Bu::List<Bu::FString>::iterator i = lStr.begin(); i; i++ )
+	for( Bu::List<Bu::String>::iterator i = lStr.begin(); i; i++ )
 	{
 		printf("\"%s\" ", (*i).getStr() );
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -15,9 +15,9 @@ Bu::Stream::~Stream()
 {
 }
 
-Bu::FString Bu::Stream::readLine()
+Bu::String Bu::Stream::readLine()
 {
-	Bu::FString sRet;
+	Bu::String sRet;
 	
 	for(;;)
 	{
@@ -30,7 +30,7 @@ Bu::FString Bu::Stream::readLine()
 	}
 }
 
-size_t Bu::Stream::write( const Bu::FString &sBuf )
+Bu::size Bu::Stream::write( const Bu::String &sBuf )
 {
 	return write( sBuf.getStr(), sBuf.getSize() );
 }

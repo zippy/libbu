@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -7,7 +7,7 @@
 
 #include "bu/httpget.h"
 
-Bu::HttpGet::HttpGet( const Bu::Url &uSrc, const Bu::FString &sMethod ) :
+Bu::HttpGet::HttpGet( const Bu::Url &uSrc, const Bu::String &sMethod ) :
 	uSrc( uSrc ),
 	sMethod( sMethod ),
 	sSrv( uSrc.getHost(), uSrc.getPort() )
@@ -34,30 +34,30 @@ void Bu::HttpGet::get()
 //	sSrv.read(
 }
 
-size_t Bu::HttpGet::read( void * /*pBuf*/, size_t /*nBytes*/ )
+Bu::size Bu::HttpGet::read( void * /*pBuf*/, Bu::size /*nBytes*/ )
 {
 	return 0;
 }
 
-size_t Bu::HttpGet::write( const void * /*pBuf*/, size_t /*nBytes*/ )
+Bu::size Bu::HttpGet::write( const void * /*pBuf*/, Bu::size /*nBytes*/ )
 {
 	return 0;
 }
 
-long Bu::HttpGet::tell()
+Bu::size Bu::HttpGet::tell()
 {
 	return 0;
 }
 
-void Bu::HttpGet::seek( long )
+void Bu::HttpGet::seek( Bu::size )
 {
 }
 
-void Bu::HttpGet::setPos( long )
+void Bu::HttpGet::setPos( Bu::size )
 {
 }
 
-void Bu::HttpGet::setPosEnd( long )
+void Bu::HttpGet::setPosEnd( Bu::size )
 {
 }
 
@@ -107,5 +107,20 @@ bool Bu::HttpGet::isBlocking()
 
 void Bu::HttpGet::setBlocking( bool /*bBlocking*/ )
 {
+}
+
+Bu::size Bu::HttpGet::getSize() const
+{
+	return 0;
+}
+
+Bu::size Bu::HttpGet::getBlockSize() const
+{
+	return 0;
+}
+
+Bu::String Bu::HttpGet::getLocation() const
+{
+	return uSrc.getUrl();
 }
 

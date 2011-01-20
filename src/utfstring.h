@@ -1,24 +1,29 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #ifndef BU_UTF_STRING_H
 #define BU_UTF_STRING_H
 
-#include "bu/fbasicstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
-	typedef FBasicString<short> UtfString;
+	class UtfString
+	{
+	public:
+		UtfString();
+		virtual ~UtfString();
 
-	template<typename T>
-	uint32_t __calcHashCode( const T &k );
+		typedef uint32_t point;
 
-	template<typename T>
-	bool __cmpHashKeys( const T &a, const T &b );
-
-	template<> uint32_t __calcHashCode<UtfString>( const UtfString &k );
-	template<> bool __cmpHashKeys<UtfString>(
-		const UtfString &a, const UtfString &b );
-	
-	template<typename t> void __tracer_format( const t &v );
-	template<> void __tracer_format<UtfString>( const UtfString &v );
-}
+	private:
+		typedef BasicString<uint16_t> RawString;
+		RawString rsStore;
+	};
+};
 
 #endif

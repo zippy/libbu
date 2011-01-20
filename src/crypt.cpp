@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -11,14 +11,14 @@
 #include "bu/membuf.h"
 #include "bu/file.h"
 
-Bu::FString Bu::cryptPass( const Bu::FString &sPass, const Bu::FString &sSalt )
+Bu::String Bu::cryptPass( const Bu::String &sPass, const Bu::String &sSalt )
 {
 	Bu::Md5 md5;
 	Bu::MemBuf mbOut;
 	Bu::Base64 b64Out( mbOut );
 	
-	Bu::FString::const_iterator i = sSalt.find('$');
-	Bu::FString sSaltSml = sSalt.getSubStr( sSalt.begin(), i );
+	Bu::String::const_iterator i = sSalt.find('$');
+	Bu::String sSaltSml = sSalt.getSubStr( sSalt.begin(), i );
 
 	md5.addData( sPass );
 	md5.addData( sSaltSml );
@@ -29,7 +29,7 @@ Bu::FString Bu::cryptPass( const Bu::FString &sPass, const Bu::FString &sSalt )
 	return sSaltSml + "$" + mbOut.getString();
 }
 
-Bu::FString Bu::cryptPass( const Bu::FString &sPass )
+Bu::String Bu::cryptPass( const Bu::String &sPass )
 {
 	Bu::MemBuf mbSalt;
 	Bu::Base64 b64Salt( mbSalt );

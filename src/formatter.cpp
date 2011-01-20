@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -21,7 +21,7 @@ Bu::Formatter::~Formatter()
 {
 }
 
-void Bu::Formatter::write( const Bu::FString &sStr )
+void Bu::Formatter::write( const Bu::String &sStr )
 {
 	rStream.write( sStr );
 }
@@ -31,7 +31,7 @@ void Bu::Formatter::write( const void *sStr, int iLen )
 	rStream.write( sStr, iLen );
 }
 
-void Bu::Formatter::writeAligned( const Bu::FString &sStr )
+void Bu::Formatter::writeAligned( const Bu::String &sStr )
 {
 	int iLen = sStr.getSize();
 	if( iLen > fLast.uMinWidth )
@@ -117,9 +117,9 @@ void Bu::Formatter::read( void *sStr, int iLen )
 	rStream.read( sStr, iLen );
 }
 
-Bu::FString Bu::Formatter::readToken()
+Bu::String Bu::Formatter::readToken()
 {
-	Bu::FString sRet;
+	Bu::String sRet;
 	if( fLast.bTokenize )
 	{
 		for(;;)
@@ -292,7 +292,7 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &f, char *sStr )
 	return f;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::FString &sStr )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::String &sStr )
 {
 	f.writeAligned( sStr );
 	return f;
@@ -388,7 +388,7 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &f, bool b )
 	return f;
 }
 
-Bu::Formatter &Bu::operator>>( Bu::Formatter &f, Bu::FString &sStr )
+Bu::Formatter &Bu::operator>>( Bu::Formatter &f, Bu::String &sStr )
 {
 	sStr = f.readToken();
 	return f;
@@ -480,7 +480,7 @@ Bu::Formatter &Bu::operator>>( Bu::Formatter &f, long double &flt )
 
 Bu::Formatter &Bu::operator>>( Bu::Formatter &f, bool &b )
 {
-	Bu::FString sStr = f.readToken();
+	Bu::String sStr = f.readToken();
 	if( !sStr.isSet() )
 		return f;
 	char c = *sStr.begin();

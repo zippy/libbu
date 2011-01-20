@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #include <bu/sio.h>
 #include <bu/lexer.h>
 #include <bu/parser.h>
@@ -123,7 +130,7 @@ public:
 		}
 	}
 
-	virtual FString tokenToString( const Token &t )
+	virtual String tokenToString( const Token &t )
 	{
 		switch( (TokenType)t.iToken )
 		{
@@ -146,7 +153,7 @@ public:
 private:
 	Stream &rSrc;
 	QueueBuf qbIn;
-	FString sBuf;
+	String sBuf;
 };
 
 class BnfParser
@@ -201,9 +208,9 @@ private:
 			next();
 			if( pCur->iToken == tokIdentifier )
 			{
-				hTokens.insert( pCur->vExtra.get<Bu::FString>(), ++iLastToken );
+				hTokens.insert( pCur->vExtra.get<Bu::String>(), ++iLastToken );
 				sio << "Added token[" << iLastToken << "]: "
-					<< pCur->vExtra.get<Bu::FString>() << sio.nl;
+					<< pCur->vExtra.get<Bu::String>() << sio.nl;
 			}
 			else if( pCur->iToken == tokSemiColon )
 				break;
@@ -214,7 +221,7 @@ private:
 
 	void nonTerminal()
 	{
-		Bu::FString sNtName = pCur->vExtra.get<Bu::FString>();
+		Bu::String sNtName = pCur->vExtra.get<Bu::String>();
 		Parser::NonTerminal nt;
 		p.addNonTerminal( sNtName );
 		sio.incIndent();
@@ -258,8 +265,8 @@ private:
 			{
 				case tokIdentifier:
 					{
-						const Bu::FString &sName =
-							pCur->vExtra.get<Bu::FString>();
+						const Bu::String &sName =
+							pCur->vExtra.get<Bu::String>();
 						if( hTokens.has( sName ) )
 						{
 							pr.append(
@@ -292,8 +299,8 @@ private:
 						next();
 						if( pCur->iToken != tokIdentifier )
 							tokenError("tokIdentifier");
-						Bu::FString sName =
-							pCur->vExtra.get<Bu::FString>();
+						Bu::String sName =
+							pCur->vExtra.get<Bu::String>();
 						next();
 						if( pCur->iToken != tokCloseSquare )
 							tokenError("tokCloseSquare");
@@ -317,8 +324,8 @@ private:
 						next();
 						if( pCur->iToken != tokIdentifier )
 							tokenError("tokIdentifier");
-						Bu::FString sName =
-							pCur->vExtra.get<Bu::FString>();
+						Bu::String sName =
+							pCur->vExtra.get<Bu::String>();
 						next();
 						if( pCur->iToken != tokCloseCurly )
 							tokenError("tokCloseCurly");
@@ -366,14 +373,14 @@ private:
 		pCur = l.nextToken();
 	}
 
-	void tokenError( const FString &s )
+	void tokenError( const String &s )
 	{
 		throw ExceptionBase( ("Expected " + s + " but found "
 				+ l.tokenToString( *pCur ) + ".").getStr() );
 	}
 
 private:
-	typedef Bu::Hash<Bu::FString, int> TokenHash;
+	typedef Bu::Hash<Bu::String, int> TokenHash;
 	TokenHash hTokens;
 	BnfLexer &l;
 	BnfLexer::Token *pCur;

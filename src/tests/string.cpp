@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
  */
 
 #include "bu/hash.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include <sys/time.h>
 #include <string>
 
@@ -27,9 +27,9 @@ inline double getTime()
 }
 #endif
 
-Bu::FString genThing()
+Bu::String genThing()
 {
-	Bu::FString bob;
+	Bu::String bob;
 	bob.append("ab ");
 	bob += "cd ";
 	bob += "efg";
@@ -39,7 +39,7 @@ Bu::FString genThing()
 	return bob;
 }
 
-void thing( Bu::FString str )
+void thing( Bu::String str )
 {
 	printf("Hey:  %s\n", str.getStr() );
 }
@@ -49,21 +49,21 @@ void copyfunc( std::string temp )
 	temp += "Hi";
 }
 
-void copyfunc( Bu::FString temp )
+void copyfunc( Bu::String temp )
 {
 	temp += "Hi";
 }
 
 void doTimings()
 {
-	Bu::FString fs1, fs2;
+	Bu::String fs1, fs2;
 	std::string ss1, ss2;
 	double dStart, dEnd, tfs1, tfs2, tfs3, tss1, tss2, tss3;
 	int nChars = 500000, nChunks=5000, nCopies=5000000, nChunkSize=1024*4;
 	char *buf = new char[nChunkSize];
 	memset( buf, '!', nChunkSize );
 
-	printf("Timing Bu::FString single chars...\n");
+	printf("Timing Bu::String single chars...\n");
 	dStart = getTime();
 	for( int j = 0; j < nChars; j++ ) fs1 += (char)('a'+(j%26));
 	fs1.getStr();
@@ -77,7 +77,7 @@ void doTimings()
 	dEnd = getTime();
 	tss1 = dEnd-dStart;
 
-	printf("Timing Bu::FString %d char chunks...\n", nChunkSize);
+	printf("Timing Bu::String %d char chunks...\n", nChunkSize);
 	dStart = getTime();
 	for( int j = 0; j < nChunks; j++ ) fs2.append(buf, nChunkSize);
 	fs2.getStr();
@@ -93,9 +93,9 @@ void doTimings()
 
 	fs2 = "Hello there.";
 	ss2 = "Hello there.";
-	printf("Timing Bu::FString copies...\n");
+	printf("Timing Bu::String copies...\n");
 	dStart = getTime();
-	for( int j = 0; j < nCopies; j++ ) Bu::FString stmp = fs2;
+	for( int j = 0; j < nCopies; j++ ) Bu::String stmp = fs2;
 	dEnd = getTime();
 	tfs3 = dEnd-dStart;
 
@@ -107,7 +107,7 @@ void doTimings()
 
 	printf(
 		"Results:       singles:        chunks:         copies:\n"
-		"Bu::FString    %10.2f/s   %10.2f/s   %10.2f/s\n"
+		"Bu::String    %10.2f/s   %10.2f/s   %10.2f/s\n"
 		"std::string    %10.2f/s   %10.2f/s   %10.2f/s\n",
 		nChars/tfs1, nChunks/tfs2, nCopies/tfs3,
 		nChars/tss1, nChunks/tss2, nCopies/tss3 );
@@ -118,16 +118,16 @@ void doTimings()
 #define pem printf("---------\n%08tX: %s\n%08tX: %s\n", (ptrdiff_t)str.getStr(), str.getStr(), (ptrdiff_t)str2.getStr(), str2.getStr() );
 int main( )
 {
-	Bu::FString fs1;
+	Bu::String fs1;
 	for( int j = 0; j < 500000; j++ ) fs1 += (char)('a'+(j%26));
 	return 0;
 
-	Bu::FString str("th");
+	Bu::String str("th");
 
 	str.prepend("Hello ");
 	str.append("ere.");
 
-	Bu::FString str2( str );
+	Bu::String str2( str );
 	pem;
 	str += "  What's up?";
 	pem;

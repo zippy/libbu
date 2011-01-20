@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -34,7 +34,7 @@ void Bu::Server::addPort( int nPort, int nPoolSize )
 	hServers.insert( nSocket, s );
 }
 
-void Bu::Server::addPort( const FString &sAddr, int nPort, int nPoolSize )
+void Bu::Server::addPort( const String &sAddr, int nPort, int nPoolSize )
 {
 	TcpServerSocket *s = new TcpServerSocket( sAddr, nPort, nPoolSize );
 	int nSocket = s->getSocket();
@@ -153,7 +153,7 @@ Bu::Server::SrvClientLink::~SrvClientLink()
 {
 }
 
-void Bu::Server::SrvClientLink::sendMessage( const Bu::FString &sMsg )
+void Bu::Server::SrvClientLink::sendMessage( const Bu::String &sMsg )
 {
 	pClient->onMessage( sMsg );
 }

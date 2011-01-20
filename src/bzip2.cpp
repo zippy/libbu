@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -37,7 +37,7 @@ void Bu::BZip2::start()
 	pBuf = new char[nBufSize];
 }
 
-size_t Bu::BZip2::stop()
+Bu::size Bu::BZip2::stop()
 {
 	TRACE();
 	if( bzState.state )
@@ -51,7 +51,7 @@ size_t Bu::BZip2::stop()
 		}
 		else
 		{
-//			size_t sTotal = 0;
+//			Bu::size sTotal = 0;
 			for(;;)
 			{
 				bzState.next_in = NULL;
@@ -119,7 +119,7 @@ void Bu::BZip2::bzError( int code )
 	}
 }
 
-size_t Bu::BZip2::read( void *pData, size_t nBytes )
+Bu::size Bu::BZip2::read( void *pData, Bu::size nBytes )
 {
 	TRACE( pData, nBytes );
 	if( !bzState.state )
@@ -177,7 +177,7 @@ size_t Bu::BZip2::read( void *pData, size_t nBytes )
 	return 0;
 }
 
-size_t Bu::BZip2::write( const void *pData, size_t nBytes )
+Bu::size Bu::BZip2::write( const void *pData, Bu::size nBytes )
 {
 	TRACE( pData, nBytes );
 	if( !bzState.state )
@@ -188,7 +188,7 @@ size_t Bu::BZip2::write( const void *pData, size_t nBytes )
 	if( bReading == true )
 		throw ExceptionBase("This bzip2 filter is in reading mode, you can't write.");
 
-//	size_t sTotalOut = 0;
+//	Bu::size sTotalOut = 0;
 	bzState.next_in = (char *)pData;
 	bzState.avail_in = nBytes;
 	for(;;)
@@ -215,7 +215,7 @@ bool Bu::BZip2::isOpen()
 	return (bzState.state != NULL);
 }
 
-size_t Bu::BZip2::getCompressedSize()
+Bu::size Bu::BZip2::getCompressedSize()
 {
 	return sTotalOut;
 }

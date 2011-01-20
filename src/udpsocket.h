@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #ifndef BU_UDP_SOCKET_H
 #define BU_UDP_SOCKET_H
 
@@ -13,24 +20,24 @@ namespace Bu
 	{
 	public:
 		UdpSocket( int iUdpSocket );
-		UdpSocket( const Bu::FString &sAddr, int iPort, int iFlags );
+		UdpSocket( const Bu::String &sAddr, int iPort, int iFlags );
 		virtual ~UdpSocket();
 
 		typedef uint32_t addr;
 
-		static Bu::FString addrToStr( const addr &a );
+		static Bu::String addrToStr( const addr &a );
 
 		virtual void close();
-		virtual size_t read( void *pBuf, size_t nBytes );
-		virtual size_t read( void *pBuf, size_t nBytes,
+		virtual Bu::size read( void *pBuf, Bu::size nBytes );
+		virtual Bu::size read( void *pBuf, Bu::size nBytes,
 				addr &sHost, int &iPort );
-		virtual size_t write( const void *pBuf, size_t nBytes );
+		virtual Bu::size write( const void *pBuf, Bu::size nBytes );
 		using Stream::write;
 
-		virtual long tell();
-		virtual void seek( long offset );
-		virtual void setPos( long pos );
-		virtual void setPosEnd( long pos );
+		virtual Bu::size tell();
+		virtual void seek( Bu::size offset );
+		virtual void setPos( Bu::size pos );
+		virtual void setPosEnd( Bu::size pos );
 		virtual bool isEos();
 		virtual bool isOpen();
 
@@ -46,7 +53,7 @@ namespace Bu
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
 
-		virtual void setSize( long iSize );
+		virtual void setSize( Bu::size iSize );
 
 		enum {
 			// Flags
@@ -56,6 +63,9 @@ namespace Bu
 			Broadcast   = 0x04, ///< Open for broadcast
 		};
 
+		virtual size getSize() const;
+		virtual size getBlockSize() const;
+		virtual Bu::String getLocation() const;
 
 	private:
 #ifdef WIN32

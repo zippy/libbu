@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -42,7 +42,7 @@ Bu::TcpSocket::TcpSocket( int nTcpSocket ) :
 	setAddress();
 }
 
-Bu::TcpSocket::TcpSocket( const Bu::FString &sAddr, int nPort, int nTimeout,
+Bu::TcpSocket::TcpSocket( const Bu::String &sAddr, int nPort, int nTimeout,
 		bool bBlocking ) :
 	nTcpSocket( 0 ),
 	bActive( false ),
@@ -149,7 +149,7 @@ void Bu::TcpSocket::close()
 	bActive = false;
 }
 
-size_t Bu::TcpSocket::read( void *pBuf, size_t nBytes )
+Bu::size Bu::TcpSocket::read( void *pBuf, Bu::size nBytes )
 {
 	fd_set rfds;
 	FD_ZERO(&rfds);
@@ -195,11 +195,11 @@ size_t Bu::TcpSocket::read( void *pBuf, size_t nBytes )
 	return 0;
 }
 
-size_t Bu::TcpSocket::read( void *pBuf, size_t nBytes,
+Bu::size Bu::TcpSocket::read( void *pBuf, Bu::size nBytes,
 		uint32_t nSec, uint32_t nUSec )
 {
 	struct timeval tv;
-	size_t nRead = 0;
+	Bu::size nRead = 0;
 	
 	fd_set rfds;
 	FD_ZERO(&rfds);
@@ -239,7 +239,7 @@ size_t Bu::TcpSocket::read( void *pBuf, size_t nBytes,
 	return nRead;
 }
 
-size_t Bu::TcpSocket::write( const void *pBuf, size_t nBytes )
+Bu::size Bu::TcpSocket::write( const void *pBuf, Bu::size nBytes )
 {
 //#ifdef WIN32
 	int nWrote = TEMP_FAILURE_RETRY( 
@@ -261,10 +261,10 @@ size_t Bu::TcpSocket::write( const void *pBuf, size_t nBytes )
 	return nWrote;
 }
 
-size_t Bu::TcpSocket::write( const void *pBuf, size_t nBytes, uint32_t nSec, uint32_t nUSec )
+Bu::size Bu::TcpSocket::write( const void *pBuf, Bu::size nBytes, uint32_t nSec, uint32_t nUSec )
 {
 	struct timeval tv;
-	size_t nWrote = 0;
+	Bu::size nWrote = 0;
 	
 	fd_set wfds;
 	FD_ZERO(&wfds);
@@ -304,22 +304,22 @@ size_t Bu::TcpSocket::write( const void *pBuf, size_t nBytes, uint32_t nSec, uin
 	return nWrote;
 }
 
-long Bu::TcpSocket::tell()
+Bu::size Bu::TcpSocket::tell()
 {
 	throw UnsupportedException();
 }
 
-void Bu::TcpSocket::seek( long )
+void Bu::TcpSocket::seek( Bu::size )
 {
 	throw UnsupportedException();
 }
 
-void Bu::TcpSocket::setPos( long )
+void Bu::TcpSocket::setPos( Bu::size )
 {
 	throw UnsupportedException();
 }
 
-void Bu::TcpSocket::setPosEnd( long )
+void Bu::TcpSocket::setPosEnd( Bu::size )
 {
 	throw UnsupportedException();
 }
@@ -401,7 +401,7 @@ void Bu::TcpSocket::setBlocking( bool bBlocking )
 		fcntl( nTcpSocket, F_SETFL, fcntl( nTcpSocket, F_GETFL, 0 ) | O_NONBLOCK );
 	}
 #else
-	u_long iMode;
+	u_Bu::size iMode;
 	if( bBlocking )
 		iMode = 0;
 	else
@@ -416,7 +416,7 @@ void Bu::TcpSocket::setBlocking( bool bBlocking )
 #endif	
 }
 
-void Bu::TcpSocket::setSize( long )
+void Bu::TcpSocket::setSize( Bu::size )
 {
 }
 
@@ -438,7 +438,7 @@ void Bu::TcpSocket::setAddress()
 	sAddress = bu_inet_ntoa( addr.sin_addr );
 }
 
-Bu::FString Bu::TcpSocket::getAddress() const
+Bu::String Bu::TcpSocket::getAddress() const
 {
 	return sAddress;
 }
@@ -446,5 +446,20 @@ Bu::FString Bu::TcpSocket::getAddress() const
 Bu::TcpSocket::operator int() const
 {
 	return nTcpSocket;
+}
+
+Bu::size Bu::TcpSocket::getSize() const
+{
+	throw UnsupportedException();
+}
+
+Bu::size Bu::TcpSocket::getBlockSize() const
+{
+	return 1500; //TODO: Fix this, it's stupid.
+}
+
+Bu::String Bu::TcpSocket::getLocation() const
+{
+	return getAddress();
 }
 

@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #include "bu/streamstack.h"
 
 #include "bu/file.h"
@@ -24,7 +31,7 @@ public:
 
 	void write()
 	{
-		Bu::FString s;
+		Bu::String s;
 		time_t tNow = time( NULL );
 		s = ctime( &tNow );
 		long lSize = s.getSize()-1;
@@ -34,7 +41,7 @@ public:
 
 	void read()
 	{
-		Bu::FString s;
+		Bu::String s;
 		long lSize;
 		rStream.read( &lSize, sizeof(long) );
 		s.setSize( lSize );

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -16,7 +16,7 @@
 
 namespace Bu { subExceptionDef( FifoException ) }
 
-Bu::Fifo::Fifo( const Bu::FString &sName, int iFlags, mode_t mAcc ) :
+Bu::Fifo::Fifo( const Bu::String &sName, int iFlags, mode_t mAcc ) :
 	iFlags( iFlags ),
 	iIn( -1 ),
 	iOut( -1 )
@@ -67,7 +67,7 @@ void Bu::Fifo::close()
 	}
 }
 
-size_t Bu::Fifo::read( void *pBuf, size_t nBytes )
+Bu::size Bu::Fifo::read( void *pBuf, Bu::size nBytes )
 {
 	if( iIn < 0 )
 		throw FifoException("Fifo not open for reading.");
@@ -75,7 +75,7 @@ size_t Bu::Fifo::read( void *pBuf, size_t nBytes )
 	return TEMP_FAILURE_RETRY( ::read( iIn, pBuf, nBytes ) );
 }
 
-size_t Bu::Fifo::write( const void *pBuf, size_t nBytes )
+Bu::size Bu::Fifo::write( const void *pBuf, Bu::size nBytes )
 {
 	if( iOut < 0 )
 		throw FifoException("Fifo not open for writing.");
@@ -83,20 +83,20 @@ size_t Bu::Fifo::write( const void *pBuf, size_t nBytes )
 	return TEMP_FAILURE_RETRY( ::write( iOut, pBuf, nBytes ) );
 }
 
-long Bu::Fifo::tell()
+Bu::size Bu::Fifo::tell()
 {
 	return -1;
 }
 
-void Bu::Fifo::seek( long )
+void Bu::Fifo::seek( Bu::size )
 {
 }
 
-void Bu::Fifo::setPos( long )
+void Bu::Fifo::setPos( Bu::size )
 {
 }
 
-void Bu::Fifo::setPosEnd( long )
+void Bu::Fifo::setPosEnd( Bu::size )
 {
 }
 

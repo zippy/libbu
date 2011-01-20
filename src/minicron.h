@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -10,7 +10,7 @@
 
 #include "bu/signals.h"
 #include "bu/heap.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 #include <time.h>
 
@@ -89,7 +89,7 @@ namespace Bu
 		 * JobId which can be used at a later time to control the execution of
 		 * the job.
 		 */
-		virtual JobId addJob( const Bu::FString &sName, CronSignal sigJob,
+		virtual JobId addJob( const Bu::String &sName, CronSignal sigJob,
 				const Timer &t );
 
 		/**
@@ -98,7 +98,7 @@ namespace Bu
 		 * function returns a JobId which can be used at a later time to control
 		 * the execution of the job.
 		 */
-		virtual JobId addJobOnce( const Bu::FString &sName, CronSignal sigJob,
+		virtual JobId addJobOnce( const Bu::String &sName, CronSignal sigJob,
 				const Timer &t );
 
 		/**
@@ -113,12 +113,12 @@ namespace Bu
 		class JobInfo
 		{
 		public:
-			JobInfo( const Bu::FString &sName, JobId jid, time_t tNext );
+			JobInfo( const Bu::String &sName, JobId jid, time_t tNext );
 			virtual ~JobInfo();
 			
 			bool operator<( const JobInfo &rhs ) const;
 
-			Bu::FString sName;
+			Bu::String sName;
 			JobId jid;
 			time_t tNext;
 		};
@@ -189,7 +189,7 @@ namespace Bu
 		class TimerBasic : public Timer
 		{
 		public:
-			TimerBasic( const Bu::FString &s );
+			TimerBasic( const Bu::String &s );
 			virtual ~TimerBasic();
 
 			virtual time_t nextTime();
@@ -208,11 +208,11 @@ namespace Bu
 				tokErr,
 				tokEos
 			};
-			Token lex( Bu::FString::const_iterator &i );
-			int lexInt( Bu::FString::const_iterator &i );
+			Token lex( Bu::String::const_iterator &i );
+			int lexInt( Bu::String::const_iterator &i );
 			int iVal; //< A temp variable for parsing.
 			time_t tLast;
-			Bu::FString sSpec;
+			Bu::String sSpec;
 		};
 		
 		/**
@@ -225,7 +225,7 @@ namespace Bu
 		{
 			friend class Bu::MiniCron;
 		private:
-			Job( const Bu::FString &sName, JobId jid, bool bRepeat=true );
+			Job( const Bu::String &sName, JobId jid, bool bRepeat=true );
 			virtual ~Job();
 
 		public:
@@ -290,10 +290,10 @@ namespace Bu
 			/**
 			 * Gets the name that was set when the job was created.
 			 */
-			Bu::FString getName() const;
+			Bu::String getName() const;
 
 		private:
-			Bu::FString sName;
+			Bu::String sName;
 			CronSignal sigJob;
 			time_t tNextRun;
 			Timer *pTimer;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -25,12 +25,12 @@ Bu::Uuid::~Uuid()
 {
 }
 
-Bu::FString Bu::Uuid::toRawString()
+Bu::String Bu::Uuid::toRawString()
 {
-	return Bu::FString( (char *)data, 16 );
+	return Bu::String( (char *)data, 16 );
 }
 
-Bu::FString Bu::Uuid::toString()
+Bu::String Bu::Uuid::toString()
 {
 	Bu::MemBuf mb;
 	Bu::Formatter f( mb );

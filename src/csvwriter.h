@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -8,19 +8,19 @@
 #ifndef BU_CSV_WRITER_H
 #define BU_CSV_WRITER_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/array.h"
 #include "bu/signals.h"
 
 namespace Bu
 {
 	class Stream;
-	typedef Bu::Array<Bu::FString> StrArray;
+	typedef Bu::Array<Bu::String> StrArray;
 
 	class CsvWriter
 	{
 	public:
-		typedef Bu::Signal1<Bu::FString, const Bu::FString &> EncodeSignal;
+		typedef Bu::Signal1<Bu::String, const Bu::String &> EncodeSignal;
 		enum Style
 		{
 			styleExcel, ///< Excel style quotes around things that need em
@@ -37,8 +37,8 @@ namespace Bu
 		Stream &sOut;
 		EncodeSignal sEncode;
 
-		static Bu::FString encodeExcel( const Bu::FString &sIn );
-		static Bu::FString encodeC( const Bu::FString &sIn );
+		static Bu::String encodeExcel( const Bu::String &sIn );
+		static Bu::String encodeC( const Bu::String &sIn );
 	};
 };
 

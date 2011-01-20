@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -162,7 +162,7 @@ int Bu::Winsock2::__WSAFDIsSet( SOCKET s, fd_set *set ) {
 	return (*Bu::Winsock2::_fnptr___WSAFDIsSet)( s, set );
 }
 
-Bu::FString Bu::getLastWinError()
+Bu::String Bu::getLastWinError()
 {
     LPVOID lpMsgBuf;
     DWORD dw = GetLastError(); 
@@ -177,7 +177,7 @@ Bu::FString Bu::getLastWinError()
         (LPSTR) &lpMsgBuf,
         0, NULL );
 
-	Bu::FString sRet( (char *)lpMsgBuf );
+	Bu::String sRet( (char *)lpMsgBuf );
 
     LocalFree(lpMsgBuf);
 

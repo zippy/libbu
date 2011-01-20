@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -10,8 +10,9 @@
 
 #include <stdint.h>
 
+#include "bu/config.h"
 #include "bu/stream.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/exceptionbase.h"
 
 namespace Bu
@@ -60,23 +61,23 @@ namespace Bu
 	{
 	public:
 		TcpSocket( int nTcpSocket );
-		TcpSocket( const FString &sAddr, int nPort, int nTimeout=30,
+		TcpSocket( const String &sAddr, int nPort, int nTimeout=30,
 				bool bBlocking=true );
 		virtual ~TcpSocket();
 		
 		virtual void close();
-		virtual size_t read( void *pBuf, size_t nBytes );
-		virtual size_t read( void *pBuf, size_t nBytes,
+		virtual size read( void *pBuf, size nBytes );
+		virtual size read( void *pBuf, size nBytes,
 				uint32_t nSec, uint32_t nUSec=0 );
-		virtual size_t write( const void *pBuf, size_t nBytes );
-		virtual size_t write( const void *pBuf, size_t nBytes,
+		virtual size write( const void *pBuf, size nBytes );
+		virtual size write( const void *pBuf, size nBytes,
 				uint32_t nSec, uint32_t nUSec=0 );
 		using Stream::write;
 
-		virtual long tell();
-		virtual void seek( long offset );
-		virtual void setPos( long pos );
-		virtual void setPosEnd( long pos );
+		virtual size tell();
+		virtual void seek( size offset );
+		virtual void setPos( size pos );
+		virtual void setPosEnd( size pos );
 		virtual bool isEos();
 		virtual bool isOpen();
 
@@ -92,10 +93,14 @@ namespace Bu
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
 
-		virtual void setSize( long iSize );
+		virtual void setSize( size iSize );
 
-		Bu::FString getAddress() const;
+		Bu::String getAddress() const;
 		operator int() const;
+
+		virtual size getSize() const;
+		virtual size getBlockSize() const;
+		virtual Bu::String getLocation() const;
 
 	private:
 		void setAddress();
@@ -107,8 +112,8 @@ namespace Bu
 #endif
 		bool bActive;
 		bool bBlocking;
-		FString sReadBuf;
-		FString sAddress;
+		String sReadBuf;
+		String sAddress;
 	};
 }
 

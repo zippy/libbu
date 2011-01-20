@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -32,7 +32,7 @@ void Bu::Buffer::start()
 {
 }
 
-size_t Bu::Buffer::stop()
+Bu::size Bu::Buffer::stop()
 {
 	iReadBufFill = iReadPos = iWriteBufFill = iWritePos = 0;
 	return sSoFar;
@@ -49,7 +49,7 @@ void Bu::Buffer::fillReadBuf()
 	}
 }
 
-size_t Bu::Buffer::read( void *pBuf, size_t nBytes )
+Bu::size Bu::Buffer::read( void *pBuf, Bu::size nBytes )
 {
 	if( nBytes <= 0 )
 	{
@@ -57,7 +57,7 @@ size_t Bu::Buffer::read( void *pBuf, size_t nBytes )
 		return 0;
 	}
 
-	size_t nTotRead = 0;
+	Bu::size nTotRead = 0;
 //	fillReadBuf();
 
 	do
@@ -87,9 +87,9 @@ size_t Bu::Buffer::read( void *pBuf, size_t nBytes )
 	return nTotRead;
 }
 
-size_t Bu::Buffer::write( const void *pBuf, size_t nBytes )
+Bu::size Bu::Buffer::write( const void *pBuf, Bu::size nBytes )
 {
-	size_t nTotWrote = 0;
+	Bu::size nTotWrote = 0;
 
 	do
 	{

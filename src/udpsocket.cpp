@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #include "bu/udpsocket.h"
 
 #include "bu/sio.h"
@@ -21,7 +28,7 @@ Bu::UdpSocket::UdpSocket( int iUdpSocket ) :
 {
 }
 
-Bu::UdpSocket::UdpSocket( const Bu::FString &sAddr, int iPort, int iFlags ) :
+Bu::UdpSocket::UdpSocket( const Bu::String &sAddr, int iPort, int iFlags ) :
 	iUdpSocket( 0 ),
 	paTarget( NULL ),
 	bBound( false )
@@ -72,9 +79,9 @@ Bu::UdpSocket::~UdpSocket()
 	paTarget = NULL;
 }
 
-Bu::FString Bu::UdpSocket::addrToStr( const addr &a )
+Bu::String Bu::UdpSocket::addrToStr( const addr &a )
 {
-	Bu::FString sOut;
+	Bu::String sOut;
 	sOut.format("%d.%d.%d.%d",
 		(a&0xff),
 		(a&0xff00)>>8,
@@ -90,24 +97,24 @@ void Bu::UdpSocket::close()
 	::close( iUdpSocket );
 }
 
-size_t Bu::UdpSocket::read( void *pBuf, size_t nBytes )
+Bu::size Bu::UdpSocket::read( void *pBuf, Bu::size nBytes )
 {
 	return recv( iUdpSocket, pBuf, nBytes, 0 );
 }
 
-size_t Bu::UdpSocket::read( void *pBuf, size_t nBytes,
+Bu::size Bu::UdpSocket::read( void *pBuf, Bu::size nBytes,
 		Bu::UdpSocket::addr &aHost, int &iPort )
 {
 	sockaddr_in name;
 	size_t size = sizeof(name);
-	size_t ret = recvfrom( iUdpSocket, pBuf, nBytes, 0,
+	Bu::size ret = recvfrom( iUdpSocket, pBuf, nBytes, 0,
 			(struct sockaddr *)&name, &size );
 	aHost = name.sin_addr.s_addr;
 	iPort = ntohs(name.sin_port);
 	return ret;
 }
 
-size_t Bu::UdpSocket::write( const void *pBuf, size_t nBytes )
+Bu::size Bu::UdpSocket::write( const void *pBuf, Bu::size nBytes )
 {
 	if( bBound )
 	{
@@ -120,22 +127,22 @@ size_t Bu::UdpSocket::write( const void *pBuf, size_t nBytes )
 	}
 }
 
-long Bu::UdpSocket::tell()
+Bu::size Bu::UdpSocket::tell()
 {
 	throw Bu::UnsupportedException();
 }
 
-void Bu::UdpSocket::seek( long )
+void Bu::UdpSocket::seek( Bu::size )
 {
 	throw Bu::UnsupportedException();
 }
 
-void Bu::UdpSocket::setPos( long )
+void Bu::UdpSocket::setPos( Bu::size )
 {
 	throw Bu::UnsupportedException();
 }
 
-void Bu::UdpSocket::setPosEnd( long )
+void Bu::UdpSocket::setPosEnd( Bu::size )
 {
 	throw Bu::UnsupportedException();
 }
@@ -211,7 +218,22 @@ void Bu::UdpSocket::setBlocking( bool bBlocking )
 #endif	
 }
 
-void Bu::UdpSocket::setSize( long )
+void Bu::UdpSocket::setSize( Bu::size )
+{
+	throw Bu::UnsupportedException();
+}
+
+Bu::size Bu::UdpSocket::getSize() const
+{
+	throw Bu::UnsupportedException();
+}
+
+Bu::size Bu::UdpSocket::getBlockSize() const
+{
+	return 1500;
+}
+
+Bu::String Bu::UdpSocket::getLocation() const
 {
 	throw Bu::UnsupportedException();
 }

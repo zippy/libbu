@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -21,14 +21,14 @@ namespace Bu
 	{
 	public:
 		TafComment( const Bu::TafComment &rSrc );
-		TafComment( const Bu::FString &sText, bool bEOL=false );
+		TafComment( const Bu::String &sText, bool bEOL=false );
 		virtual ~TafComment();
 
-		const Bu::FString &getText() const;
+		const Bu::String &getText() const;
 		bool isEOLStyle() const;
 
 	private:
-		Bu::FString sText;
+		Bu::String sText;
 		bool bEOL;
 	};
 }

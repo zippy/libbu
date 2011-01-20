@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -7,7 +7,7 @@
 
 #include "bu/substream.h"
 
-Bu::SubStream::SubStream( Bu::Stream &rNext, long iSize ) :
+Bu::SubStream::SubStream( Bu::Stream &rNext, Bu::size iSize ) :
 	Bu::Filter( rNext ),
 	iStart( 0 ),
 	iPos( 0 ),
@@ -20,18 +20,18 @@ Bu::SubStream::~SubStream()
 {
 }
 
-size_t Bu::SubStream::read( void *pBuf, size_t nBytes )
+Bu::size Bu::SubStream::read( void *pBuf, Bu::size nBytes )
 {
-	if( (long)nBytes > iSize-iPos )
+	if( (Bu::size)nBytes > iSize-iPos )
 		nBytes = iSize-iPos;
 	nBytes = rNext.read( pBuf, nBytes );
 	iPos += nBytes;
 	return nBytes;
 }
 
-size_t Bu::SubStream::write( const void *pBuf, size_t nBytes )
+Bu::size Bu::SubStream::write( const void *pBuf, Bu::size nBytes )
 {
-	if( (long)nBytes > iSize-iPos )
+	if( (Bu::size)nBytes > iSize-iPos )
 		nBytes = iSize-iPos;
 	nBytes = rNext.write( pBuf, nBytes );
 	iPos += nBytes;
@@ -43,7 +43,7 @@ void Bu::SubStream::start()
 	// doesn't mean anything...
 }
 
-size_t Bu::SubStream::stop()
+Bu::size Bu::SubStream::stop()
 {
 	// doesn't mean anything...
 	return 0;
@@ -54,12 +54,12 @@ void Bu::SubStream::close()
 	// don't do anything?  maybe...
 }
 
-long Bu::SubStream::tell()
+Bu::size Bu::SubStream::tell()
 {
 	return iPos;
 }
 
-void Bu::SubStream::seek( long offset )
+void Bu::SubStream::seek( Bu::size offset )
 {
 	if( iPos+offset < 0 )
 		offset = -iPos;
@@ -69,7 +69,7 @@ void Bu::SubStream::seek( long offset )
 	iPos += offset;
 }
 
-void Bu::SubStream::setPos( long pos )
+void Bu::SubStream::setPos( Bu::size pos )
 {
 	if( pos < 0 )
 		pos = 0;
@@ -80,7 +80,7 @@ void Bu::SubStream::setPos( long pos )
 	rNext.setPos( pos );
 }
 
-void Bu::SubStream::setPosEnd( long pos )
+void Bu::SubStream::setPosEnd( Bu::size pos )
 {
 	if( iSize-pos < 0 )
 		pos = 0;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -36,7 +36,7 @@ public:
 		printf("New dim = (%dx%d)\n", iWidth, iHeight );
 	}
 
-	virtual void gotLine( Bu::FString &sLine )
+	virtual void gotLine( Bu::String &sLine )
 	{
 		printf("Line: \"%s\"\n", sLine.getStr() );
 		write("\n\r", 2 );

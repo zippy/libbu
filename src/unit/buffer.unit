@@ -1,6 +1,6 @@
 // vim: syntax=cpp
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -14,12 +14,12 @@ suite Buffer
 {
 	test emptyFile
 	{
-		Bu::FString sTmp("empty-XXXXXX");
+		Bu::String sTmp("empty-XXXXXX");
 		Bu::File fEmpty = tempFile(sTmp);
 		Bu::Buffer buf( fEmpty );
 
 		unitTest( buf.isEos() == false );
-		Bu::FString sLine = buf.readLine();
+		Bu::String sLine = buf.readLine();
 		unitTest( sLine == "" );
 		unitTest( fEmpty.isEos() == true );
 		unitTest( buf.isEos() == true );

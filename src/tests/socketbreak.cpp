@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -26,9 +26,9 @@ int main()
 
 	char buf[3];
 	printf("About to write.\n");
-	printf("write:  %d\n", sSend.write("hi", 2 ) );
+	printf("write:  %lld\n", sSend.write("hi", 2 ) );
 	printf("About to read.\n");
-	printf("read:   %d\n", sSend.read( buf, 2 ) );
+	printf("read:   %lld\n", sSend.read( buf, 2 ) );
 
 	return 0;
 }

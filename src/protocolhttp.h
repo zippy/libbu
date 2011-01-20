@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -13,7 +13,7 @@
 
 #include "bu/protocol.h"
 #include "bu/client.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/hash.h"
 
 namespace Bu
@@ -32,7 +32,7 @@ namespace Bu
 	class ProtocolHttp : public Protocol
 	{
 	public: /* Types */
-		typedef Bu::List<Bu::FString> TokenList;
+		typedef Bu::List<Bu::String> TokenList;
 
 	public: /* Interface */
 		ProtocolHttp();
@@ -42,25 +42,25 @@ namespace Bu
 		virtual void onNewData( Bu::Client *pClient );
 
 		virtual void onRequest(
-			const Bu::FString &sMethod, const Bu::FString &sPath )=0;
+			const Bu::String &sMethod, const Bu::String &sPath )=0;
 
 		class Response
 		{
 			friend class Bu::ProtocolHttp;
 		public:
 			Response( int iCode );
-			Response( int iCode, const Bu::FString &sReason );
+			Response( int iCode, const Bu::String &sReason );
 			virtual ~Response();
 
-			void setHeader( const Bu::FString &sKey, const Bu::FString &sVal );
-			void setContent( const Bu::FString &sCont );
+			void setHeader( const Bu::String &sKey, const Bu::String &sVal );
+			void setContent( const Bu::String &sCont );
 
 		private:
 			int iCode;
-			Bu::FString sReason;
-			typedef Bu::Hash<Bu::FString,Bu::FString> StringHash;
+			Bu::String sReason;
+			typedef Bu::Hash<Bu::String,Bu::String> StringHash;
 			StringHash hHeaders;
-			Bu::FString sContent;
+			Bu::String sContent;
 		};
 		
 		void sendResponse( const Response &rRes );
@@ -83,7 +83,7 @@ namespace Bu
 		 * processed, false if the end-of-line has not been reached, and more
 		 * data needs to be read before this operation can continue.
 		 */
-		TokenType getToken( Bu::FString &line );
+		TokenType getToken( Bu::String &line );
 		bool isWS( char buf );
 		bool isSeperator( char buf );
 
@@ -96,8 +96,8 @@ namespace Bu
 
 		int iState;
 
-		Bu::FString sMethod;
-		Bu::FString sPath;
+		Bu::String sMethod;
+		Bu::String sPath;
 		int iMajor;
 		int iMinor;
 	};

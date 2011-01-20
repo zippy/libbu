@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -51,7 +51,7 @@ void Bu::ProtocolHttp::onNewData( Bu::Client *pClient )
 
 	for(;;)
 	{
-		Bu::FString sToken;
+		Bu::String sToken;
 		TokenType tt = getToken( sToken );
 
 		if( tt == ttOutOfData )
@@ -148,7 +148,7 @@ void Bu::ProtocolHttp::onNewData( Bu::Client *pClient )
 	}
 }
 
-Bu::ProtocolHttp::TokenType Bu::ProtocolHttp::getToken( Bu::FString &line )
+Bu::ProtocolHttp::TokenType Bu::ProtocolHttp::getToken( Bu::String &line )
 {
 	char s;
 	int jmax = pClient->getInputSize();
@@ -330,7 +330,7 @@ Bu::ProtocolHttp::Response::Response( int iCode ) :
 	}
 }
 
-Bu::ProtocolHttp::Response::Response( int iCode, const Bu::FString &sReason ) :
+Bu::ProtocolHttp::Response::Response( int iCode, const Bu::String &sReason ) :
 	iCode( iCode ),
 	sReason( sReason )
 {
@@ -341,12 +341,12 @@ Bu::ProtocolHttp::Response::~Response()
 }
 
 void Bu::ProtocolHttp::Response::setHeader(
-	const Bu::FString &sKey, const Bu::FString &sVal )
+	const Bu::String &sKey, const Bu::String &sVal )
 {
 	hHeaders.insert( sKey, sVal );
 }
 
-void Bu::ProtocolHttp::Response::setContent( const Bu::FString &sCont )
+void Bu::ProtocolHttp::Response::setContent( const Bu::String &sCont )
 {
 	sContent = sCont;
 }

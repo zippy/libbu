@@ -1,6 +1,6 @@
 // vim: syntax=cpp
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -18,7 +18,7 @@ suite Taf
 	test read1
 	{
 #define FN_TMP ("/tmp/tmpXXXXXXXX")
-		Bu::FString sFnTmp(FN_TMP);
+		Bu::String sFnTmp(FN_TMP);
 		Bu::File fOut = Bu::File::tempFile( sFnTmp );
 		const char *data =
 			"{test: name=\"Bob\"}"
@@ -43,7 +43,7 @@ suite Taf
 		Bu::TafWriter tw( mb );
 		
 		Bu::TafGroup g("Test data");
-		Bu::FString sData( 256 );
+		Bu::String sData( 256 );
 		for( int j = 0; j < 256; j++ )
 			sData[j] = (unsigned char)j;
 		g.addChild( new Bu::TafProperty("Encoded", sData) );
@@ -87,7 +87,7 @@ suite Taf
 		Bu::TafWriter tw( mb );
 
 		Bu::TafGroup g("Test Group");
-		Bu::FString sVal;
+		Bu::String sVal;
 		g.addChild( new Bu::TafProperty("Lame", sVal) );
 		tw.writeGroup( &g );
 

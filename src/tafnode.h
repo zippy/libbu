@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -9,7 +9,7 @@
 #define BU_TAF_NODE_H
 
 #include <stdint.h>
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/hash.h"
 #include "bu/exceptionbase.h"
 

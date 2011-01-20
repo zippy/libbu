@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -10,7 +10,7 @@
 
 #include "bu/protocol.h"
 #include "bu/hash.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 // #define __TELNET_DEBUG
 
@@ -88,7 +88,7 @@ namespace Bu
 		 * the line or not, the data will be cleared from the buffer when this
 		 * function returns, any changes made to the buffer will be destroyed.
 		 */
-		virtual void gotLine( Bu::FString & /*sLine*/ ){};
+		virtual void gotLine( Bu::String & /*sLine*/ ){};
 
 		/**
 		 * Override this function to be notified of any new data that comes in
@@ -98,7 +98,7 @@ namespace Bu
 		 * child class in this function, the buffer will never be cleared unless
 		 * it happens in this function's override.
 		 */
-		virtual void gotData( Bu::FString & /*sData*/ ){};
+		virtual void gotData( Bu::String & /*sData*/ ){};
 
 		/**
 		 * Using this function to enable or disable canonical mode only affects
@@ -117,11 +117,11 @@ namespace Bu
 		void setCanonical( bool bCon=true );
 		bool isCanonical();
 
-		void write( const Bu::FString &sData );
+		void write( const Bu::String &sData );
 		void write( const char *pData, int iSize );
 		void write( char cData );
 
-		const Bu::FString &getBuffer() { return sDataBuf; }
+		const Bu::String &getBuffer() { return sDataBuf; }
 
 	public:
 		/**
@@ -138,7 +138,7 @@ namespace Bu
 		 * sSubBuf, it will be cleared as soon as this function returns anyway.
 		 */
 		virtual void onSubUnknown( char /*cSubOpt*/,
-			Bu::FString & /*sSubBuf*/ ){};
+			Bu::String & /*sSubBuf*/ ){};
 
 	private:
 		/**
@@ -208,8 +208,8 @@ namespace Bu
 	private:
 		Client *pClient;
 
-		Bu::FString sDataBuf;	/**< Buffer for regular line data. */
-		Bu::FString sSubBuf;	/**< Buffer for subnegotiation data. */
+		Bu::String sDataBuf;	/**< Buffer for regular line data. */
+		Bu::String sSubBuf;	/**< Buffer for subnegotiation data. */
 		char cSubOpt;	/**< Which suboption are we processing. */
 
 		bool bCanonical;	/**< Are we canonicalizing incoming data? */

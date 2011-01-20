@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -8,7 +8,7 @@
 #ifndef BU_FAST_CGI_H
 #define BU_FAST_CGI_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/hash.h"
 #include "bu/array.h"
 #include "bu/tcpsocket.h"
@@ -27,7 +27,7 @@ namespace Bu
 
 		static bool isEmbedded();
 
-		typedef Bu::Hash<Bu::FString, Bu::FString> StrHash;
+		typedef Bu::Hash<Bu::String, Bu::String> StrHash;
 		enum RequestType
 		{
 			typeBeginRequest	= 1,
@@ -86,8 +86,8 @@ namespace Bu
 		typedef struct Channel {
 			Channel() : uFlags( 0 ) { }
 			StrHash hParams;
-			Bu::FString sStdIn;
-			Bu::FString sData;
+			Bu::String sStdIn;
+			Bu::String sData;
 			uint8_t uFlags;
 		} Channel;
 
@@ -104,7 +104,7 @@ namespace Bu
 
 		virtual void onInit() { };
 		virtual int onRequest( const StrHash &hParams,
-			const Bu::FString &sStdIn, Bu::Stream &sStdOut,
+			const Bu::String &sStdIn, Bu::Stream &sStdOut,
 			Bu::Stream &sStdErr )=0;
 		virtual void onUninit() { };
 

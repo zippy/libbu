@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -14,7 +14,7 @@
 	#include <sys/select.h>
 #endif
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/list.h"
 #include "bu/ito.h"
 #include "bu/itomutex.h"
@@ -59,7 +59,7 @@ namespace Bu
 		virtual ~ItoServer();
 
 		void addPort( int nPort, int nPoolSize=40 );
-		void addPort( const FString &sAddr, int nPort, int nPoolSize=40 );
+		void addPort( const String &sAddr, int nPort, int nPoolSize=40 );
 
 		//void scan();
 		void setTimeout( int nTimeoutSec, int nTimeoutUSec=0 );
@@ -82,7 +82,7 @@ namespace Bu
 					int nTimeoutSec, int nTimeoutUSec );
 			virtual ~ItoClient();
 
-			typedef ItoQueue<Bu::FString *> StringQueue;
+			typedef ItoQueue<Bu::String *> StringQueue;
 			StringQueue qMsg;
 
 		protected:
@@ -105,7 +105,7 @@ namespace Bu
 			SrvClientLink( ItoClient *pClient );
 			virtual ~SrvClientLink();
 
-			virtual void sendMessage( const Bu::FString &sMsg );
+			virtual void sendMessage( const Bu::String &sMsg );
 
 		private:
 			ItoClient *pClient;

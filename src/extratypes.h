@@ -5,15 +5,22 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_CRYPT_H
-#define BU_CRYPT_H
+#ifndef EXTRA_TYPES_H
+#define EXTRA_TYPES_H
 
-#include "bu/string.h"
+#include "bu/config.h"
+
+#include <stdint.h>
 
 namespace Bu
 {
-	String cryptPass( const Bu::String &sPass, const Bu::String &sSalt );
-	String cryptPass( const Bu::String &sPass );
+#ifdef USE_64BIT_IO
+	typedef int64_t		size;
+	typedef uint64_t	usize;
+#else
+	typedef int32_t		size;
+	typedef uint32_t	usize;
+#endif
 };
 
 #endif

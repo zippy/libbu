@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
@@ -35,7 +35,7 @@ namespace Bu
 	private:
 		void writeProperty( const Bu::TafProperty *pProp );
 		void writeComment( const Bu::TafComment *pComment );
-		void writeString( const Bu::FString &str );
+		void writeString( const Bu::String &str );
 		void ident();
 		Bu::Stream &sOut;
 		int iDepth;

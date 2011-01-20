@@ -1,29 +1,17 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #include "bu/utfstring.h"
 
-template class Bu::FBasicString<short>;
-
-template<> uint32_t Bu::__calcHashCode<Bu::UtfString>( const Bu::UtfString &k )
+Bu::UtfString::UtfString()
 {
-	long j, sz = k.getSize()*2;
-	const char *s = (const char *)k.getStr();
-
-	long nPos = 0;
-	for( j = 0; j < sz; j++, s++ )
-	{
-		nPos = *s + (nPos << 6) + (nPos << 16) - nPos;
-	}
-
-	return nPos;	
 }
 
-template<> bool Bu::__cmpHashKeys<Bu::UtfString>(
-		const Bu::UtfString &a, const Bu::UtfString &b )
+Bu::UtfString::~UtfString()
 {
-	return a == b;
-}
-
-template<> void Bu::__tracer_format<Bu::UtfString>( const Bu::UtfString &v )
-{
-	printf("(%ld)\"%s\"", v.getSize(), (const char *)v.getStr() );
 }
 

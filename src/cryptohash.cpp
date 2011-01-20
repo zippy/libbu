@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -15,15 +15,15 @@ Bu::CryptoHash::~CryptoHash()
 {
 }
 
-void Bu::CryptoHash::addData( const Bu::FString &sData )
+void Bu::CryptoHash::addData( const Bu::String &sData )
 {
 	addData( sData.getStr(), sData.getSize() );
 }
 
-Bu::FString Bu::CryptoHash::getHexResult()
+Bu::String Bu::CryptoHash::getHexResult()
 {
-	Bu::FString sResult = getResult();
-	Bu::FString sRet( 2*sResult.getSize() );
+	Bu::String sResult = getResult();
+	Bu::String sRet( 2*sResult.getSize() );
 	static const char hex_tab[] = {"0123456789abcdef"};
 
 	int k = 0;

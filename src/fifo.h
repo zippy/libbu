@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 #include "bu/stream.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include "bu/exceptionbase.h"
 
 namespace Bu
@@ -27,18 +27,18 @@ namespace Bu
 	class Fifo : public Bu::Stream
 	{
 	public:
-		Fifo( const Bu::FString &sName, int iFlags, mode_t mAcc=-1 );
+		Fifo( const Bu::String &sName, int iFlags, mode_t mAcc=-1 );
 		virtual ~Fifo();
 
 		virtual void close();
-		virtual size_t read( void *pBuf, size_t nBytes );
-		virtual size_t write( const void *pBuf, size_t nBytes );
+		virtual Bu::size read( void *pBuf, Bu::size nBytes );
+		virtual Bu::size write( const void *pBuf, Bu::size nBytes );
 		using Stream::write;
 
-		virtual long tell();
-		virtual void seek( long offset );
-		virtual void setPos( long pos );
-		virtual void setPosEnd( long pos );
+		virtual Bu::size tell();
+		virtual void seek( Bu::size offset );
+		virtual void setPos( Bu::size pos );
+		virtual void setPosEnd( Bu::size pos );
 		virtual bool isEos();
 		virtual bool isOpen();
 

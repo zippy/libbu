@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -8,7 +8,7 @@
 #ifndef BU_UUID_H
 #define BU_UUID_H
 
-#include "bu/fstring.h"
+#include "bu/string.h"
 
 namespace Bu
 {
@@ -19,8 +19,8 @@ namespace Bu
 		Uuid( const Uuid &src );
 		virtual ~Uuid();
 
-		Bu::FString toRawString();
-		Bu::FString toString();
+		Bu::String toRawString();
+		Bu::String toString();
 
 		static Uuid gen();
 		static Uuid genV1();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -11,7 +11,7 @@
 #include "bu/hash.h"
 #include "bu/list.h"
 #include "bu/exceptionbase.h"
-#include "bu/fstring.h"
+#include "bu/string.h"
 #include <stddef.h>
 
 #include "bu/config.h"
@@ -144,7 +144,7 @@ namespace Bu
 	class Plugger
 	{
 	public:
-		typedef Bu::Hash<Bu::FString, PluginReg *> PluginHash;
+		typedef Bu::Hash<Bu::String, PluginReg *> PluginHash;
 		typedef Bu::Hash<ptrdiff_t, void *> InstHash;
 
 	public:
@@ -184,8 +184,8 @@ namespace Bu
 			hPlugin.insert( pInfo->sID, pReg );
 		}
 
-		void registerExternalPlugin( const Bu::FString &sFName,
-				const Bu::FString &sPluginName )
+		void registerExternalPlugin( const Bu::String &sFName,
+				const Bu::String &sPluginName )
 		{
 			PluginReg *pReg;
 			if( hPlugin.has( sPluginName ) )
@@ -227,7 +227,7 @@ namespace Bu
 			hPlugin.insert( pReg->pInfo->sID, pReg );
 		}
 
-		T *instantiate( const Bu::FString &lpName )
+		T *instantiate( const Bu::String &lpName )
 		{
 			PluginReg *pReg = (PluginReg *)hPlugin[lpName];
 			if( pReg == NULL )
@@ -240,7 +240,7 @@ namespace Bu
 			return p;
 		}
 
-		bool hasPlugin( const Bu::FString &lpName )
+		bool hasPlugin( const Bu::String &lpName )
 		{
 			return hPlugin.has( lpName );
 		}
@@ -275,7 +275,7 @@ namespace Bu
 			hPlugin.clear();
 		}
 
-		Bu::List<Bu::FString> getPluginList()
+		Bu::List<Bu::String> getPluginList()
 		{
 			return hPlugin.getKeys();
 		}

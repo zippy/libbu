@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #ifndef BU_STREAM_STACK_H
 #define BU_STREAM_STACK_H
 
@@ -103,14 +110,14 @@ namespace Bu
 		//
 
 		virtual void close();
-		virtual size_t read( void *pBuf, size_t nBytes );
-		virtual size_t write( const void *pBuf, size_t nBytes );
+		virtual Bu::size read( void *pBuf, Bu::size nBytes );
+		virtual Bu::size write( const void *pBuf, Bu::size nBytes );
 
-		virtual size_t write( const Bu::FString &sBuf );
-		virtual long tell();
-		virtual void seek( long offset );
-		virtual void setPos( long pos );
-		virtual void setPosEnd( long pos );
+		virtual Bu::size write( const Bu::String &sBuf );
+		virtual Bu::size tell();
+		virtual void seek( Bu::size offset );
+		virtual void setPos( Bu::size pos );
+		virtual void setPosEnd( Bu::size pos );
 		virtual bool isEos();
 		virtual bool isOpen();
 		virtual void flush();
@@ -121,10 +128,13 @@ namespace Bu
 		virtual bool isSeekable();
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
-		virtual void setSize( long iSize );
+		virtual void setSize( Bu::size iSize );
+		virtual size getSize() const;
+		virtual size getBlockSize() const;
+		virtual Bu::String getLocation() const;
 
 	private:
-		void checkStack();
+		void checkStack() const;
 
 	private:
 		FilterList lFilts;

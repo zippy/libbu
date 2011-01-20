@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #ifndef BU_NULL_STREAM_H
 #define BU_NULL_STREAM_H
 
@@ -24,14 +31,14 @@ namespace Bu
 		virtual ~NullStream();
 
 		virtual void close();
-		virtual size_t read( void *pBuf, size_t nBytes );
-		virtual Bu::FString readLine();
-		virtual size_t write( const void *pBuf, size_t nBytes );
+		virtual Bu::size read( void *pBuf, Bu::size nBytes );
+		virtual Bu::String readLine();
+		virtual Bu::size write( const void *pBuf, Bu::size nBytes );
 		using Bu::Stream::write;
-		virtual long tell();
-		virtual void seek( long offset );
-		virtual void setPos( long pos );
-		virtual void setPosEnd( long pos );
+		virtual Bu::size tell();
+		virtual void seek( Bu::size offset );
+		virtual void setPos( Bu::size pos );
+		virtual void setPosEnd( Bu::size pos );
 		virtual bool isEos();
 		virtual bool isOpen();
 		virtual void flush();
@@ -42,14 +49,18 @@ namespace Bu
 		virtual bool isSeekable();
 		virtual bool isBlocking();
 		virtual void setBlocking( bool bBlocking=true );
-		virtual void setSize( long iSize );
+		virtual void setSize( Bu::size iSize );
 
-		size_t getBytesRead() { return sRead; }
-		size_t getByetsWritten() { return sWrote; }
+		virtual size getSize() const;
+		virtual size getBlockSize() const;
+		virtual Bu::String getLocation() const;
+
+		Bu::size getBytesRead() { return sRead; }
+		Bu::size getByetsWritten() { return sWrote; }
 
 	private:
-		size_t sRead;
-		size_t sWrote;
+		Bu::size sRead;
+		Bu::size sWrote;
 	};
 };
 

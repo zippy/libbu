@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
 #include "bu/parser.h"
 #include "bu/lexer.h"
 
@@ -172,12 +179,12 @@ void Bu::Parser::setRootNonTerminal( int iRoot )
 	iRootNonTerminal = iRoot;
 }
 
-void Bu::Parser::setRootNonTerminal( const Bu::FString &sRoot )
+void Bu::Parser::setRootNonTerminal( const Bu::String &sRoot )
 {
 	setRootNonTerminal( hNonTerminalName.get( sRoot ) );
 }
 
-int Bu::Parser::addNonTerminal( const Bu::FString &sName, NonTerminal &nt )
+int Bu::Parser::addNonTerminal( const Bu::String &sName, NonTerminal &nt )
 {
 	int iId = aNonTerminal.getSize();
 	aNonTerminal.append( nt );
@@ -186,7 +193,7 @@ int Bu::Parser::addNonTerminal( const Bu::FString &sName, NonTerminal &nt )
 	return iId;
 }
 
-int Bu::Parser::addNonTerminal( const Bu::FString &sName )
+int Bu::Parser::addNonTerminal( const Bu::String &sName )
 {
 	int iId = aNonTerminal.getSize();
 	aNonTerminal.append( NonTerminal() );
@@ -195,22 +202,22 @@ int Bu::Parser::addNonTerminal( const Bu::FString &sName )
 	return iId;
 }
 
-void Bu::Parser::setNonTerminal( const Bu::FString &sName, NonTerminal &nt )
+void Bu::Parser::setNonTerminal( const Bu::String &sName, NonTerminal &nt )
 {
 	aNonTerminal[hNonTerminalName.get(sName)] = nt;
 }
 
-int Bu::Parser::getNonTerminalId( const Bu::FString &sName )
+int Bu::Parser::getNonTerminalId( const Bu::String &sName )
 {
 	return hNonTerminalName.get( sName );
 }
 
-bool Bu::Parser::hasNonTerminal( const Bu::FString &sName )
+bool Bu::Parser::hasNonTerminal( const Bu::String &sName )
 {
 	return hNonTerminalName.has( sName );
 }
 
-int Bu::Parser::addReduction( const Bu::FString &sName, const Reduction &r )
+int Bu::Parser::addReduction( const Bu::String &sName, const Reduction &r )
 {
 	int iId = aReduction.getSize();
 	aReduction.append( r );
@@ -218,7 +225,7 @@ int Bu::Parser::addReduction( const Bu::FString &sName, const Reduction &r )
 	return iId;
 }
 
-int Bu::Parser::addReduction( const Bu::FString &sName )
+int Bu::Parser::addReduction( const Bu::String &sName )
 {
 	int iId = aReduction.getSize();
 	aReduction.append( Reduction() );
@@ -226,17 +233,17 @@ int Bu::Parser::addReduction( const Bu::FString &sName )
 	return iId;
 }
 
-void Bu::Parser::setReduction( const Bu::FString &sName, const Reduction &r )
+void Bu::Parser::setReduction( const Bu::String &sName, const Reduction &r )
 {
 	aReduction[hReductionName.get(sName)] = r;
 }
 
-int Bu::Parser::getReductionId( const Bu::FString &sName )
+int Bu::Parser::getReductionId( const Bu::String &sName )
 {
 	return hReductionName.get( sName );
 }
 
-bool Bu::Parser::hasReduction( const Bu::FString &sName )
+bool Bu::Parser::hasReduction( const Bu::String &sName )
 {
 	return hReductionName.has( sName );
 }

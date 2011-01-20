@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -39,7 +39,7 @@ void Bu::Md5::reset()
 	uBits[1] = 0;
 }
 
-void Bu::Md5::setSalt( const Bu::FString & /*sSalt*/ )
+void Bu::Md5::setSalt( const Bu::String & /*sSalt*/ )
 {
 }
 
@@ -86,11 +86,11 @@ void Bu::Md5::addData( const void *sVData, int iSize )
 	memcpy( inbuf, sData, iSize );
 }
 
-Bu::FString Bu::Md5::getResult()
+Bu::String Bu::Md5::getResult()
 {
 	uint32_t lsum[4];
 	compCap( lsum );
-	return Bu::FString( (const char *)lsum, 4*4 );
+	return Bu::String( (const char *)lsum, 4*4 );
 }
 
 void Bu::Md5::writeResult( Bu::Stream &sOut )
