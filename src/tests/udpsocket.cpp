@@ -2,22 +2,57 @@
 #include "bu/sio.h"
 
 #include <errno.h>
+#include <arpa/inet.h> 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <sys/utsname.h>
 
 using namespace Bu;
 
 int main( int argc, char *argv[] )
 {
-	if( argv[1][0] == 'l' )
+	sio << Fmt::hex(8) << INADDR_ANY << sio.nl << Fmt::hex(8) << inet_addr("0.0.0.0") << sio.nl;
+	if( argc == 1 )
+	{
+		sio << "Options are 'l' for listening and 'b' for broadcasting."
+			<< sio.nl;
+	}
+	else if( argv[1][0] == 'l' )
 	{
 		sio << "Listening..." << sio.nl;
-		Bu::UdpSocket udp( "255.255.255.255", 6688, UdpSocket::Read|UdpSocket::Broadcast );
+		Bu::UdpSocket udp( "0.0.0.0", 6688, UdpSocket::Read|UdpSocket::Broadcast );
 
 		for(;;)
 		{
 			char buf[1501];
 			int iRead = udp.read( buf, 1500 );
-			buf[iRead] = '\0';
-			sio << "Read(" << iRead << "): '" << buf << "'" << sio.nl;
+			if( iRead >= 0 )
+			{
+				buf[iRead] = '\0';
+				sio << "Read(" << iRead << "): '" << buf << "'" << sio.nl;
+			}
+			else
+			{
+				sio << "Got " << iRead << ": " << strerror( errno ) << sio.nl;
+			}
+		}
+	}
+	else if( argv[1][0] == 'L' )
+	{
+		sio << "Listening..." << sio.nl;
+		Bu::UdpSocket udp( "0.0.0.0", 6688, UdpSocket::Read|UdpSocket::Broadcast );
+
+		for(;;)
+		{
+			char buf[1501];
+			Bu::UdpSocket::addr aHost;
+			int iPort;
+			int iRead = udp.read( buf, 1500, aHost, iPort );
+			if( iRead >= 0 )
+			{
+				buf[iRead] = '\0';
+				sio << "Read(" << iRead << ") from " << Bu::UdpSocket::addrToStr( aHost ) << ":" << iPort << ": '" << buf << "'" << sio.nl;
+			}
 		}
 	}
 	else if( argv[1][0] == 'b' )

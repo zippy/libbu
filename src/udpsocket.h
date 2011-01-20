@@ -16,13 +16,15 @@ namespace Bu
 		UdpSocket( const Bu::FString &sAddr, int iPort, int iFlags );
 		virtual ~UdpSocket();
 
+		typedef uint32_t addr;
+
+		static Bu::FString addrToStr( const addr &a );
+
 		virtual void close();
 		virtual size_t read( void *pBuf, size_t nBytes );
 		virtual size_t read( void *pBuf, size_t nBytes,
-				uint32_t nSec, uint32_t nUSec=0 );
+				addr &sHost, int &iPort );
 		virtual size_t write( const void *pBuf, size_t nBytes );
-		virtual size_t write( const void *pBuf, size_t nBytes,
-				uint32_t nSec, uint32_t nUSec=0 );
 		using Stream::write;
 
 		virtual long tell();
