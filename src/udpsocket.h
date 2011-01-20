@@ -13,7 +13,7 @@ namespace Bu
 	{
 	public:
 		UdpSocket( int iUdpSocket );
-		UdpSocket( const Bu::FString &sAddr, int iPort, bool bBroadcast );
+		UdpSocket( const Bu::FString &sAddr, int iPort, int iFlags );
 		virtual ~UdpSocket();
 
 		virtual void close();
@@ -46,12 +46,23 @@ namespace Bu
 
 		virtual void setSize( long iSize );
 
+		enum {
+			// Flags
+			Read		= 0x01,	///< Open udp socket for reading
+			Write		= 0x02, ///< Open udp socket for writing
+			ReadWrite	= 0x03, ///< Open for both read and write
+			Broadcast   = 0x04, ///< Open for broadcast
+		};
+
+
 	private:
 #ifdef WIN32
 		unsigned int iUdpSocket;
 #else
 		int iUdpSocket;
 #endif
+		void *paTarget;
+		bool bBound;
 	};
 };
 

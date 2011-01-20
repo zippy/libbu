@@ -8,17 +8,20 @@
 
 namespace Bu { subExceptionDef( UdpSocketException ) }
 
+#define saTarget ( *((struct sockaddr_in *)paTarget) )
+
 Bu::UdpSocket::UdpSocket( int iUdpSocket ) :
-	iUdpSocket( iUdpSocket )
+	iUdpSocket( iUdpSocket ),
+	paTarget( NULL ),
+	bBound( false )
 {
 }
 
-Bu::UdpSocket::UdpSocket( const Bu::FString &sAddr, int iPort,
-		bool bBroadcast ) :
-	iUdpSocket( 0 )
+Bu::UdpSocket::UdpSocket( const Bu::FString &sAddr, int iPort, int iFlags ) :
+	iUdpSocket( 0 ),
+	paTarget( NULL ),
+	bBound( false )
 {
-	struct sockaddr_in name;
-
 	iUdpSocket = socket( PF_INET, SOCK_DGRAM, 0 );
 	if( iUdpSocket < 0 )
 	{
@@ -27,7 +30,7 @@ Bu::UdpSocket::UdpSocket( const Bu::FString &sAddr, int iPort,
 			);
 	}
 
-	if( bBroadcast )
+	if( (iFlags&Broadcast) )
 	{
 		int broadcast = 1;
 		if( (setsockopt( iUdpSocket, SOL_SOCKET, SO_BROADCAST,
@@ -39,42 +42,29 @@ Bu::UdpSocket::UdpSocket( const Bu::FString &sAddr, int iPort,
 		}
 	}
 
-	name.sin_family = AF_INET;
-	name.sin_port = htons( iPort );
-	name.sin_addr.s_addr = INADDR_ANY;
-	memset( name.sin_zero, '\0', sizeof(name.sin_zero) );
+	paTarget = new struct sockaddr_in;
+	saTarget.sin_family = AF_INET;
+	saTarget.sin_port = htons( iPort );
+	saTarget.sin_addr.s_addr = inet_addr( sAddr.getStr() ); // INADDR_ANY;
+	memset( saTarget.sin_zero, '\0', sizeof(saTarget.sin_zero) );
 	
-	if( bind( iUdpSocket, (struct sockaddr*) &name, sizeof(name) ) == -1 )
+	if( (iFlags&Read) )
 	{
-		throw UdpSocketException("Couldn't bind port to udp socket: %s",
-			strerror( errno )
-			);
-	}
-	
-	name.sin_family = AF_INET;
-	name.sin_port = htons( iPort );
-	name.sin_addr.s_addr = inet_addr( sAddr.getStr() );
-	memset( name.sin_zero, '\0', sizeof(name.sin_zero) );
-/*
-	while( true )
-	{
-		nbytes = sendto( iUdpSocket, "12345", 5, 0,
-			(struct sockaddr *)&name, size );
-		if( nbytes < 0 )
+		if( bind( iUdpSocket, (struct sockaddr*)paTarget, sizeof(struct sockaddr_in) )
+				== -1 )
 		{
-			perror("sendto");
-//			exit( 0 );
+			throw UdpSocketException("Couldn't bind port to udp socket: %s",
+				strerror( errno )
+				);
 		}
+		bBound = true;
+	}
+}
 
-		printf("Client wrote something\n");
-		int nQueen = sockServe.accept( 3, 0 );
-		if( nQueen >= 0 )
-		{
-			close( iUdpSocket );
-			return nQueen;
-		}
-	}
-	*/
+Bu::UdpSocket::~UdpSocket()
+{
+	delete (struct sockaddr_in *)paTarget;
+	paTarget = NULL;
 }
 
 void Bu::UdpSocket::close()
@@ -84,6 +74,7 @@ void Bu::UdpSocket::close()
 
 size_t Bu::UdpSocket::read( void *pBuf, size_t nBytes )
 {
+	return recvfrom( iUdpSocket, pBuf, nBytes, 0, NULL, 0 );
 }
 
 size_t Bu::UdpSocket::read( void *pBuf, size_t nBytes,
@@ -93,9 +84,15 @@ size_t Bu::UdpSocket::read( void *pBuf, size_t nBytes,
 
 size_t Bu::UdpSocket::write( const void *pBuf, size_t nBytes )
 {
-// name, the destination address, needs to be a class variable...
-//	return sendto( iUdpSocket, pBuf, nBytes, 0,
-//		(struct sockaddr *)&name, size );
+	if( bBound )
+	{
+		return sendto( iUdpSocket, pBuf, nBytes, 0, NULL, 0 );
+	}
+	else
+	{
+		return sendto( iUdpSocket, pBuf, nBytes, 0,
+			(struct sockaddr*)paTarget, sizeof(struct sockaddr_in) );
+	}
 }
 
 size_t Bu::UdpSocket::write( const void *pBuf, size_t nBytes,
