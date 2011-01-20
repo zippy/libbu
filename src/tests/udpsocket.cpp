@@ -1,6 +1,8 @@
 #include "bu/udpsocket.h"
 #include "bu/sio.h"
 
+#include <errno.h>
+
 using namespace Bu;
 
 int main( int argc, char *argv[] )
@@ -26,7 +28,8 @@ int main( int argc, char *argv[] )
 
 		for(;;)
 		{
-			udp.write("hello", 5 );
+			int iWrote = udp.write("hello", 5 );
+			sio << "Wrote(" << iWrote << "): " << strerror( errno ) << sio.nl;
 			usleep( 250000 );
 		}
 	}
