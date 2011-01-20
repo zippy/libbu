@@ -137,7 +137,8 @@ namespace Bu
 			for(;;)
 			{
 				Chunk *n = i->pNext;
-				aChr.deallocate( i->pData, i->nLength+1 );
+				aChr.deallocate( i->pData,
+						(i->nLength<nMinSize)?(nMinSize):(i->nLength)+1 );
 				aChunk.deallocate( i, 1 );
 				if( n == NULL )
 					break;
@@ -169,7 +170,8 @@ namespace Bu
 			Chunk *pNew = aChunk.allocate( 1 );
 			pNew->pNext = pSrc->pNext;
 			pNew->nLength = pSrc->nLength;
-			pNew->pData = aChr.allocate( pSrc->nLength+1 );
+			pNew->pData = aChr.allocate(
+				(pNew->nLength<nMinSize)?(nMinSize):(pNew->nLength)+1 );
 			memcpy( pNew->pData, pSrc->pData, pSrc->nLength );
 			pNew->pData[pNew->nLength] = (chr)0;
 			return pNew;
@@ -1142,12 +1144,15 @@ namespace Bu
 			flatten();
 			_hardCopy();
 
+			// TODO:  This is bad
+
 			Chunk *pNew = core->newChunk( nNewSize );
 			long nNewLen = (nNewSize<core->nLength)?(nNewSize):(core->nLength);
 			if( core->nLength > 0 )
 			{
 				memcpy( pNew->pData, core->pFirst->pData, nNewLen );
-				core->aChr.deallocate( core->pFirst->pData, core->pFirst->nLength+1 );
+				core->aChr.deallocate( core->pFirst->pData,
+					(core->pFirst->nLength<nMinSize)?(nMinSize):(core->pFirst->nLength)+1 );
 				core->aChunk.deallocate( core->pFirst, 1 );
 			}
 			pNew->pData[nNewLen] = (chr)0;

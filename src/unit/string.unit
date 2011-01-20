@@ -348,4 +348,32 @@ suite String
 		b = a;
 		b.getStr();
 	}
+
+	test padding1
+	{
+		Bu::String a;
+		a.append('a');
+		a.append('b');
+		a.append('c');
+		a.append("hello");
+		a.clear();
+	}
+
+	test padding2
+	{
+		Bu::String src("It's all sorts of things");
+		Bu::String::const_iterator i = src.find('a');
+		Bu::String::const_iterator j = src.find('f');
+		Bu::String a, b;
+		a.append( i );
+		i += 2;
+		a.append( i, j );
+		a.append('a');
+		a.append('b');
+		a.append('c');
+		a.append("hello");
+		a.append( src );
+		b = a;
+		a.clear();
+	}
 }
