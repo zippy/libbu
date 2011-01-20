@@ -8,10 +8,10 @@ read
 for i in $(find . -iname '*.cpp' -o -iname '*.h' -o -iname '*.unit' -o -iname '*.doxy'); do
 	echo -n $i...
 	sed -i $i \
-		-e 's@"fstring.h@"bu/string.h@' \
-		-e 's@"bu/fstring.h@"bu/string.h@' \
-		-e 's@<fstring.h@<bu/string.h@' \
-		-e 's@<bu/fstring.h@<bu/string.h@' \
-		-e 's@FString@String@'
+		-e 's@"fstring.h@"bu/string.h@g' \
+		-e 's@"bu/fstring.h@"bu/string.h@g' \
+		-e 's@<fstring.h@<bu/string.h@g' \
+		-e 's@<bu/fstring.h@<bu/string.h@g' \
+		-e 's@FString@String@g'
 	echo done.
 done
