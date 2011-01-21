@@ -18,6 +18,11 @@ namespace Bu
 	 * as it's output.  It is strongly dependant on every byte in the input,
 	 * which means that it's a good choice for adding to short messages to
 	 * ensure that the contents of the messages are unchanged.
+	 *
+	 * Pearson hash is named for it's inventor Peter K. Pearson who described
+	 * it in his article "Fast hashing of variable-length text strings"
+	 * published in 1990 by ACM.  I haven't read it, because you have to pay to
+	 * get a copy :-P
 	 */
 	class PearsonHash : public Bu::CryptoHash
 	{
