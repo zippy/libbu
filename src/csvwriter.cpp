@@ -50,7 +50,7 @@ void Bu::CsvWriter::writeLine( const StrArray &aStrs )
 
 Bu::String Bu::CsvWriter::encodeExcel( const Bu::String &sIn )
 {
-	if( sIn.find('\"') )
+	if( sIn.find('\"') || sIn.find(',') )
 	{
 		Bu::String sOut = "\"";
 		for( Bu::String::const_iterator i = sIn.begin(); i; i++ )
@@ -60,6 +60,7 @@ Bu::String Bu::CsvWriter::encodeExcel( const Bu::String &sIn )
 			else
 				sOut += *i;
 		}
+		sOut += '\"';
 		return sOut;
 	}
 	return sIn;

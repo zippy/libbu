@@ -1,0 +1,76 @@
+// vim: syntax=cpp
+/*
+ * Copyright (C) 2007-2010 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
+#include "bu/sha1.h"
+
+#include <stdlib.h>
+
+suite Sha1
+{
+	test basics
+	{
+#define tryStr( a, b ) \
+	{ Bu::Sha1 m; m.addData(a); unitTest( m.getHexResult() == b ); } (void)0
+		tryStr("", "da39a3ee5e6b4b0d3255bfef95601890afd80709");
+		tryStr("The quick brown fox jumps over the lazy dog",
+			"2fd4e1c67a2d28fced849ee1bb76e7391b93eb12");
+		tryStr("The quick brown fox jumps over the lazy cog",
+			"de9f2c7fd25e1b3afad3e85a0bd17d9b100db4b3");
+	}
+
+	test twoChunks
+	{
+		Bu::Sha1 m;
+		m.addData("The quick brown fo");
+		m.addData("x jumps over the lazy dog");
+		unitTest( m.getHexResult() == "2fd4e1c67a2d28fced849ee1bb76e7391b93eb12" );
+	}
+
+	test biggerBlocks
+	{
+		const char *sums[41] = {
+			"2356aab95478d8e3c2c918e36f383e46d06154c7",
+			"e3f663240c185a95111c4e00e20865dfbda390aa",
+			"3f21881040b42f44476b610b6d2191f72afc1cb5",
+			"493fe9da6de598c52ea56962b15ccc4405a8dfda",
+			"4684ff568f7c1198a258eb04d88209f4feab4e05",
+			"614101c1c164b8b6099f63165ea01078cbb6c77f",
+			"393f1c1a9f6384653029ab807756e85a13147029",
+			"fd66443d68f8b0508b4f125f2cff1192bfc01913",
+			"1ef66120e530731194554bb2cd51293779a0bcc7",
+			"d77e0eda0037f51b0b6c197371c5fd801cc0eede",
+			"ce8b579bd3aa2ccac2e0205f52a8ed03777117ac",
+			"d9e9d7fc411de2f89329ab758dc8f4302f80ff23"
+		};
+
+		char block[128];
+		for( int i = 0; i < 128; i++ )
+			block[i] = i*2;
+
+		const char **curSum = sums;
+		for( int j = 1; j < 4096; j*=2 )
+		{
+			/*
+			Bu::File fOut("temp", Bu::File::WriteNew );
+			for( int b = 0; b < j; b++ )
+			{
+				fOut.write( block, 128 );
+			}
+			fOut.close();
+			system("sha1sum -b temp");
+			*/
+			Bu::Sha1 m;
+			for( int b = 0; b < j; b++ )
+			{
+				m.addData( block, 128 );
+			}
+			unitTest( m.getHexResult() == *curSum );
+			curSum++;
+		} 
+	}
+}
