@@ -376,4 +376,37 @@ suite String
 		b = a;
 		a.clear();
 	}
+
+	test append
+	{
+		// This is the byte sequence that caused += to die
+		//	03 F0 9C A4 F5 8A C8 CA 0E
+		uint8_t b;
+		Bu::String m1;
+		b = 0x03; m1 += (char)b;
+		b = 0xF0; m1 += (char)b;
+		b = 0x9C; m1 += (char)b;
+		b = 0xA4; m1 += (char)b;
+		b = 0xF5; m1 += (char)b;
+		b = 0x8A; m1 += (char)b;
+		b = 0xC8; m1 += (char)b;
+		b = 0xCA; m1 += (char)b;
+		b = 0x0E; m1 += (char)b;
+
+		Bu::String m2;
+		b = 0x03; m2.append( (const char *)&b, 1 );
+		b = 0xF0; m2.append( (const char *)&b, 1 );
+		b = 0x9C; m2.append( (const char *)&b, 1 );
+		b = 0xA4; m2.append( (const char *)&b, 1 );
+		b = 0xF5; m2.append( (const char *)&b, 1 );
+		b = 0x8A; m2.append( (const char *)&b, 1 );
+		b = 0xC8; m2.append( (const char *)&b, 1 );
+		b = 0xCA; m2.append( (const char *)&b, 1 );
+		b = 0x0E; m2.append( (const char *)&b, 1 );
+
+		unitTest( m1 == m2 );
+		unitTest( m1 == "\x03\xF0\x9C\xA4\xF5\x8A\xC8\xCA\x0E" );
+	}
 }
+// 03F09CA4F58AC8CA0E80F0D9D409D0A60700A192270004BC3A99E91D0001034F544603362E35013103313130019CA4F58AC8CA0E0002830800002C4200008AC200EBF7D9D4090127BB010000E3
+// 
