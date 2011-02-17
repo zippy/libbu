@@ -19,6 +19,8 @@ namespace Bu
 	/**
 	 * A POSIX compliant, node based filesystem built on top of Myriad.
 	 *
+	 * Think about putting this all in one stream, on block boundaries.
+	 *
 	 * A header is placed into stream 1.
 	 * Header format:
 	 *   int32_t iMagicHeader  (A7188B39)
@@ -39,10 +41,13 @@ namespace Bu
 	 * Basic node header format:
 	 *   int32_t iUser
 	 *   int32_t iGroup
-	 *   int16_t iMeta
 	 *   int16_t iPerms
+	 *   int16_t iLinks
 	 *   int32_t iStreamIndex
 	 *   int32_t iParentNode
+	 *   int64_t iATime
+	 *   int64_t iMTime
+	 *   int64_t iCTime
 	 *   int16_t iNameSize
 	 *   char[iNameSize] sName
 	 */
@@ -51,6 +56,30 @@ namespace Bu
 	public:
 		MyriadFs( Bu::Stream &rStore, int iBlockSize=512 );
 		virtual ~MyriadFs();
+
+		enum
+		{
+			permOthX	= 0000001,
+			permOthW	= 0000002,
+			permOthR	= 0000004,
+			permGrpX	= 0000010,
+			permGrpW	= 0000020,
+			permGrpR	= 0000040,
+			permUsrX	= 0000100,
+			permUsrW	= 0000200,
+			permUsrR	= 0000400,
+			permSticky	= 0001000,
+			permSetGid	= 0002000,
+			permSetUid	= 0004000,
+			typeFifo	= 0010000,
+			typeChrDev	= 0020000,
+			typeDir		= 0040000,
+			typeBlkDev	= 0060000,
+			typeRegFile	= 0100000,
+			typeSymLink	= 0120000,
+			typeSocket	= 0140000,
+			typeMask	= 0170000
+		}
 
 	private:
 		Bu::Stream &rStore;

@@ -61,15 +61,15 @@ Bu::MyriadFs::MyriadFs( Bu::Stream &rStore, int iBlockSize ) :
 #endif
 			int32_t iTmp32 = 0;
 			int16_t iTmp16 = 0;
-			ms.write( &iUser, 4 );
-			ms.write( &iGroup, 4 );
-			ms.write( &iTmp16, 2 );
-			ms.write( &iTmp16, 2 );
+			ms.write( &iUser, 4 );		// User
+			ms.write( &iGroup, 4 );		// Group
+			ms.write( &iTmp16, 2 );		// Meta?  I...don't remember this
+			ms.write( &iTmp16, 2 );		// Permissions/types
 			iTmp32 = 3;
-			ms.write( &iTmp32, 4 );
+			ms.write( &iTmp32, 4 );		// Stream index
 			iTmp32 = 0;
-			ms.write( &iTmp32, 4 );
-			ms.write( &iTmp16, 2 );	
+			ms.write( &iTmp32, 4 );		// Parent inode
+			ms.write( &iTmp16, 2 );		// Name size
 		}
 
 		// Create inode 0's storage stream.
