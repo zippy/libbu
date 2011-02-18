@@ -45,6 +45,16 @@ Bu::String Bu::Uuid::toString()
 	return mb.getString();
 }
 
+Bu::String Bu::Uuid::toUrn()
+{
+	return "urn:uuid:" + toString();
+}
+
+int Bu::Uuid::getVersion()
+{
+	return (data[6]&((8|4|2|1)<<4))>>4;
+}
+
 #define msb( i ) (1<<(7-i))
 
 void Bu::Uuid::clear()

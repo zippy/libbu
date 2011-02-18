@@ -45,7 +45,17 @@ Bu::MyriadFs::MyriadFs( Bu::Stream &rStore, int iBlockSize ) :
 	
 		int8_t iVer;
 		ms.read( &iVer, 1 );
-		throw MyriadFsException("You totally have a MyriadFs stream, version %d, but they can't be loaded yet.", iVer );
+
+		int32_t iNumNodes;
+		ms.read( &iNumNodes, 4 );
+		for( int32_t j = 0; j < iNumNodes; j++ )
+		{
+			int32_t iNode;
+			int32_t iPos;
+			ms.read( &iNode, 4 );
+			ms.read( &iPos, 4 );
+			hNodeIndex.insert( iNode, iPos );
+		}
 	}
 	else
 	{
@@ -125,26 +135,103 @@ Bu::MyriadStream Bu::MyriadFs::open( const Bu::String &sPath, int iMode )
 		if( iParent < 0 )
 			throw;
 
+		// This means that an intermediate path component couldn't be found
+		if( e.getErrorCode() == 1 )
+			throw;
+
 		// The file wasn't found, but the path leading up to it was.
 		// first, figure out the final path element...
 		Bu::String::const_iterator iStart = sPath.begin();
 		if( *iStart == '/' )
 			iStart++;
 		sio << "Scanning for filename:" << sio.nl;
-		for( Bu::String::const_iterator iEnd = iStart.find('/')+1; iEnd; iStart = iEnd ) { }
+		for( Bu::String::const_iterator iEnd = iStart.find('/'); iEnd;
+			 iStart = iEnd+1, iEnd = iStart.find('/') ) { }
 		Bu::String sName( iStart, sPath.end() );
 		sio << "End filename: " << sName << sio.nl;
 		sio << "Parent inode: " << iParent << sio.nl;
-		iNode = create( iParent, sName, 0664|typeRegFile );
+		iNode = create( iParent, sName, 0664|typeRegFile, 0 );
 		sio << "New iNode: " << iNode << sio.nl;
 		return openByInode( iNode );
 	}
+}
 
-	return mStore.openStream( 2 );
+void Bu::MyriadFs::create( const Bu::String &sPath, uint16_t iPerms )
+{
+	create( sPath, iPerms, 0 );
+}
+
+void Bu::MyriadFs::create( const Bu::String &sPath, uint16_t iPerms,
+		uint16_t iDevHi, uint16_t iDevLo )
+{
+	create( sPath, iPerms, ((uint32_t)iDevHi<<16)|(uint32_t)iDevLo );
+}
+
+void Bu::MyriadFs::create( const Bu::String &sPath, uint16_t iPerms,
+		uint32_t uSpecial )
+{
+	int32_t iParent = -1;
+	int32_t iNode;
+	try
+	{
+		iNode = lookupInode( sPath, iParent );
+		sio << "File found." << sio.nl;
+		// The file was found
+		throw Bu::MyriadFsException("Path already exists.");
+	}
+	catch( Bu::MyriadFsException &e )
+	{
+		if( iParent < 0 )
+			throw;
+
+		// This means that an intermediate path component couldn't be found
+		if( e.getErrorCode() == 1 )
+			throw;
+
+		// The file wasn't found, but the path leading up to it was.
+		// first, figure out the final path element...
+		Bu::String::const_iterator iStart = sPath.begin();
+		if( *iStart == '/' )
+			iStart++;
+		sio << "Scanning for filename:" << sio.nl;
+		for( Bu::String::const_iterator iEnd = iStart.find('/'); iEnd;
+			 iStart = iEnd+1, iEnd = iStart.find('/') ) { }
+		Bu::String sName( iStart, sPath.end() );
+		sio << "End filename: " << sName << sio.nl;
+		sio << "Parent inode: " << iParent << sio.nl;
+		iNode = create( iParent, sName, iPerms, uSpecial );
+		sio << "New iNode: " << iNode << sio.nl;
+	}
+}
+
+void Bu::MyriadFs::mkDir( const Bu::String &sPath, uint16_t iPerms )
+{
+	create( sPath, (iPerms&permMask)|typeDir, 0 );
+}
+
+Bu::MyriadFs::Dir Bu::MyriadFs::readDir( const Bu::String &sPath )
+{
+	int32_t iParent = -1;
+	int32_t iNode = lookupInode( sPath, iParent );
+	return readDir( iNode );
+}
+
+dev_t Bu::MyriadFs::devToSys( uint32_t uDev )
+{
+	return (((uDev&0xFFFF0000)>>8)&0xFF00) | ((uDev&0xFF));
+}
+
+uint32_t Bu::MyriadFs::sysToDev( dev_t uDev )
+{
+	return (((uint32_t)uDev&0xFF00)<<8) | ((uint32_t)uDev&0xFF);
 }
 
 int32_t Bu::MyriadFs::lookupInode( const Bu::String &sPath, int32_t &iParent )
 {
+	if( sPath == "/" )
+	{
+		return 0;
+	}
 	if( sPath[0] == '/' )
 	{
 		// Absolute lookup
@@ -185,7 +272,7 @@ int32_t Bu::MyriadFs::lookupInode( Bu::String::const_iterator iStart,
 				// Not the last one in our path, double check it's a dir
 				if( ((*i).uPerms&typeMask) == typeDir )
 				{
-					return lookupInode( iEnd+1, (*i).iNode );
+					return lookupInode( iEnd+1, (*i).iNode, iParent );
 				}
 				else
 				{
@@ -198,13 +285,16 @@ int32_t Bu::MyriadFs::lookupInode( Bu::String::const_iterator iStart,
 		}
 	}
 
-	throw Bu::MyriadFsException( 1, "Path not found");
+	if( iEnd )
+		throw Bu::MyriadFsException( 1, "Path not found");
+	else
+		throw Bu::MyriadFsException( 2, "Path not found");
 }
 
 Bu::MyriadFs::Dir Bu::MyriadFs::readDir( int32_t iNode )
 {
 	Bu::MyriadStream ms = openByInode( iNode );
-	int32_t iNumChildren;
+	int32_t iNumChildren = 0;
 	ms.read( &iNumChildren, 4 );
 	
 	Bu::MyriadStream is = mStore.openStream( 2 );
@@ -236,7 +326,7 @@ Bu::MyriadStream Bu::MyriadFs::openByInode( int32_t iNode )
 		case typeDir:
 		case typeSymLink:
 		case typeRegFile:
-			return mStore.openStream( rs.iStreamIndex );
+			return mStore.openStream( rs.uStreamIndex );
 
 		default:
 			throw Bu::MyriadFsException(
@@ -245,22 +335,22 @@ Bu::MyriadStream Bu::MyriadFs::openByInode( int32_t iNode )
 }
 
 int32_t Bu::MyriadFs::create( int32_t iParent, const Bu::String &sName,
-		uint16_t uPerms )
+		uint16_t uPerms, uint32_t uSpecial )
 {
 	Bu::MyriadStream ms = openByInode( iParent );
-	int32_t iNumChildren;
+	int32_t iNumChildren = 0;
 	ms.read( &iNumChildren, 4 );
 	iNumChildren++;
 	ms.setPos( 0 );
 	ms.write( &iNumChildren, 4 );
 	ms.setPos( iNumChildren*4 ); // Actually 4+(iNumChildren-1)*4 :-P
-	int32_t iNode = allocInode( sName, iParent, uPerms );
+	int32_t iNode = allocInode( sName, iParent, uPerms, uSpecial );
 	ms.write( &iNode, 4 );
 	return iNode;
 }
 
 int32_t Bu::MyriadFs::allocInode( const Bu::String &sName, int32_t iParent,
-		uint16_t uPerms )
+		uint16_t uPerms, uint32_t uSpecial )
 {
 	int32_t iNode = 0;
 	for(; iNode < 0xfffffff; iNode++ )
@@ -279,14 +369,29 @@ int32_t Bu::MyriadFs::allocInode( const Bu::String &sName, int32_t iParent,
 			rs.iLinks = 1;
 			switch( (uPerms&typeMask) )
 			{
-				case typeDir:
 				case typeRegFile:
 				case typeSymLink:
-					rs.iStreamIndex = mStore.createStream();
+					rs.uStreamIndex = mStore.createStream();
+					break;
+				
+				case typeDir:
+					rs.uStreamIndex = mStore.createStream();
+					{
+						Bu::MyriadStream msDir = mStore.openStream(
+							rs.uStreamIndex
+							);
+						uint32_t uSize = 0;
+						msDir.write( &uSize, 4 );
+					}
+					break;
+
+				case typeChrDev:
+				case typeBlkDev:
+					rs.uStreamIndex = uSpecial;
 					break;
 
 				default:
-					rs.iStreamIndex = 0;
+					rs.uStreamIndex = 0;
 					break;
 			}
 			rs.iParentNode = iParent;
@@ -320,11 +425,18 @@ void Bu::MyriadFs::stat( int32_t iNode, Stat &rBuf, MyriadStream &rIs )
 	rBuf.iATime = rs.iATime;
 	rBuf.iMTime = rs.iMTime;
 	rBuf.iCTime = rs.iCTime;
+	rBuf.uDev = 0;
+	rBuf.iSize = 0;
 	switch( (rBuf.uPerms&typeMask) )
 	{
 		case typeRegFile:
 		case typeSymLink:
-			rBuf.iSize = mStore.getStreamSize( rs.iStreamIndex );
+			rBuf.iSize = mStore.getStreamSize( rs.uStreamIndex );
+			break;
+
+		case typeChrDev:
+		case typeBlkDev:
+			rBuf.uDev = rs.uStreamIndex;
 			break;
 
 		default:

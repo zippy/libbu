@@ -1,136 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="robots" content="index,follow" />
-    <meta name="creator" content="rfcmarkup version 1.73" />
-    <link rel="icon" href="/images/rfc.png" type="image/png" />
-    <link rel="shortcut icon" href="/images/rfc.png" type="image/png" />
-    <title>RFC 4122 - A Universally Unique IDentifier (UUID) URN Namespace</title>
-    
-    <style type="text/css">
-	body {
-	    margin: 0px 8px;
-            font-size: 1em;
-	}
-        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-	    font-weight: bold;
-            line-height: 0pt;
-            display: inline;
-            white-space: pre;
-            font-family: monospace;
-            font-size: 1em;
-	    font-weight: bold;
-        }
-        pre {
-            font-size: 1em;
-            margin-top: 0px;
-            margin-bottom: 0px;
-        }
-	.pre {
-	    white-space: pre;
-	    font-family: monospace;
-	}
-	.header{
-	    font-weight: bold;
-	}
-        .newpage {
-            page-break-before: always;
-        }
-        .invisible {
-            text-decoration: none;
-            color: white;
-        }
-        @media print {
-            body {
-                font-size: 10.5pt;
-            }
-            h1, h2, h3, h4, h5, h6 {
-                font-size: 10.5pt;
-            }
-        
-            a:link, a:visited {
-                color: inherit;
-                text-decoration: none;
-            }
-            .noprint {
-                display: none;
-            }
-        }
-	@media screen {
-	    .grey, .grey a:link, .grey a:visited {
-		color: #777;
-	    }
-            .docinfo {
-                background-color: #EEE;
-            }
-            .top {
-                border-top: 7px solid #EEE;
-            }
-            .bgwhite  { background-color: white; }
-            .bgred    { background-color: #F44; }
-            .bggrey   { background-color: #666; }
-            .bgbrown  { background-color: #840; }            
-            .bgorange { background-color: #FA0; }
-            .bgyellow { background-color: #EE0; }
-            .bgmagenta{ background-color: #F4F; }
-            .bgblue   { background-color: #66F; }
-            .bgcyan   { background-color: #4DD; }
-            .bggreen  { background-color: #4F4; }
 
-            .legend   { font-size: 90%; }
-            .cplate   { font-size: 70%; border: solid grey 1px; }
-	}
-    </style>
 
-    <script type="text/javascript"><!--
-    function addHeaderTags() {
-	var spans = document.getElementsByTagName("span");
-	for (var i=0; i < spans.length; i++) {
-	    var elem = spans[i];
-	    if (elem) {
-		var level = elem.getAttribute("class");
-                if (level == "h1" || level == "h2" || level == "h3" || level == "h4" || level == "h5" || level == "h6") {
-                    elem.innerHTML = "<"+level+">"+elem.innerHTML+"</"+level+">";		
-                }
-	    }
-	}
-    }
-    var legend_html = "Colour legend:<br />      <table>         <tr><td>Unknown:</td>          <td><span class='cplate bgwhite'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Draft:</td>            <td><span class='cplate bgred'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Informational:</td>    <td><span class='cplate bgorange'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Experimental:</td>     <td><span class='cplate bgyellow'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Best Common Practice:</td><td><span class='cplate bgmagenta'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Proposed Standard:</td><td><span class='cplate bgblue'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Draft Standard:</td>   <td><span class='cplate bgcyan'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Standard:</td>         <td><span class='cplate bggreen'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Historic:</td>         <td><span class='cplate bggrey'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Obsolete:</td>         <td><span class='cplate bgbrown'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>     </table>";
-    function showElem(id) {
-        var elem = document.getElementById(id);
-        elem.innerHTML = eval(id+"_html");
-        elem.style.visibility='visible';
-    }
-    function hideElem(id) {
-        var elem = document.getElementById(id);
-        elem.style.visibility='hidden';        
-        elem.innerHTML = "";
-    }
-    // -->
-    </script>
-</head>
-<body onload="addHeaderTags()">
-   <div style="height: 13px;">
-      <div onmouseover="this.style.cursor='pointer';"
-         onclick="showElem('legend');"
-         onmouseout="hideElem('legend')"
-	 style="height: 6px; position: absolute;"
-         class="pre noprint docinfo bgblue"
-         title="Click for colour legend." >                                                                        </div>
-      <div id="legend"
-           class="docinfo noprint pre legend"
-           style="position:absolute; top: 4px; left: 4ex; visibility:hidden; background-color: white; padding: 4px 9px 5px 7px; border: solid #345 1px; "
-           onmouseover="showElem('legend');"
-           onmouseout="hideElem('legend');">
-      </div>
-   </div>
-<span class="pre noprint docinfo top">[<a href="../html/" title="Document search and retrieval page">RFCs/IDs</a>] [<a href="/rfc/rfc4122.txt" title="Plaintext version of this document">Plain Text</a>] [From <a href="draft-mealling-uuid-urn">draft-mealling-uuid-urn</a>]                  </span><br />
-<span class="pre noprint docinfo">                                                                        </span><br />
-<span class="pre noprint docinfo">                                                       PROPOSED STANDARD</span><br />
-<span class="pre noprint docinfo">                                                                  <a href="http://www.rfc-editor.org/errata_search.php?rfc=4122">Errata</a></span><br />
-<pre>
+
+
+
+
 Network Working Group                                           P. Leach
 Request for Comments: 4122                                     Microsoft
 Category: Standards Track                                    M. Mealling
@@ -140,7 +13,7 @@ Category: Standards Track                                    M. Mealling
                                                                July 2005
 
 
-          <span class="h1">A Universally Unique IDentifier (UUID) URN Namespace</span>
+          A Universally Unique IDentifier (UUID) URN Namespace
 
 Status of This Memo
 
@@ -182,41 +55,41 @@ Abstract
 
 
 
-<span class="grey">Leach, et al.               Standards Track                     [Page 1]</span>
-</pre><pre class='newpage'><a name="page-2" id="page-2" href="#page-2" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                     [Page 1]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
 Table of Contents
 
-   <a href="#section-1">1</a>. Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  <a href="#page-2">2</a>
-   <a href="#section-2">2</a>. Motivation . . . . . . . . . . . . . . . . . . . . . . . . . .  <a href="#page-3">3</a>
-   <a href="#section-3">3</a>. Namespace Registration Template  . . . . . . . . . . . . . . .  <a href="#page-3">3</a>
-   <a href="#section-4">4</a>. Specification  . . . . . . . . . . . . . . . . . . . . . . . .  <a href="#page-5">5</a>
-      <a href="#section-4.1">4.1</a>. Format. . . . . . . . . . . . . . . . . . . . . . . . . .  <a href="#page-5">5</a>
-           <a href="#section-4.1.1">4.1.1</a>. Variant. . . . . . . . . . . . . . . . . . . . . .  <a href="#page-6">6</a>
-           <a href="#section-4.1.2">4.1.2</a>. Layout and Byte Order. . . . . . . . . . . . . . .  <a href="#page-6">6</a>
-           <a href="#section-4.1.3">4.1.3</a>. Version. . . . . . . . . . . . . . . . . . . . . .  <a href="#page-7">7</a>
-           <a href="#section-4.1.4">4.1.4</a>. Timestamp. . . . . . . . . . . . . . . . . . . . .  <a href="#page-8">8</a>
-           <a href="#section-4.1.5">4.1.5</a>. Clock Sequence . . . . . . . . . . . . . . . . . .  <a href="#page-8">8</a>
-           <a href="#section-4.1.6">4.1.6</a>. Node . . . . . . . . . . . . . . . . . . . . . . .  <a href="#page-9">9</a>
-           <a href="#section-4.1.7">4.1.7</a>. Nil UUID . . . . . . . . . . . . . . . . . . . . .  <a href="#page-9">9</a>
-      <a href="#section-4.2">4.2</a>. Algorithms for Creating a Time-Based UUID . . . . . . . .  <a href="#page-9">9</a>
-           <a href="#section-4.2.1">4.2.1</a>. Basic Algorithm. . . . . . . . . . . . . . . . . . <a href="#page-10">10</a>
-           <a href="#section-4.2.2">4.2.2</a>. Generation Details . . . . . . . . . . . . . . . . <a href="#page-12">12</a>
-      <a href="#section-4.3">4.3</a>. Algorithm for Creating a Name-Based UUID. . . . . . . . . <a href="#page-13">13</a>
+   1. Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  2
+   2. Motivation . . . . . . . . . . . . . . . . . . . . . . . . . .  3
+   3. Namespace Registration Template  . . . . . . . . . . . . . . .  3
+   4. Specification  . . . . . . . . . . . . . . . . . . . . . . . .  5
+      4.1. Format. . . . . . . . . . . . . . . . . . . . . . . . . .  5
+           4.1.1. Variant. . . . . . . . . . . . . . . . . . . . . .  6
+           4.1.2. Layout and Byte Order. . . . . . . . . . . . . . .  6
+           4.1.3. Version. . . . . . . . . . . . . . . . . . . . . .  7
+           4.1.4. Timestamp. . . . . . . . . . . . . . . . . . . . .  8
+           4.1.5. Clock Sequence . . . . . . . . . . . . . . . . . .  8
+           4.1.6. Node . . . . . . . . . . . . . . . . . . . . . . .  9
+           4.1.7. Nil UUID . . . . . . . . . . . . . . . . . . . . .  9
+      4.2. Algorithms for Creating a Time-Based UUID . . . . . . . .  9
+           4.2.1. Basic Algorithm. . . . . . . . . . . . . . . . . . 10
+           4.2.2. Generation Details . . . . . . . . . . . . . . . . 12
+      4.3. Algorithm for Creating a Name-Based UUID. . . . . . . . . 13
       4.4. Algorithms for Creating a UUID from Truly Random or
-           Pseudo-Random Numbers . . . . . . . . . . . . . . . . . . <a href="#page-14">14</a>
-      <a href="#section-4.5">4.5</a>. Node IDs that Do Not Identify the Host. . . . . . . . . . <a href="#page-15">15</a>
-   <a href="#section-5">5</a>. Community Considerations . . . . . . . . . . . . . . . . . . . <a href="#page-15">15</a>
-   <a href="#section-6">6</a>. Security Considerations  . . . . . . . . . . . . . . . . . . . <a href="#page-16">16</a>
-   <a href="#section-7">7</a>. Acknowledgments  . . . . . . . . . . . . . . . . . . . . . . . <a href="#page-16">16</a>
-   <a href="#section-8">8</a>. Normative References . . . . . . . . . . . . . . . . . . . . . <a href="#page-16">16</a>
-   <a href="#appendix-A">A</a>. <a href="#appendix-A">Appendix A</a> - Sample Implementation . . . . . . . . . . . . . . <a href="#page-18">18</a>
-   <a href="#appendix-B">B</a>. <a href="#appendix-B">Appendix B</a> - Sample Output of utest  . . . . . . . . . . . . . <a href="#page-29">29</a>
-   <a href="#appendix-C">C</a>. <a href="#appendix-C">Appendix C</a> - Some Name Space IDs . . . . . . . . . . . . . . . <a href="#page-30">30</a>
+           Pseudo-Random Numbers . . . . . . . . . . . . . . . . . . 14
+      4.5. Node IDs that Do Not Identify the Host. . . . . . . . . . 15
+   5. Community Considerations . . . . . . . . . . . . . . . . . . . 15
+   6. Security Considerations  . . . . . . . . . . . . . . . . . . . 16
+   7. Acknowledgments  . . . . . . . . . . . . . . . . . . . . . . . 16
+   8. Normative References . . . . . . . . . . . . . . . . . . . . . 16
+   A. Appendix A - Sample Implementation . . . . . . . . . . . . . . 18
+   B. Appendix B - Sample Output of utest  . . . . . . . . . . . . . 29
+   C. Appendix C - Some Name Space IDs . . . . . . . . . . . . . . . 30
 
-<span class="h2"><a name="section-1">1</a>.  Introduction</span>
+1.  Introduction
 
    This specification defines a Uniform Resource Name namespace for
    UUIDs (Universally Unique IDentifier), also known as GUIDs (Globally
@@ -227,23 +100,23 @@ Table of Contents
    to implement services using UUIDs as URNs.  Nothing in this document
    should be construed to override the DCE standards that defined UUIDs.
 
-   There is an ITU-T Recommendation and ISO/IEC Standard [<a href="#ref-3" title='"Procedures for the operation of OSI Registration Authorities: Generation and registration of Universally Unique Identifiers (UUIDs) and their use as ASN.1 Object Identifier components"'>3</a>] that are
+   There is an ITU-T Recommendation and ISO/IEC Standard [3] that are
    derived from earlier versions of this document.  Both sets of
    specifications have been aligned, and are fully technically
    compatible.  In addition, a global registration function is being
    provided by the Telecommunications Standardisation Bureau of ITU-T;
-   for details see &lt;<a href="http://www.itu.int/ITU-T/asn1/uuid.html">http://www.itu.int/ITU-T/asn1/uuid.html</a>&gt;.
+   for details see <http://www.itu.int/ITU-T/asn1/uuid.html>.
 
 
 
 
 
-<span class="grey">Leach, et al.               Standards Track                     [Page 2]</span>
-</pre><pre class='newpage'><a name="page-3" id="page-3" href="#page-3" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                     [Page 2]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
-<span class="h2"><a name="section-2">2</a>.  Motivation</span>
+2.  Motivation
 
    One of the main reasons for using UUIDs is that no centralized
    authority is required to administer them (although one format uses
@@ -263,7 +136,7 @@ Table of Contents
    registration process allows for UUIDs to be one of the URNs with the
    lowest minting cost.
 
-<span class="h2"><a name="section-3">3</a>.  Namespace Registration Template</span>
+3.  Namespace Registration Template
 
    Namespace ID:  UUID
    Registration Information:
@@ -282,7 +155,7 @@ Table of Contents
       very persistent objects across a network.
 
       The internal representation of a UUID is a specific sequence of
-      bits in memory, as described in <a href="#section-4">Section 4</a>.  To accurately
+      bits in memory, as described in Section 4.  To accurately
       represent a UUID as a URN, it is necessary to convert the bit
       sequence to a string representation.
 
@@ -294,13 +167,13 @@ Table of Contents
 
 
 
-<span class="grey">Leach, et al.               Standards Track                     [Page 3]</span>
-</pre><pre class='newpage'><a name="page-4" id="page-4" href="#page-4" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                     [Page 3]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
       The formal definition of the UUID string representation is
-      provided by the following ABNF [<a href="#ref-7" title='"Augmented BNF for Syntax Specifications: ABNF"'>7</a>]:
+      provided by the following ABNF [7]:
 
       UUID                   = time-low "-" time-mid "-"
                                time-high-and-version "-"
@@ -324,7 +197,7 @@ Table of Contents
    urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6
 
    Relevant ancillary documentation:
-      [<a href="#ref-1" title='"Network Computing Architecture"'>1</a>][2]
+      [1][2]
    Identifier uniqueness considerations:
       This document specifies three algorithms to generate UUIDs: the
       first leverages the unique values of 802 MAC addresses to
@@ -350,12 +223,12 @@ Table of Contents
 
 
 
-<span class="grey">Leach, et al.               Standards Track                     [Page 4]</span>
-</pre><pre class='newpage'><a name="page-5" id="page-5" href="#page-5" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                     [Page 4]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
-      or privacy concerns make its use undesirable, <a href="#section-4.5">Section 4.5</a>
+      or privacy concerns make its use undesirable, Section 4.5
       specifies two alternatives.  Another approach is to use version 3
       or version 4 UUIDs as defined below.
 
@@ -364,7 +237,7 @@ Table of Contents
 
    Rules for Lexical Equivalence:
       Consider each field of the UUID to be an unsigned integer as shown
-      in the table in section <a href="#section-4.1.2">Section 4.1.2</a>.  Then, to compare a pair of
+      in the table in section Section 4.1.2.  Then, to compare a pair of
       UUIDs, arithmetically compare the corresponding fields from each
       UUID in order of significance and according to their data type.
       Two UUIDs are equal if and only if all the corresponding fields
@@ -396,9 +269,9 @@ Table of Contents
    Scope:
       UUIDs are global in scope.
 
-<span class="h2"><a name="section-4">4</a>.  Specification</span>
+4.  Specification
 
-<span class="h3"><a name="section-4.1">4.1</a>.  Format</span>
+4.1.  Format
 
    The UUID format is 16 octets; some bits of the eight octet variant
    field specified below determine finer structure.
@@ -406,12 +279,12 @@ Table of Contents
 
 
 
-<span class="grey">Leach, et al.               Standards Track                     [Page 5]</span>
-</pre><pre class='newpage'><a name="page-6" id="page-6" href="#page-6" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                     [Page 5]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
-<span class="h4"><a name="section-4.1.1">4.1.1</a>.  Variant</span>
+4.1.1.  Variant
 
    The variant field determines the layout of the UUID.  That is, the
    interpretation of all other bits in the UUID depends on the setting
@@ -438,7 +311,7 @@ Table of Contents
    defined here is not guaranteed, and is not likely to be an issue in
    practice.
 
-<span class="h4"><a name="section-4.1.2">4.1.2</a>.  Layout and Byte Order</span>
+4.1.2.  Layout and Byte Order
 
    To minimize confusion about bit assignments within octets, the UUID
    record definition is defined only in terms of fields that are
@@ -462,9 +335,9 @@ Table of Contents
 
 
 
-<span class="grey">Leach, et al.               Standards Track                     [Page 6]</span>
-</pre><pre class='newpage'><a name="page-7" id="page-7" href="#page-7" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                     [Page 6]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
    clock_seq_hi_and_rese  unsigned 8    8      The high field of the
@@ -500,7 +373,7 @@ Table of Contents
    |                         node (2-5)                            |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-<span class="h4"><a name="section-4.1.3">4.1.3</a>.  Version</span>
+4.1.3.  Version
 
    The version number is in the most significant 4 bits of the time
    stamp (bits 4 through 7 of the time_hi_and_version field).
@@ -518,9 +391,9 @@ Table of Contents
 
 
 
-<span class="grey">Leach, et al.               Standards Track                     [Page 7]</span>
-</pre><pre class='newpage'><a name="page-8" id="page-8" href="#page-8" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                     [Page 7]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
     0     0     1     1        3     The name-based version
@@ -538,7 +411,7 @@ Table of Contents
    The version is more accurately a sub-type; again, we retain the term
    for compatibility.
 
-<span class="h4"><a name="section-4.1.4">4.1.4</a>.  Timestamp</span>
+4.1.4.  Timestamp
 
    The timestamp is a 60-bit value.  For UUID version 1, this is
    represented by Coordinated Universal Time (UTC) as a count of 100-
@@ -552,12 +425,12 @@ Table of Contents
    offset.
 
    For UUID version 3 or 5, the timestamp is a 60-bit value constructed
-   from a name as described in <a href="#section-4.3">Section 4.3</a>.
+   from a name as described in Section 4.3.
 
    For UUID version 4, the timestamp is a randomly or pseudo-randomly
-   generated 60-bit value, as described in <a href="#section-4.4">Section 4.4</a>.
+   generated 60-bit value, as described in Section 4.4.
 
-<span class="h4"><a name="section-4.1.5">4.1.5</a>.  Clock Sequence</span>
+4.1.5.  Clock Sequence
 
    For UUID version 1, the clock sequence is used to help avoid
    duplicates that could arise when the clock is set backwards in time
@@ -574,9 +447,9 @@ Table of Contents
 
 
 
-<span class="grey">Leach, et al.               Standards Track                     [Page 8]</span>
-</pre><pre class='newpage'><a name="page-9" id="page-9" href="#page-9" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                     [Page 8]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
    Similarly, if the node ID changes (e.g., because a network card has
@@ -593,12 +466,12 @@ Table of Contents
    The initial value MUST NOT be correlated to the node identifier.
 
    For UUID version 3 or 5, the clock sequence is a 14-bit value
-   constructed from a name as described in <a href="#section-4.3">Section 4.3</a>.
+   constructed from a name as described in Section 4.3.
 
    For UUID version 4, clock sequence is a randomly or pseudo-randomly
-   generated 14-bit value as described in <a href="#section-4.4">Section 4.4</a>.
+   generated 14-bit value as described in Section 4.4.
 
-<span class="h4"><a name="section-4.1.6">4.1.6</a>.  Node</span>
+4.1.6.  Node
 
    For UUID version 1, the node field consists of an IEEE 802 MAC
    address, usually the host address.  For systems with multiple IEEE
@@ -608,34 +481,34 @@ Table of Contents
    transmitted on an 802.3 LAN.
 
    For systems with no IEEE address, a randomly or pseudo-randomly
-   generated value may be used; see <a href="#section-4.5">Section 4.5</a>.  The multicast bit must
+   generated value may be used; see Section 4.5.  The multicast bit must
    be set in such addresses, in order that they will never conflict with
    addresses obtained from network cards.
 
    For UUID version 3 or 5, the node field is a 48-bit value constructed
-   from a name as described in <a href="#section-4.3">Section 4.3</a>.
+   from a name as described in Section 4.3.
 
    For UUID version 4, the node field is a randomly or pseudo-randomly
-   generated 48-bit value as described in <a href="#section-4.4">Section 4.4</a>.
+   generated 48-bit value as described in Section 4.4.
 
-<span class="h4"><a name="section-4.1.7">4.1.7</a>.  Nil UUID</span>
+4.1.7.  Nil UUID
 
    The nil UUID is special form of UUID that is specified to have all
    128 bits set to zero.
 
-<span class="h3"><a name="section-4.2">4.2</a>.  Algorithms for Creating a Time-Based UUID</span>
+4.2.  Algorithms for Creating a Time-Based UUID
 
    Various aspects of the algorithm for creating a version 1 UUID are
    discussed in the following sections.
 
 
 
-<span class="grey">Leach, et al.               Standards Track                     [Page 9]</span>
-</pre><pre class='newpage'><a name="page-10" id="page-10" href="#page-10" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                     [Page 9]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
-<span class="h4"><a name="section-4.2.1">4.2.1</a>.  Basic Algorithm</span>
+4.2.1.  Basic Algorithm
 
    The following algorithm is simple, correct, and inefficient:
 
@@ -663,7 +536,7 @@ Table of Contents
    o  Release the global lock.
 
    o  Format a UUID from the current timestamp, clock sequence, and node
-      ID values according to the steps in <a href="#section-4.2.2">Section 4.2.2</a>.
+      ID values according to the steps in Section 4.2.2.
 
    If UUIDs do not need to be frequently generated, the above algorithm
    may be perfectly adequate.  For higher performance requirements,
@@ -686,12 +559,12 @@ Table of Contents
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 10]</span>
-</pre><pre class='newpage'><a name="page-11" id="page-11" href="#page-11" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 10]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
-<span class="h5"><a name="section-4.2.1.1">4.2.1.1</a>.  Reading Stable Storage</span>
+4.2.1.1.  Reading Stable Storage
 
    The state only needs to be read from stable storage once at boot
    time, if it is read into a system-wide shared volatile store (and
@@ -708,7 +581,7 @@ Table of Contents
    sequence to a random value, then instead of keeping it in stable
    store, the current node ID may be returned.
 
-<span class="h5"><a name="section-4.2.1.2">4.2.1.2</a>.  System Clock Resolution</span>
+4.2.1.2.  System Clock Resolution
 
    The timestamp is generated from the system time, whose resolution may
    be less than the resolution of the UUID timestamp.
@@ -733,7 +606,7 @@ Table of Contents
    will permit higher speed allocation by making multiple UUIDs
    potentially available for each time stamp value.
 
-<span class="h5"><a name="section-4.2.1.3">4.2.1.3</a>.  Writing Stable Storage</span>
+4.2.1.3.  Writing Stable Storage
 
    The state does not always need to be written to stable store every
    time a UUID is generated.  The timestamp in the stable store can be
@@ -742,9 +615,9 @@ Table of Contents
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 11]</span>
-</pre><pre class='newpage'><a name="page-12" id="page-12" href="#page-12" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 11]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
    the clock sequence and node ID remain unchanged, only the shared
@@ -753,19 +626,19 @@ Table of Contents
    typical time it takes the system to reboot, a crash will not cause a
    reinitialization of the clock sequence.
 
-<span class="h5"><a name="section-4.2.1.4">4.2.1.4</a>.  Sharing State Across Processes</span>
+4.2.1.4.  Sharing State Across Processes
 
    If it is too expensive to access shared state each time a UUID is
    generated, then the system-wide generator can be implemented to
    allocate a block of time stamps each time it is called; a per-
    process generator can allocate from that block until it is exhausted.
 
-<span class="h4"><a name="section-4.2.2">4.2.2</a>.  Generation Details</span>
+4.2.2.  Generation Details
 
    Version 1 UUIDs are generated according to the following algorithm:
 
    o  Determine the values for the UTC-based timestamp and clock
-      sequence to be used in the UUID, as described in <a href="#section-4.2.1">Section 4.2.1</a>.
+      sequence to be used in the UUID, as described in Section 4.2.1.
 
    o  For the purposes of this algorithm, consider the timestamp to be a
       60-bit unsigned integer and the clock sequence to be a 14-bit
@@ -798,9 +671,9 @@ Table of Contents
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 12]</span>
-</pre><pre class='newpage'><a name="page-13" id="page-13" href="#page-13" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 12]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
    o  Set the 6 least significant bits (bits zero through 5) of the
@@ -814,7 +687,7 @@ Table of Contents
    o  Set the node field to the 48-bit IEEE address in the same order of
       significance as the address.
 
-<span class="h3"><a name="section-4.3">4.3</a>.  Algorithm for Creating a Name-Based UUID</span>
+4.3.  Algorithm for Creating a Name-Based UUID
 
    The version 3 or 5 UUID is meant for generating UUIDs from "names"
    that are drawn from, and unique within, some "name space".  The
@@ -845,18 +718,18 @@ Table of Contents
    as follows:
 
    o  Allocate a UUID to use as a "name space ID" for all UUIDs
-      generated from names in that name space; see <a href="#appendix-C">Appendix C</a> for some
+      generated from names in that name space; see Appendix C for some
       pre-defined values.
 
-   o  Choose either MD5 [<a href="#ref-4" title='"The MD5 Message-Digest Algorithm "'>4</a>] or SHA-1 [<a href="#ref-8" title='"Secure Hash Standard"'>8</a>] as the hash algorithm; If
+   o  Choose either MD5 [4] or SHA-1 [8] as the hash algorithm; If
       backward compatibility is not an issue, SHA-1 is preferred.
 
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 13]</span>
-</pre><pre class='newpage'><a name="page-14" id="page-14" href="#page-14" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 13]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
    o  Convert the name to a canonical sequence of octets (as defined by
@@ -876,7 +749,7 @@ Table of Contents
 
    o  Set the four most significant bits (bits 12 through 15) of the
       time_hi_and_version field to the appropriate 4-bit version number
-      from <a href="#section-4.1.3">Section 4.1.3</a>.
+      from Section 4.1.3.
 
    o  Set the clock_seq_hi_and_reserved field to octet 8 of the hash.
 
@@ -890,7 +763,7 @@ Table of Contents
 
    o  Convert the resulting UUID to local byte order.
 
-<span class="h3"><a name="section-4.4">4.4</a>.  Algorithms for Creating a UUID from Truly Random or</span>
+4.4.  Algorithms for Creating a UUID from Truly Random or
       Pseudo-Random Numbers
 
    The version 4 UUID is meant for generating UUIDs from truly-random or
@@ -903,28 +776,28 @@ Table of Contents
 
    o  Set the four most significant bits (bits 12 through 15) of the
       time_hi_and_version field to the 4-bit version number from
-      <a href="#section-4.1.3">Section 4.1.3</a>.
+      Section 4.1.3.
 
    o  Set all the other bits to randomly (or pseudo-randomly) chosen
       values.
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 14]</span>
-</pre><pre class='newpage'><a name="page-15" id="page-15" href="#page-15" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 14]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
-   See <a href="#section-4.5">Section 4.5</a> for a discussion on random numbers.
+   See Section 4.5 for a discussion on random numbers.
 
-<span class="h3"><a name="section-4.5">4.5</a>.  Node IDs that Do Not Identify the Host</span>
+4.5.  Node IDs that Do Not Identify the Host
 
    This section describes how to generate a version 1 UUID if an IEEE
    802 address is not available, or its use is not desired.
 
    One approach is to contact the IEEE and get a separate block of
    addresses.  At the time of writing, the application could be found at
-   &lt;<a href="http://standards.ieee.org/regauth/oui/pilot-ind.html">http://standards.ieee.org/regauth/oui/pilot-ind.html</a>&gt;, and the cost
+   <http://standards.ieee.org/regauth/oui/pilot-ind.html>, and the cost
    was US$550.
 
    A better solution is to obtain a 47-bit cryptographic quality random
@@ -942,7 +815,7 @@ Table of Contents
    correct local/global bit.
 
    Advice on generating cryptographic-quality random numbers can be
-   found in <a href="./rfc1750">RFC1750</a> [<a href="#ref-5" title='"Randomness Requirements for Security"'>5</a>].
+   found in RFC1750 [5].
 
    In addition, items such as the computer's name and the name of the
    operating system, while not strictly speaking random, will help
@@ -952,11 +825,11 @@ Table of Contents
    specific, because both the data available and the functions to obtain
    them are often very system specific.  A generic approach, however, is
    to accumulate as many sources as possible into a buffer, use a
-   message digest such as MD5 [<a href="#ref-4" title='"The MD5 Message-Digest Algorithm "'>4</a>] or SHA-1 [<a href="#ref-8" title='"Secure Hash Standard"'>8</a>], take an arbitrary 6
+   message digest such as MD5 [4] or SHA-1 [8], take an arbitrary 6
    bytes from the hash value, and set the multicast bit as described
    above.
 
-<span class="h2"><a name="section-5">5</a>.  Community Considerations</span>
+5.  Community Considerations
 
    The use of UUIDs is extremely pervasive in computing.  They comprise
    the core identifier infrastructure for many operating systems
@@ -966,15 +839,15 @@ Table of Contents
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 15]</span>
-</pre><pre class='newpage'><a name="page-16" id="page-16" href="#page-16" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 15]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
    This specification attempts to standardize that practice as openly as
    possible and in a way that attempts to benefit the entire Internet.
 
-<span class="h2"><a name="section-6">6</a>.  Security Considerations</span>
+6.  Security Considerations
 
    Do not assume that UUIDs are hard to guess; they should not be used
    as security capabilities (identifiers whose mere possession grants
@@ -990,7 +863,7 @@ Table of Contents
    be willing to rely on the random number source at all hosts.  If this
    is not feasible, the namespace variant should be used.
 
-<span class="h2"><a name="section-7">7</a>.  Acknowledgments</span>
+7.  Acknowledgments
 
    This document draws heavily on the OSF DCE specification for UUIDs.
    Ted Ts'o provided helpful comments, especially on the byte ordering
@@ -1002,42 +875,42 @@ Table of Contents
    S. Engelschall, John Larmouth, and Paul Thorpe.  Professor Larmouth
    was also invaluable in achieving coordination with ISO/IEC.
 
-<span class="h2"><a name="section-8">8</a>.  Normative References</span>
+8.  Normative References
 
-   [<a name="ref-1" id="ref-1">1</a>]  Zahn, L., Dineen, T., and P. Leach, "Network Computing
+   [1]  Zahn, L., Dineen, T., and P. Leach, "Network Computing
         Architecture", ISBN 0-13-611674-4, January 1990.
 
-   [<a name="ref-2" id="ref-2">2</a>]  "DCE: Remote Procedure Call", Open Group CAE Specification C309,
+   [2]  "DCE: Remote Procedure Call", Open Group CAE Specification C309,
         ISBN 1-85912-041-5, August 1994.
 
-   [<a name="ref-3" id="ref-3">3</a>]  ISO/IEC 9834-8:2004 Information Technology, "Procedures for the
+   [3]  ISO/IEC 9834-8:2004 Information Technology, "Procedures for the
         operation of OSI Registration Authorities: Generation and
         registration of Universally Unique Identifiers (UUIDs) and their
         use as ASN.1 Object Identifier components" ITU-T Rec. X.667,
         2004.
 
-   [<a name="ref-4" id="ref-4">4</a>]  Rivest, R., "The MD5 Message-Digest Algorithm ", <a href="./rfc1321">RFC 1321</a>, April
+   [4]  Rivest, R., "The MD5 Message-Digest Algorithm ", RFC 1321, April
         1992.
 
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 16]</span>
-</pre><pre class='newpage'><a name="page-17" id="page-17" href="#page-17" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 16]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
-   [<a name="ref-5" id="ref-5">5</a>]  Eastlake, D., 3rd, Schiller, J., and S. Crocker, "Randomness
-        Requirements for Security", <a href="./bcp106">BCP 106</a>, <a href="./rfc4086">RFC 4086</a>, June 2005.
+   [5]  Eastlake, D., 3rd, Schiller, J., and S. Crocker, "Randomness
+        Requirements for Security", BCP 106, RFC 4086, June 2005.
 
-   [<a name="ref-6" id="ref-6">6</a>]  Moats, R., "URN Syntax", <a href="./rfc2141">RFC 2141</a>, May 1997.
+   [6]  Moats, R., "URN Syntax", RFC 2141, May 1997.
 
-   [<a name="ref-7" id="ref-7">7</a>]  Crocker, D. and P. Overell, "Augmented BNF for Syntax
-        Specifications: ABNF", <a href="./rfc2234">RFC 2234</a>, November 1997.
+   [7]  Crocker, D. and P. Overell, "Augmented BNF for Syntax
+        Specifications: ABNF", RFC 2234, November 1997.
 
-   [<a name="ref-8" id="ref-8">8</a>]  National Institute of Standards and Technology, "Secure Hash
+   [8]  National Institute of Standards and Technology, "Secure Hash
         Standard", FIPS PUB 180-1, April 1995,
-        &lt;<a href="http://www.itl.nist.gov/fipspubs/fip180-1.htm">http://www.itl.nist.gov/fipspubs/fip180-1.htm</a>&gt;.
+        <http://www.itl.nist.gov/fipspubs/fip180-1.htm>.
 
 
 
@@ -1078,12 +951,12 @@ Table of Contents
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 17]</span>
-</pre><pre class='newpage'><a name="page-18" id="page-18" href="#page-18" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 17]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
-<span class="h2"><a name="appendix-A">Appendix A</a>.  <a href="#appendix-A">Appendix A</a> - Sample Implementation</span>
+Appendix A.  Appendix A - Sample Implementation
 
    This implementation consists of 5 files: uuid.h, uuid.c, sysdep.h,
    sysdep.c and utest.c.  The uuid.* files are the system independent
@@ -1100,7 +973,7 @@ copyrt.h
 
 /*
 ** Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-** Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. &amp;
+** Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. &
 ** Digital Equipment Corporation, Maynard, Mass.
 ** Copyright (c) 1998 Microsoft.
 ** To anyone who acknowledges that this file is provided "AS IS"
@@ -1134,9 +1007,9 @@ typedef struct {
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 18]</span>
-</pre><pre class='newpage'><a name="page-19" id="page-19" href="#page-19" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 18]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
 /* uuid_create -- generate a UUID */
@@ -1173,10 +1046,10 @@ int uuid_compare(uuid_t *u1, uuid_t *u2);
 uuid.c
 
 #include "copyrt.h"
-#include &lt;string.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;time.h&gt;
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "sysdep.h"
 #include "uuid.h"
 
@@ -1190,9 +1063,9 @@ static void format_uuid_v1(uuid_t *uuid, unsigned16 clockseq,
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 19]</span>
-</pre><pre class='newpage'><a name="page-20" id="page-20" href="#page-20" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 19]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
 static void format_uuid_v3or5(uuid_t *uuid, unsigned char hash[16],
@@ -1212,15 +1085,15 @@ int uuid_create(uuid_t *uuid)
      /* acquire system-wide lock so we're alone */
      LOCK;
      /* get time, node ID, saved state from non-volatile storage */
-     get_current_time(&amp;timestamp);
-     get_ieee_node_identifier(&amp;node);
-     f = read_state(&amp;clockseq, &amp;last_time, &amp;last_node);
+     get_current_time(&timestamp);
+     get_ieee_node_identifier(&node);
+     f = read_state(&clockseq, &last_time, &last_node);
 
      /* if no NV state, or if clock went backwards, or node ID
         changed (e.g., new network card) change clockseq */
-     if (!f || memcmp(&amp;node, &amp;last_node, sizeof node))
+     if (!f || memcmp(&node, &last_node, sizeof node))
          clockseq = true_random();
-     else if (timestamp &lt; last_time)
+     else if (timestamp < last_time)
          clockseq++;
 
      /* save the state for next time */
@@ -1240,23 +1113,23 @@ void format_uuid_v1(uuid_t* uuid, unsigned16 clock_seq,
 {
     /* Construct a version 1 uuid with the information we've gathered
        plus a few constants. */
-    uuid-&gt;time_low = (unsigned long)(timestamp &amp; 0xFFFFFFFF);
-    uuid-&gt;time_mid = (unsigned short)((timestamp &gt;&gt; 32) &amp; 0xFFFF);
-    uuid-&gt;time_hi_and_version =
+    uuid->time_low = (unsigned long)(timestamp & 0xFFFFFFFF);
+    uuid->time_mid = (unsigned short)((timestamp >> 32) & 0xFFFF);
+    uuid->time_hi_and_version =
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 20]</span>
-</pre><pre class='newpage'><a name="page-21" id="page-21" href="#page-21" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 20]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
-        (unsigned short)((timestamp &gt;&gt; 48) &amp; 0x0FFF);
-    uuid-&gt;time_hi_and_version |= (1 &lt;&lt; 12);
-    uuid-&gt;clock_seq_low = clock_seq &amp; 0xFF;
-    uuid-&gt;clock_seq_hi_and_reserved = (clock_seq &amp; 0x3F00) &gt;&gt; 8;
-    uuid-&gt;clock_seq_hi_and_reserved |= 0x80;
-    memcpy(&amp;uuid-&gt;node, &amp;node, sizeof uuid-&gt;node);
+        (unsigned short)((timestamp >> 48) & 0x0FFF);
+    uuid->time_hi_and_version |= (1 << 12);
+    uuid->clock_seq_low = clock_seq & 0xFF;
+    uuid->clock_seq_hi_and_reserved = (clock_seq & 0x3F00) >> 8;
+    uuid->clock_seq_hi_and_reserved |= 0x80;
+    memcpy(&uuid->node, &node, sizeof uuid->node);
 }
 
 /* data type for UUID generator persistent state */
@@ -1280,7 +1153,7 @@ int read_state(unsigned16 *clockseq, uuid_time_t *timestamp,
         fp = fopen("state", "rb");
         if (fp == NULL)
             return 0;
-        fread(&amp;st, sizeof st, 1, fp);
+        fread(&st, sizeof st, 1, fp);
         fclose(fp);
         inited = 1;
     }
@@ -1302,9 +1175,9 @@ void write_state(unsigned16 clockseq, uuid_time_t timestamp,
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 21]</span>
-</pre><pre class='newpage'><a name="page-22" id="page-22" href="#page-22" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 21]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
     if (!inited) {
@@ -1316,9 +1189,9 @@ void write_state(unsigned16 clockseq, uuid_time_t timestamp,
     st.cs = clockseq;
     st.ts = timestamp;
     st.node = node;
-    if (timestamp &gt;= next_save) {
+    if (timestamp >= next_save) {
         fp = fopen("state", "wb");
-        fwrite(&amp;st, sizeof st, 1, fp);
+        fwrite(&st, sizeof st, 1, fp);
         fclose(fp);
         /* schedule next save for 10 seconds from now */
         next_save = timestamp + (10 * 10 * 1000 * 1000);
@@ -1336,13 +1209,13 @@ void get_current_time(uuid_time_t *timestamp)
     uuid_time_t time_now;
 
     if (!inited) {
-        get_system_time(&amp;time_now);
+        get_system_time(&time_now);
         uuids_this_tick = UUIDS_PER_TICK;
         inited = 1;
     }
 
     for ( ; ; ) {
-        get_system_time(&amp;time_now);
+        get_system_time(&time_now);
 
         /* if clock reading changed since last UUID generated, */
         if (time_last != time_now) {
@@ -1351,16 +1224,16 @@ void get_current_time(uuid_time_t *timestamp)
             time_last = time_now;
             break;
         }
-        if (uuids_this_tick &lt; UUIDS_PER_TICK) {
+        if (uuids_this_tick < UUIDS_PER_TICK) {
             uuids_this_tick++;
             break;
         }
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 22]</span>
-</pre><pre class='newpage'><a name="page-23" id="page-23" href="#page-23" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 22]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
         /* going too fast for our clock; spin */
@@ -1377,10 +1250,10 @@ static unsigned16 true_random(void)
     uuid_time_t time_now;
 
     if (!inited) {
-        get_system_time(&amp;time_now);
+        get_system_time(&time_now);
         time_now = time_now / UUIDS_PER_TICK;
         srand((unsigned int)
-               (((time_now &gt;&gt; 32) ^ time_now) &amp; 0xffffffff));
+               (((time_now >> 32) ^ time_now) & 0xffffffff));
         inited = 1;
     }
 
@@ -1403,10 +1276,10 @@ void uuid_create_md5_from_name(uuid_t *uuid, uuid_t nsid, void *name,
     net_nsid.time_mid = htons(net_nsid.time_mid);
     net_nsid.time_hi_and_version = htons(net_nsid.time_hi_and_version);
 
-    MD5Init(&amp;c);
-    MD5Update(&amp;c, &amp;net_nsid, sizeof net_nsid);
-    MD5Update(&amp;c, name, namelen);
-    MD5Final(hash, &amp;c);
+    MD5Init(&c);
+    MD5Update(&c, &net_nsid, sizeof net_nsid);
+    MD5Update(&c, name, namelen);
+    MD5Final(hash, &c);
 
     /* the hash is in network byte order at this point */
     format_uuid_v3or5(uuid, hash, 3);
@@ -1414,9 +1287,9 @@ void uuid_create_md5_from_name(uuid_t *uuid, uuid_t nsid, void *name,
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 23]</span>
-</pre><pre class='newpage'><a name="page-24" id="page-24" href="#page-24" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 23]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
 void uuid_create_sha1_from_name(uuid_t *uuid, uuid_t nsid, void *name,
@@ -1433,10 +1306,10 @@ void uuid_create_sha1_from_name(uuid_t *uuid, uuid_t nsid, void *name,
     net_nsid.time_mid = htons(net_nsid.time_mid);
     net_nsid.time_hi_and_version = htons(net_nsid.time_hi_and_version);
 
-    SHA1_Init(&amp;c);
-    SHA1_Update(&amp;c, &amp;net_nsid, sizeof net_nsid);
-    SHA1_Update(&amp;c, name, namelen);
-    SHA1_Final(hash, &amp;c);
+    SHA1_Init(&c);
+    SHA1_Update(&c, &net_nsid, sizeof net_nsid);
+    SHA1_Update(&c, name, namelen);
+    SHA1_Final(hash, &c);
 
     /* the hash is in network byte order at this point */
     format_uuid_v3or5(uuid, hash, 5);
@@ -1448,40 +1321,40 @@ void format_uuid_v3or5(uuid_t *uuid, unsigned char hash[16], int v)
 {
     /* convert UUID to local byte order */
     memcpy(uuid, hash, sizeof *uuid);
-    uuid-&gt;time_low = ntohl(uuid-&gt;time_low);
-    uuid-&gt;time_mid = ntohs(uuid-&gt;time_mid);
-    uuid-&gt;time_hi_and_version = ntohs(uuid-&gt;time_hi_and_version);
+    uuid->time_low = ntohl(uuid->time_low);
+    uuid->time_mid = ntohs(uuid->time_mid);
+    uuid->time_hi_and_version = ntohs(uuid->time_hi_and_version);
 
     /* put in the variant and version bits */
-    uuid-&gt;time_hi_and_version &amp;= 0x0FFF;
-    uuid-&gt;time_hi_and_version |= (v &lt;&lt; 12);
-    uuid-&gt;clock_seq_hi_and_reserved &amp;= 0x3F;
-    uuid-&gt;clock_seq_hi_and_reserved |= 0x80;
+    uuid->time_hi_and_version &= 0x0FFF;
+    uuid->time_hi_and_version |= (v << 12);
+    uuid->clock_seq_hi_and_reserved &= 0x3F;
+    uuid->clock_seq_hi_and_reserved |= 0x80;
 }
 
 /* uuid_compare --  Compare two UUID's "lexically" and return */
-#define CHECK(f1, f2) if (f1 != f2) return f1 &lt; f2 ? -1 : 1;
+#define CHECK(f1, f2) if (f1 != f2) return f1 < f2 ? -1 : 1;
 int uuid_compare(uuid_t *u1, uuid_t *u2)
 {
     int i;
 
-    CHECK(u1-&gt;time_low, u2-&gt;time_low);
-    CHECK(u1-&gt;time_mid, u2-&gt;time_mid);
+    CHECK(u1->time_low, u2->time_low);
+    CHECK(u1->time_mid, u2->time_mid);
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 24]</span>
-</pre><pre class='newpage'><a name="page-25" id="page-25" href="#page-25" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 24]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
-    CHECK(u1-&gt;time_hi_and_version, u2-&gt;time_hi_and_version);
-    CHECK(u1-&gt;clock_seq_hi_and_reserved, u2-&gt;clock_seq_hi_and_reserved);
-    CHECK(u1-&gt;clock_seq_low, u2-&gt;clock_seq_low)
-    for (i = 0; i &lt; 6; i++) {
-        if (u1-&gt;node[i] &lt; u2-&gt;node[i])
+    CHECK(u1->time_hi_and_version, u2->time_hi_and_version);
+    CHECK(u1->clock_seq_hi_and_reserved, u2->clock_seq_hi_and_reserved);
+    CHECK(u1->clock_seq_low, u2->clock_seq_low)
+    for (i = 0; i < 6; i++) {
+        if (u1->node[i] < u2->node[i])
             return -1;
-        if (u1-&gt;node[i] &gt; u2-&gt;node[i])
+        if (u1->node[i] > u2->node[i])
             return 1;
     }
     return 0;
@@ -1496,15 +1369,15 @@ sysdep.h
 #define WININC 0
 
 #ifdef WININC
-#include &lt;windows.h&gt;
+#include <windows.h>
 #else
-#include &lt;sys/types.h&gt;
-#include &lt;sys/time.h&gt;
-#include &lt;sys/sysinfo.h&gt;
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/sysinfo.h>
 #endif
 
 #include "global.h"
-/* change to point to where MD5 .h's live; <a href="./rfc1321">RFC 1321</a> has sample
+/* change to point to where MD5 .h's live; RFC 1321 has sample
    implementation */
 #include "md5.h"
 
@@ -1526,9 +1399,9 @@ typedef unsigned char   byte;
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 25]</span>
-</pre><pre class='newpage'><a name="page-26" id="page-26" href="#page-26" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 25]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
 #define unsigned64_t unsigned __int64
@@ -1551,7 +1424,7 @@ void get_random_info(char seed[16]);
 sysdep.c
 
 #include "copyrt.h"
-#include &lt;stdio.h&gt;
+#include <stdio.h>
 #include "sysdep.h"
 
 /* system dependent call to get IEEE node ID.
@@ -1566,25 +1439,25 @@ void get_ieee_node_identifier(uuid_node_t *node)
     if (!inited) {
         fp = fopen("nodeid", "rb");
         if (fp) {
-            fread(&amp;saved_node, sizeof saved_node, 1, fp);
+            fread(&saved_node, sizeof saved_node, 1, fp);
             fclose(fp);
         }
         else {
             get_random_info(seed);
             seed[0] |= 0x01;
-            memcpy(&amp;saved_node, seed, sizeof saved_node);
+            memcpy(&saved_node, seed, sizeof saved_node);
             fp = fopen("nodeid", "wb");
             if (fp) {
-                fwrite(&amp;saved_node, sizeof saved_node, 1, fp);
+                fwrite(&saved_node, sizeof saved_node, 1, fp);
                 fclose(fp);
             }
         }
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 26]</span>
-</pre><pre class='newpage'><a name="page-27" id="page-27" href="#page-27" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 26]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
         inited = 1;
@@ -1606,7 +1479,7 @@ void get_system_time(uuid_time_t *uuid_time)
        Jan 1, 1601. UUIDs use time in 100ns ticks since Oct 15, 1582.
        The difference is 17 Days in Oct + 30 (Nov) + 31 (Dec)
        + 18 years and 5 leap days. */
-    GetSystemTimeAsFileTime((FILETIME *)&amp;time);
+    GetSystemTimeAsFileTime((FILETIME *)&time);
     time.QuadPart +=
 
           (unsigned __int64) (1000*1000*10)       // seconds
@@ -1615,7 +1488,7 @@ void get_system_time(uuid_time_t *uuid_time)
     *uuid_time = time.QuadPart;
 }
 
-/* Sample code, not for use in production; see <a href="./rfc1750">RFC 1750</a> */
+/* Sample code, not for use in production; see RFC 1750 */
 void get_random_info(char seed[16])
 {
     MD5_CTX c;
@@ -1629,24 +1502,24 @@ void get_random_info(char seed[16])
         char hostname[MAX_COMPUTERNAME_LENGTH + 1];
     } r;
 
-    MD5Init(&amp;c);
-    GlobalMemoryStatus(&amp;r.m);
-    GetSystemInfo(&amp;r.s);
-    GetSystemTimeAsFileTime(&amp;r.t);
-    QueryPerformanceCounter(&amp;r.pc);
+    MD5Init(&c);
+    GlobalMemoryStatus(&r.m);
+    GetSystemInfo(&r.s);
+    GetSystemTimeAsFileTime(&r.t);
+    QueryPerformanceCounter(&r.pc);
     r.tc = GetTickCount();
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 27]</span>
-</pre><pre class='newpage'><a name="page-28" id="page-28" href="#page-28" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 27]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
     r.l = MAX_COMPUTERNAME_LENGTH + 1;
-    GetComputerName(r.hostname, &amp;r.l);
-    MD5Update(&amp;c, &amp;r, sizeof r);
-    MD5Final(seed, &amp;c);
+    GetComputerName(r.hostname, &r.l);
+    MD5Update(&c, &r, sizeof r);
+    MD5Final(seed, &c);
 }
 
 #else
@@ -1655,7 +1528,7 @@ void get_system_time(uuid_time_t *uuid_time)
 {
     struct timeval tp;
 
-    gettimeofday(&amp;tp, (struct timezone *)0);
+    gettimeofday(&tp, (struct timezone *)0);
 
     /* Offset between UUID formatted times and Unix formatted times.
        UUID UTC base time is October 15, 1582.
@@ -1665,7 +1538,7 @@ void get_system_time(uuid_time_t *uuid_time)
         + I64(0x01B21DD213814000);
 }
 
-/* Sample code, not for use in production; see <a href="./rfc1750">RFC 1750</a> */
+/* Sample code, not for use in production; see RFC 1750 */
 void get_random_info(char seed[16])
 {
     MD5_CTX c;
@@ -1675,12 +1548,12 @@ void get_random_info(char seed[16])
         char hostname[257];
     } r;
 
-    MD5Init(&amp;c);
-    sysinfo(&amp;r.s);
-    gettimeofday(&amp;r.t, (struct timezone *)0);
+    MD5Init(&c);
+    sysinfo(&r.s);
+    gettimeofday(&r.t, (struct timezone *)0);
     gethostname(r.hostname, 256);
-    MD5Update(&amp;c, &amp;r, sizeof r);
-    MD5Final(seed, &amp;c);
+    MD5Update(&c, &r, sizeof r);
+    MD5Final(seed, &c);
 }
 
 #endif
@@ -1689,14 +1562,14 @@ utest.c
 
 #include "copyrt.h"
 #include "sysdep.h"
-#include &lt;stdio.h&gt;
+#include <stdio.h>
 #include "uuid.h"
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 28]</span>
-</pre><pre class='newpage'><a name="page-29" id="page-29" href="#page-29" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 28]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
 uuid_t NameSpace_DNS = { /* 6ba7b810-9dad-11d1-80b4-00c04fd430c8 */
@@ -1714,7 +1587,7 @@ void puid(uuid_t u)
     printf("%8.8x-%4.4x-%4.4x-%2.2x%2.2x-", u.time_low, u.time_mid,
     u.time_hi_and_version, u.clock_seq_hi_and_reserved,
     u.clock_seq_low);
-    for (i = 0; i &lt; 6; i++)
+    for (i = 0; i < 6; i++)
         printf("%2.2x", u.node[i]);
     printf("\n");
 }
@@ -1725,20 +1598,20 @@ void main(int argc, char **argv)
     uuid_t u;
     int f;
 
-    uuid_create(&amp;u);
+    uuid_create(&u);
     printf("uuid_create(): "); puid(u);
 
-    f = uuid_compare(&amp;u, &amp;u);
+    f = uuid_compare(&u, &u);
     printf("uuid_compare(u,u): %d\n", f);     /* should be 0 */
-    f = uuid_compare(&amp;u, &amp;NameSpace_DNS);
+    f = uuid_compare(&u, &NameSpace_DNS);
     printf("uuid_compare(u, NameSpace_DNS): %d\n", f); /* s.b. 1 */
-    f = uuid_compare(&amp;NameSpace_DNS, &amp;u);
+    f = uuid_compare(&NameSpace_DNS, &u);
     printf("uuid_compare(NameSpace_DNS, u): %d\n", f); /* s.b. -1 */
-    uuid_create_md5_from_name(&amp;u, NameSpace_DNS, "www.widgets.com", 15);
+    uuid_create_md5_from_name(&u, NameSpace_DNS, "www.widgets.com", 15);
     printf("uuid_create_md5_from_name(): "); puid(u);
 }
 
-<span class="h2"><a name="appendix-B">Appendix B</a>.  <a href="#appendix-B">Appendix B</a> - Sample Output of utest</span>
+Appendix B.  Appendix B - Sample Output of utest
 
      uuid_create(): 7d444840-9dc0-11d1-b245-5ffdce74fad2
      uuid_compare(u,u): 0
@@ -1750,12 +1623,12 @@ void main(int argc, char **argv)
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 29]</span>
-</pre><pre class='newpage'><a name="page-30" id="page-30" href="#page-30" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 29]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
-<span class="h2"><a name="appendix-C">Appendix C</a>.  <a href="#appendix-C">Appendix C</a> - Some Name Space IDs</span>
+Appendix C.  Appendix C - Some Name Space IDs
 
    This appendix lists the name space IDs for some potentially
    interesting name spaces, as initialized C structures and in the
@@ -1806,9 +1679,9 @@ void main(int argc, char **argv)
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 30]</span>
-</pre><pre class='newpage'><a name="page-31" id="page-31" href="#page-31" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 30]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
 Authors' Addresses
@@ -1832,7 +1705,7 @@ Authors' Addresses
 
    Phone: +1-678-581-9656
    EMail: michael@refactored-networks.com
-   URI: <a href="http://www.refactored-networks.com">http://www.refactored-networks.com</a>
+   URI: http://www.refactored-networks.com
 
 
    Rich Salz
@@ -1843,7 +1716,7 @@ Authors' Addresses
 
    Phone: +1 617-864-0455
    EMail: rsalz@datapower.com
-   URI:   <a href="http://www.datapower.com">http://www.datapower.com</a>
+   URI:   http://www.datapower.com
 
 
 
@@ -1862,9 +1735,9 @@ Authors' Addresses
 
 
 
-<span class="grey">Leach, et al.               Standards Track                    [Page 31]</span>
-</pre><pre class='newpage'><a name="page-32" id="page-32" href="#page-32" class="invisible"> </a>
-<span class="grey"><a href="./rfc4122">RFC 4122</a>                  A UUID URN Namespace                 July 2005</span>
+Leach, et al.               Standards Track                    [Page 31]
+
+RFC 4122                  A UUID URN Namespace                 July 2005
 
 
 Full Copyright Statement
@@ -1872,7 +1745,7 @@ Full Copyright Statement
    Copyright (C) The Internet Society (2005).
 
    This document is subject to the rights, licenses and restrictions
-   contained in <a href="./bcp78">BCP 78</a>, and except as set forth therein, the authors
+   contained in BCP 78, and except as set forth therein, the authors
    retain all their rights.
 
    This document and the information contained herein are provided on an
@@ -1892,14 +1765,14 @@ Intellectual Property
    might or might not be available; nor does it represent that it has
    made any independent effort to identify any such rights.  Information
    on the procedures with respect to rights in RFC documents can be
-   found in <a href="./bcp78">BCP 78</a> and <a href="./bcp79">BCP 79</a>.
+   found in BCP 78 and BCP 79.
 
    Copies of IPR disclosures made to the IETF Secretariat and any
    assurances of licenses to be made available, or the result of an
    attempt made to obtain a general license or permission for the use of
    such proprietary rights by implementers or users of this
    specification can be obtained from the IETF on-line IPR repository at
-   <a href="http://www.ietf.org/ipr">http://www.ietf.org/ipr</a>.
+   http://www.ietf.org/ipr.
 
    The IETF invites any interested party to bring to its attention any
    copyrights, patents or patent applications, or other proprietary
@@ -1919,10 +1792,4 @@ Acknowledgement
 
 
 Leach, et al.               Standards Track                    [Page 32]
-</pre><pre class='newpage'>
-
-</pre><br />
-<span class="noprint"><small><small>Html markup produced by rfcmarkup 1.73, available from
-<a href="http://tools.ietf.org/tools/rfcmarkup/">http://tools.ietf.org/tools/rfcmarkup/</a>
-</small></small></span>
-</body></html>
+

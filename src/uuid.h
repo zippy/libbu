@@ -21,6 +21,9 @@ namespace Bu
 
 		Bu::String toRawString();
 		Bu::String toString();
+		Bu::String toUrn();
+
+		int getVersion();
 
 		static Uuid gen();
 		static Uuid genV1();

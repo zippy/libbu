@@ -8,6 +8,8 @@
 #ifndef MYRIAD_FS_H
 #define MYRIAD_FS_H
 
+#include <sys/types.h>
+
 #include "bu/myriad.h"
 
 namespace Bu
@@ -38,9 +40,9 @@ namespace Bu
 	 * Basic node header format:
 	 *   int32_t iUser
 	 *   int32_t iGroup
-	 *   int16_t iPerms
+	 *   uint16_t uPerms
 	 *   int16_t iLinks
-	 *   int32_t iStreamIndex
+	 *   uint32_t uStreamIndex
 	 *   int32_t iParentNode
 	 *   int64_t iATime
 	 *   int64_t iMTime
@@ -51,14 +53,14 @@ namespace Bu
 	 * Some types get special formats for their assosiated data stream, or
 	 * other special considerations, here's a list:
 	 *
-	 * - typeFifo: No stream, iStreamIndex unused (probably)
-	 * - typeChrDev: No stream, iStreamIndex is device hi/lo
+	 * - typeFifo: No stream, uStreamIndex unused (probably)
+	 * - typeChrDev: No stream, uStreamIndex is device hi/lo
 	 * - typeDir: The stream contains a directory contents listing, described
 	 *            below
-	 * - typeBlkDev: No stream, iStreamIndex is device hi/lo
+	 * - typeBlkDev: No stream, uStreamIndex is device hi/lo
 	 * - typeRegFile: The stream is the file data
 	 * - typeSymLink: The stream is the destination of the symlink
-	 * - typeSocket: No steram, iStreamIndex unused (probably)
+	 * - typeSocket: No steram, uStreamIndex unused (probably)
 	 *
 	 * Directory streams have this simple listing format.  They contain a list
 	 * of all child elements, with no particular order at the moment.  The . and
@@ -89,6 +91,7 @@ namespace Bu
 			permSticky	= 0001000,
 			permSetGid	= 0002000,
 			permSetUid	= 0004000,
+			permMask	= 0007777,
 			typeFifo	= 0010000,
 			typeChrDev	= 0020000,
 			typeDir		= 0040000,
@@ -127,14 +130,23 @@ namespace Bu
 			int64_t iMTime;
 			int64_t iCTime;
 			int32_t iSize;
+			uint32_t uDev;
 			Bu::String sName;
 		};
 		typedef Bu::List<Stat> Dir;
 
 		void stat( const Bu::String &sPath, Stat &rBuf );
 		MyriadStream open( const Bu::String &sPath, int iMode );
-//		void create( const Bu::String &sPath, uint16_t iPerms );
+		void create( const Bu::String &sPath, uint16_t iPerms );
+		void create( const Bu::String &sPath, uint16_t iPerms,
+				uint16_t iDevHi, uint16_t iDevLo );
+		void create( const Bu::String &sPath, uint16_t iPerms,
+				uint32_t uSpecial );
+		void mkDir( const Bu::String &sPath, uint16_t iPerms );
+		Dir readDir( const Bu::String &sPath );
 
+		static dev_t devToSys( uint32_t uDev );
+		static uint32_t sysToDev( dev_t uDev );
 
 	private:
 		class RawStat
@@ -144,7 +156,7 @@ namespace Bu
 			int32_t iGroup;
 			uint16_t uPerms;
 			int16_t iLinks;
-			int32_t iStreamIndex;
+			uint32_t uStreamIndex;
 			int32_t iParentNode;
 			int64_t iATime;
 			int64_t iMTime;
@@ -160,9 +172,9 @@ namespace Bu
 		Dir readDir( int32_t iNode );
 		MyriadStream openByInode( int32_t iNode );
 		int32_t create( int32_t iParent, const Bu::String &sName,
-				uint16_t uPerms );
+				uint16_t uPerms, uint32_t uSpecial );
 		int32_t allocInode( const Bu::String &sName, int32_t iParent,
-				uint16_t uPerms );
+				uint16_t uPerms, uint32_t uSpecial );
 		void stat( int32_t iNode, Stat &rBuf, MyriadStream &rIs );
 		void writeHeader();
 

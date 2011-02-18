@@ -15,6 +15,7 @@ int main()
 	Uuid i = Uuid::gen();
 
 	sio << i.toString() << sio.nl;
+	sio << "Version: " << i.getVersion() << sio.nl;
 
 	return 0;
 }
