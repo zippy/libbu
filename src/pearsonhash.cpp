@@ -42,7 +42,7 @@ void Bu::PearsonHash::reset()
 	iValue = 0;
 }
 
-void Bu::PearsonHash::setSalt( const Bu::String &sSalt )
+void Bu::PearsonHash::setSalt( const Bu::String & /*sSalt*/ )
 {
 }
 

@@ -140,6 +140,13 @@ extern "C" {
 		return 0;
 	}
 
+	static int myriadfs_utimens( const char *sPath,
+			const struct timespec tv[2] )
+	{
+		pFs->setTimes( sPath, tv[0].tv_sec, tv[1].tv_sec );
+		return 0;
+	}
+
 	static struct fuse_operations myriadfs_oper;
 
 	int main( int argc, char *argv[] )
@@ -155,6 +162,8 @@ extern "C" {
 		myriadfs_oper.write      = myriadfs_write;
 		myriadfs_oper.create	 = myriadfs_create;
 		myriadfs_oper.mknod		 = myriadfs_mknod;
+		myriadfs_oper.release	 = myriadfs_release;
+		myriadfs_oper.utimens	 = myriadfs_utimens;
 		printf("Starting fuse_main.\n");
 		int iRet = fuse_main( argc, argv, &myriadfs_oper, NULL );
 		printf("Done with fuse_main.\n");

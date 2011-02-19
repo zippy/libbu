@@ -61,7 +61,7 @@ void Bu::Md5::addData( const void *sVData, int iSize )
 		unsigned char *p = (unsigned char *) inbuf + t;
 
 		t = 64 - t;
-		if( iSize < t ) {
+		if( (uint32_t)iSize < t ) {
 			memcpy( p, sData, iSize );
 			return;
 		}

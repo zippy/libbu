@@ -142,7 +142,6 @@ target "libbu++-r$(svnversion "-n").tar.bz2"
 {
 	input [
 		"LICENSE",
-		"build.conf",
 		"Doxyfile",
 		files("*.bld"),
 		"support/vim/syntax/taf.vim",

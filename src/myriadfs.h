@@ -32,23 +32,18 @@ namespace Bu
 	 *   int32_t iInode
 	 *   int32_t iPosition
 	 *
-	 * The node headers or inode structures have a base size of 46 bytes.
-	 * Everything else in the block is used for the name.  I.e. if you have
-	 * a blocksize of 512 bytes then you wind up with a max name size of
-	 * 512-46=466 characters, or a blocksize of 256 gives you 210 chraacters
-	 * as a max.  The node headers are all stored in stream 2.
+	 * The node headers or inode structures have a base size of 44 bytes.
+	 * The name is stored in the directory format.
 	 * Basic node header format:
+	 *   int32_t iNode
 	 *   int32_t iUser
 	 *   int32_t iGroup
 	 *   uint16_t uPerms
 	 *   int16_t iLinks
 	 *   uint32_t uStreamIndex
-	 *   int32_t iParentNode
 	 *   int64_t iATime
 	 *   int64_t iMTime
 	 *   int64_t iCTime
-	 *   int16_t iNameSize
-	 *   char[iNameSize] sName
 	 *
 	 * Some types get special formats for their assosiated data stream, or
 	 * other special considerations, here's a list:
@@ -70,6 +65,8 @@ namespace Bu
 	 *
 	 * NodeTable:
 	 *   int32_t iInode
+	 *   uint8_t uNameSize
+	 *   char[uNameSize] sName
 	 */
 	class MyriadFs
 	{
@@ -144,6 +141,9 @@ namespace Bu
 				uint32_t uSpecial );
 		void mkDir( const Bu::String &sPath, uint16_t iPerms );
 		Dir readDir( const Bu::String &sPath );
+		void setTimes( const Bu::String &sPath, int64_t iATime,
+				int64_t iMTime );
+		void unlink( const Bu::String &sPath );
 
 		static dev_t devToSys( uint32_t uDev );
 		static uint32_t sysToDev( dev_t uDev );
@@ -152,16 +152,15 @@ namespace Bu
 		class RawStat
 		{
 		public:
+			int32_t iNode;
 			int32_t iUser;
 			int32_t iGroup;
 			uint16_t uPerms;
 			int16_t iLinks;
 			uint32_t uStreamIndex;
-			int32_t iParentNode;
 			int64_t iATime;
 			int64_t iMTime;
 			int64_t iCTime;
-			int16_t iNameSize;
 		};
 		typedef Bu::Hash<int32_t, int32_t> NodeIndex;
 
@@ -173,10 +172,11 @@ namespace Bu
 		MyriadStream openByInode( int32_t iNode );
 		int32_t create( int32_t iParent, const Bu::String &sName,
 				uint16_t uPerms, uint32_t uSpecial );
-		int32_t allocInode( const Bu::String &sName, int32_t iParent,
-				uint16_t uPerms, uint32_t uSpecial );
+		int32_t allocInode( uint16_t uPerms, uint32_t uSpecial );
 		void stat( int32_t iNode, Stat &rBuf, MyriadStream &rIs );
+		void unlink( int32_t iNode );
 		void writeHeader();
+		void setTimes( int32_t iNode, int64_t iATime, int64_t iMTime );
 
 	private:
 		Bu::Stream &rStore;

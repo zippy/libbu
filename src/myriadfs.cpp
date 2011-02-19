@@ -78,22 +78,15 @@ Bu::MyriadFs::MyriadFs( Bu::Stream &rStore, int iBlockSize ) :
 		{
 			mStore.createStream( 2 );
 			Bu::MyriadStream ms = mStore.openStream( 2 );
-			int32_t iTmp32 = 0;
-			int16_t iTmp16 = 0;
-			uint16_t uPerms = 775|typeDir;
-			ms.write( &iUser, 4 );		// User
-			ms.write( &iGroup, 4 );		// Group
-			ms.write( &uPerms, 2 );		// Permissions/types
-			ms.write( &iTmp16, 2 );		// Link count
-			iTmp32 = 3;
-			ms.write( &iTmp32, 4 );		// Stream index
-			iTmp32 = 0;
-			ms.write( &iTmp32, 4 );		// Parent inode (root's it's own parent)
-			int64_t iTime = time(NULL);
-			ms.write( &iTime, 8 );		// atime
-			ms.write( &iTime, 8 );		// mtime
-			ms.write( &iTime, 8 );		// ctime
-			ms.write( &iTmp16, 2 );		// Name size
+			RawStat rs;
+			rs.iNode = 0;
+			rs.iUser = iUser;
+			rs.iGroup = iGroup;
+			rs.uPerms = 0755|typeDir;
+			rs.iLinks = 1;
+			rs.uStreamIndex = 3;
+			rs.iCTime = rs.iMTime = rs.iATime = time(NULL);
+			ms.write( &rs, sizeof(RawStat) );
 		}
 
 		// Create inode 0's storage stream.
@@ -216,6 +209,17 @@ Bu::MyriadFs::Dir Bu::MyriadFs::readDir( const Bu::String &sPath )
 	return readDir( iNode );
 }
 
+void Bu::MyriadFs::setTimes( const Bu::String &sPath, int64_t iATime,
+		int64_t iMTime )
+{
+	int32_t iParent = -1;
+	int32_t iNode;
+
+	iNode = lookupInode( sPath, iParent );
+	
+	setTimes( iNode, iATime, iMTime );
+}
+
 dev_t Bu::MyriadFs::devToSys( uint32_t uDev )
 {
 	return (((uDev&0xFFFF0000)>>8)&0xFF00) | ((uDev&0xFF));
@@ -306,6 +310,10 @@ Bu::MyriadFs::Dir Bu::MyriadFs::readDir( int32_t iNode )
 		ms.read( &iChildNode, 4 );
 		Stat s;
 		stat( iChildNode, s, is );
+		uint8_t uLen;
+		ms.read( &uLen, 1 );
+		s.sName.setSize( uLen );
+		ms.read( s.sName.getStr(), uLen );
 		lDir.append( s );
 
 		sio << "    " << s.sName << sio.nl;
@@ -318,7 +326,7 @@ Bu::MyriadStream Bu::MyriadFs::openByInode( int32_t iNode )
 {
 	int32_t iIndex = hNodeIndex.get( iNode );
 	Bu::MyriadStream ms = mStore.openStream( 2 );
-	ms.setPos( mStore.getBlockSize()*iIndex );
+	ms.setPos( iIndex*sizeof(RawStat) );
 	RawStat rs;
 	ms.read( &rs, sizeof(RawStat) );
 	switch( (rs.uPerms&typeMask) )
@@ -337,20 +345,26 @@ Bu::MyriadStream Bu::MyriadFs::openByInode( int32_t iNode )
 int32_t Bu::MyriadFs::create( int32_t iParent, const Bu::String &sName,
 		uint16_t uPerms, uint32_t uSpecial )
 {
+	if( sName.getSize() > 255 )
+	{
+		throw Bu::MyriadFsException("Filename too long, max is 255 bytes.");
+	}
 	Bu::MyriadStream ms = openByInode( iParent );
 	int32_t iNumChildren = 0;
 	ms.read( &iNumChildren, 4 );
 	iNumChildren++;
 	ms.setPos( 0 );
 	ms.write( &iNumChildren, 4 );
-	ms.setPos( iNumChildren*4 ); // Actually 4+(iNumChildren-1)*4 :-P
-	int32_t iNode = allocInode( sName, iParent, uPerms, uSpecial );
+	ms.setPosEnd( 0 );
+	int32_t iNode = allocInode( uPerms, uSpecial );
 	ms.write( &iNode, 4 );
+	uint8_t uLen = sName.getSize();
+	ms.write( &uLen, 1 );
+	ms.write( sName.getStr(), uLen );
 	return iNode;
 }
 
-int32_t Bu::MyriadFs::allocInode( const Bu::String &sName, int32_t iParent,
-		uint16_t uPerms, uint32_t uSpecial )
+int32_t Bu::MyriadFs::allocInode( uint16_t uPerms, uint32_t uSpecial )
 {
 	int32_t iNode = 0;
 	for(; iNode < 0xfffffff; iNode++ )
@@ -358,11 +372,12 @@ int32_t Bu::MyriadFs::allocInode( const Bu::String &sName, int32_t iParent,
 		if( !hNodeIndex.has( iNode ) )
 		{
 			Bu::MyriadStream is = mStore.openStream( 2 );
-			is.setSize( (hNodeIndex.getSize()+1)*mStore.getBlockSize() );
-			is.setPos( hNodeIndex.getSize()*mStore.getBlockSize() );
+			is.setSize( (hNodeIndex.getSize()+1)*sizeof(RawStat) );
+			is.setPos( hNodeIndex.getSize()*sizeof(RawStat) );
 
 			hNodeIndex.insert( iNode, hNodeIndex.getSize() );
 			RawStat rs;
+			rs.iNode = iNode;
 			rs.iUser = iUser;
 			rs.iGroup = iGroup;
 			rs.uPerms = uPerms;
@@ -376,6 +391,8 @@ int32_t Bu::MyriadFs::allocInode( const Bu::String &sName, int32_t iParent,
 				
 				case typeDir:
 					rs.uStreamIndex = mStore.createStream();
+					sio << "Creating directory node, storage: "
+						<< rs.uStreamIndex << sio.nl;
 					{
 						Bu::MyriadStream msDir = mStore.openStream(
 							rs.uStreamIndex
@@ -394,13 +411,10 @@ int32_t Bu::MyriadFs::allocInode( const Bu::String &sName, int32_t iParent,
 					rs.uStreamIndex = 0;
 					break;
 			}
-			rs.iParentNode = iParent;
 			rs.iATime = time(NULL);
 			rs.iMTime = time(NULL);
 			rs.iCTime = time(NULL);
-			rs.iNameSize = sName.getSize();
 			is.write( &rs, sizeof(RawStat) );
-			is.write( sName.getStr(), sName.getSize() );
 
 			return iNode;
 		}
@@ -412,11 +426,11 @@ int32_t Bu::MyriadFs::allocInode( const Bu::String &sName, int32_t iParent,
 
 void Bu::MyriadFs::stat( int32_t iNode, Stat &rBuf, MyriadStream &rIs )
 {
-	rIs.setPos( hNodeIndex.get( iNode )*mStore.getBlockSize() );
+	rIs.setPos( hNodeIndex.get( iNode )*sizeof(RawStat) );
 	RawStat rs;
 	rIs.read( &rs, sizeof(RawStat) );
-	rBuf.sName.setSize( rs.iNameSize );
-	rIs.read( rBuf.sName.getStr(), rs.iNameSize );
+	if( rs.iNode != iNode )
+		throw Bu::MyriadFsException("Filesystem corruption detected.");
 	rBuf.iNode = iNode;
 	rBuf.iUser = rs.iUser;
 	rBuf.iGroup = rs.iGroup;
@@ -445,6 +459,11 @@ void Bu::MyriadFs::stat( int32_t iNode, Stat &rBuf, MyriadStream &rIs )
 	}
 }
 
+void Bu::MyriadFs::unlink( int32_t iNode )
+{
+	
+}
+
 void Bu::MyriadFs::writeHeader()
 {
 	Bu::MyriadStream ms = mStore.openStream( 1 );
@@ -463,5 +482,18 @@ void Bu::MyriadFs::writeHeader()
 
 	// Truncate the stream afterwards so we don't use up too much space.
 	ms.setSize( ms.tell() );
+}
+
+void Bu::MyriadFs::setTimes( int32_t iNode, int64_t iATime, int64_t iMTime )
+{
+	RawStat rs;
+	Bu::MyriadStream is = mStore.openStream( 2 );
+
+	is.setPos( hNodeIndex.get(iNode)*sizeof(RawStat) );
+	is.read( &rs, sizeof(RawStat) );
+	rs.iATime = iATime;
+	rs.iMTime = iMTime;
+	is.setPos( hNodeIndex.get(iNode)*sizeof(RawStat) );
+	is.write( &rs, sizeof(RawStat) );
 }
 
