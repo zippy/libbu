@@ -54,13 +54,11 @@ extern "C" {
 	static int myriadfs_readdir( const char *sPath, void *buf,
 			fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi )
 	{
-		fprintf( stderr, "Reading dir...\n");
 		Bu::MyriadFs::Dir lDir = pFs->readDir( sPath );
 		filler( buf, ".", NULL, 0 );
 		filler( buf, "..", NULL, 0 );
 		for( Bu::MyriadFs::Dir::iterator i = lDir.begin(); i; i++ )
 		{
-			fprintf( stderr, "Adding file: '%s'\n", (*i).sName.getStr() );
 			filler( buf, (*i).sName.getStr(), NULL, 0 );
 		}
 
@@ -80,6 +78,7 @@ extern "C" {
 			Bu::MyriadStream ms = pFs->open( sPath, 0 );
 			fi->fh = iNextFileId;
 			hOpenFiles.insert( iNextFileId++, ms );
+			printf("File opened, %d files open now.\n", hOpenFiles.getSize() );
 			return 0;
 		}
 		catch(...)
@@ -112,6 +111,7 @@ extern "C" {
 			Bu::MyriadStream ms = pFs->open( sPath, 0 );
 			fi->fh = iNextFileId;
 			hOpenFiles.insert( iNextFileId++, ms );
+			printf("File created, %d files open now.\n", hOpenFiles.getSize() );
 			return 0;
 		}
 		catch(...)
@@ -136,6 +136,7 @@ extern "C" {
 	static int myriadfs_release( const char *sPath, struct fuse_file_info *fi )
 	{
 		hOpenFiles.erase( fi->fh );
+		printf("File released, %d files open now.\n", hOpenFiles.getSize() );
 
 		return 0;
 	}
@@ -143,7 +144,14 @@ extern "C" {
 	static int myriadfs_utimens( const char *sPath,
 			const struct timespec tv[2] )
 	{
-		pFs->setTimes( sPath, tv[0].tv_sec, tv[1].tv_sec );
+		try
+		{
+			pFs->setTimes( sPath, tv[0].tv_sec, tv[1].tv_sec );
+		}
+		catch(...)
+		{
+			return -EACCES;
+		}
 		return 0;
 	}
 

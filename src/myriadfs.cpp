@@ -257,7 +257,7 @@ int32_t Bu::MyriadFs::lookupInode( Bu::String::const_iterator iStart,
 	Bu::String::const_iterator iEnd = iStart.find('/');
 	Bu::String sTok( iStart, iEnd );
 
-	sio << "Direcotry component: " << sTok << sio.nl;
+//	sio << "Direcotry component: " << sTok << sio.nl;
 
 	Dir lDir = readDir( iNode );
 
@@ -303,7 +303,7 @@ Bu::MyriadFs::Dir Bu::MyriadFs::readDir( int32_t iNode )
 	
 	Bu::MyriadStream is = mStore.openStream( 2 );
 	Dir lDir;
-	sio << "Reading dir, " << iNumChildren << " entries:" << sio.nl;
+//	sio << "Reading dir, " << iNumChildren << " entries:" << sio.nl;
 	for( int32_t j = 0; j < iNumChildren; j++ )
 	{
 		int32_t iChildNode;
@@ -316,7 +316,7 @@ Bu::MyriadFs::Dir Bu::MyriadFs::readDir( int32_t iNode )
 		ms.read( s.sName.getStr(), uLen );
 		lDir.append( s );
 
-		sio << "    " << s.sName << sio.nl;
+//		sio << "    " << s.sName << sio.nl;
 	}
 
 	return lDir;
