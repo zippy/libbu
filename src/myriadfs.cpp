@@ -191,8 +191,8 @@ void Bu::MyriadFs::mkDir( const Bu::String &sPath, uint16_t iPerms )
 	create( sPath, (iPerms&permMask)|typeDir, 0 );
 }
 
-void Bu::MyriadFs::mkSymLink( const Bu::String &sPath,
-		const Bu::String &sTarget )
+void Bu::MyriadFs::mkSymLink( const Bu::String &sTarget,
+		const Bu::String &sPath )
 {
 	int32_t iParent = -1;
 	int32_t iNode;
@@ -219,6 +219,42 @@ void Bu::MyriadFs::mkSymLink( const Bu::String &sPath,
 		sio << "New iNode: " << iNode << sio.nl;
 		MyriadStream ms = openByInode( iNode );
 		ms.write( sTarget );
+	}
+}
+
+void Bu::MyriadFs::mkHardLink( const Bu::String &sTarget,
+		const Bu::String &sPath )
+{
+	int32_t iParent = -1;
+	int32_t iNode;
+	
+	iNode = lookupInode( sTarget, iParent );
+
+	try
+	{
+		lookupInode( sPath, iParent );
+		throw Bu::MyriadFsException("Path already exists.");
+	}
+	catch( Bu::MyriadFsException &e )
+	{
+		if( iParent < 0 )
+			throw;
+
+		// This means that an intermediate path component couldn't be found
+		if( e.getErrorCode() == 1 )
+			throw;
+
+		// The file wasn't found, but the path leading up to it was.
+		// first, figure out the final path element...
+		Bu::String sName = filePart( sPath );
+		sio << "End filename: " << sName << sio.nl;
+		sio << "Parent inode: " << iParent << sio.nl;
+		addToDir( iParent, iNode, sName );
+		MyriadStream is = mStore.openStream( 2 );
+		RawStat rs;
+		readInode( iNode, rs, is );
+		rs.iLinks++;
+		writeInode( rs, is );
 	}
 }
 
@@ -303,6 +339,21 @@ void Bu::MyriadFs::unlink( const Bu::String &sPath )
 		ms.write( (*i).sName.getStr(), iSize );
 	}
 	ms.setSize( ms.tell() );
+}
+
+void Bu::MyriadFs::setFileSize( const Bu::String &sPath, int32_t iSize )
+{
+	int32_t iParent = -1;
+	int32_t iNode;
+	iNode = lookupInode( sPath, iParent );
+	MyriadStream ms = openByInode( iNode );
+	ms.setSize( iSize );
+}
+
+void Bu::MyriadFs::rename( const Bu::String &sFrom, const Bu::String &sTo )
+{
+	mkHardLink( sFrom, sTo );
+	unlink( sFrom );
 }
 
 dev_t Bu::MyriadFs::devToSys( uint32_t uDev )
@@ -454,25 +505,31 @@ Bu::MyriadStream Bu::MyriadFs::openByInode( int32_t iNode )
 	}
 }
 
-int32_t Bu::MyriadFs::create( int32_t iParent, const Bu::String &sName,
-		uint16_t uPerms, uint32_t uSpecial )
+void Bu::MyriadFs::addToDir( int32_t iDir, int32_t iNode,
+		const Bu::String &sName )
 {
 	if( sName.getSize() > 255 )
 	{
 		throw Bu::MyriadFsException("Filename too long, max is 255 bytes.");
 	}
-	Bu::MyriadStream ms = openByInode( iParent );
+	Bu::MyriadStream ms = openByInode( iDir );
 	int32_t iNumChildren = 0;
 	ms.read( &iNumChildren, 4 );
 	iNumChildren++;
 	ms.setPos( 0 );
 	ms.write( &iNumChildren, 4 );
 	ms.setPosEnd( 0 );
-	int32_t iNode = allocInode( uPerms, uSpecial );
 	ms.write( &iNode, 4 );
 	uint8_t uLen = sName.getSize();
 	ms.write( &uLen, 1 );
 	ms.write( sName.getStr(), uLen );
+}
+
+int32_t Bu::MyriadFs::create( int32_t iParent, const Bu::String &sName,
+		uint16_t uPerms, uint32_t uSpecial )
+{
+	int32_t iNode = allocInode( uPerms, uSpecial );
+	addToDir( iParent, iNode, sName );
 	return iNode;
 }
 

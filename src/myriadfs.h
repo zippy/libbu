@@ -141,12 +141,15 @@ namespace Bu
 		void create( const Bu::String &sPath, uint16_t iPerms,
 				uint32_t uSpecial );
 		void mkDir( const Bu::String &sPath, uint16_t iPerms );
-		void mkSymLink( const Bu::String &sPath, const Bu::String &sTarget );
+		void mkSymLink( const Bu::String &sTarget, const Bu::String &sPath );
+		void mkHardLink( const Bu::String &sTarget, const Bu::String &sPath );
 		Bu::String readSymLink( const Bu::String &sPath );
 		Dir readDir( const Bu::String &sPath );
 		void setTimes( const Bu::String &sPath, int64_t iATime,
 				int64_t iMTime );
 		void unlink( const Bu::String &sPath );
+		void setFileSize( const Bu::String &sPath, int32_t iSize );
+		void rename( const Bu::String &sFrom, const Bu::String &sTo );
 
 		static dev_t devToSys( uint32_t uDev );
 		static uint32_t sysToDev( dev_t uDev );
@@ -177,6 +180,7 @@ namespace Bu
 		void writeInode( const RawStat &rs, MyriadStream &rOs );
 		Dir readDir( int32_t iNode );
 		MyriadStream openByInode( int32_t iNode );
+		void addToDir( int32_t iDir, int32_t iNode, const Bu::String &sName );
 		int32_t create( int32_t iParent, const Bu::String &sName,
 				uint16_t uPerms, uint32_t uSpecial );
 		int32_t allocInode( uint16_t uPerms, uint32_t uSpecial );
