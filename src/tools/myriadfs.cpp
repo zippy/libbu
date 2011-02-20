@@ -29,7 +29,6 @@ extern "C" {
 	{
 		try
 		{
-			printf("myriadfs_getattr: Statting file: %s\n", sPath );
 			Bu::MyriadFs::Stat st;
 			pFs->stat( sPath, st );
 			stbuf->st_ino = st.iNode;
@@ -78,7 +77,8 @@ extern "C" {
 			Bu::MyriadStream ms = pFs->open( sPath, 0 );
 			fi->fh = iNextFileId;
 			hOpenFiles.insert( iNextFileId++, ms );
-			printf("File opened, %d files open now.\n", hOpenFiles.getSize() );
+			printf("File '%s' opened, %d files open now.\n",
+				sPath, hOpenFiles.getSize() );
 			return 0;
 		}
 		catch(...)
@@ -108,10 +108,11 @@ extern "C" {
 	{
 		try
 		{
-			Bu::MyriadStream ms = pFs->open( sPath, 0 );
+			Bu::MyriadStream ms = pFs->open( sPath, 0, uPerms );
 			fi->fh = iNextFileId;
 			hOpenFiles.insert( iNextFileId++, ms );
-			printf("File created, %d files open now.\n", hOpenFiles.getSize() );
+			printf("File '%s' created, %d files open now.\n",
+				sPath, hOpenFiles.getSize() );
 			return 0;
 		}
 		catch(...)
@@ -136,7 +137,8 @@ extern "C" {
 	static int myriadfs_release( const char *sPath, struct fuse_file_info *fi )
 	{
 		hOpenFiles.erase( fi->fh );
-		printf("File released, %d files open now.\n", hOpenFiles.getSize() );
+		printf("File '%s' released, %d files open now.\n",
+			sPath, hOpenFiles.getSize() );
 
 		return 0;
 	}
@@ -150,6 +152,52 @@ extern "C" {
 		}
 		catch(...)
 		{
+			return -EACCES;
+		}
+		return 0;
+	}
+
+	static int myriadfs_unlink( const char *sPath )
+	{
+		try
+		{
+			pFs->unlink( sPath );
+		}
+		catch( Bu::MyriadFsException &e )
+		{
+			printf("MyriadFsException: %s\n", e.what() );
+			return -EACCES;
+		}
+		return 0;
+	}
+
+	static int myriadfs_symlink( const char *sTarget, const char *sPath )
+	{
+		try
+		{
+			printf("Path = '%s', Target = '%s'\n", sPath, sTarget );
+			pFs->mkSymLink( sPath, sTarget );
+		}
+		catch( Bu::MyriadFsException &e )
+		{
+			printf("MyriadFsException: %s\n", e.what() );
+			return -EACCES;
+		}
+		return 0;
+	}
+
+	static int myriadfs_readlink( const char *sPath, char *sOut, size_t s )
+	{
+		try
+		{
+			Bu::String sTrg = pFs->readSymLink( sPath );
+			size_t iLen = (s-1>sTrg.getSize())?(sTrg.getSize()):(s-1);
+			memcpy( sOut, sTrg.getStr(), iLen );
+			sOut[iLen] = '\0';
+		}
+		catch( Bu::MyriadFsException &e )
+		{
+			printf("MyriadFsException: %s\n", e.what() );
 			return -EACCES;
 		}
 		return 0;
@@ -172,6 +220,10 @@ extern "C" {
 		myriadfs_oper.mknod		 = myriadfs_mknod;
 		myriadfs_oper.release	 = myriadfs_release;
 		myriadfs_oper.utimens	 = myriadfs_utimens;
+		myriadfs_oper.unlink	 = myriadfs_unlink;
+		myriadfs_oper.rmdir		 = myriadfs_unlink;
+		myriadfs_oper.symlink	 = myriadfs_symlink;
+		myriadfs_oper.readlink	 = myriadfs_readlink;
 		printf("Starting fuse_main.\n");
 		int iRet = fuse_main( argc, argv, &myriadfs_oper, NULL );
 		printf("Done with fuse_main.\n");

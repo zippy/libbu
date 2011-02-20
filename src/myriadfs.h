@@ -133,13 +133,16 @@ namespace Bu
 		typedef Bu::List<Stat> Dir;
 
 		void stat( const Bu::String &sPath, Stat &rBuf );
-		MyriadStream open( const Bu::String &sPath, int iMode );
+		MyriadStream open( const Bu::String &sPath, int iMode,
+			uint16_t uPerms=0664 );
 		void create( const Bu::String &sPath, uint16_t iPerms );
 		void create( const Bu::String &sPath, uint16_t iPerms,
 				uint16_t iDevHi, uint16_t iDevLo );
 		void create( const Bu::String &sPath, uint16_t iPerms,
 				uint32_t uSpecial );
 		void mkDir( const Bu::String &sPath, uint16_t iPerms );
+		void mkSymLink( const Bu::String &sPath, const Bu::String &sTarget );
+		Bu::String readSymLink( const Bu::String &sPath );
 		Dir readDir( const Bu::String &sPath );
 		void setTimes( const Bu::String &sPath, int64_t iATime,
 				int64_t iMTime );
@@ -168,15 +171,21 @@ namespace Bu
 		int32_t lookupInode( const Bu::String &sPath, int32_t &iParent );
 		int32_t lookupInode( Bu::String::const_iterator iStart,
 				int32_t iNode, int32_t &iParent );
+		void readInode( int32_t iNode, RawStat &rs, MyriadStream &rIs );
+		void readInode( int32_t iNode, RawStat &rs );
+		void writeInode( const RawStat &rs );
+		void writeInode( const RawStat &rs, MyriadStream &rOs );
 		Dir readDir( int32_t iNode );
 		MyriadStream openByInode( int32_t iNode );
 		int32_t create( int32_t iParent, const Bu::String &sName,
 				uint16_t uPerms, uint32_t uSpecial );
 		int32_t allocInode( uint16_t uPerms, uint32_t uSpecial );
 		void stat( int32_t iNode, Stat &rBuf, MyriadStream &rIs );
-		void unlink( int32_t iNode );
 		void writeHeader();
 		void setTimes( int32_t iNode, int64_t iATime, int64_t iMTime );
+		void destroyNode( int32_t iNode );
+
+		Bu::String filePart( const Bu::String &sPath );
 
 	private:
 		Bu::Stream &rStore;
