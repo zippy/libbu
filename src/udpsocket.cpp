@@ -5,6 +5,8 @@
  * terms of the license contained in the file LICENSE.
  */
 
+#ifndef WIN32 //not on windows
+
 #include "bu/udpsocket.h"
 
 #include "bu/sio.h"
@@ -237,4 +239,6 @@ Bu::String Bu::UdpSocket::getLocation() const
 {
 	throw Bu::UnsupportedException();
 }
+
+#endif
 

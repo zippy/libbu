@@ -4,6 +4,7 @@
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
  */
+#ifndef WIN32 //not on windows
 
 #ifndef BU_UDP_SOCKET_H
 #define BU_UDP_SOCKET_H
@@ -77,5 +78,7 @@ namespace Bu
 		bool bBound;
 	};
 };
+
+#endif
 
 #endif

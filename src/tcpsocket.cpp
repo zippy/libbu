@@ -401,7 +401,7 @@ void Bu::TcpSocket::setBlocking( bool bBlocking )
 		fcntl( nTcpSocket, F_SETFL, fcntl( nTcpSocket, F_GETFL, 0 ) | O_NONBLOCK );
 	}
 #else
-	u_Bu::size iMode;
+	u_long iMode;
 	if( bBlocking )
 		iMode = 0;
 	else
