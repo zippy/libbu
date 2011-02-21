@@ -236,9 +236,13 @@ Bu::size Bu::File::getSize() const
 
 Bu::size Bu::File::getBlockSize() const
 {
+#ifdef WIN32
+	return 4096;
+#else
 	struct stat st;
 	fstat( fd, &st );
 	return st.st_blksize;
+#endif
 }
 
 Bu::String Bu::File::getLocation() const
