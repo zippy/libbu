@@ -154,12 +154,12 @@ namespace Bu
 
 			bool operator==( const Ptr &rRhs ) const
 			{
-				return pData == rRhs.pData;
+				return pCache == rRhs.pCache && kId == rRhs.kId;
 			}
 
 			bool operator!=( const Ptr &rRhs ) const
 			{
-				return pData != rRhs.pData;
+				return pCache != rRhs.pCache || kId != rRhs.kId;
 			}
 
 		private:

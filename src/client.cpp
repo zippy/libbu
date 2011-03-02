@@ -14,7 +14,7 @@
 #include "bu/clientlinkfactory.h"
 
 /** Read buffer size. */
-#define RBS		(1024*2)
+#define RBS		(1500) // 1500 is the nominal MTU for ethernet, it's a good guess
 
 Bu::Client::Client( Bu::TcpSocket *pSocket,
 		class Bu::ClientLinkFactory *pfLink ) :
@@ -82,10 +82,10 @@ void Bu::Client::processInput()
 
 void Bu::Client::processOutput()
 {
+	char buf[RBS];
 	if( qbWrite.getSize() > 0 )
 	{
 		int nAmnt = RBS;
-		char *buf = new char[nAmnt];
 		nAmnt = qbWrite.peek( buf, nAmnt );
 		int nReal = pTopStream->write( buf, nAmnt );
 		qbWrite.seek( nReal );
