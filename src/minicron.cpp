@@ -119,6 +119,58 @@ void Bu::MiniCron::removeJob( JobId jid )
 	}
 }
 
+void Bu::MiniCron::runJob( JobId jid, bool bReschedule )
+{
+	Bu::List<Job *> lJobs;
+	while( !hJobs.isEmpty() )
+	{
+		Job *pJob = hJobs.dequeue();
+		if( pJob->getId() == jid )
+		{
+			pJob->run( bReschedule );
+			if( !pJob->bContinue )
+			{
+				delete pJob;
+				break;
+			}
+			lJobs.append( pJob );
+			break;
+		}
+		lJobs.append( pJob );
+	}
+
+	for( Bu::List<Job *>::iterator i = lJobs.begin(); i; i++ )
+	{
+		hJobs.enqueue( *i );
+	}
+}
+
+void Bu::MiniCron::runJob( const Bu::String &sName, bool bReschedule )
+{
+	Bu::List<Job *> lJobs;
+	while( !hJobs.isEmpty() )
+	{
+		Job *pJob = hJobs.dequeue();
+		if( pJob->getName() == sName )
+		{
+			pJob->run( bReschedule );
+			if( !pJob->bContinue )
+			{
+				delete pJob;
+				break;
+			}
+			lJobs.append( pJob );
+			break;
+		}
+		lJobs.append( pJob );
+	}
+
+	for( Bu::List<Job *>::iterator i = lJobs.begin(); i; i++ )
+	{
+		hJobs.enqueue( *i );
+	}
+}
+
 Bu::MiniCron::JobInfoList Bu::MiniCron::getJobInfo()
 {
 	JobInfoList lRet;
@@ -148,10 +200,11 @@ Bu::MiniCron::Job::~Job()
 	pTimer = NULL;
 }
 
-void Bu::MiniCron::Job::run()
+void Bu::MiniCron::Job::run( bool bReschedule )
 {
 	iRunCount++;
-	tNextRun = pTimer->nextTime();
+	if( bReschedule )
+		tNextRun = pTimer->nextTime();
 	sigJob( *this );
 }
 

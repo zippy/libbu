@@ -110,6 +110,22 @@ namespace Bu
 		 */
 		virtual void removeJob( JobId jid );
 
+		/**
+		 * Executes the job specified right now.  If bReschedule is true then
+		 * the job is then removed from the queue and rescheduled as though
+		 * it's time had come naturally to be run.  Otherwise, it's run without
+		 * interrupting the normal schedule.
+		 */
+		virtual void runJob( JobId jid, bool bReschedule=false );
+
+		/**
+		 * Executes the job specified right now.  If bReschedule is true then
+		 * the job is then removed from the queue and rescheduled as though
+		 * it's time had come naturally to be run.  Otherwise, it's run without
+		 * interrupting the normal schedule.
+		 */
+		virtual void runJob( const Bu::String &sName, bool bReschedule=false );
+
 		class JobInfo
 		{
 		public:
@@ -234,7 +250,7 @@ namespace Bu
 			 * Execute this job once, increment the runcount and schedule the
 			 * next occurance of it.
 			 */
-			void run();
+			void run( bool bReschedule=true );
 
 			/**
 			 * Get the time this job will next run.
