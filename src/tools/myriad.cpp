@@ -125,13 +125,13 @@ int main( int argc, char *argv[] )
 					<< "  Used space:   " << m.getTotalUsedBytes() << sio.nl
 					<< "  Unused space: " << m.getTotalUnusedBytes() << sio.nl
 					<< "  % of files:   " << (double)(m.getNumBlocks()*m.getBlockSize())/(double)(m.getTotalUsedBytes() + m.getTotalUnusedBytes( 4096 ))*100.0 << sio.nl;
-				Bu::Array<int> aStreams = m.getStreamIds();
+/*				Bu::Array<int> aStreams = m.getStreamIds();
 				sio << "  Stream info:" << sio.nl;
 				for( Bu::Array<int>::iterator i = aStreams.begin(); i; i++ )
 				{
 					sio << "    " << Fmt(4) << *i << ") "
 						<< m.getStreamSize( *i ) << "b" << sio.nl;
-				}
+				} */
 			}
 			break;
 
