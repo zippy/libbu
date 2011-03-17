@@ -10,7 +10,6 @@
 
 #include <bu/string.h>
 #include <typeinfo>
-#include <bu/membuf.h>
 #include <bu/formatter.h>
 
 namespace Bu
@@ -26,9 +25,9 @@ namespace Bu
 		VariantTypeRoot();
 		virtual ~VariantTypeRoot();
 
-		virtual Bu::String toString() const=0;
 		virtual const std::type_info &getType() const=0;
 		virtual VariantTypeRoot *clone() const=0;
+		virtual void format( Bu::Formatter &f ) const=0;
 	};
 
 	template<class t>
@@ -65,12 +64,9 @@ namespace Bu
 			return data;
 		}
 
-		virtual Bu::String toString() const
+		virtual void format( Formatter &f ) const
 		{
-			MemBuf mb;
-			Formatter f( mb );
 			f << data;
-			return mb.getString();
 		}
 
 		virtual const std::type_info &getType() const
@@ -111,6 +107,7 @@ namespace Bu
 	 */
 	class Variant
 	{
+	friend Bu::Formatter &operator<<( Bu::Formatter &f, const Variant &v );
 	public:
 		Variant();
 		Variant( const Variant &v );
@@ -123,8 +120,8 @@ namespace Bu
 		}
 		virtual ~Variant();
 
-		bool isSet() const;
 		Bu::String toString() const;
+		bool isSet() const;
 		const std::type_info &getType() const;
 
 		Variant &operator=( const Variant &rhs );
@@ -219,17 +216,14 @@ namespace Bu
 	private:
 		VariantTypeRoot *pCore;
 	};
-
+/*
 	template<class t>
 	Bu::Formatter &operator<<( Bu::Formatter &f, const VariantType<t> &vt )
 	{
-		return f << vt.toString();
-	}
+		return f << vt.getData;
+	}*/
 
 	Bu::Formatter &operator<<( Bu::Formatter &f, const Variant &v );
-
-	template<> Bu::String VariantType<int>::toString() const;
-	template<> Bu::String VariantType<bool>::toString() const;
 };
 
 #endif

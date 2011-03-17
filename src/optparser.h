@@ -78,7 +78,10 @@ namespace Bu
 				}
 				else
 				{
-					setValueFromStr( vVar.toString() );
+					Bu::MemBuf mb;
+					Bu::Formatter f( mb );
+//					f << vVar;
+					setValueFromStr( mb.getString() );
 				}
 			}
 			

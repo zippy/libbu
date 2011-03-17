@@ -6,6 +6,7 @@
  */
 
 #include "bu/lexer.h"
+#include "bu/membuf.h"
 
 Bu::Lexer::Lexer()
 {

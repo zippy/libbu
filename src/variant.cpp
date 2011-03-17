@@ -7,6 +7,8 @@
 
 #include "bu/variant.h"
 
+#include "bu/membuf.h"
+
 namespace Bu
 {
 	Formatter &operator<<( Formatter &f, const String &s );
@@ -49,16 +51,17 @@ Bu::Variant::~Variant()
 	}
 }
 
+Bu::String Bu::Variant::toString() const
+{
+	Bu::MemBuf mb;
+	Bu::Formatter f( mb );
+	f << *this;
+	return mb.getString();
+}
+
 bool Bu::Variant::isSet() const
 {
 	return pCore != NULL;
-}
-
-Bu::String Bu::Variant::toString() const
-{
-	if( !pCore )
-		return "***NO DATA***";
-	return pCore->toString();
 }
 
 const std::type_info &Bu::Variant::getType() const
@@ -87,18 +90,10 @@ Bu::Variant &Bu::Variant::operator=( const Bu::Variant &rhs )
 
 Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::Variant &v )
 {
-	return f << v.toString();
-}
+	if( !v.pCore )
+		return f << "(null)";
 
-template<> Bu::String Bu::VariantType<int>::toString() const
-{
-	Bu::String s;
-	s.format("%d", data );
-	return s;
-}
-
-template<> Bu::String Bu::VariantType<bool>::toString() const
-{
-	return data?"true":"false";
+	v.pCore->format( f );
+	return f;
 }
 
