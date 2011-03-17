@@ -10,6 +10,8 @@
 #include "bu/hash.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 typedef Bu::Hash<Bu::String, int> StrIntHash;
 typedef Bu::Hash<Bu::String, Bu::String> StrStrHash;
@@ -96,5 +98,60 @@ suite Hash
 
 		StrIntHash h3 = h.clone();
 		unitTest( !h3.isCoreShared( h ) );
+	}
+
+	test stress
+	{
+		srandom(time(NULL));
+
+		IntStrHash hTest;
+		setStepCount( 1000000 );
+
+		for( int i=0; i<1000000; ++i )
+		{
+			char buf[40]; snprintf(buf,40,"num%d",i);
+			hTest[i] = buf;
+			incProgress();
+
+			/*printf("(%s) size: %u fill: %u cap:%u\n",
+				buf,
+				hTest.getSize(),
+				hTest.getFill(),
+				hTest.getCapacity()
+				);*/
+
+			if( ((double)random()/(double)RAND_MAX)<.3 )
+			{
+				Bu::List<int> lKeys = hTest.getKeys();
+				int iIdx = (int)(((double)random()/(double)RAND_MAX)
+					*lKeys.getSize());
+				Bu::List<int>::const_iterator it = lKeys.begin();
+				for( int k=0; it; ++it, ++k )
+				{
+					if( k == iIdx )
+						hTest.erase( *it );
+				}
+			}
+
+			if( hTest.getSize() > 100 )
+			{
+				int iK = (int)(((double)random()/(double)RAND_MAX)*50)+10;
+				for( int j=0; j<iK; ++j )
+				{
+					Bu::List<int> lKeys = hTest.getKeys();
+					int iIdx = (int)(((double)random()/(double)RAND_MAX)
+						*lKeys.getSize());
+					Bu::List<int>::const_iterator it = lKeys.begin();
+					for( int k=0; it; ++it, ++k )
+					{
+						if( k == iIdx )
+						{
+							hTest.erase( *it );
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 }
