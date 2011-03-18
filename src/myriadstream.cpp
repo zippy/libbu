@@ -304,8 +304,6 @@ Bu::size Bu::MyriadStream::getBlockSize() const
 
 Bu::String Bu::MyriadStream::getLocation() const
 {
-	Bu::String s;
-	s.format("%d", pStream->iId );
-	return s;
+	return Bu::String("%1").arg( pStream->iId );
 }
 

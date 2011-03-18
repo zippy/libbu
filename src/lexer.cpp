@@ -7,6 +7,7 @@
 
 #include "bu/lexer.h"
 #include "bu/membuf.h"
+#include "bu/formatter.h"
 
 Bu::Lexer::Lexer()
 {

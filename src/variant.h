@@ -8,12 +8,19 @@
 #ifndef BU_VARIANT_H
 #define BU_VARIANT_H
 
-#include <bu/string.h>
+//#include <bu/string.h>
 #include <typeinfo>
-#include <bu/formatter.h>
+// #include <bu/formatter.h>
+
+#ifndef NULL
+#define NULL (0L)
+#endif
+
+#include "bu/exceptionbase.h"
 
 namespace Bu
 {
+	class String;
 	class Formatter;
 	class Variant;
 	/** @cond DEVEL */

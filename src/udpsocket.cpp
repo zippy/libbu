@@ -83,15 +83,11 @@ Bu::UdpSocket::~UdpSocket()
 
 Bu::String Bu::UdpSocket::addrToStr( const addr &a )
 {
-	Bu::String sOut;
-	sOut.format("%d.%d.%d.%d",
-		(a&0xff),
-		(a&0xff00)>>8,
-		(a&0xff0000)>>16,
-		(a&0xff000000)>>24
-		);
-
-	return sOut;
+	return Bu::String("%1.%2.%3.%4").
+		arg( (a&0xff) ).
+		arg( (a&0xff00)>>8 ).
+		arg( (a&0xff0000)>>16 ).
+		arg( (a&0xff000000)>>24 );
 }
 
 void Bu::UdpSocket::close()

@@ -8,7 +8,7 @@
 #ifndef BU_UTF_STRING_H
 #define BU_UTF_STRING_H
 
-#include "bu/string.h"
+#include <stdint.h>
 
 namespace Bu
 {
@@ -21,8 +21,8 @@ namespace Bu
 		typedef uint32_t point;
 
 	private:
-		typedef BasicString<uint16_t> RawString;
-		RawString rsStore;
+//		typedef BasicString<uint16_t> RawString;
+//		RawString rsStore;
 	};
 };
 

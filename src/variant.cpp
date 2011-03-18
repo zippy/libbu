@@ -6,7 +6,7 @@
  */
 
 #include "bu/variant.h"
-
+#include "bu/formatter.h"
 #include "bu/membuf.h"
 
 namespace Bu

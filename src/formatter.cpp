@@ -7,6 +7,7 @@
 
 #include "bu/formatter.h"
 
+#include "bu/stream.h"
 #include <string.h>
 
 Bu::Formatter::Formatter( Stream &rStream ) :
@@ -189,67 +190,72 @@ void Bu::Formatter::setIndentChar( char cIndent )
 	this->cIndent = cIndent;
 }
 
-Bu::Formatter::Fmt &Bu::Formatter::Fmt::width( unsigned int uWidth )
+void Bu::Formatter::doFlush()
+{
+	rStream.flush();
+}
+
+Bu::Fmt &Bu::Fmt::width( unsigned int uWidth )
 {
 	this->uMinWidth = uWidth;
 	return *this;
 }
 
-Bu::Formatter::Fmt &Bu::Formatter::Fmt::fill( char cFill )
+Bu::Fmt &Bu::Fmt::fill( char cFill )
 {
 	this->cFillChar = (unsigned char)cFill;
 	return *this;
 }
 
-Bu::Formatter::Fmt &Bu::Formatter::Fmt::radix( unsigned int uRadix )
+Bu::Fmt &Bu::Fmt::radix( unsigned int uRadix )
 {
 	this->uRadix = uRadix;
 	return *this;
 }
 
-Bu::Formatter::Fmt &Bu::Formatter::Fmt::align( Alignment eAlign )
+Bu::Fmt &Bu::Fmt::align( Alignment eAlign )
 {
 	this->uAlign = eAlign;
 	return *this;
 }
 
-Bu::Formatter::Fmt &Bu::Formatter::Fmt::left()
+Bu::Fmt &Bu::Fmt::left()
 {
 	this->uAlign = Fmt::Left;
 	return *this;
 }
 
-Bu::Formatter::Fmt &Bu::Formatter::Fmt::center()
+Bu::Fmt &Bu::Fmt::center()
 {
 	this->uAlign = Fmt::Center;
 	return *this;
 }
 
-Bu::Formatter::Fmt &Bu::Formatter::Fmt::right()
+Bu::Fmt &Bu::Fmt::right()
 {
 	this->uAlign = Fmt::Right;
 	return *this;
 }
 
-Bu::Formatter::Fmt &Bu::Formatter::Fmt::plus( bool bPlus )
+Bu::Fmt &Bu::Fmt::plus( bool bPlus )
 {
 	this->bPlus = bPlus;
 	return *this;
 }
 
-Bu::Formatter::Fmt &Bu::Formatter::Fmt::caps( bool bCaps )
+Bu::Fmt &Bu::Fmt::caps( bool bCaps )
 {
 	this->bCaps = bCaps;
 	return *this;
 }
 
-Bu::Formatter::Fmt &Bu::Formatter::Fmt::tokenize( bool bTokenize )
+Bu::Fmt &Bu::Fmt::tokenize( bool bTokenize )
 {
 	this->bTokenize = bTokenize;
 	return *this;
 }
 
-Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::Formatter::Fmt &fmt )
+Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::Fmt &fmt )
 {
 	f.setTempFormat( fmt );
 	return f;
