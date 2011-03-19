@@ -105,9 +105,7 @@ namespace Bu
 			virtual Bu::String call(
 				const Bu::String &sIn, StrList & )
 			{
-				Bu::String sOut( sIn );
-				sOut.toUpper();
-				return sOut;
+				return sIn.toUpper();
 			}
 		};
 
@@ -119,9 +117,7 @@ namespace Bu
 			virtual Bu::String call(
 				const Bu::String &sIn, StrList & )
 			{
-				Bu::String sOut( sIn );
-				sOut.toLower();
-				return sOut;
+				return sIn.toLower();
 			}
 		};
 		

@@ -41,8 +41,7 @@ typedef struct num
 void printHeap( Bu::Heap<Bu::String> &h, int j )
 {
 //	return;
-	Bu::String sFName;
-	sFName.format("graph-step-%02d.dot", j );
+	Bu::String sFName = Bu::String("graph-step-%1.dot").arg( j, Bu::Fmt().width(2).fill('0') );
 	Bu::File fOut( sFName, Bu::File::WriteNew );
 	Bu::Formatter f( fOut );
 	f << "Graph step: " << j << ", total size: " << h.getSize() << f.nl;

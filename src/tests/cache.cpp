@@ -105,9 +105,7 @@ public:
 		Bu::File f( sFile,
 			Bu::File::Write|Bu::File::Create|Bu::File::Truncate
 			);
-		Bu::String s;
-		s.format("%d", num );
-		f.write( s );
+		f.write( Bu::String("%1").arg( num ) );
 	}
 
 	virtual void sync( Bob *, const long & )
@@ -126,16 +124,14 @@ public:
 	virtual Bob *load( const long &key )
 	{
 		TRACE( key );
-		Bu::String sDest;
-		sDest.format("bobcache/%d", key );
+		Bu::String sDest = Bu::String("bobcache/%1").arg( key );
 		return  new Bob( readNum( sDest ) );
 	}
 
 	virtual void unload( Bob *pObj, const long &key )
 	{
 		TRACE( pObj, key );
-		Bu::String sDest;
-		sDest.format("bobcache/%d", key );
+		Bu::String sDest = Bu::String("bobcache/%1").arg( key );
 		writeNum( sDest, pObj->getInt() );
 		delete pObj;
 	}
@@ -144,8 +140,7 @@ public:
 	{
 		TRACE( rSrc );
 		long id = ++cLastId;
-		Bu::String sDest;
-		sDest.format("bobcache/%d", id );
+		Bu::String sDest = Bu::String("bobcache/%1").arg( id );
 		writeNum( sDest, rSrc->getInt() );
 		return id;
 	}
@@ -153,8 +148,7 @@ public:
 	virtual void destroy( Bob *pObj, const long &key )
 	{
 		TRACE( pObj, key );
-		Bu::String sDest;
-		sDest.format("bobcache/%d", key );
+		Bu::String sDest = Bu::String("bobcache/%1").arg( key );
 		if( !access( sDest.getStr(), F_OK ) )
 			unlink( sDest.getStr() );
 		delete pObj;
@@ -163,8 +157,7 @@ public:
 	virtual void destroy( const long &key )
 	{
 		TRACE( pObj, key );
-		Bu::String sDest;
-		sDest.format("bobcache/%d", key );
+		Bu::String sDest = Bu::String("bobcache/%1").arg( key );
 		if( !access( sDest.getStr(), F_OK ) )
 			unlink( sDest.getStr() );
 	}

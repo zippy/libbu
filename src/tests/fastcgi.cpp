@@ -43,17 +43,17 @@ public:
 		sOut += getcwd( buf, 2048 );
 		sOut += "</li></ul>";
 		sOut += "<h1>Stdin:</h1>";
-		sOut.formatAppend("%d bytes<pre>", sStdIn.getSize() );
+		sOut += Bu::String("%1 bytes<pre>").arg( sStdIn.getSize() );
 		Bu::String sL, sR;
 		for( Bu::String::const_iterator i = sStdIn.begin();
 			i; i++ )
 		{
-			sL.formatAppend("%02X ",
-				(unsigned int)((unsigned char)*i) );
+			sL += Bu::String("%1").arg(
+					(unsigned int)((unsigned char)*i), Bu::Fmt::hex().width(2).fill('0') );
 			if( *i < 27 )
 				sR += ". ";
 			else
-				sR.formatAppend("&#%d; ",
+				sR += Bu::String("&#%1; ").arg(
 					(unsigned int)((unsigned char)*i) );
 			if( sL.getSize()/3 == 8 )
 			{
