@@ -59,7 +59,7 @@ void doTimings()
 	Bu::String fs1, fs2;
 	std::string ss1, ss2;
 	double dStart, dEnd, tfs1, tfs2, tfs3, tss1, tss2, tss3;
-	int nChars = 500000, nChunks=5000, nCopies=5000000, nChunkSize=1024*4;
+	int nChars = 50000000, nChunks=50000, nCopies=500000000, nChunkSize=1024*4;
 	char *buf = new char[nChunkSize];
 	memset( buf, '!', nChunkSize );
 
@@ -106,21 +106,21 @@ void doTimings()
 	tss3 = dEnd-dStart;
 
 	printf(
-		"Results:       singles:        chunks:         copies:\n"
-		"Bu::String    %10.2f/s   %10.2f/s   %10.2f/s\n"
-		"std::string    %10.2f/s   %10.2f/s   %10.2f/s\n",
+		"Results:          singles:              chunks:            copies:\n"
+		"Bu::String    %15.2f/s   %15.2f/s   %15.2f/s\n"
+		"std::string   %15.2f/s   %15.2f/s   %15.2f/s\n",
 		nChars/tfs1, nChunks/tfs2, nCopies/tfs3,
 		nChars/tss1, nChunks/tss2, nCopies/tss3 );
 
 	delete[] buf;
 }
 
-#define pem printf("---------\n%08tX: %s\n%08tX: %s\n", (ptrdiff_t)str.getStr(), str.getStr(), (ptrdiff_t)str2.getStr(), str2.getStr() );
+#define pem printf("---------\n%08tX: %s\n%08tX: %s\n", (ptrdiff_t)str.getConstStr(), str.getConstStr(), (ptrdiff_t)str2.getConstStr(), str2.getConstStr() );
 int main( )
 {
-	Bu::String fs1;
-	for( int j = 0; j < 500000; j++ ) fs1 += (char)('a'+(j%26));
-	return 0;
+//	Bu::String fs1;
+//	for( int j = 0; j < 500000; j++ ) fs1 += (char)('a'+(j%26));
+//	return 0;
 
 	Bu::String str("th");
 
