@@ -10,6 +10,51 @@
 #include "bu/stream.h"
 #include <string.h>
 
+template<> float Bu::tlog( float x )
+{
+	return logf( x );
+}
+
+template<> double Bu::tlog( double x )
+{
+	return log( x );
+}
+
+template<> long double Bu::tlog( long double x )
+{
+	return logl( x );
+}
+
+template<> float Bu::tfloor( float x )
+{
+	return floorf( x );
+}
+
+template<> double Bu::tfloor( double x )
+{
+	return floor( x );
+}
+
+template<> long double Bu::tfloor( long double x )
+{
+	return floorl( x );
+}
+
+template<> float Bu::tpow( float x, float y )
+{
+	return powf( x, y );
+}
+
+template<> double Bu::tpow( double x, double y )
+{
+	return pow( x, y );
+}
+
+template<> long double Bu::tpow( long double x, long double y )
+{
+	return powl( x, y );
+}
+
 Bu::Formatter::Formatter( Stream &rStream ) :
 	rStream( rStream ),
 	bTempFmt( false ),

@@ -11,9 +11,26 @@
 #include "bu/string.h"
 #include "bu/fmt.h"
 
+#include <math.h>
+
 namespace Bu
 {
 	class Stream;
+
+	template<typename t> t tlog( t x );
+	template<> float tlog( float x );
+	template<> double tlog( double x );
+	template<> long double tlog( long double x );
+
+	template<typename t> t tfloor( t x );
+	template<> float tfloor( float x );
+	template<> double tfloor( double x );
+	template<> long double tfloor( long double x );
+
+	template<typename t> t tpow( t x, t y );
+	template<> float tpow( float x, float y );
+	template<> double tpow( double x, double y );
+	template<> long double tpow( long double x, long double y );
 
 	class Formatter
 	{
@@ -118,8 +135,41 @@ namespace Bu
 		void ffmt( type f )
 		{
 			Bu::String fTmp;
-//			fTmp.format("%f", f );
-//			writeAligned("**make floats work**");
+			bool bNeg = false;
+			char cBase = fLast.bCaps?'A':'a';
+			if( fLast.uRadix < 2 || fLast.uRadix > 36 )
+			{
+				usedFormat();
+				return;
+			}
+
+			if( signbit(f) )
+			{
+				bNeg = true;
+				f = -f;
+			}
+			int iScale = tfloor(tlog( f ) / tlog( (type)fLast.uRadix ));
+			f /= tpow( (type)fLast.uRadix, (type)iScale );
+
+			if( iScale < 0 )
+			{
+				fTmp += "0.";
+				for( int j = 1; j < -iScale; j++ )
+					fTmp += '0';
+			}
+			int c = f;
+			fTmp += (char)((c<10)?('0'+c):(cBase+c-10));
+			f -= (int)f;
+			for( int j = 0; j < 150 && f; j++ )
+			{
+				if( iScale - j == 0 )
+					fTmp += '.';
+				f = f*fLast.uRadix;
+				int c = f;
+				fTmp += (char)((c<10)?('0'+c):(cBase+c-10));
+				f -= (int)f;
+			}
+
 			writeAligned( fTmp );
 			usedFormat();
 		}
