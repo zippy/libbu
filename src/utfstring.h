@@ -12,6 +12,8 @@
 
 namespace Bu
 {
+	class String;
+
 	class UtfString
 	{
 	public:
@@ -19,6 +21,8 @@ namespace Bu
 		virtual ~UtfString();
 
 		typedef uint32_t point;
+
+		static void debugUtf8( const Bu::String &sUtf8 );
 
 	private:
 //		typedef BasicString<uint16_t> RawString;
