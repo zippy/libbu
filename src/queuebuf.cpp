@@ -24,11 +24,6 @@ Bu::QueueBuf::~QueueBuf()
 		delete[] *i;
 }
 
-int Bu::QueueBuf::getSize()
-{
-	return iTotalSize;
-}
-
 void Bu::QueueBuf::close()
 {
 	for( BlockList::iterator i = lBlocks.begin(); i; i++ )

@@ -119,7 +119,7 @@ target ["tests/bzip2", "tests/streamstack"]
 }
 
 target ["tests/itoserver", "tests/socketblock", "tests/itoheap",
-	"tests/itoqueue1", "tests/itoqueue2"]
+	"tests/itoqueue1", "tests/itoqueue2", "tests/conduit"]
 {
 	LDFLAGS += "-lpthread";
 }

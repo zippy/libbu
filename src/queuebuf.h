@@ -24,8 +24,6 @@ namespace Bu
 		QueueBuf( int iBlockSize=256 );
 		virtual ~QueueBuf();
 
-		int getSize();
-
 		virtual void close();
 		virtual Bu::size read( void *pBuf, Bu::size nBytes );
 		virtual Bu::size peek( void *pBuf, Bu::size nBytes );
