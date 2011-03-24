@@ -63,6 +63,7 @@ namespace Bu
 			{
 				Bu::MemBuf mb( sVal );
 				Bu::Formatter f( mb );
+				f << Bu::Fmt().tokenize( false );
 				f >> v;
 			}
 
