@@ -1103,7 +1103,7 @@ void Bu::String::trimFront( long nAmnt )
 	core->clear();
 	core->appendChunk( pNew );
 }
-
+/*
 void Bu::String::trimBack( char c )
 {
 	if( core->pFirst == NULL || core->nLength == 0 )
@@ -1112,6 +1112,23 @@ void Bu::String::trimBack( char c )
 	for( ; core->pFirst->nLength > 0 &&
 		core->pFirst->pData[core->pFirst->nLength-1] == c;
 		core->pFirst->nLength--, core->nLength-- ) { }
+}
+*/
+void Bu::String::trimBack( long iAmnt )
+{
+	if( iAmnt < 0 )
+		return;
+	if( core->nLength - iAmnt < 0 )
+	{
+		clear();
+		return;
+	}
+	if( core->pFirst == NULL || core->nLength == 0 )
+		return;
+
+	flatten();
+	core->pFirst->nLength -= iAmnt;
+	core->nLength -= iAmnt;
 }
 
 Bu::String::iterator Bu::String::begin()

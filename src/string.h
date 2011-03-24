@@ -923,7 +923,8 @@ namespace Bu
 		 */
 		void trimFront( long nAmnt );
 
-		void trimBack( char c );
+	//	void trimBack( char c );
+		void trimBack( long iAmnt );
 		
 		iterator begin();
 
