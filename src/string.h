@@ -11,10 +11,6 @@
 #include <stdint.h>
 #include <memory>
 
-#ifndef WIN32
-#include <wordexp.h>
-#endif
-
 #include "bu/util.h"
 #include "bu/sharedcore.h"
 #include "bu/exceptionbase.h"
@@ -24,8 +20,6 @@
 #include "bu/variant.h"
 
 #include <string.h>
-
-#define nMinSize	(256)
 
 namespace Bu
 {

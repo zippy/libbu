@@ -14,6 +14,8 @@
 #include "bu/formatter.h"
 #include <stdlib.h>
 
+#define nMinSize	(256)
+
 Bu::StringCore::StringCore() :
 	nLength( 0 ),
 	pFirst( NULL ),
