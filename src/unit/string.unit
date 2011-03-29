@@ -340,6 +340,13 @@ suite String
 		unitTest( a.replace("i", "ooo") == "Thooos ooos a test." );
 	}
 
+	test replace2
+	{
+		Bu::String a;
+		a = "aaaboostuffb";
+		unitTest( a.replace("boo", "/") == "aaa/stuffb" );
+	}
+
 	test coreDerefBug1
 	{
 		Bu::String a, b;

@@ -994,7 +994,7 @@ Bu::String::const_iterator Bu::String::find( const String &rStr,
 	if( !iStart ) iStart = begin();
 	for( ; iStart; iStart++ )
 	{
-		if( iStart.compare( rStr ) )
+		if( iStart.compare( rStr, rStr.getSize() ) )
 			return iStart;
 	}
 	return end();

@@ -203,6 +203,7 @@ namespace Bu
 					if( *a != *b )
 						return false;
 				}
+
 				return true;
 			}
 
@@ -212,11 +213,14 @@ namespace Bu
 				const_iterator b = c;
 				if( a == b )
 					return true;
-				for(int j = 0; a && b && j < nLen; a++, b++, j++ )
+				int j;
+				for( j = 0; a && b && j < nLen; a++, b++, j++ )
 				{
 					if( *a != *b )
 						return false;
 				}
+				if( j < nLen )
+					return false;
 				return true;
 			}
 
@@ -252,7 +256,7 @@ namespace Bu
 			bool compare( const String &s ) const
 			{
 				if( !pChunk ) return false;
-				return compare( s.begin() );
+				return compare( s.begin(), s.getSize() );
 			}
 
 			bool compare( const String &s, int nLen ) const
@@ -458,11 +462,14 @@ namespace Bu
 				iterator b = c;
 				if( a == b )
 					return true;
-				for(int j = 0; a && b && j < nLen; a++, b++, j++ )
+				int j;
+				for( j = 0; a && b && j < nLen; a++, b++, j++ )
 				{
 					if( *a != *b )
 						return false;
 				}
+				if( j < nLen )
+					return false;
 				return true;
 			}
 
@@ -498,7 +505,7 @@ namespace Bu
 			bool compare( const String &s ) const
 			{
 				if( !pChunk ) return false;
-				return compare( s.begin() );
+				return compare( s.begin(), s.getSize() );
 			}
 
 			bool compare( const String &s, int nLen ) const
