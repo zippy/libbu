@@ -133,6 +133,7 @@ namespace Bu
 		virtual ~OptParser();
 
 		void parse( int argc, char **argv );
+		void parse( const Bu::String &sLine );
 
 		void addOption( const Option &opt );
 		

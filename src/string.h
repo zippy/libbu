@@ -117,6 +117,13 @@ namespace Bu
 				iPos = i.iPos;
 				return *this;
 			}
+			
+			const_iterator &operator=( const iterator &i )
+			{
+				pChunk = i.pChunk;
+				iPos = i.iPos;
+				return *this;
+			}
 
 			const_iterator &operator++()
 			{
@@ -203,7 +210,8 @@ namespace Bu
 					if( *a != *b )
 						return false;
 				}
-
+				if( (bool)a != (bool)b )
+					return false;
 				return true;
 			}
 
@@ -213,14 +221,11 @@ namespace Bu
 				const_iterator b = c;
 				if( a == b )
 					return true;
-				int j;
-				for( j = 0; a && b && j < nLen; a++, b++, j++ )
+				for(int j = 0; j < nLen; a++, b++, j++ )
 				{
-					if( *a != *b )
+					if( !a || !b || *a != *b )
 						return false;
 				}
-				if( j < nLen )
-					return false;
 				return true;
 			}
 
@@ -256,7 +261,7 @@ namespace Bu
 			bool compare( const String &s ) const
 			{
 				if( !pChunk ) return false;
-				return compare( s.begin(), s.getSize() );
+				return compare( s.begin() );
 			}
 
 			bool compare( const String &s, int nLen ) const
@@ -442,10 +447,10 @@ namespace Bu
 				return pChunk != NULL;
 			}
 
-			bool compare( const iterator &c ) const
+			bool compare( const const_iterator &c ) const
 			{
-				iterator a = *this;
-				iterator b = c;
+				const_iterator a( *this );
+				const_iterator b = c;
 				if( a == b )
 					return true;
 				for(; a && b; a++, b++ )
@@ -453,23 +458,22 @@ namespace Bu
 					if( *a != *b )
 						return false;
 				}
+				if( (bool)a != (bool)b )
+					return false;
 				return true;
 			}
 
-			bool compare( const iterator &c, int nLen ) const
+			bool compare( const const_iterator &c, int nLen ) const
 			{
-				iterator a = *this;
-				iterator b = c;
+				const_iterator a( *this );
+				const_iterator b = c;
 				if( a == b )
 					return true;
-				int j;
-				for( j = 0; a && b && j < nLen; a++, b++, j++ )
+				for(int j = 0; j < nLen; a++, b++, j++ )
 				{
-					if( *a != *b )
+					if( !a || !b || *a != *b )
 						return false;
 				}
-				if( j < nLen )
-					return false;
 				return true;
 			}
 
@@ -505,7 +509,7 @@ namespace Bu
 			bool compare( const String &s ) const
 			{
 				if( !pChunk ) return false;
-				return compare( s.begin(), s.getSize() );
+				return compare( s.begin() );
 			}
 
 			bool compare( const String &s, int nLen ) const
@@ -924,8 +928,9 @@ namespace Bu
 		 */
 		void trimFront( long nAmnt );
 
-	//	void trimBack( char c );
 		void trimBack( long iAmnt );
+
+		Bu::String trimWhitespace() const;
 		
 		iterator begin();
 

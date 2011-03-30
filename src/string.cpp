@@ -443,7 +443,7 @@ Bu::String Bu::String::replace( const Bu::String &fnd,
 	const_iterator o = begin();
 	while( true )
 	{
-		const_iterator i = o.find( fnd );
+		const_iterator i = o.find( fnd, fnd.getSize() );
 		if( !i )
 		{
 			out.append( o );
@@ -994,7 +994,7 @@ Bu::String::const_iterator Bu::String::find( const String &rStr,
 	if( !iStart ) iStart = begin();
 	for( ; iStart; iStart++ )
 	{
-		if( iStart.compare( rStr, rStr.getSize() ) )
+		if( iStart.compare( rStr ) )
 			return iStart;
 	}
 	return end();
@@ -1131,6 +1131,36 @@ void Bu::String::trimBack( long iAmnt )
 	flatten();
 	core->pFirst->nLength -= iAmnt;
 	core->nLength -= iAmnt;
+}
+
+Bu::String Bu::String::trimWhitespace() const
+{
+	if( core->nLength == 0 )
+		return "";
+	const_iterator i = begin();
+	for( ; i && (*i == ' ' || *i == '\t' || *i == '\n' || *i == '\r'); i++ ) { }
+	if( !i )
+		return "";
+
+	const_iterator e = i;
+	for( ; e; e++ )
+	{
+		if( *e == ' ' || *e == '\t' || *e == '\n' || *e == '\r' )
+		{
+			const_iterator t = e;
+			for( ; t && (*t == ' ' || *t == '\t' || *t == '\n' || *t == '\r'); t++ ) { }
+			if( t )
+			{
+				e = t;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+
+	return Bu::String( i, e );
 }
 
 Bu::String::iterator Bu::String::begin()

@@ -167,6 +167,68 @@ void Bu::OptParser::parse( int argc, char **argv )
 	}
 }
 
+void Bu::OptParser::parse( const Bu::String &sLine )
+{
+	Bu::String sCmd = sLine.clone();
+	int iParams = 0;
+	bool bInGap = true;
+	bool bInQuote = false;
+	for( Bu::String::iterator i = sCmd.begin(); i; i++ )
+	{
+		if( bInQuote == false && (*i == ' ' || *i == '\t') )
+		{
+			if( bInGap == false )
+			{
+				bInGap = true;
+			}
+		}
+		else if( *i == '"' )
+		{
+			bInQuote = !bInQuote;
+		}
+		else
+		{
+			if( bInGap )
+			{
+				iParams++;
+				bInGap = false;
+			}
+		}
+	}
+
+	bInQuote = false;
+	bInGap = true;
+	char **asParam = new char*[iParams];
+	iParams = 0;
+	for( char *i = sCmd.getStr(); *i; i++ )
+	{
+		if( bInQuote == false && (*i == ' ' || *i == '\t') )
+		{
+			if( bInGap == false )
+			{
+				bInGap = true;
+				*i = '\0';
+			}
+		}
+		else if( *i == '"' )
+		{
+			bInQuote = !bInQuote;
+		}
+		else
+		{
+			if( bInGap )
+			{
+				asParam[iParams++] = i;
+				bInGap = false;
+			}
+		}
+	}
+
+	parse( iParams, asParam );
+
+	delete[] asParam;
+}
+
 void Bu::OptParser::addOption( const Option &opt )
 {
 	lOption.append( opt );
