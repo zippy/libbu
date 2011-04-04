@@ -8,8 +8,12 @@
 #include "bu/utfstring.h"
 
 #include "bu/string.h"
+#include "bu/stream.h"
 
 #include <endian.h>
+
+#include "bu/sio.h"
+using Bu::sio;
 
 Bu::UtfString::UtfString()
 {
@@ -33,20 +37,35 @@ void Bu::UtfString::set( const Bu::String &sInput, Encoding eEnc )
 			break;
 
 		case Utf16:
-		case Utf16be:
 			setUtf16( sInput );
 			break;
 
+		case Utf16be:
+			setUtf16be( sInput );
+			break;
+
 		case Utf16le:
-			throw Bu::ExceptionBase("Utf16le not supported yet.");
+			setUtf16le( sInput );
 			break;
 
 		case Utf32:
-			throw Bu::ExceptionBase("Utf32 not supported yet.");
+			setUtf32( sInput );
 			break;
 
-		case Ucs16:
-			throw Bu::ExceptionBase("Ucs16 not supported yet.");
+		case Utf32be:
+			setUtf32be( sInput );
+			break;
+
+		case Utf32le:
+			setUtf32le( sInput );
+			break;
+
+		case Ucs2:
+			throw Bu::ExceptionBase("Ucs2 not supported yet.");
+			break;
+
+		case Ucs4:
+			throw Bu::ExceptionBase("Ucs4 not supported yet.");
 			break;
 
 		case GuessEncoding:
@@ -104,8 +123,32 @@ void Bu::UtfString::setUtf8( const Bu::String &sInput )
 
 void Bu::UtfString::setUtf16( const Bu::String &sInput )
 {
+	Bu::String::const_iterator i = sInput.begin();
+	if( (uint8_t)*sInput.begin() == 0xFF &&
+		(uint8_t)*(sInput.begin()+1) == 0xFE )
+	{
+		setUtf16le( sInput );
+		return;
+	}
+	setUtf16be( sInput );
+}
+
+void Bu::UtfString::setUtf16be( const Bu::String &sInput )
+{
+	Bu::String::const_iterator i = sInput.begin();
+	if( (uint8_t)*sInput.begin() == 0xFE &&
+		(uint8_t)*(sInput.begin()+1) == 0xFF )
+
+	{
+		i += 2;
+		sio << "Verified big endian." << sio.nl;
+	}
+	else
+	{
+		sio << "Assuming big endian." << sio.nl;
+	}
 	uint16_t hi, lo;
-	for( Bu::String::const_iterator i = sInput.begin(); i; i++ )
+	for( ; i; i++ )
 	{
 		hi = (((uint8_t)*i)<<8) | ((uint8_t)*(++i));
 		append16( hi );
@@ -117,25 +160,192 @@ void Bu::UtfString::setUtf16( const Bu::String &sInput )
 	}
 }
 
-#include "bu/sio.h"
-using Bu::sio;
+void Bu::UtfString::setUtf16le( const Bu::String &sInput )
+{
+	Bu::String::const_iterator i = sInput.begin();
+	if( (uint8_t)*sInput.begin() == 0xFF &&
+		(uint8_t)*(sInput.begin()+1) == 0xFE )
+	{
+		i += 2;
+		sio << "Verified little endian." << sio.nl;
+	}
+	else
+	{
+		sio << "Assuming little endian." << sio.nl;
+	}
+	uint16_t hi, lo;
+	for( ; i; i++ )
+	{
+		hi = (((uint8_t)*i)) | ((uint8_t)*(++i)<<8);
+		append16( hi );
+		if( (hi&0xD800u) == 0xD800u )
+		{
+			lo = (((uint8_t)*(++i))) | ((uint8_t)*(++i)<<8);
+			append16( lo );
+		}
+	}
+}
+
+void Bu::UtfString::setUtf32( const Bu::String &sInput )
+{
+	Bu::String::const_iterator i = sInput.begin();
+	if( (uint8_t)*i == 0x00 &&
+		(uint8_t)*(++i) == 0x00 &&
+		(uint8_t)*(++i) == 0xFF &&
+		(uint8_t)*(++i) == 0xFE )
+	{
+		setUtf32le( sInput );
+		return;
+	}
+	setUtf32be( sInput );
+}
+
+void Bu::UtfString::setUtf32be( const Bu::String &sInput )
+{
+	Bu::String::const_iterator i = sInput.begin();
+	if( (uint8_t)*i == 0x00 &&
+		(uint8_t)*(++i) == 0x00 &&
+		(uint8_t)*(++i) == 0xFE &&
+		(uint8_t)*(++i) == 0xFF )
+	{
+		i++;
+		sio << "Verified big endian." << sio.nl;
+	}
+	else
+	{
+		i = sInput.begin();
+		sio << "Assuming big endian." << sio.nl;
+	}
+	for( ; i; i++ )
+	{
+		append( (((uint8_t)*i)<<24) |
+				(((uint8_t)*(++i))<<16) |
+				(((uint8_t)*(++i))<<8) |
+				((uint8_t)*(++i))
+			  );
+	}
+}
+
+void Bu::UtfString::setUtf32le( const Bu::String &sInput )
+{
+	Bu::String::const_iterator i = sInput.begin();
+	if( (uint8_t)*i == 0x00 &&
+		(uint8_t)*(++i) == 0x00 &&
+		(uint8_t)*(++i) == 0xFF &&
+		(uint8_t)*(++i) == 0xFE )
+	{
+		i++;
+		sio << "Verified little endian." << sio.nl;
+	}
+	else
+	{
+		i = sInput.begin();
+		sio << "Assuming little endian." << sio.nl;
+	}
+	for( ; i; i++ )
+	{
+		append( ((uint8_t)*i) |
+				(((uint8_t)*(++i))<<8) |
+				(((uint8_t)*(++i))<<16) |
+				(((uint8_t)*(++i))<<24)
+			  );
+	}
+}
+
+void Bu::UtfString::write( Bu::Stream &sOut, Encoding eEnc )
+{
+	switch( eEnc )
+	{
+		case Utf8:
+			writeUtf8( sOut );
+			break;
+
+		case Utf16:
+			writeUtf16( sOut );
+			break;
+
+		case Utf16be:
+			writeUtf16be( sOut );
+			break;
+
+		case Utf16le:
+			writeUtf16le( sOut );
+			break;
+
+		case Utf32:
+			writeUtf32( sOut );
+			break;
+
+		case Utf32be:
+			writeUtf32be( sOut );
+			break;
+
+		case Utf32le:
+			writeUtf32le( sOut );
+			break;
+
+		case Ucs2:
+			throw Bu::ExceptionBase("Ucs2 not supported yet.");
+			break;
+
+		case Ucs4:
+			throw Bu::ExceptionBase("Ucs4 not supported yet.");
+			break;
+
+		case GuessEncoding:
+			throw Bu::ExceptionBase(
+				"GuessEncoding is incompatible with encoding.");
+			break;
+
+	}
+}
+
+void Bu::UtfString::writeUtf8( Bu::Stream &sOut )
+{
+}
+
+void Bu::UtfString::writeUtf16( Bu::Stream &sOut )
+{
+}
+
+void Bu::UtfString::writeUtf16be( Bu::Stream &sOut )
+{
+}
+
+void Bu::UtfString::writeUtf16le( Bu::Stream &sOut )
+{
+}
+
+void Bu::UtfString::writeUtf32( Bu::Stream &sOut )
+{
+}
+
+void Bu::UtfString::writeUtf32be( Bu::Stream &sOut )
+{
+}
+
+void Bu::UtfString::writeUtf32le( Bu::Stream &sOut )
+{
+}
 
 Bu::UtfChar Bu::UtfString::get( int iIndex )
 {
-	Bu::UtfChar i = aData[iIndex];
+	return nextChar( iIndex );
+}
+
+Bu::UtfChar Bu::UtfString::nextChar( int &iIndex )
+{
+	Bu::UtfChar i = aData[iIndex++];
 	switch( i&0xFC00 )
 	{
 		case 0xD800:
-			sio << "(hi) ";
-			return (((i&0x3FF)<<10) | ((aData[iIndex+1]&0x3FF)))+0x10000;
+			return (((i&0x3FF)<<10) | ((aData[iIndex++]&0x3FF)))+0x10000;
 
 		case 0xDC00:
-			sio << "(lo) ";
-			return 0;
+			return (((aData[iIndex-2]&0x3FF)<<10) | ((i&0x3FF)))+0x10000;
 
 		default:
-			sio << "(--) ";
-			return i&0xFC00;
+			return i;
 	}
 }
 
