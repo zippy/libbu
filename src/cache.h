@@ -16,6 +16,8 @@
 
 #include "bu/trace.h"
 
+#include "bu/sio.h"
+
 namespace Bu
 {
 //	template<class keytype, class obtype>

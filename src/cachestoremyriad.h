@@ -98,6 +98,7 @@ namespace Bu
 			MyriadStream ns = mStore.openStream( iStream );
 			__cacheStoreMyriadStore<keytype, obtype>( ns, *pSrc, key );
 			ns.setSize( ns.tell() );
+			sync();
 			return key;
 		}
 
