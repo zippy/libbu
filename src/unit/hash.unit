@@ -100,18 +100,68 @@ suite Hash
 		unitTest( !h3.isCoreShared( h ) );
 	}
 
+	test reHashSpecial
+	{
+		IntStrHash hTest;
+
+		setStepCount( 1000000 );
+		for( int i=0; i<1000000; ++i )
+		{
+			char buf[40]; snprintf(buf,40,"num%d",i);
+			incProgress();
+
+			if( ((double)random()/(double)RAND_MAX)<.01 )
+			{
+				//printf("ERASE: %d (%s)\n",i%64,buf);
+				hTest.erase(i%64);
+			}
+			else
+			{
+				hTest[i%64]=buf;
+			}
+
+			/*printf("(%d) size: %u fill: %u cap:%u\n",
+				i,
+				hTest.getSize(),
+				hTest.getFill(),
+				hTest.getCapacity()
+				);*/
+		}
+	}
+
 	test stress
 	{
 		srandom(time(NULL));
 
 		IntStrHash hTest;
-		setStepCount( 1000000 );
+		IntStrHash hReUse;
+		setStepCount( 100000 );
 
-		for( int i=0; i<1000000; ++i )
+		for( int i=0; i<100000; ++i )
 		{
 			char buf[40]; snprintf(buf,40,"num%d",i);
 			hTest[i] = buf;
 			incProgress();
+
+			
+			if( ((double)random()/(double)RAND_MAX)<.01 )
+			{
+				Bu::List<int> lKeys = hReUse.getKeys();
+				Bu::List<int>::const_iterator it = lKeys.begin();
+				int iIdx = (int)(((double)random()/(double)RAND_MAX)
+					*lKeys.getSize());
+				for( int l=0; it; ++it, ++l )
+				{
+					if( l==iIdx )
+					{
+						int iVal = *it;
+						hReUse.erase( *it );
+						char buf[40]; snprintf(buf,40,"num%d",iVal);
+						hTest[i] = buf;
+						//printf("re-use: %s\n",buf);
+					}
+				}
+			}
 
 			/*printf("(%s) size: %u fill: %u cap:%u\n",
 				buf,
@@ -129,7 +179,10 @@ suite Hash
 				for( int k=0; it; ++it, ++k )
 				{
 					if( k == iIdx )
+					{
+						hReUse.insert(*it,"yo");
 						hTest.erase( *it );
+					}
 				}
 			}
 
@@ -146,6 +199,7 @@ suite Hash
 					{
 						if( k == iIdx )
 						{
+							hReUse.insert(*it,"yo");
 							hTest.erase( *it );
 							break;
 						}
