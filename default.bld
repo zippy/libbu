@@ -15,7 +15,8 @@ CXXFLAGS += "-ggdb -W -Wall -I.";
 
 action "default"
 {
-	build: [targets("header-links"), "libbu++.a", targets("tools")];
+	build: [targets("header-links"), "libbu++.a",
+		targets("tools")];
 }
 
 action "pkg"
@@ -25,14 +26,44 @@ action "pkg"
 
 action "all"
 {
-	build: [targets("header-links"), "libbu++.a", targets("tools"),
-		targets("tests")];
+	build: [targets("header-links"), "libbu++.a",
+		targets("tools"), targets("tests")];
 }
 
 action "unit"
 {
 	build: targets("unit tests");
 }
+/*
+target "src/autoconfig.h"
+{
+	input "autoconfig";
+	display "autoconfig";
+	profile "build"
+	{
+		execute("./autoconfig 2>src/autoconfig.h");
+	}
+}
+
+target "bu/autoconfig.h"
+{
+	tag "header-links";
+	display "symlink";
+	input "src/autoconfig.h";
+	profile "build"
+	{
+		execute("echo ${INPUT}");
+		execute("echo ${OUTPUT}");
+		execute("mkdir -p $(dirname ${OUTPUT}); ln -s ../${INPUT} ${OUTPUT}");
+	}
+}
+
+target "autoconfig"
+{
+	rule "exe";
+	input "autoconfig.cpp";
+}
+*/
 
 target files("src/*.h").replace("src/", "bu/")
 {

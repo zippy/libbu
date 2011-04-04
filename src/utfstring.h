@@ -9,9 +9,12 @@
 #define BU_UTF_STRING_H
 
 #include <stdint.h>
+#include "bu/array.h"
 
 namespace Bu
 {
+	class String;
+
 	/**
 	 * UtfChar isn't actually a character, unicode specifies "code points" not
 	 * characters.  The main reason for this is that not all code points define
@@ -40,10 +43,23 @@ namespace Bu
 		UtfString( const Bu::String &sInput, Encoding eEnc=Utf8 );
 		virtual ~UtfString();
 
-		static void debugUtf8( const Bu::String &sUtf8 );
+		void append( UtfChar ch );
+
+		void set( const Bu::String &sInput, Encoding eEnc=Utf8 );
+		void setUtf8( const Bu::String &sInput );
+		void setUtf16( const Bu::String &sInput );
+//		void setUtf16be( const Bu::String &sInput );
+//		void setUtf16le( const Bu::String &sInput );
+
+		void debug();
+
+		UtfChar get( int iIndex );
 
 	private:
-		uint16_t *pData;
+		void append16( uint16_t i ) { aData.append( i ); }
+
+	private:
+		Bu::Array<uint16_t> aData;
 		int iRawLen;
 		int iCharLen;
 	};

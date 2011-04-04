@@ -17,4 +17,7 @@
 
 #include "bu/extratypes.h"
 
+// Later if we need autoconfig stuff, here's where it'll go.
+// #include "bu/autoconfig.h"
+
 #endif

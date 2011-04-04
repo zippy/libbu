@@ -16,7 +16,8 @@ int main( int argc, char *argv[] )
 			int iAmnt = fIn.read( buf, 4096 );
 			sUtf8.append( buf, iAmnt );
 		}
-		Bu::UtfString::debugUtf8( sUtf8 );
+		Bu::UtfString us( sUtf8, Bu::UtfString::Utf16 );
+		us.debug();
 	}
 }
 
