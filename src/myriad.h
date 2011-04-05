@@ -155,6 +155,8 @@ namespace Bu
 		 */
 		static bool isMyriad( Bu::Stream &sStore );
 
+		const Bu::BitString &getBlocksUsed() const;
+
 	private:
 		/**
 		 * Initialize this object based on the data already in the assosiated

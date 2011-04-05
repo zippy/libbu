@@ -656,3 +656,8 @@ bool Bu::Myriad::isMyriad( Bu::Stream &sStore )
 	return true;
 }
 
+const Bu::BitString &Bu::Myriad::getBlocksUsed() const
+{
+	return bsBlockUsed;
+}
+

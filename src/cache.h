@@ -16,8 +16,6 @@
 
 #include "bu/trace.h"
 
-#include "bu/sio.h"
-
 namespace Bu
 {
 //	template<class keytype, class obtype>
@@ -242,6 +240,8 @@ namespace Bu
 
 			pCalc->onLoad( pData, k );
 
+			pStore->sync();
+
 			return Ptr( this, pData, k );
 		}
 
@@ -331,6 +331,7 @@ namespace Bu
 				hEnt.erase( cId );
 
 				pStore->destroy( pObj, cId );
+				pStore->sync();
 			}
 			catch( Bu::HashException &e ) {
 				pCalc->onDestroy( cId );
@@ -343,6 +344,7 @@ namespace Bu
 				else
 				{
 					pStore->destroy( cId );
+					pStore->sync();
 				}
 			}
 		}
