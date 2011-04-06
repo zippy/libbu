@@ -42,10 +42,22 @@ namespace Bu
 	 */
 	struct __calcNextTSize_fast
 	{
-		uint32_t operator()( uint32_t nCapacity, uint32_t, uint32_t nDeleted ) const
+		uint32_t operator()( uint32_t nCapacity, uint32_t nFilled,
+				uint32_t nDeleted ) const
 		{
-			if( nDeleted >= nCapacity/2 )
+			// This frist case will allow hashtables that are mostly deleted
+			// items to reset to small allocations
+			if( nFilled-nDeleted <= nCapacity/4 )
+			{
+				nCapacity = 11;
+				while( nCapacity < nFilled*5/4 )
+					nCapacity = nCapacity*2+1;
 				return nCapacity;
+			}
+			// This will hopefully prevent hash tables from growing needlessly
+			if( nFilled-nDeleted <= nCapacity/2 )
+				return nCapacity;
+			// Otherwise, just increase the capacity
 			return nCapacity*2+1;
 		}
 	};
