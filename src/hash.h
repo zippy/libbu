@@ -15,8 +15,6 @@
 #include "bu/archivebase.h"
 #include "bu/sharedcore.h"
 
-#define bitsToBytes( n ) (n/32+(n%32>0 ? 1 : 0))
-
 namespace Bu
 {
 	subExceptionDecl( HashException )
@@ -62,6 +60,13 @@ namespace Bu
 		}
 	};
 
+	template<typename totype>
+	int bitsTo( int iCount )
+	{
+		return ( (iCount/(sizeof(totype)*8))
+				+ (iCount%(sizeof(totype)*8)>0 ? 1 : 0));
+	}
+
 	template<typename key, typename value, typename sizecalc, typename keyalloc,
 		typename valuealloc, typename challoc>
 	class Hash;
@@ -100,7 +105,7 @@ namespace Bu
 				return;
 
 			nCapacity = 11;
-			nKeysSize = bitsToBytes( nCapacity );
+			nKeysSize = bitsTo<uint32_t>( nCapacity );
 			bFilled = ca.allocate( nKeysSize );
 			bDeleted = ca.allocate( nKeysSize );
 			clearBits();
@@ -316,7 +321,7 @@ namespace Bu
 			
 			// Calculate new sizes
 			nCapacity = nNewSize;
-			nKeysSize = bitsToBytes( nCapacity );
+			nKeysSize = bitsTo<uint32_t>( nCapacity );
 		
 			// Allocate new memory + prep
 			bFilled = ca.allocate( nKeysSize );
@@ -1209,7 +1214,7 @@ namespace Bu
 			pRet->nFilled = 0;
 			pRet->nDeleted = 0;
 			pRet->nCapacity = src->nCapacity;
-			pRet->nKeysSize = bitsToBytes( pRet->nCapacity );
+			pRet->nKeysSize = bitsTo<uint32_t>( pRet->nCapacity );
 			pRet->bFilled = pRet->ca.allocate( pRet->nKeysSize );
 			pRet->bDeleted = pRet->ca.allocate( pRet->nKeysSize );
 			pRet->clearBits();
