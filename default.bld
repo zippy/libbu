@@ -34,28 +34,20 @@ action "unit"
 {
 	build: targets("unit tests");
 }
-/*
-target "src/autoconfig.h"
+
+target ["src/autoconfig.h", "src/version.h"]
 {
 	input "autoconfig";
 	display "autoconfig";
 	profile "build"
 	{
-		execute("./autoconfig 2>src/autoconfig.h");
+		execute("./autoconfig ${OUTPUT}");
 	}
 }
 
-target "bu/autoconfig.h"
+target "src/version.h"
 {
-	tag "header-links";
-	display "symlink";
-	input "src/autoconfig.h";
-	profile "build"
-	{
-		execute("echo ${INPUT}");
-		execute("echo ${OUTPUT}");
-		execute("mkdir -p $(dirname ${OUTPUT}); ln -s ../${INPUT} ${OUTPUT}");
-	}
+	input ".svn";
 }
 
 target "autoconfig"
@@ -63,9 +55,9 @@ target "autoconfig"
 	rule "exe";
 	input "autoconfig.cpp";
 }
-*/
 
-target files("src/*.h").replace("src/", "bu/")
+target [files("src/*.h").replace("src/", "bu/"), "bu/autoconfig.h",
+	"bu/version.h"]
 {
 	tag "header-links";
 	display "symlink";
@@ -75,6 +67,7 @@ target files("src/*.h").replace("src/", "bu/")
 		execute("mkdir -p $(dirname ${OUTPUT}); ln -s ../${INPUT} ${OUTPUT}");
 	}
 }
+
 target files("src/compat/*.h").replace("src/", "bu/")
 {
 	tag "header-links";

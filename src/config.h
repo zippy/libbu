@@ -17,7 +17,11 @@
 
 #include "bu/extratypes.h"
 
-// Later if we need autoconfig stuff, here's where it'll go.
-// #include "bu/autoconfig.h"
+#ifndef WIN32
+#include "bu/autoconfig.h"
+#else
+#warning Cannot generate an autoinclude file for windows yet
+#endif
+
 
 #endif

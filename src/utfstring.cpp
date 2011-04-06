@@ -9,9 +9,7 @@
 
 #include "bu/string.h"
 #include "bu/stream.h"
-
-#include <endian.h>
-
+#include "bu/config.h"
 #include "bu/sio.h"
 using Bu::sio;
 
