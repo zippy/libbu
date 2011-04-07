@@ -86,10 +86,8 @@ namespace Bu
 
 		void write( Bu::Stream &sOut, Encoding eEnc=Utf8 );
 		void writeUtf8( Bu::Stream &sOut );
-		void writeUtf16( Bu::Stream &sOut );
 		void writeUtf16be( Bu::Stream &sOut );
 		void writeUtf16le( Bu::Stream &sOut );
-		void writeUtf32( Bu::Stream &sOut );
 		void writeUtf32be( Bu::Stream &sOut );
 		void writeUtf32le( Bu::Stream &sOut );
 

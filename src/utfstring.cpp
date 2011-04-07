@@ -259,8 +259,8 @@ void Bu::UtfString::write( Bu::Stream &sOut, Encoding eEnc )
 			break;
 
 		case Utf16:
-			writeUtf16( sOut );
-			break;
+//			writeUtf16( sOut );
+//			break;
 
 		case Utf16be:
 			writeUtf16be( sOut );
@@ -271,8 +271,8 @@ void Bu::UtfString::write( Bu::Stream &sOut, Encoding eEnc )
 			break;
 
 		case Utf32:
-			writeUtf32( sOut );
-			break;
+//			writeUtf32( sOut );
+//			break;
 
 		case Utf32be:
 			writeUtf32be( sOut );
@@ -300,30 +300,151 @@ void Bu::UtfString::write( Bu::Stream &sOut, Encoding eEnc )
 
 void Bu::UtfString::writeUtf8( Bu::Stream &sOut )
 {
+	int iPos = 0;
+	while( iPos < aData.getSize() )
+	{
+		uint8_t uByte;
+		Bu::UtfChar chr = nextChar( iPos );
+		if( chr >= 0x010000 )
+		{
+			// Four bytes
+			// 111 111111 111111 111111
+			uByte = (chr>>18)|0xF0;
+			sOut.write( &uByte, 1 );
+			uByte = (chr>>12)&0x3F|0x80;
+			sOut.write( &uByte, 1 );
+			uByte = (chr>>6)&0x3F|0x80;
+			sOut.write( &uByte, 1 );
+			uByte = (chr&0x3F)|0x80;
+			sOut.write( &uByte, 1 );
+		}
+		else if( chr >= 0x800 )
+		{
+			// Three bytes
+			// 1111 111111 111111
+			uByte = (chr>>12)|0xE0;
+			sOut.write( &uByte, 1 );
+			uByte = (chr>>6)&0x3F|0x80;
+			sOut.write( &uByte, 1 );
+			uByte = (chr&0x3F)|0x80;
+			sOut.write( &uByte, 1 );
+		}
+		else if( chr >= 0x80 )
+		{
+			// Two bytes
+			// 11111 111111
+			uByte = (chr>>6)|0xC0;
+			sOut.write( &uByte, 1 );
+			uByte = (chr&0x3F)|0x80;
+			sOut.write( &uByte, 1 );
+		}
+		else
+		{
+			// One byte
+			uByte = chr;
+			sOut.write( &uByte, 1 );
+		}
+	}
 }
-
+/*
 void Bu::UtfString::writeUtf16( Bu::Stream &sOut )
 {
 }
-
+*/
 void Bu::UtfString::writeUtf16be( Bu::Stream &sOut )
 {
+#if BYTE_ORDER == BIG_ENDIAN
+	uint16_t iTmp = 0xFEFF; // Byte Order Marker
+	sOut.write( &iTmp, 2 );
+	for( Array<uint16_t>::iterator i = aData.begin(); i; i++ )
+	{
+		iTmp = *i;
+		sOut.write( &iTmp, 2 );
+	}
+#else
+	uint16_t iTmp = 0xFEFF; // Byte Order Marker
+	iTmp = (iTmp>>8) | (iTmp<<8);
+	sOut.write( &iTmp, 2 );
+	for( Array<uint16_t>::iterator i = aData.begin(); i; i++ )
+	{
+		iTmp = *i;
+		iTmp = (iTmp>>8) | (iTmp<<8);
+		sOut.write( &iTmp, 2 );
+	}
+#endif
 }
 
 void Bu::UtfString::writeUtf16le( Bu::Stream &sOut )
 {
-}
-
-void Bu::UtfString::writeUtf32( Bu::Stream &sOut )
-{
+#if BYTE_ORDER == LITTLE_ENDIAN
+	uint16_t iTmp = 0xFEFF; // Byte Order Marker
+	sOut.write( &iTmp, 2 );
+	for( Array<uint16_t>::iterator i = aData.begin(); i; i++ )
+	{
+		iTmp = *i;
+		sOut.write( &iTmp, 2 );
+	}
+#else
+	uint16_t iTmp = 0xFEFF; // Byte Order Marker
+	iTmp = (iTmp>>8) | (iTmp<<8);
+	sOut.write( &iTmp, 2 );
+	for( Array<uint16_t>::iterator i = aData.begin(); i; i++ )
+	{
+		iTmp = *i;
+		iTmp = (iTmp>>8) | (iTmp<<8);
+		sOut.write( &iTmp, 2 );
+	}
+#endif
 }
 
 void Bu::UtfString::writeUtf32be( Bu::Stream &sOut )
 {
+#if BYTE_ORDER == BIG_ENDIAN
+	uint32_t iTmp = 0xFEFF; // Byte Order Marker
+	sOut.write( &iTmp, 4 );
+	int i = 0;
+	while( i < aData.getSize() )
+	{
+		iTmp = nextChar( i );
+		sOut.write( &iTmp, 4 );
+	}
+#else
+	uint32_t iTmp = 0xFEFF; // Byte Order Marker
+	iTmp = (iTmp>>24)|(iTmp<<24)|((iTmp&0xff0000)>>8)|((iTmp&0xff00)<<8);
+	sOut.write( &iTmp, 4 );
+	int i = 0;
+	while( i < aData.getSize() )
+	{
+		iTmp = nextChar( i );
+		iTmp = (iTmp>>24)|(iTmp<<24)|((iTmp&0xff0000)>>8)|((iTmp&0xff00)<<8);
+		sOut.write( &iTmp, 4 );
+	}
+#endif
 }
 
 void Bu::UtfString::writeUtf32le( Bu::Stream &sOut )
 {
+#if BYTE_ORDER == LITTLE_ENDIAN
+	uint32_t iTmp = 0xFEFF; // Byte Order Marker
+	sOut.write( &iTmp, 4 );
+	int i = 0;
+	while( i < aData.getSize() )
+	{
+		iTmp = nextChar( i );
+		sOut.write( &iTmp, 4 );
+	}
+#else
+	uint32_t iTmp = 0xFEFF; // Byte Order Marker
+	iTmp = (iTmp>>24)|(iTmp<<24)|((iTmp&0xff0000)>>8)|((iTmp&0xff00)<<8);
+	sOut.write( &iTmp, 4 );
+	int i = 0;
+	while( i < aData.getSize() )
+	{
+		iTmp = nextChar( i );
+		iTmp = (iTmp>>24)|(iTmp<<24)|((iTmp&0xff0000)>>8)|((iTmp&0xff00)<<8);
+		sOut.write( &iTmp, 4 );
+	}
+#endif
 }
 
 Bu::UtfChar Bu::UtfString::get( int iIndex )
@@ -362,7 +483,7 @@ void Bu::UtfString::debug()
 	{
 		if( i > 0 )
 			sio << ", ";
-		sio << "0x" << Fmt::hex() << get( i );
+		sio << "0x" << Fmt::hex() << nextChar( i );
 	}
 	sio << sio.nl;
 }
