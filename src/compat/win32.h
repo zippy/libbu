@@ -128,6 +128,12 @@ namespace Bu
 
 #undef USE_64BIT_IO
 
+// Windows has no autoconfig, and no endian.h, but only works on little endian
+// as far as I know.
+#define LITTLE_ENDIAN 0
+#define BIG_ENDIAN 1
+#define BYTE_ORDER 0
+
 #endif /* WIN32 */
 #endif
 

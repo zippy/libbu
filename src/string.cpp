@@ -141,7 +141,7 @@ Bu::String::String( const char *pData, long nLength )
 	append( pData, nLength );
 }
 
-Bu::String::String( const Bu::String::String &rSrc ) :
+Bu::String::String( const Bu::String &rSrc ) :
 	Bu::SharedCore<Bu::String, Bu::StringCore>( rSrc )
 {
 }
