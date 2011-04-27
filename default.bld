@@ -35,6 +35,11 @@ action "unit"
 	build: targets("unit tests");
 }
 
+action "myriadfs"
+{
+	build: "myriadfs";
+}
+
 target ["src/autoconfig.h", "src/version.h"]
 {
 	input "autoconfig";
@@ -105,13 +110,22 @@ target "viewcsv"
 	LDFLAGS += "-lncurses";
 }
 
+target files("src/extra/*.cpp").replace("src/extra/","").replace(".cpp","")
+{
+	input "src/extra/${OUTPUT}.cpp";
+	rule "exe";
+	requires "libbu++.a";
+	CXXFLAGS += "-I.";
+	LDFLAGS += "-L. -lbu++";
+}
+
 //
 // This shouldn't be.  Basically, if you set a property on a top level target
 // that has children it seems like the items should apply to the children.
 // I'm honestly not 100% sure what the policy should be yet, but this seems like
 // I shouldn't have to do it this way.
 //
-target "src/tools/myriadfs.o"
+target "src/extra/myriadfs.o"
 {
 	CXXFLAGS += "-D_FILE_OFFSET_BITS=64";
 }
