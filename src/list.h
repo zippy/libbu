@@ -871,6 +871,28 @@ namespace Bu
 			return *this;
 		}
 
+		iterator find( const value &v )
+		{
+			for( iterator i = begin(); i; i++ )
+			{
+				if( (*i) == v )
+					return i;
+			}
+
+			return end();
+		}
+
+		const_iterator find( const value &v ) const
+		{
+			for( const_iterator i = begin(); i; i++ )
+			{
+				if( (*i) == v )
+					return i;
+			}
+
+			return end();
+		}
+
 		/**
 		 * Get the current size of the list.
 		 *@returns (int) The current size of the list.
