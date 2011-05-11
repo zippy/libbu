@@ -59,7 +59,7 @@ namespace Bu
 		 * Append a value to the list.
 		 *@param v (const value_type &) The value to append.
 		 */
-		void append( const value &v )
+		Link *append( const value &v )
 		{
 			Link *pNew = la.allocate( 1 );
 			pNew->pValue = va.allocate( 1 );
@@ -78,13 +78,14 @@ namespace Bu
 				pLast->pNext = pNew;
 				pLast = pNew;
 			}
+			return pNew;
 		}
 		
 		/**
 		 * Prepend a value to the list.
 		 *@param v (const value_type &) The value to prepend.
 		 */
-		void prepend( const value &v )
+		Link *prepend( const value &v )
 		{
 			Link *pNew = la.allocate( 1 );
 			pNew->pValue = va.allocate( 1 );
@@ -103,6 +104,7 @@ namespace Bu
 				pFirst->pPrev = pNew;
 				pFirst = pNew;
 			}
+			return pNew;
 		}
 		
 		void clear()
@@ -122,19 +124,17 @@ namespace Bu
 			nSize = 0;
 		}
 		
-		void insert( Link *pLink, const value &v )
+		Link *insert( Link *pLink, const value &v )
 		{
 			Link *pAfter = pLink;
 			if( pAfter == NULL )
 			{
-				append( v );
-				return;
+				return append( v );
 			}
 			Link *pPrev = pAfter->pPrev;
 			if( pPrev == NULL )
 			{
-				prepend( v );
-				return;
+				return prepend( v );
 			}
 
 			Link *pNew = la.allocate( 1 );
@@ -146,6 +146,8 @@ namespace Bu
 			pNew->pPrev = pPrev;
 			pAfter->pPrev = pNew;
 			pPrev->pNext = pNew;
+
+			return pNew;
 		}
 
 		/**
@@ -441,14 +443,13 @@ namespace Bu
 		 * support the > operator.
 		 */
 		template<typename cmptype>
-		MyType &insertSorted( cmptype cmp, const value &v )
+		iterator insertSorted( cmptype cmp, const value &v )
 		{
 			_hardCopy();
 			if( core->pFirst == NULL )
 			{
 				// Empty list
-				core->append( v );
-				return *this;
+				return iterator( core->append( v ) );
 			}
 			else
 			{
@@ -457,26 +458,24 @@ namespace Bu
 				{
 					if( cmp( v, *(pCur->pValue)) )
 					{
-						core->insert( pCur, v );
-						return *this;
+						return iterator( core->insert( pCur, v ) );
 					}
 					pCur = pCur->pNext;
 					if( pCur == NULL )
 					{
-						core->append( v );
-						return *this;
+						return iterator( core->append( v ) );
 					}
 				}
 			}
 		}
 		
-		MyType &insertSorted( const value &v )
+		iterator insertSorted( const value &v )
 		{
 			return insertSorted<__basicLTCmp<value> >( v );
 		}
 
 		template<typename cmptype>
-		MyType &insertSorted( const value &v )
+		iterator insertSorted( const value &v )
 		{
 			cmptype cmp;
 			return insertSorted( cmp, v );
