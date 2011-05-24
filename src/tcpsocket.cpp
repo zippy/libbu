@@ -165,7 +165,7 @@ Bu::size Bu::TcpSocket::read( void *pBuf, Bu::size nBytes )
 	{
 		int nRead = TEMP_FAILURE_RETRY( 
 			bu_recv( nTcpSocket, (char *) pBuf, nBytes, 0 ) );
-		if( nRead == 0 )
+		if( nRead == 0 && nBytes > 0 )
 		{
 			close();
 			throw TcpSocketException( TcpSocketException::cClosed, "TcpSocket closed.");
