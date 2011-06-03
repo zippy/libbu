@@ -1,0 +1,136 @@
+for i in range( 0, 5 ) do
+{
+	templparams = "";
+	funcparams = "";
+	templcallparams = "";
+	funccallparams = "";
+	if i >= 1 then
+	{
+		for p in range( 1, i ) do
+		{
+			if p > 1 then
+			{
+				templcallparams << ", ";
+				funccallparams << ", ";
+				funcparams << ", ";
+			}
+			templparams << ", typename p${p}t";
+			funcparams << "p${p}t p${p}";
+			templcallparams << "p${p}t";
+			funccallparams << "p${p}";
+		}
+	}
+	warning "template<typename ret${templparams}>";
+	warning "virtual ret operator()( ${funcparams} )=0;";
+}
+/*
+
+	//
+	// 1 Parameter
+	//
+
+	template<typename ret, typename p1t>
+	class _Slot1
+	{
+	public:
+		_Slot1() { }
+		virtual ~_Slot1() { }
+
+		virtual ret operator()( p1t p1 )=0;
+
+		virtual _Slot1<ret, p1t> *clone() const=0;
+	};
+
+	template<typename cls, typename ret, typename p1t>
+	class __Slot1 : public _Slot1<ret, p1t>
+	{
+	public:
+		__Slot1( cls *pCls, ret (cls::*pFnc)( p1t ) ) :
+			pCls( pCls ), pFnc( pFnc ) { }
+		virtual ~__Slot1() { }
+
+		virtual ret operator()( p1t p1 )
+		{
+			return (pCls->*pFnc)( p1 );
+		}
+		
+		virtual _Slot1<ret, p1t> *clone() const
+		{
+			return new __Slot1<cls, ret, p1t>( pCls, pFnc );
+		}
+	
+	private:
+		cls *pCls;
+		ret (cls::*pFnc)( p1t );
+	};
+
+	template<typename ret, typename p1t>
+	class __Slot1F : public _Slot1<ret, p1t>
+	{
+	public:
+		__Slot1F( ret (*pFnc)( p1t ) ) :
+			pFnc( pFnc ) { }
+		virtual ~__Slot1F() { }
+
+		virtual ret operator()( p1t p1 )
+		{
+			return (*pFnc)( p1 );
+		}
+		
+		virtual _Slot1<ret, p1t> *clone() const
+		{
+			return new __Slot1F<ret, p1t>( pFnc );
+		}
+	
+	private:
+		ret (*pFnc)( p1t p1 );
+	};
+	
+	template<typename ret, typename p1t>
+	class Signal1
+	{
+	public:
+		Signal1() : pCb( NULL ) { }
+		Signal1( _Slot1<ret, p1t> *pCb ) : pCb( pCb ) { }
+		Signal1( const Signal1<ret, p1t> &rSrc ) :
+			pCb( (rSrc.pCb)?(rSrc.pCb->clone()):(NULL) ) { }
+
+		virtual ~Signal1() { delete pCb; pCb = NULL; }
+
+		ret operator()( p1t p1 )
+		{
+			if( !pCb ) throw SignalException("Uninitialized signal used.");
+			return (*pCb)( p1 );
+		}
+
+		bool isSet() const { return pCb != NULL; }
+		operator bool() const { return isSet(); }
+		
+		Signal1<ret, p1t> &operator=( const Signal1<ret, p1t> &rhs )
+		{
+			pCb = rhs.pCb->clone();
+			return *this;
+		}
+
+	private:
+		_Slot1<ret, p1t> *pCb;
+	};
+	
+	template<typename cls, typename ret, typename p1t>
+	Signal1<ret, p1t> slot( cls *pCls, ret (cls::*pFnc)( p1t ) )
+	{
+		if( !pCls || !pFnc ) throw SignalException("NULL pointer in slot().");
+		return Signal1<ret, p1t>(
+			new __Slot1<cls, ret, p1t>( pCls, pFnc )
+			);
+	}
+	
+	template<typename ret, typename p1t>
+	Signal1<ret, p1t> slot( ret (*pFnc)( p1t ) )
+	{
+		if( !pFnc ) throw SignalException("NULL pointer in slot().");
+		return Signal1<ret, p1t>(
+			new __Slot1F<ret, p1t>( pFnc )
+			);
+	}
+	*/
