@@ -15,8 +15,15 @@ namespace Bu
 	class Buffer : public Bu::Filter
 	{
 	public:
-		Buffer( Bu::Stream &rNext, int iBufSize=4096 );
+		Buffer( Bu::Stream &rNext, int iWhat=Both, int iBufSize=4096 );
 		virtual ~Buffer();
+
+		enum
+		{
+			Write	= 1,
+			Read	= 2,
+			Both	= 3
+		};
 
 		virtual void start();
 		virtual Bu::size stop();
@@ -44,6 +51,7 @@ namespace Bu
 		int iReadPos;
 		int iWriteBufFill;
 		int iWritePos;
+		int iWhat;
 	};
 };
 

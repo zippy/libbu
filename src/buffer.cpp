@@ -7,7 +7,7 @@
 
 #include "bu/buffer.h"
 
-Bu::Buffer::Buffer( Bu::Stream &rNext, int iBufSize ) :
+Bu::Buffer::Buffer( Bu::Stream &rNext, int iWhat, int iBufSize ) :
 	Bu::Filter( rNext ),
 	sSoFar( 0 ),
 	iBufSize( iBufSize ),
@@ -16,7 +16,8 @@ Bu::Buffer::Buffer( Bu::Stream &rNext, int iBufSize ) :
 	iReadBufFill( 0 ),
 	iReadPos( 0 ),
 	iWriteBufFill( 0 ),
-	iWritePos( 0 )
+	iWritePos( 0 ),
+	iWhat( iWhat )
 {
 	sReadBuf = new char[iBufSize];
 	sWriteBuf = new char[iBufSize];
@@ -51,6 +52,9 @@ void Bu::Buffer::fillReadBuf()
 
 Bu::size Bu::Buffer::read( void *pBuf, Bu::size nBytes )
 {
+	if( (iWhat&Read) == 0 )
+		return rNext.read( pBuf, nBytes );
+
 	if( nBytes <= 0 )
 	{
 		fillReadBuf();
@@ -89,6 +93,9 @@ Bu::size Bu::Buffer::read( void *pBuf, Bu::size nBytes )
 
 Bu::size Bu::Buffer::write( const void *pBuf, Bu::size nBytes )
 {
+	if( (iWhat&Write) == 0 )
+		return rNext.write( pBuf, nBytes );
+
 	Bu::size nTotWrote = 0;
 
 	do
@@ -137,6 +144,9 @@ Bu::size Bu::Buffer::write( const void *pBuf, Bu::size nBytes )
 
 void Bu::Buffer::flush()
 {
+	if( (iWhat&Write) == 0 )
+		return rNext.flush();
+
 	if( iWriteBufFill > 0 )
 	{
 		//printf("Buffer: Flushing remaining data, %db.\n", iWriteBufFill );
