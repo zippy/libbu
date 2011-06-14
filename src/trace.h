@@ -13,6 +13,8 @@
 #include <stddef.h>
 #include <string.h>
 
+#include <bu/sio.h>
+
 namespace Bu
 {
 /*	template<typename t> void __tracer_format( t &v )
@@ -20,7 +22,10 @@ namespace Bu
 		__tracer_format( *const_cast<const t *>(&v) );
 	}
 */
-	template<typename t> void __tracer_format( const t &v );
+	template<typename t> void __tracer_format( const t &v )
+	{
+		Bu::sio << v;
+	}
 
 	void __tracer( const char *pf );
 
@@ -163,18 +168,6 @@ namespace Bu
 	}
 #undef looper
 	
-	template<> void __tracer_format<int8_t>( const int8_t &v );
-	template<> void __tracer_format<uint8_t>( const uint8_t &v );
-	template<> void __tracer_format<int16_t>( const int16_t &v );
-	template<> void __tracer_format<uint16_t>( const uint16_t &v );
-	template<> void __tracer_format<int32_t>( const int32_t &v );
-	template<> void __tracer_format<uint32_t>( const uint32_t &v );
-	template<> void __tracer_format<int64_t>( const int64_t &v );
-	template<> void __tracer_format<uint64_t>( const uint64_t &v );
-	template<> void __tracer_format<bool>( const bool &v );
-	template<> void __tracer_format<char>( const char &v );
-	template<> void __tracer_format<long>( const long &v );
-	template<> void __tracer_format<unsigned long>( const unsigned long &v );
 	template<> void __tracer_format<float>( const float &v );
 	template<> void __tracer_format<double>( const double &v );
 	template<> void __tracer_format<void *>( void * const &v );
