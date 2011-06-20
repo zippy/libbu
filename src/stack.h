@@ -9,6 +9,7 @@
 #define BU_STACK_H
 
 #include <memory>
+#include "bu/config.h"
 
 namespace Bu
 {

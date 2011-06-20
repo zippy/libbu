@@ -12,6 +12,10 @@
 
 #include <stdint.h>
 
+#ifndef NULL
+#define NULL 0
+#endif
+
 namespace Bu
 {
 #ifdef USE_64BIT_IO
