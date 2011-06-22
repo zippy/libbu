@@ -1,6 +1,10 @@
-function genSigs( maxParams )
+function genSigs( outName )
 {
-	fOut = open("testsignal.h", "w");
+	if exists( outName ) then
+	{
+		unlink( outName );
+	}
+	fOut = open(outName, "w");
 	fOut.write(
 		"/*\n"
 		" * Copyright (C) 2007-2011 Xagasoft, All rights reserved.\n"
@@ -21,7 +25,7 @@ function genSigs( maxParams )
 		"\n"
 		);
 
-	for i in range( 0, 5 ) do
+	for i in range( 0, 10 ) do
 	{
 		templParams = "typename ret";
 		funcParams = "";

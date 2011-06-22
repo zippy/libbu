@@ -11,6 +11,8 @@
  * and actually does a better job with a number of things.
  */
 
+include "gensigs.bld";
+
 CXXFLAGS += "-ggdb -W -Wall -I.";
 
 action "default"
@@ -53,6 +55,15 @@ target ["src/autoconfig.h", "src/version.h"]
 target "src/version.h"
 {
 	input ".svn";
+}
+
+target "src/signals.h"
+{
+	input "gensigs.bld";
+	profile "build"
+	{
+		genSigs( OUTPUT );
+	}
 }
 
 target "autoconfig"
