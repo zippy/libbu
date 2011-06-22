@@ -13,8 +13,8 @@ function genSigs( outName )
 		" * terms of the license contained in the file LICENSE.\n"
 		" */\n"
 		"\n"
-		"#ifndef BU_OBJECT_SIGNALS_H\n"
-		"#define BU_OBJECT_SIGNALS_H\n"
+		"#ifndef BU_SIGNALS_H\n"
+		"#define BU_SIGNALS_H\n"
 		"\n"
 		"#include \"bu/util.h\"\n"
 		"#include \"bu/exceptionbase.h\"\n"
@@ -50,6 +50,8 @@ function genSigs( outName )
 			}
 		}
 		fOut.write(
+			"#ifndef BU_SIGNAL_PARAM_COUNT_${i}\n"
+			"#define BU_SIGNAL_PARAM_COUNT_${i}\n"
 			"	//\n"
 			"	// ${i} Parameter(s)\n"
 			"	//\n"
@@ -154,6 +156,7 @@ function genSigs( outName )
 			"			new __Slot${i}F<${templCallParams}>( pFnc )\n"
 			"			);\n"
 			"	}\n"
+			"#endif  // BU_SIGNAL_PARAM_COUNT_${i}\n"
 			"\n"
 			);
 	}
