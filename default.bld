@@ -73,7 +73,7 @@ target "autoconfig"
 }
 
 target [files("src/*.h").replace("src/", "bu/"), "bu/autoconfig.h",
-	"bu/version.h"]
+	"bu/version.h", "bu/signals.h"]
 {
 	tag "header-links";
 	display "symlink";
