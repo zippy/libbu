@@ -7,6 +7,9 @@
  */
 
 #include "bu/variant.h"
+#include "bu/membuf.h"
+#include "bu/formatter.h"
+#include "bu/string.h"
 
 suite Variant
 {
@@ -17,5 +20,15 @@ suite Variant
 
 		Bu::Variant v2( v );
 		v2.get<int>();
+	}
+
+	test formatting
+	{
+		Bu::Variant v("hello");
+		Bu::MemBuf mb;
+		Bu::Formatter f( mb );
+		f << v;
+		unitTest( mb.getString() == v.get<Bu::String>() );
+
 	}
 }
