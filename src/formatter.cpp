@@ -351,7 +351,8 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::String &sStr )
 
 Bu::Formatter &Bu::operator<<( Bu::Formatter &f, signed char c )
 {
-	f.write( (char *)&c, 1 );
+	f.ifmt<signed char>( c );
+	//f.write( (char *)&c, 1 );
 	return f;
 }
 
@@ -363,7 +364,8 @@ Bu::Formatter &Bu::operator<<( Bu::Formatter &f, char c )
 
 Bu::Formatter &Bu::operator<<( Bu::Formatter &f, unsigned char c )
 {
-	f.write( (char *)&c, 1 );
+	f.ifmt<unsigned char>( c );
+	//f.write( (char *)&c, 1 );
 	return f;
 }
 
