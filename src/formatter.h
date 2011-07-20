@@ -147,6 +147,7 @@ namespace Bu
 			{
 				bNeg = true;
 				f = -f;
+				fTmp += "-";
 			}
 			int iScale = tfloor(tlog( f ) / tlog( (type)fLast.uRadix ));
 			f /= tpow( (type)fLast.uRadix, (type)iScale );
