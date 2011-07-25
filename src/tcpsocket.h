@@ -60,7 +60,13 @@ namespace Bu
 	class TcpSocket : public Stream
 	{
 	public:
-		TcpSocket( int nTcpSocket );
+#ifdef WIN32
+		typedef unsigned int handle;
+#else
+		typedef int handle;
+#endif
+
+		TcpSocket( handle nTcpSocket );
 		TcpSocket( const String &sAddr, int nPort, int nTimeout=30,
 				bool bBlocking=true );
 		virtual ~TcpSocket();
@@ -96,7 +102,10 @@ namespace Bu
 		virtual void setSize( size iSize );
 
 		Bu::String getAddress() const;
-		operator int() const;
+		operator handle() const;
+
+		handle getHandle() const;
+		handle takeHandle();
 
 		virtual size getSize() const;
 		virtual size getBlockSize() const;
@@ -105,11 +114,8 @@ namespace Bu
 	private:
 		void setAddress();
 
-#ifdef WIN32
-		unsigned int nTcpSocket;
-#else
-		int nTcpSocket;
-#endif
+		handle nTcpSocket;
+		
 		bool bActive;
 		bool bBlocking;
 		String sReadBuf;

@@ -31,7 +31,7 @@
 
 namespace Bu { subExceptionDef( TcpSocketException ) }
 
-Bu::TcpSocket::TcpSocket( int nTcpSocket ) :
+Bu::TcpSocket::TcpSocket( handle nTcpSocket ) :
 	nTcpSocket( nTcpSocket ),
 	bActive( true ),
 	bBlocking( true )
@@ -443,9 +443,22 @@ Bu::String Bu::TcpSocket::getAddress() const
 	return sAddress;
 }
 
-Bu::TcpSocket::operator int() const
+Bu::TcpSocket::operator Bu::TcpSocket::handle() const
 {
 	return nTcpSocket;
+}
+
+Bu::TcpSocket::handle Bu::TcpSocket::getHandle() const
+{
+	return nTcpSocket;
+}
+
+Bu::TcpSocket::handle Bu::TcpSocket::takeHandle()
+{
+	handle nRet = nTcpSocket;
+	bActive = false;
+	nTcpSocket = 0;
+	return nRet;
 }
 
 Bu::size Bu::TcpSocket::getSize() const
