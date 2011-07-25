@@ -21,16 +21,29 @@ Bu::Uuid::Uuid( const Uuid &src )
 	memcpy( data, src.data, 16 );
 }
 
+Bu::Uuid::Uuid( const Bu::String &sSrc )
+{
+	if( sSrc.getSize() == 16 )
+	{
+		memcpy( data, sSrc.getStr(), 16 );
+	}
+	else if( sSrc.getSize() == 36 )
+	{
+		// Parse it
+		set( sSrc );
+	}
+}
+
 Bu::Uuid::~Uuid()
 {
 }
 
-Bu::String Bu::Uuid::toRawString()
+Bu::String Bu::Uuid::toRawString() const
 {
 	return Bu::String( (char *)data, 16 );
 }
 
-Bu::String Bu::Uuid::toString()
+Bu::String Bu::Uuid::toString() const
 {
 	Bu::MemBuf mb;
 	Bu::Formatter f( mb );
@@ -45,7 +58,7 @@ Bu::String Bu::Uuid::toString()
 	return mb.getString();
 }
 
-Bu::String Bu::Uuid::toUrn()
+Bu::String Bu::Uuid::toUrn() const
 {
 	return "urn:uuid:" + toString();
 }
@@ -67,18 +80,23 @@ Bu::Uuid Bu::Uuid::gen()
 	Bu::File fIn( "/proc/sys/kernel/random/uuid", Bu::File::Read );
 	char dat[36];
 	fIn.read( dat, 36 );
-	int iNibble = 0;
 	Uuid id;
-	memset( id.data, 0, 16 );
+	id.set( dat );
+	return id;
+}
+
+void Bu::Uuid::set( const Bu::String &sSrc )
+{
+	const char *dat = sSrc.getStr();
+	int iNibble = 0;
+	memset( data, 0, 16 );
 	for( int j = 0; j < 36; j++ )
 	{
 		if( dat[j] == '-' )
 			continue;
 		unsigned char c = (dat[j]>='0'&&dat[j]<='9')?(dat[j]-'0'):(dat[j]-'a'+10);
-		id.data[iNibble/2] |= (iNibble%2==0)?(c<<4):(c);
+		data[iNibble/2] |= (iNibble%2==0)?(c<<4):(c);
 		iNibble++;
 	}
-
-	return id;
 }
 

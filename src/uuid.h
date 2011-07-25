@@ -17,11 +17,12 @@ namespace Bu
 	public:
 		Uuid();
 		Uuid( const Uuid &src );
+		Uuid( const Bu::String &sSrc );
 		virtual ~Uuid();
 
-		Bu::String toRawString();
-		Bu::String toString();
-		Bu::String toUrn();
+		Bu::String toRawString() const;
+		Bu::String toString() const;
+		Bu::String toUrn() const;
 
 		int getVersion();
 
@@ -35,6 +36,7 @@ namespace Bu
 		void clear();
 
 	private:
+		void set( const Bu::String &sSrc );
 		unsigned char data[16];
 	};
 };
