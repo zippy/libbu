@@ -100,3 +100,18 @@ void Bu::Uuid::set( const Bu::String &sSrc )
 	}
 }
 
+bool Bu::Uuid::operator==( const Uuid &rhs ) const
+{
+	return memcmp( data, rhs.data, 16 ) == 0;
+}
+
+template<> uint32_t Bu::__calcHashCode<Bu::Uuid>( const Bu::Uuid &k )
+{
+	return __calcHashCode<String>( k.toRawString() );
+}
+
+template<> bool Bu::__cmpHashKeys<Bu::Uuid>( const Bu::Uuid &a, const Bu::Uuid &b )
+{
+	return a == b;
+}
+

@@ -35,10 +35,22 @@ namespace Bu
 
 		void clear();
 
+		bool operator==( const Uuid &rhs ) const;
+
 	private:
 		void set( const Bu::String &sSrc );
 		unsigned char data[16];
 	};
+
+	template<typename T>
+	uint32_t __calcHashCode( const T &k );
+
+	template<typename T>
+	bool __cmpHashKeys( const T &a, const T &b );
+
+	template<> uint32_t __calcHashCode<Uuid>( const Uuid &k );
+	template<> bool __cmpHashKeys<Uuid>(
+		const Uuid &a, const Uuid &b );
 };
 
 #endif
