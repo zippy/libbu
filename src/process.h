@@ -40,12 +40,14 @@ namespace Bu
 			{
 				None	= 0x00,
 				SetUid	= 0x01,
+				SetGid	= 0x02,
 			};
 
 			Options() : eFlags( None ) {}
 
-			OptFlags eFlags;
+			int eFlags;
 			int iUid;
+			int iGid;
 		};
 
 		Process( Flags eFlags, const char *sName, char *const argv[] );

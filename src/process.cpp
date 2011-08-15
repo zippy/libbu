@@ -154,6 +154,10 @@ void Bu::Process::gexec( Flags eFlags, const char *sName, char *const argv[] )
 			::close( iaStdErr[0] );
 			dup2( iaStdErr[1], 2 );
 		}
+		if( (opt.eFlags&Options::SetGid) )
+		{
+			setgid( opt.iGid );
+		}
 		if( (opt.eFlags&Options::SetUid) )
 		{
 			setuid( opt.iUid );
