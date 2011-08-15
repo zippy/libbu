@@ -61,6 +61,51 @@ Bu::Process::Process( Flags eFlags, const char *sName, const char *argv, ...) :
 	delete[] list;
 }
 
+Bu::Process::Process( Flags eFlags, const Bu::Process::Options &opt, const char *sName, char *const argv[] ) :
+	iStdIn( -1 ),
+	iStdOut( -1 ),
+	iStdErr( -1 ),
+	iPid( 0 ),
+	iProcStatus( 0 ),
+	bBlocking( true ),
+	bStdOutEos( true ),
+	bStdErrEos( true ),
+	opt( opt )
+{
+	gexec( eFlags, sName, argv );
+}
+
+Bu::Process::Process( Flags eFlags, const Bu::Process::Options &opt, const char *sName, const char *argv, ...) :
+	iStdIn( -1 ),
+	iStdOut( -1 ),
+	iStdErr( -1 ),
+	iPid( 0 ),
+	iProcStatus( 0 ),
+	bBlocking( true ),
+	bStdOutEos( true ),
+	bStdErrEos( true ),
+	opt( opt )
+{
+	int iCnt = 0;
+	va_list ap;
+	va_start( ap, argv );
+	for(; va_arg( ap, const char *); iCnt++ ) { }
+	va_end( ap );
+
+	char const **list = new char const *[iCnt+2];
+	va_start( ap, argv );
+	list[0] = argv;
+	for( int j = 1; j <= iCnt; j++ )
+	{
+		list[j] = va_arg( ap, const char *);
+	}
+	list[iCnt+1] = NULL;
+	va_end( ap );
+
+	gexec( eFlags, sName, (char *const *)list );
+	delete[] list;
+}
+
 Bu::Process::~Process()
 {
 	close();
@@ -108,6 +153,10 @@ void Bu::Process::gexec( Flags eFlags, const char *sName, char *const argv[] )
 		{
 			::close( iaStdErr[0] );
 			dup2( iaStdErr[1], 2 );
+		}
+		if( (opt.eFlags&Options::SetUid) )
+		{
+			setuid( opt.iUid );
 		}
 		execvp( sName, argv );
 		throw Bu::ExceptionBase("Hey, execvp failed!");

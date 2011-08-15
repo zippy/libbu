@@ -33,8 +33,25 @@ namespace Bu
 		};
 
 	public:
+		class Options
+		{
+		public:
+			enum OptFlags
+			{
+				None	= 0x00,
+				SetUid	= 0x01,
+			};
+
+			Options() : eFlags( None ) {}
+
+			OptFlags eFlags;
+			int iUid;
+		};
+
 		Process( Flags eFlags, const char *sName, char *const argv[] );
 		Process( Flags eFlags, const char *sName, const char *argv, ...);
+		Process( Flags eFlags, const Options &opt, const char *sName, char *const argv[] );
+		Process( Flags eFlags, const Options &opt, const char *sName, const char *argv, ...);
 		virtual ~Process();
 
 		/**
@@ -125,6 +142,7 @@ namespace Bu
 
 		void gexec( Flags eFlags, const char *sName, char *const argv[] );
 		void checkClose();
+		Options opt;
 	};
 }
 
