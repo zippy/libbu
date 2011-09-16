@@ -63,6 +63,8 @@ namespace Bu
 		void wait();
 
 		virtual void close();
+		virtual void closeStdIn();
+		virtual void closeStdOut();
 		virtual Bu::size read( void *pBuf, Bu::size nBytes );
 		virtual Bu::size readErr( void *pBuf, Bu::size nBytes );
 		virtual Bu::size write( const void *pBuf, Bu::size nBytes );

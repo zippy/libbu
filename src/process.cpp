@@ -176,14 +176,27 @@ void Bu::Process::close()
 {
 	if( iPid )
 	{
-		::close( iStdIn );
-		if( iStdErr > -1 )
+		if( iStdIn > -1 )
+			::close( iStdIn );
+		if( iStdOut > -1 )
 			::close( iStdOut );
 		if( iStdErr > -1 )
 			::close( iStdErr );
 		waitpid( iPid, &iProcStatus, 0 );
 		iPid = 0;
 	}
+}
+
+void Bu::Process::closeStdIn()
+{
+	::close( iStdIn );
+	iStdIn = -1;
+}
+
+void Bu::Process::closeStdOut()
+{
+	::close( iStdOut );
+	iStdOut = -1;
 }
 
 Bu::size Bu::Process::read( void *pBuf, Bu::size nBytes )
