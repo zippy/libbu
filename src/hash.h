@@ -1273,7 +1273,8 @@ namespace Bu
 		typename c, typename d>
 	ArchiveBase &operator<<( ArchiveBase &ar, const Hash<key,value,a,b,c,d> &h )
 	{
-		ar << h.getSize();
+		long iSize = h.getSize();
+		ar << iSize;
 		for( typename Hash<key,value,a,b,c,d>::const_iterator i = h.begin(); i != h.end(); i++ )
 		{
 			ar << (i.getKey());
