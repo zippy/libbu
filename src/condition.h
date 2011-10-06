@@ -5,25 +5,25 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_ITO_CONDITION_H
-#define BU_ITO_CONDITION_H
+#ifndef BU_CONDITION_H
+#define BU_CONDITION_H
 
 #include <pthread.h>
 
-#include "itomutex.h"
+#include "bu/mutex.h"
 
 namespace Bu
 {
 	/**
 	 * Ito condition.  This is a fairly simple condition mechanism.  As you may
-	 * notice this class inherits from the ItoMutex class, this is because all
+	 * notice this class inherits from the Mutex class, this is because all
 	 * conditions must be within a locked block.  The standard usage of a
 	 * condition is to pause one thread, perhaps indefinately, until another
 	 * thread signals that it is alright to procede.
 	 * <br>
 	 * Standard usage for the thread that wants to wait is as follows:
 	 * <pre>
-	 * ItoCondition cond;
+	 * Condition cond;
 	 * ... // Perform setup and enter your run loop
 	 * cond.lock();
 	 * while( !isFinished() ) // Could be anything you're waiting for
@@ -36,18 +36,18 @@ namespace Bu
 	 * or broadcast.  See both of those functions for the difference.
 	 *@ingroup Threading
 	 */
-	class ItoCondition : public ItoMutex
+	class Condition : public Mutex
 	{
 	public:
 		/**
 		 * Create a condition.
 		 */
-		ItoCondition();
+		Condition();
 
 		/**
 		 * Destroy a condition.
 		 */
-		~ItoCondition();
+		~Condition();
 
 		/**
 		 * Wait forever, or until signalled.  This has to be called from within

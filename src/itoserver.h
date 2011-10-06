@@ -16,8 +16,8 @@
 
 #include "bu/string.h"
 #include "bu/list.h"
-#include "bu/ito.h"
-#include "bu/itomutex.h"
+#include "bu/thread.h"
+#include "bu/mutex.h"
 #include "bu/itoqueue.h"
 #include "bu/set.h"
 
@@ -50,7 +50,7 @@ namespace Bu
 	 * happening within the server itself, and actually makes it useful.
 	 *@ingroup Threading Serving
 	 */
-	class ItoServer : public Ito
+	class ItoServer : public Thread
 	{
 		friend class ItoClient;
 		friend class SrvClientLinkFactory;
@@ -74,7 +74,7 @@ namespace Bu
 
 	private:
 		class SrvClientLink;
-		class ItoClient : public Ito
+		class ItoClient : public Thread
 		{
 		friend class Bu::ItoServer::SrvClientLink;
 		public:
@@ -96,7 +96,7 @@ namespace Bu
 			int iPort;
 			int nTimeoutSec;
 			int nTimeoutUSec;
-			ItoMutex imProto;
+			Mutex imProto;
 		};
 
 		class SrvClientLink : public Bu::ClientLink
@@ -132,7 +132,7 @@ namespace Bu
 		typedef ItoQueue<ItoClient *> ClientQueue;
 		ClientHash hClients;
 		ClientQueue qClientCleanup;
-		ItoMutex imClients;
+		Mutex imClients;
 
 		void clientCleanup( int iSocket );
 	};

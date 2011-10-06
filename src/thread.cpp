@@ -5,51 +5,51 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/ito.h"
+#include "bu/thread.h"
 
 #include "bu/config.h"
 
-Bu::Ito::Ito()
+Bu::Thread::Thread()
 {
 }
 
-Bu::Ito::~Ito()
+Bu::Thread::~Thread()
 {
 }
 
-bool Bu::Ito::start()
+bool Bu::Thread::start()
 {
 	nHandle = pthread_create( &ptHandle, NULL, threadRunner, this );
 
 	return true;
 }
 
-bool Bu::Ito::stop()
+bool Bu::Thread::stop()
 {
 	pthread_cancel( ptHandle );
 
 	return true;
 }
 
-void *Bu::Ito::threadRunner( void *pThread )
+void *Bu::Thread::threadRunner( void *pThread )
 {
-	((Ito *)pThread)->run();
+	((Thread *)pThread)->run();
 	pthread_exit( NULL );
 	return NULL;
 }
 
-bool Bu::Ito::join()
+bool Bu::Thread::join()
 {
 	pthread_join( ptHandle, NULL );
 	return true;
 }
 
-void Bu::Ito::yield()
+void Bu::Thread::yield()
 {
 #ifndef WIN32
 	pthread_yield();
 #else
-	#warning Bu::Ito::yield IS A STUB for WIN32!!!!	
+	#warning Bu::Thread::yield IS A STUB for WIN32!!!!	
 #endif
 }
 

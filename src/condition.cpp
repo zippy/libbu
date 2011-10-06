@@ -7,24 +7,24 @@
 
 #include <sys/time.h>
 
-#include "bu/itocondition.h"
+#include "bu/condition.h"
 
-Bu::ItoCondition::ItoCondition()
+Bu::Condition::Condition()
 {
 	pthread_cond_init( &cond, NULL );
 }
 
-Bu::ItoCondition::~ItoCondition()
+Bu::Condition::~Condition()
 {
 	pthread_cond_destroy( &cond );
 }
 
-int Bu::ItoCondition::wait()
+int Bu::Condition::wait()
 {
 	return pthread_cond_wait( &cond, &mutex );
 }
 
-int Bu::ItoCondition::wait( int nSec, int nUSec )
+int Bu::Condition::wait( int nSec, int nUSec )
 {
 	struct timeval now;
 	struct timespec timeout;
@@ -37,12 +37,12 @@ int Bu::ItoCondition::wait( int nSec, int nUSec )
 	return pthread_cond_timedwait( &cond, &mutex, &timeout );
 }
 
-int Bu::ItoCondition::signal()
+int Bu::Condition::signal()
 {
 	return pthread_cond_signal( &cond );
 }
 
-int Bu::ItoCondition::broadcast()
+int Bu::Condition::broadcast()
 {
 	return pthread_cond_broadcast( &cond );
 }

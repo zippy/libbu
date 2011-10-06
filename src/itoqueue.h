@@ -10,8 +10,8 @@
 
 #include <pthread.h>
 
-#include "itomutex.h"
-#include "itocondition.h"
+#include "mutex.h"
+#include "condition.h"
 
 namespace Bu
 {
@@ -232,8 +232,8 @@ namespace Bu
 		Item *pEnd;		/**< The end of the queue, the last element to dequeue. */
 		long nSize;		/**< The number of items in the queue. */
 
-		ItoMutex mOperate;	/**< The master mutex, used on all operations. */
-		ItoCondition cBlock;	/**< The condition for blocking dequeues. */
+		Mutex mOperate;	/**< The master mutex, used on all operations. */
+		Condition cBlock;	/**< The condition for blocking dequeues. */
 	};
 }
 

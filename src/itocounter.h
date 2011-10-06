@@ -8,7 +8,7 @@
 #ifndef BU_ITO_COUNTER_H
 #define BU_ITO_COUNTER_H
 
-#include "itomutex.h"
+#include "mutex.h"
 
 namespace Bu
 {
@@ -42,7 +42,7 @@ namespace Bu
 
 	private:
 		T tCounter;				/**< The counter itself. */
-		ItoMutex mOperate;	/**< The master mutex, used on all operations. */
+		Mutex mOperate;	/**< The master mutex, used on all operations. */
 	};
 }
 

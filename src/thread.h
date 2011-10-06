@@ -5,8 +5,8 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_ITO_H
-#define BU_ITO_H
+#ifndef BU_THREAD_H
+#define BU_THREAD_H
 
 #include <pthread.h>
 
@@ -19,18 +19,18 @@ namespace Bu
 	 * run in it's own thread, one per class instance.
 	 *@ingroup Threading
 	 */
-	class Ito
+	class Thread
 	{
 	public:
 		/**
-		 * Construct an Ito thread.
+		 * Construct an Thread thread.
 		 */
-		Ito();
+		Thread();
 
 		/**
-		 * Destroy an Ito thread.
+		 * Destroy an Thread thread.
 		 */
-		virtual ~Ito();
+		virtual ~Thread();
 
 		/**
 		 * Begin thread execution.  This will call the overridden run function,
@@ -38,7 +38,7 @@ namespace Bu
 		 * exits, the thread is killed, or the thread is cancelled (optionally).
 		 * The thread started in this manner has access to all of it's class
 		 * variables, but be sure to protect possible multiple-access with
-		 * ItoMutex objects.
+		 * ThreadMutex objects.
 		 * @returns True if starting the thread was successful.  False if
 		 * something went wrong and the thread has not started.
 		 */
@@ -63,7 +63,7 @@ namespace Bu
 		/**
 		 * Join the thread in action.  This function performs what is commonly
 		 * called a thread join.  That is that it effectively makes the calling
-		 * thread an the Ito thread contained in the called object one in the
+		 * thread an the Thread thread contained in the called object one in the
 		 * same, and pauses the calling thread until the called thread exits.
 		 * That is, when called from, say, your main(), mythread.join() will
 		 * not return until the thread mythread has exited.  This is very handy
@@ -79,10 +79,10 @@ namespace Bu
 
 	protected:
 		/**
-		 * The workhorse of the Ito class.  This is the function that will run
+		 * The workhorse of the Thread class.  This is the function that will run
 		 * in the thread, when this function exits the thread dies and is
-		 * cleaned up by the system.  Make sure to read up on ItoMutex,
-		 * ItoCondition, and cancel to see how to control and protect
+		 * cleaned up by the system.  Make sure to read up on ThreadMutex,
+		 * ThreadCondition, and cancel to see how to control and protect
 		 * everything you do in a safe way within this function.
 		 *@returns I'm not sure right now, but this is the posix standard form.
 		 */
