@@ -102,6 +102,8 @@ namespace Bu
 
 		virtual void run();
 
+		void stopRunning() { bRunning = false; }
+
 		virtual void onInit() { };
 		virtual int onRequest( const StrHash &hParams,
 			const Bu::String &sStdIn, Bu::Stream &sStdOut,
