@@ -5,13 +5,12 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_ITO_ATOM_H
-#define BU_ITO_ATOM_H
+#ifndef BU_SYNCHRO_ATOM_H
+#define BU_SYNCHRO_ATOM_H
 
 #include <pthread.h>
 
-#include "itomutex.h"
-#include "itocondition.h"
+#include "bu/mutex.h"
 
 namespace Bu
 {
@@ -20,22 +19,22 @@ namespace Bu
 	 *@ingroup Threading
 	 */
 	template <class T>
-	class ItoAtom
+	class SynchroAtom
 	{
 	public:
 		/**
 		 * Construct an empty queue.
 		 */
-		ItoAtom()
+		SynchroAtom()
 		{
 		}
 
-		ItoAtom( const T &src ) :
+		SynchroAtom( const T &src ) :
 			data( src )
 		{
 		}
 		
-		~ItoAtom()
+		~SynchroAtom()
 		{
 		}
 
@@ -57,7 +56,7 @@ namespace Bu
 	private:
 		T data;
 
-		ItoMutex mOperate;	/**< The master mutex, used on all operations. */
+		Mutex mOperate;	/**< The master mutex, used on all operations. */
 	};
 };
 

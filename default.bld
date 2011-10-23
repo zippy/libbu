@@ -167,6 +167,11 @@ target ["tests/bzip2", "tests/streamstack"]
 	LDFLAGS += "-lbz2";
 }
 
+target ["tests/deflate"]
+{
+	LDFLAGS += "-lz";
+}
+
 target ["tests/itoserver", "tests/socketblock", "tests/itoheap",
 	"tests/itoqueue1", "tests/itoqueue2", "tests/conduit"]
 {

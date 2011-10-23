@@ -5,4 +5,4 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/itocounter.h"
+#include "bu/synchrocounter.h"

@@ -18,7 +18,7 @@
 #include "bu/list.h"
 #include "bu/thread.h"
 #include "bu/mutex.h"
-#include "bu/itoqueue.h"
+#include "bu/synchroqueue.h"
 #include "bu/set.h"
 
 #include "bu/clientlink.h"
@@ -82,7 +82,7 @@ namespace Bu
 					int nTimeoutSec, int nTimeoutUSec );
 			virtual ~ItoClient();
 
-			typedef ItoQueue<Bu::String *> StringQueue;
+			typedef SynchroQueue<Bu::String *> StringQueue;
 			StringQueue qMsg;
 
 		protected:
@@ -129,7 +129,7 @@ namespace Bu
 		typedef Hash<int,TcpServerSocket *> ServerHash;
 		ServerHash hServers;
 		typedef Hash<int,ItoClient *> ClientHash;
-		typedef ItoQueue<ItoClient *> ClientQueue;
+		typedef SynchroQueue<ItoClient *> ClientQueue;
 		ClientHash hClients;
 		ClientQueue qClientCleanup;
 		Mutex imClients;

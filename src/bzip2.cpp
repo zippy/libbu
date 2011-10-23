@@ -33,7 +33,7 @@ void Bu::BZip2::start()
 	bzState.bzfree = NULL;
 	bzState.opaque = NULL;
 
-	nBufSize = 50000;
+	nBufSize = 64*1024;
 	pBuf = new char[nBufSize];
 }
 

@@ -5,10 +5,10 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_ITO_COUNTER_H
-#define BU_ITO_COUNTER_H
+#ifndef BU_SYNCHRO_COUNTER_H
+#define BU_SYNCHRO_COUNTER_H
 
-#include "mutex.h"
+#include "bu/mutex.h"
 
 namespace Bu
 {
@@ -18,15 +18,15 @@ namespace Bu
 	 *@ingroup Threading Containers
 	 */
 	template <class T>
-	class ItoCounter
+	class SynchroCounter
 	{
 	public:
-		ItoCounter() :
+		SynchroCounter() :
 			tCounter( 0 )
 		{
 		}
 		
-		virtual ~ItoCounter()
+		virtual ~SynchroCounter()
 		{
 		}
 

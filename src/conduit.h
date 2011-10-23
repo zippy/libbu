@@ -11,8 +11,8 @@
 #include "bu/stream.h"
 #include "bu/string.h"
 #include "bu/queuebuf.h"
-#include "bu/itomutex.h"
-#include "bu/itocondition.h"
+#include "bu/mutex.h"
+#include "bu/condition.h"
 
 namespace Bu
 {
@@ -54,8 +54,8 @@ namespace Bu
 
 	private:
 		QueueBuf qb;
-		mutable ItoMutex im;
-		ItoCondition cBlock;
+		mutable Mutex im;
+		Condition cBlock;
 		bool bBlocking;
 		bool bOpen;
 	};
