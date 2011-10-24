@@ -5,11 +5,10 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_DEFLATE_H
-#define BU_DEFLATE_H
+#ifndef BU_LZMA_H
+#define BU_LZMA_H
 
 #include <stdint.h>
-#include <zlib.h>
 
 #include "bu/filter.h"
 
@@ -19,23 +18,17 @@ namespace Bu
 	 *
 	 *@ingroup Streams
 	 */
-	class Deflate : public Bu::Filter
+	class Lzma : public Bu::Filter
 	{
 	public:
 		enum Format
 		{
-			Raw			= 0x01,
-			Zlib		= 0x02,
-			Gzip		= 0x03,
-			AutoDetect	= 0x04,
-
-			AutoRaw		= 0x04|0x01,
-			AutoZlib	= 0x04|0x02,
-			AutoGzip	= 0x04|0x03
+			Xz			= 0x01,
+			LzmaAlone	= 0x02,
 		};
 
-		Deflate( Bu::Stream &rNext, int nCompression=-1, Format eFmt=AutoRaw );
-		virtual ~Deflate();
+		Lzma( Bu::Stream &rNext, int nCompression=6, Format eFmt=Xz );
+		virtual ~Lzma();
 
 		virtual void start();
 		virtual Bu::size stop();
@@ -48,8 +41,8 @@ namespace Bu
 		Bu::size getCompressedSize();
 
 	private:
-		void zError( int code );
-		z_stream zState;
+		void lzmaError( int code );
+		void *prState;
 		bool bReading;
 		int nCompression;
 		char *pBuf;
