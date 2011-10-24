@@ -29,3 +29,8 @@
  *@defgroup Streams Streams
  * Streams are for data.
  */
+
+/**
+ *@defgroup Compression Compression
+ * Filters that give access to common compression libraries.
+ */

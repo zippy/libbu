@@ -15,8 +15,11 @@
 namespace Bu
 {
 	/**
+	 * Provides XZ compression and decompression, both LZMA1 (LzmaAlone) as
+	 * well as the newer LZMA2 (xz) format.  This uses .xz by default.
 	 *
 	 *@ingroup Streams
+	 *@ingroup Compression
 	 */
 	class Lzma : public Bu::Filter
 	{

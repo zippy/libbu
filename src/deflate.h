@@ -15,8 +15,12 @@
 namespace Bu
 {
 	/**
+	 * Provides Deflate (LZ77) support via zlib.  This provides zlib, raw, and
+	 * gzip stream types.  By default it will autodetect the input type and
+	 * encode into a raw deflate stream.
 	 *
 	 *@ingroup Streams
+	 *@ingroup Compression
 	 */
 	class Deflate : public Bu::Filter
 	{

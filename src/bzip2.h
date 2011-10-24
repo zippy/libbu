@@ -15,8 +15,10 @@
 namespace Bu
 {
 	/**
+	 * Provides BZip2 type compression and decompression.
 	 *
 	 *@ingroup Streams
+	 *@ingroup Compression
 	 */
 	class BZip2 : public Bu::Filter
 	{
