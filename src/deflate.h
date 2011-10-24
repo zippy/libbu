@@ -9,7 +9,6 @@
 #define BU_DEFLATE_H
 
 #include <stdint.h>
-#include <zlib.h>
 
 #include "bu/filter.h"
 
@@ -49,7 +48,7 @@ namespace Bu
 
 	private:
 		void zError( int code );
-		z_stream zState;
+		void *prState;
 		bool bReading;
 		int nCompression;
 		char *pBuf;

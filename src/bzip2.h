@@ -9,7 +9,6 @@
 #define BU_BZIP2_H
 
 #include <stdint.h>
-#include <bzlib.h>
 
 #include "bu/filter.h"
 
@@ -36,7 +35,7 @@ namespace Bu
 
 	private:
 		void bzError( int code );
-		bz_stream bzState;
+		void *prState;
 		bool bReading;
 		int nCompression;
 		char *pBuf;
