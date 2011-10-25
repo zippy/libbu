@@ -118,6 +118,8 @@ Bu::size Bu::Base64::read( void *pBuf, Bu::size nBytes )
 			{
 				if( rNext.isEos() )
 				{
+					if( iRPos == 0 )
+						iRPos = iChars;
 					bEosIn = true;
 					if( j != 0 )
 					{

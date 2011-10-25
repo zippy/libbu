@@ -1,0 +1,28 @@
+// vim: syntax=cpp
+/*
+ * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ *
+ * This file is part of the libbu++ library and is released under the
+ * terms of the license contained in the file LICENSE.
+ */
+
+#include "bu/strfilter.h"
+#include "bu/base64.h"
+
+suite MemBuf
+{
+	test decode01
+	{
+		unitTest( Bu::decodeStr<Bu::Base64>("RnVu") == "Fun" );
+		unitTest( Bu::decodeStr<Bu::Base64>("V2hhdA==") == "What" );
+		unitTest( Bu::decodeStr<Bu::Base64>("SGVsbG8=") == "Hello" );
+	}
+
+	test encode01
+	{
+		unitTest( Bu::decodeStr<Bu::Base64>("R n V  u") == "Fun" );
+		unitTest( Bu::decodeStr<Bu::Base64>("V2\n\n\thh   dA==") == "What" );
+		unitTest( Bu::decodeStr<Bu::Base64>("\n\n\t\t   SGV\r\ns\tbG8\n=") == "Hello" );
+	}
+}
+
