@@ -149,9 +149,6 @@ Bu::size Bu::Deflate::read( void *pData, Bu::size nBytes )
 	for(;;)
 	{
 		int ret = inflate( pState, Z_NO_FLUSH );
-		printf("inflate returned %d; avail in=%d, out=%d\n", ret,
-				pState->avail_in, pState->avail_out );
-	
 		nReadTotal += nRead-pState->avail_out;
 
 		if( ret == Z_STREAM_END )

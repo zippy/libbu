@@ -37,7 +37,7 @@ namespace Bu
 			AutoGzip	= 0x04|0x03
 		};
 
-		Deflate( Bu::Stream &rNext, int nCompression=-1, Format eFmt=AutoRaw );
+		Deflate( Bu::Stream &rNext, int nCompression=-1, Format eFmt=AutoZlib );
 		virtual ~Deflate();
 
 		virtual void start();

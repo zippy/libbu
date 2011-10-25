@@ -22,7 +22,7 @@ namespace Bu
 	class Base64 : public Bu::Filter
 	{
 	public:
-		Base64( Bu::Stream &rNext );
+		Base64( Bu::Stream &rNext, int iChunkSize=0 );
 		virtual ~Base64();
 
 		virtual void start();
@@ -51,6 +51,8 @@ namespace Bu
 			Decode		= 0x02,
 		};
 		Mode eMode;
+		int iChunkSize;
+		int iCurChunk;
 	};
 };
 
