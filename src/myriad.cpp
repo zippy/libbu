@@ -128,7 +128,7 @@ void Bu::Myriad::initialize()
 	
 	bsBlockUsed.setSize( iBlocks, true );
 
-	bool bCanSkip = false; // Can skip around, post initial header stream i/o
+//	bool bCanSkip = false; // Can skip around, post initial header stream i/o
 	MyriadStream *pIn = new MyriadStream( *this, pFakeHdr );
 	pIn->setPos( sStore.tell() );
 	for( int j = 0; j < iStreams; j++ )
@@ -156,7 +156,7 @@ void Bu::Myriad::initialize()
 			{
 	//			sio << "Myriad:   - End of prepartition, unlocking skipping."
 	//				<< sio.nl;
-				bCanSkip = true;
+//				bCanSkip = true;
 				MyriadStream *pTmp = new MyriadStream( *this, aStreams[0] );
 	//			sio << "Myriad    - Position = " << pIn->tell() << sio.nl;
 				pTmp->setPos( pIn->tell() );

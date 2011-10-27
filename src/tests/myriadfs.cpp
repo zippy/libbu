@@ -6,7 +6,7 @@
 
 using namespace Bu;
 
-int main( int argc, char *argv[] )
+int main()
 {
 //	Bu::MemBuf mb;
 	Bu::File mb("store.myr", File::Read|File::Write|File::Create );

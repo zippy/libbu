@@ -2,7 +2,7 @@
 #include <bu/string.h>
 #include <bu/utfstring.h>
 
-int main( int argc, char *argv[] )
+int main()
 {
 	Bu::File fIn("utf8.in", Bu::File::Read );
 	Bu::String sUtf8;

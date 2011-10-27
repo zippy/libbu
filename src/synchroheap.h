@@ -5,28 +5,25 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_ITO_HEAP_H
-#define BU_ITO_HEAP_H
+#ifndef BU_SYNCHRO_HEAP_H
+#define BU_SYNCHRO_HEAP_H
 
 #include "bu/heap.h"
-#include "bu/itomutex.h"
-#include "bu/itocondition.h"
+#include "bu/mutex.h"
+#include "bu/condition.h"
 
 namespace Bu
 {
-	class ItoMutex;
-	class ItoCondition;
-
 	template<typename item, typename cmpfunc=__basicLTCmp<item>,
 		typename itemalloc=std::allocator<item> >
-	class ItoHeap
+	class SynchroHeap
 	{
 	public:
-		ItoHeap()
+		SynchroHeap()
 		{
 		}
 
-		virtual ~ItoHeap()
+		virtual ~SynchroHeap()
 		{
 		}
 
@@ -145,8 +142,8 @@ namespace Bu
 
 	private:
 		Heap< item, cmpfunc, itemalloc > hData;
-		ItoMutex imData;
-		ItoCondition icBlock;
+		Mutex imData;
+		Condition icBlock;
 	};
 };
 

@@ -13,7 +13,7 @@ const char Bu::Base64::tblEnc[65] = {
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 };
 
-Bu::Base64::Base64( Bu::Stream &rNext ) :
+Bu::Base64::Base64( Bu::Stream &rNext, int iChunkSize ) :
 	Bu::Filter( rNext ),
 	iBPos( 0 ),
 	iBuf( 0 ),
@@ -22,7 +22,9 @@ Bu::Base64::Base64( Bu::Stream &rNext ) :
 	bEosIn( false ),
 	iTotalIn( 0 ),
 	iTotalOut( 0 ),
-	eMode( Nothing )
+	eMode( Nothing ),
+	iChunkSize( iChunkSize ),
+	iCurChunk( 0 )
 {
 	start();
 
@@ -62,11 +64,12 @@ Bu::Base64::~Base64()
 
 void Bu::Base64::start()
 {
+	iCurChunk = 0;
 }
 
 Bu::size Bu::Base64::stop()
 {
-//	if( eMode |= Encode )
+	if( eMode == Encode )
 	{
 		char outBuf[4];
 		int iBUsed = 4-(3-iBPos);
@@ -80,17 +83,30 @@ Bu::size Bu::Base64::stop()
 		{
 			outBuf[k] = '=';
 		}
-		iTotalOut += rNext.write( outBuf, 4 );
+		iCurChunk += 4;
+		if( iChunkSize && iCurChunk >= iChunkSize )
+		{
+			iCurChunk = iCurChunk-iChunkSize;
+			iTotalOut += rNext.write( outBuf, 4-iCurChunk );
+			iTotalOut += rNext.write("\r\n", 2 );
+			iTotalOut += rNext.write( outBuf+(4-iCurChunk), iCurChunk );
+		}
+		else
+			iTotalOut += rNext.write( outBuf, 4 );
 		return iTotalOut;
 	}
-//	else
-//	{
+	else
+	{
 		return iTotalIn;
-//	}
+	}
 }
 
 Bu::size Bu::Base64::read( void *pBuf, Bu::size nBytes )
 {
+	if( eMode == Encode )
+		throw Bu::Base64Exception("Cannot read from an output stream.");
+	eMode = Decode;
+
 	if( bEosIn == true && iRPos == iChars )
 		return 0;
 	Bu::size sIn = 0;
@@ -118,6 +134,8 @@ Bu::size Bu::Base64::read( void *pBuf, Bu::size nBytes )
 			{
 				if( rNext.isEos() )
 				{
+					if( iRPos == 0 )
+						iRPos = iChars;
 					bEosIn = true;
 					if( j != 0 )
 					{
@@ -155,6 +173,10 @@ Bu::size Bu::Base64::read( void *pBuf, Bu::size nBytes )
 
 Bu::size Bu::Base64::write( const void *pBuf, Bu::size nBytes )
 {
+	if( eMode == Decode )
+		throw Bu::Base64Exception("Cannot write to an input stream.");
+	eMode = Encode;
+
 	Bu::size sOut = 0;
 	char outBuf[4];
 	for( Bu::size j = 0; j < nBytes; j++ )
@@ -166,7 +188,16 @@ Bu::size Bu::Base64::write( const void *pBuf, Bu::size nBytes )
 			{
 				outBuf[3-k] = tblEnc[(iBuf>>(6*k))&0x3f];
 			}
-			sOut += rNext.write( outBuf, 4 );
+			iCurChunk += 4;
+			if( iChunkSize && iCurChunk >= iChunkSize )
+			{
+				iCurChunk = iCurChunk-iChunkSize;
+				sOut += rNext.write( outBuf, 4-iCurChunk );
+				sOut += rNext.write("\r\n", 2 );
+				sOut += rNext.write( outBuf+(4-iCurChunk), iCurChunk );
+			}
+			else
+				sOut += rNext.write( outBuf, 4 );
 			iBPos = iBuf = 0;
 		}
 	}

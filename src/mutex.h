@@ -5,8 +5,8 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_ITO_MUTEX_H
-#define BU_ITO_MUTEX_H
+#ifndef BU_MUTEX_H
+#define BU_MUTEX_H
 
 #include <pthread.h>
 
@@ -19,13 +19,13 @@ namespace Bu
 	 * or initing them.
 	 *@ingroup Threading
 	 */
-	class ItoMutex
+	class Mutex
 	{
 	public:
 		/**
 		 * Create an unlocked mutex.
 		 */
-		ItoMutex();
+		Mutex();
 		
 		/**
 		 * Destroy a mutex.  This can only be done when a mutex is unlocked.
@@ -33,7 +33,7 @@ namespace Bu
 		 * wait for the mutex to unlock, the odds of which are usually farily
 		 * low at deconstruction time.
 		 */
-		~ItoMutex();
+		~Mutex();
 
 		/**
 		 * Lock the mutex.  This causes all future calls to lock on this

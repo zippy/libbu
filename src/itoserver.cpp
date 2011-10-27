@@ -80,7 +80,7 @@ void Bu::ItoServer::run()
 		struct timeval xTimeout = { nTimeoutSec, nTimeoutUSec };
 		
 		fd_set fdRead = fdActive;
-		fd_set fdWrite = fdActive;
+		//fd_set fdWrite = fdActive;
 		fd_set fdException = fdActive;
 
 		if( TEMP_FAILURE_RETRY( select( FD_SETSIZE, &fdRead, NULL, &fdException, &xTimeout ) ) < 0 )

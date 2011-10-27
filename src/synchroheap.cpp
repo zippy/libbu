@@ -5,5 +5,5 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/itoheap.h"
+#include "bu/synchroheap.h"
 

@@ -8,10 +8,15 @@
 #include "bu/bzip2.h"
 #include "bu/trace.h"
 
+#include <bzlib.h>
+
+#define pState ((bz_stream *)prState)
+
 using namespace Bu;
 
 Bu::BZip2::BZip2( Bu::Stream &rNext, int nCompression ) :
 	Bu::Filter( rNext ),
+	prState( NULL ),
 	nCompression( nCompression ),
 	sTotalOut( 0 )
 {
@@ -28,25 +33,29 @@ Bu::BZip2::~BZip2()
 void Bu::BZip2::start()
 {
 	TRACE();
-	bzState.state = NULL;
-	bzState.bzalloc = NULL;
-	bzState.bzfree = NULL;
-	bzState.opaque = NULL;
 
-	nBufSize = 50000;
+	prState = new bz_stream;
+	pState->state = NULL;
+	pState->bzalloc = NULL;
+	pState->bzfree = NULL;
+	pState->opaque = NULL;
+
+	nBufSize = 64*1024;
 	pBuf = new char[nBufSize];
 }
 
 Bu::size Bu::BZip2::stop()
 {
 	TRACE();
-	if( bzState.state )
+	if( pState->state )
 	{
 		if( bReading )
 		{
-			BZ2_bzDecompressEnd( &bzState );
+			BZ2_bzDecompressEnd( pState );
 			delete[] pBuf;
 			pBuf = NULL;
+			delete pState;
+			prState = NULL;
 			return 0;
 		}
 		else
@@ -54,21 +63,23 @@ Bu::size Bu::BZip2::stop()
 //			Bu::size sTotal = 0;
 			for(;;)
 			{
-				bzState.next_in = NULL;
-				bzState.avail_in = 0;
-				bzState.avail_out = nBufSize;
-				bzState.next_out = pBuf;
-				int res = BZ2_bzCompress( &bzState, BZ_FINISH );
-				if( bzState.avail_out < nBufSize )
+				pState->next_in = NULL;
+				pState->avail_in = 0;
+				pState->avail_out = nBufSize;
+				pState->next_out = pBuf;
+				int res = BZ2_bzCompress( pState, BZ_FINISH );
+				if( pState->avail_out < nBufSize )
 				{
-					sTotalOut += rNext.write( pBuf, nBufSize-bzState.avail_out );
+					sTotalOut += rNext.write( pBuf, nBufSize-pState->avail_out );
 				}
 				if( res == BZ_STREAM_END )
 					break;
 			}
-			BZ2_bzCompressEnd( &bzState );
+			BZ2_bzCompressEnd( pState );
 			delete[] pBuf;
 			pBuf = NULL;
+			delete pState;
+			prState = NULL;
 			return sTotalOut;
 		}
 	}
@@ -122,42 +133,42 @@ void Bu::BZip2::bzError( int code )
 Bu::size Bu::BZip2::read( void *pData, Bu::size nBytes )
 {
 	TRACE( pData, nBytes );
-	if( !bzState.state )
+	if( !pState->state )
 	{
 		bReading = true;
-		BZ2_bzDecompressInit( &bzState, 0, 0 );
-		bzState.next_in = pBuf;
-		bzState.avail_in = 0;
+		BZ2_bzDecompressInit( pState, 0, 0 );
+		pState->next_in = pBuf;
+		pState->avail_in = 0;
 	}
 	if( bReading == false )
 		throw ExceptionBase("This bzip2 filter is in writing mode, you can't read.");
 
 	int nRead = 0;
-	int nReadTotal = bzState.total_out_lo32;
-	bzState.next_out = (char *)pData;
-	bzState.avail_out = nBytes;
+	int nReadTotal = pState->total_out_lo32;
+	pState->next_out = (char *)pData;
+	pState->avail_out = nBytes;
 	for(;;)
 	{
-		int ret = BZ2_bzDecompress( &bzState );
+		int ret = BZ2_bzDecompress( pState );
 	
-		nReadTotal += nRead-bzState.avail_out;
+		nReadTotal += nRead-pState->avail_out;
 
 		if( ret == BZ_STREAM_END )
 		{
-			if( bzState.avail_in > 0 )
+			if( pState->avail_in > 0 )
 			{
 				if( rNext.isSeekable() )
 				{
-					rNext.seek( -bzState.avail_in );
+					rNext.seek( -pState->avail_in );
 				}
 			}
-			return nBytes-bzState.avail_out;
+			return nBytes-pState->avail_out;
 		}
 		bzError( ret );
 
-		if( bzState.avail_out )
+		if( pState->avail_out )
 		{
-			if( bzState.avail_in == 0 )
+			if( pState->avail_in == 0 )
 			{
 				nRead = rNext.read( pBuf, nBufSize );
 				if( nRead == 0 && rNext.isEos() )
@@ -165,13 +176,13 @@ Bu::size Bu::BZip2::read( void *pData, Bu::size nBytes )
 					throw Bu::ExceptionBase("Premature end of underlying "
 							"stream found reading bzip2 stream.");
 				}
-				bzState.next_in = pBuf;
-				bzState.avail_in = nRead;
+				pState->next_in = pBuf;
+				pState->avail_in = nRead;
 			}
 		}
 		else
 		{
-			return nBytes-bzState.avail_out;
+			return nBytes-pState->avail_out;
 		}
 	}
 	return 0;
@@ -180,29 +191,29 @@ Bu::size Bu::BZip2::read( void *pData, Bu::size nBytes )
 Bu::size Bu::BZip2::write( const void *pData, Bu::size nBytes )
 {
 	TRACE( pData, nBytes );
-	if( !bzState.state )
+	if( !pState->state )
 	{
 		bReading = false;
-		BZ2_bzCompressInit( &bzState, nCompression, 0, 30 );
+		BZ2_bzCompressInit( pState, nCompression, 0, 30 );
 	}
 	if( bReading == true )
 		throw ExceptionBase("This bzip2 filter is in reading mode, you can't write.");
 
 //	Bu::size sTotalOut = 0;
-	bzState.next_in = (char *)pData;
-	bzState.avail_in = nBytes;
+	pState->next_in = (char *)pData;
+	pState->avail_in = nBytes;
 	for(;;)
 	{
-		bzState.avail_out = nBufSize;
-		bzState.next_out = pBuf;
+		pState->avail_out = nBufSize;
+		pState->next_out = pBuf;
 
-		bzError( BZ2_bzCompress( &bzState, BZ_RUN ) );
+		bzError( BZ2_bzCompress( pState, BZ_RUN ) );
 
-		if( bzState.avail_out < nBufSize )
+		if( pState->avail_out < nBufSize )
 		{
-			sTotalOut += rNext.write( pBuf, nBufSize-bzState.avail_out );
+			sTotalOut += rNext.write( pBuf, nBufSize-pState->avail_out );
 		}
-		if( bzState.avail_in == 0 )
+		if( pState->avail_in == 0 )
 			break;
 	}
 
@@ -212,7 +223,7 @@ Bu::size Bu::BZip2::write( const void *pData, Bu::size nBytes )
 bool Bu::BZip2::isOpen()
 {
 	TRACE();
-	return (bzState.state != NULL);
+	return (pState->state != NULL);
 }
 
 Bu::size Bu::BZip2::getCompressedSize()

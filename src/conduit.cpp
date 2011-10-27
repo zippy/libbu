@@ -116,15 +116,15 @@ Bu::size Bu::Conduit::tell()
 	return sRet;
 }
 
-void Bu::Conduit::seek( Bu::size offset )
+void Bu::Conduit::seek( Bu::size )
 {
 }
 
-void Bu::Conduit::setPos( Bu::size pos )
+void Bu::Conduit::setPos( Bu::size )
 {
 }
 
-void Bu::Conduit::setPosEnd( Bu::size pos )
+void Bu::Conduit::setPosEnd( Bu::size )
 {
 }
 
@@ -203,7 +203,7 @@ void Bu::Conduit::setBlocking( bool bBlocking )
 	im.unlock();
 }
 
-void Bu::Conduit::setSize( Bu::size iSize )
+void Bu::Conduit::setSize( Bu::size )
 {
 }
 

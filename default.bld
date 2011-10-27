@@ -17,7 +17,7 @@ CXXFLAGS += "-ggdb -W -Wall -I.";
 
 action "default"
 {
-	build: [targets("header-links"), "libbu++.a",
+	build: ["header-links", "libbu++.a",
 		targets("tools")];
 }
 
@@ -28,7 +28,7 @@ action "pkg"
 
 action "all"
 {
-	build: [targets("header-links"), "libbu++.a",
+	build: ["header-links", "libbu++.a",
 		targets("tools"), targets("tests")];
 }
 
@@ -60,6 +60,7 @@ target "src/version.h"
 target "src/signals.h"
 {
 	input "gensigs.bld";
+	display "generate";
 	profile "build"
 	{
 		genSigs( OUTPUT );
@@ -80,7 +81,8 @@ target [files("src/*.h").replace("src/", "bu/"), "bu/autoconfig.h",
 	input OUTPUT.replace("bu/","src/");
 	profile "build"
 	{
-		execute("mkdir -p $(dirname ${OUTPUT}); ln -s ../${INPUT} ${OUTPUT}");
+		DIR = OUTPUT.dirName();
+		execute("mkdir -p ${DIR}; ln -s ../${INPUT} ${OUTPUT}");
 	}
 }
 
@@ -91,7 +93,18 @@ target files("src/compat/*.h").replace("src/", "bu/")
 	input OUTPUT.replace("bu/","src/");
 	profile "build"
 	{
-		execute("mkdir -p $(dirname ${OUTPUT}); ln -s ../../${INPUT} ${OUTPUT}");
+		DIR = OUTPUT.dirName();
+		execute("mkdir -p ${DIR}; ln -s ../../${INPUT} ${OUTPUT}");
+	}
+}
+
+target "header-links"
+{
+	input targets("header-links");
+	display "symlinks";
+	profile "build"
+	{
+		condition always;
 	}
 }
 
@@ -165,6 +178,16 @@ target files("src/tests/*.cpp").replace("src/","").replace(".cpp","")
 target ["tests/bzip2", "tests/streamstack"]
 {
 	LDFLAGS += "-lbz2";
+}
+
+target ["tests/deflate", "tests/enc"]
+{
+	LDFLAGS += "-lz";
+}
+
+target ["tests/lzma"]
+{
+	LDFLAGS += "-llzma";
 }
 
 target ["tests/itoserver", "tests/socketblock", "tests/itoheap",

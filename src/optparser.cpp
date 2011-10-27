@@ -375,11 +375,9 @@ Bu::String Bu::OptParser::format( const Bu::String &sIn, int iWidth,
 	bool bSpace = false;
 	int iPrevLineLen;
 	int iLineLen = 0;
-	char c;
 	Bu::String::const_iterator iLastSpace, iStart;
 	for( Bu::String::const_iterator i = iLastSpace = iStart = sIn.begin(); i; i++ )
 	{
-		c = *i;
 		if( *i == ' ' )
 		{
 			if( bSpace == false )

@@ -135,7 +135,6 @@ namespace Bu
 		void ffmt( type f )
 		{
 			Bu::String fTmp;
-			bool bNeg = false;
 			char cBase = fLast.bCaps?'A':'a';
 			if( fLast.uRadix < 2 || fLast.uRadix > 36 )
 			{
@@ -145,7 +144,6 @@ namespace Bu
 
 			if( signbit(f) )
 			{
-				bNeg = true;
 				f = -f;
 				fTmp += "-";
 			}
@@ -228,7 +226,9 @@ namespace Bu
 		template<typename type>
 		void fparse( type &f, const Bu::String &sBuf )
 		{
-			sscanf( sBuf.getStr(), "%f", &f );
+			double fIn;
+			sscanf( sBuf.getStr(), "%lf", &fIn );
+			f = fIn;
 			usedFormat();
 		}
 

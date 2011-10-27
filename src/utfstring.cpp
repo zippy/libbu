@@ -121,7 +121,7 @@ void Bu::UtfString::setUtf8( const Bu::String &sInput )
 
 void Bu::UtfString::setUtf16( const Bu::String &sInput )
 {
-	Bu::String::const_iterator i = sInput.begin();
+//	Bu::String::const_iterator i = sInput.begin();
 	if( (uint8_t)*sInput.begin() == 0xFF &&
 		(uint8_t)*(sInput.begin()+1) == 0xFE )
 	{
@@ -311,9 +311,9 @@ void Bu::UtfString::writeUtf8( Bu::Stream &sOut )
 			// 111 111111 111111 111111
 			uByte = (chr>>18)|0xF0;
 			sOut.write( &uByte, 1 );
-			uByte = (chr>>12)&0x3F|0x80;
+			uByte = ((chr>>12)&0x3F)|0x80;
 			sOut.write( &uByte, 1 );
-			uByte = (chr>>6)&0x3F|0x80;
+			uByte = ((chr>>6)&0x3F)|0x80;
 			sOut.write( &uByte, 1 );
 			uByte = (chr&0x3F)|0x80;
 			sOut.write( &uByte, 1 );
@@ -324,7 +324,7 @@ void Bu::UtfString::writeUtf8( Bu::Stream &sOut )
 			// 1111 111111 111111
 			uByte = (chr>>12)|0xE0;
 			sOut.write( &uByte, 1 );
-			uByte = (chr>>6)&0x3F|0x80;
+			uByte = ((chr>>6)&0x3F)|0x80;
 			sOut.write( &uByte, 1 );
 			uByte = (chr&0x3F)|0x80;
 			sOut.write( &uByte, 1 );

@@ -80,7 +80,7 @@ public:
 	Bu::String sDst;
 };
 
-Bu::Formatter &operator>>( Bu::Formatter &f, Mode &e )
+Bu::Formatter &operator>>( Bu::Formatter &f, Mode & /*e*/ )
 {
 	sio << "Uh oh, the formatter was called..." << sio.nl;
 	return f;

@@ -5,19 +5,19 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_ITO_QUEUE_H
-#define BU_ITO_QUEUE_H
+#ifndef BU_SYNCHRO_QUEUE_H
+#define BU_SYNCHRO_QUEUE_H
 
 #include <pthread.h>
 
-#include "itomutex.h"
-#include "itocondition.h"
+#include "bu/mutex.h"
+#include "bu/condition.h"
 
 namespace Bu
 {
 	/**
 	 * A thread-safe queue class.  This class is a very simple queue with some
-	 * cool extra functionality for use with the Ito system.  The main extra
+	 * cool extra functionality for use with the Synchro system.  The main extra
 	 * that it provides is the option to either dequeue without blocking, with
 	 * infinite blocking, or with timed blocking, which will return a value if
 	 * something is enqueued within the specified time limit, or NULL if the
@@ -25,7 +25,7 @@ namespace Bu
 	 *@ingroup Threading Containers
 	 */
 	template <class T>
-	class ItoQueue
+	class SynchroQueue
 	{
 	private:
 		/**
@@ -41,7 +41,7 @@ namespace Bu
 		/**
 		 * Construct an empty queue.
 		 */
-		ItoQueue() :
+		SynchroQueue() :
 			pStart( NULL ),
 			pEnd( NULL ),
 			nSize( 0 )
@@ -54,7 +54,7 @@ namespace Bu
 		 * pointers without cleaning up the memory they pointed to.  Make sure
 		 * you're queue is empty before allowing it to be destroyed!
 		 */
-		~ItoQueue()
+		~SynchroQueue()
 		{
 			Item *pCur = pStart;
 			while( pCur )
@@ -232,8 +232,8 @@ namespace Bu
 		Item *pEnd;		/**< The end of the queue, the last element to dequeue. */
 		long nSize;		/**< The number of items in the queue. */
 
-		ItoMutex mOperate;	/**< The master mutex, used on all operations. */
-		ItoCondition cBlock;	/**< The condition for blocking dequeues. */
+		Mutex mOperate;	/**< The master mutex, used on all operations. */
+		Condition cBlock;	/**< The condition for blocking dequeues. */
 	};
 }
 

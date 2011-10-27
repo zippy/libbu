@@ -227,6 +227,11 @@ void redPrint( Bu::Parser &p )
 
 int main( int argc, char *argv[] )
 {
+	if( argc < 2 )
+	{
+		println("Provide an input filename as the first parameter.");
+		return 0;
+	}
 	File fIn( argv[1], File::Read );
 
 	Parser p;

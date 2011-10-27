@@ -18,12 +18,12 @@
 #include "bu/list.h"
 #include "bu/fmt.h"
 #include "bu/variant.h"
-
 #include <string.h>
 
 namespace Bu
 {
 	class String;
+	class MemBuf;
 
 	/** @cond DEVEL */
 	class StringCore

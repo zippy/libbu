@@ -5,8 +5,8 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#ifndef BU_BZIP2_H
-#define BU_BZIP2_H
+#ifndef BU_LZMA_H
+#define BU_LZMA_H
 
 #include <stdint.h>
 
@@ -15,16 +15,23 @@
 namespace Bu
 {
 	/**
-	 * Provides BZip2 type compression and decompression.
+	 * Provides XZ compression and decompression, both LZMA1 (LzmaAlone) as
+	 * well as the newer LZMA2 (xz) format.  This uses .xz by default.
 	 *
 	 *@ingroup Streams
 	 *@ingroup Compression
 	 */
-	class BZip2 : public Bu::Filter
+	class Lzma : public Bu::Filter
 	{
 	public:
-		BZip2( Bu::Stream &rNext, int nCompression=9 );
-		virtual ~BZip2();
+		enum Format
+		{
+			Xz			= 0x01,
+			LzmaAlone	= 0x02,
+		};
+
+		Lzma( Bu::Stream &rNext, int nCompression=6, Format eFmt=Xz );
+		virtual ~Lzma();
 
 		virtual void start();
 		virtual Bu::size stop();
@@ -32,17 +39,20 @@ namespace Bu
 		virtual Bu::size write( const void *pBuf, Bu::size nBytes );
 
 		virtual bool isOpen();
+		virtual bool isEos();
 
 		Bu::size getCompressedSize();
 
 	private:
-		void bzError( int code );
+		void lzmaError( int code );
 		void *prState;
 		bool bReading;
 		int nCompression;
 		char *pBuf;
 		uint32_t nBufSize;
 		Bu::size sTotalOut;
+		Format eFmt;
+		bool bEos;
 	};
 }
 

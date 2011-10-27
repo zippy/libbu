@@ -23,7 +23,7 @@ namespace Bu
 	{
 	public:
 		Sha1();
-		~Sha1();
+		virtual ~Sha1();
 
 		virtual void reset();
 		virtual void setSalt( const Bu::String &sSalt );

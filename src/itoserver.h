@@ -16,9 +16,9 @@
 
 #include "bu/string.h"
 #include "bu/list.h"
-#include "bu/ito.h"
-#include "bu/itomutex.h"
-#include "bu/itoqueue.h"
+#include "bu/thread.h"
+#include "bu/mutex.h"
+#include "bu/synchroqueue.h"
 #include "bu/set.h"
 
 #include "bu/clientlink.h"
@@ -50,7 +50,7 @@ namespace Bu
 	 * happening within the server itself, and actually makes it useful.
 	 *@ingroup Threading Serving
 	 */
-	class ItoServer : public Ito
+	class ItoServer : public Thread
 	{
 		friend class ItoClient;
 		friend class SrvClientLinkFactory;
@@ -74,7 +74,7 @@ namespace Bu
 
 	private:
 		class SrvClientLink;
-		class ItoClient : public Ito
+		class ItoClient : public Thread
 		{
 		friend class Bu::ItoServer::SrvClientLink;
 		public:
@@ -82,7 +82,7 @@ namespace Bu
 					int nTimeoutSec, int nTimeoutUSec );
 			virtual ~ItoClient();
 
-			typedef ItoQueue<Bu::String *> StringQueue;
+			typedef SynchroQueue<Bu::String *> StringQueue;
 			StringQueue qMsg;
 
 		protected:
@@ -96,7 +96,7 @@ namespace Bu
 			int iPort;
 			int nTimeoutSec;
 			int nTimeoutUSec;
-			ItoMutex imProto;
+			Mutex imProto;
 		};
 
 		class SrvClientLink : public Bu::ClientLink
@@ -129,10 +129,10 @@ namespace Bu
 		typedef Hash<int,TcpServerSocket *> ServerHash;
 		ServerHash hServers;
 		typedef Hash<int,ItoClient *> ClientHash;
-		typedef ItoQueue<ItoClient *> ClientQueue;
+		typedef SynchroQueue<ItoClient *> ClientQueue;
 		ClientHash hClients;
 		ClientQueue qClientCleanup;
-		ItoMutex imClients;
+		Mutex imClients;
 
 		void clientCleanup( int iSocket );
 	};

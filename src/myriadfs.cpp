@@ -112,7 +112,7 @@ void Bu::MyriadFs::stat( const Bu::String &sPath, Bu::MyriadFs::Stat &rBuf )
 	stat( iNode, rBuf, is );
 }
 
-Bu::MyriadStream Bu::MyriadFs::open( const Bu::String &sPath, int iMode,
+Bu::MyriadStream Bu::MyriadFs::open( const Bu::String &sPath, int /*iMode*/,
 		uint16_t uPerms )
 {
 	int32_t iParent = -1;
@@ -291,9 +291,9 @@ void Bu::MyriadFs::setTimes( const Bu::String &sPath, int64_t iATime,
 void Bu::MyriadFs::unlink( const Bu::String &sPath )
 {
 	int32_t iParent = -1;
-	int32_t iNode;
+//	int32_t iNode;
 
-	iNode = lookupInode( sPath, iParent );
+	/*iNode =*/ lookupInode( sPath, iParent );
 
 	Dir lDir = readDir( iParent );
 
@@ -660,7 +660,7 @@ void Bu::MyriadFs::destroyNode( int32_t iNode )
 	Bu::MyriadStream is = mStore.openStream( 2 );
 
 	// This will be overwritten with the last node
-	int32_t iPosition = hNodeIndex.get( iNode );
+	uint32_t iPosition = hNodeIndex.get( iNode );
 	RawStat rsOld;
 	readInode( iNode, rsOld, is );
 	switch( (rsOld.uPerms&typeMask) )
