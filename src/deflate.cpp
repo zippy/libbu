@@ -123,6 +123,8 @@ void Bu::Deflate::zError( int code )
 Bu::size Bu::Deflate::read( void *pData, Bu::size nBytes )
 {
 	TRACE( pData, nBytes );
+	if( nBytes  <= 0 )
+		return 0;
 	if( !pState->state )
 	{
 		bReading = true;
@@ -191,6 +193,8 @@ Bu::size Bu::Deflate::read( void *pData, Bu::size nBytes )
 Bu::size Bu::Deflate::write( const void *pData, Bu::size nBytes )
 {
 	TRACE( pData, nBytes );
+	if( nBytes  <= 0 )
+		return 0;
 	if( !pState->state )
 	{
 		bReading = false;
