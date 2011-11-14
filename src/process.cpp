@@ -388,7 +388,7 @@ void Bu::Process::select( bool &bStdOut, bool &bStdErr )
 bool Bu::Process::isRunning()
 {
 	if( waitpid( iPid, NULL, WNOHANG ) == iPid )
-		close();
+		checkClose();
 	return iPid != 0;
 }
 
