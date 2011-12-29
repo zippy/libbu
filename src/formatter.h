@@ -159,7 +159,8 @@ namespace Bu
 			int c = f;
 			fTmp += (char)((c<10)?('0'+c):(cBase+c-10));
 			f -= (int)f;
-			for( int j = 0; j < 8 && f; j++ )
+			int j;
+			for( j = 0; j < 8 && f; j++ )
 			{
 				if( iScale - j == 0 )
 					fTmp += '.';
@@ -167,6 +168,12 @@ namespace Bu
 				int c = f;
 				fTmp += (char)((c<10)?('0'+c):(cBase+c-10));
 				f -= (int)f;
+			}
+			if( iScale >= j )
+			{
+				for( int k = j; k < iScale; k++ )
+					fTmp += '0';
+				fTmp += ".0";
 			}
 
 			writeAligned( fTmp );
