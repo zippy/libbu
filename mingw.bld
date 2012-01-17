@@ -44,7 +44,7 @@ target "libbu++win.a"
 	CXXFLAGS += "-I. -Isupport/windows";
 }
 
-target "src/process.win_o"
+target ["src/process.win_o", "src/deflate.win_o", "src/lzma.win_o"]
 {
 	profile "build"
 	{

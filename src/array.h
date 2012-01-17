@@ -197,6 +197,26 @@ namespace Bu
 
 			return *this;
 		}
+		
+		MyType &append( const MyType &rVal )
+		{
+			_hardCopy();
+
+			if( core->iSize + rVal.core->iSize > core->iCapacity )
+			{
+				core->setCapacity( core->iSize + rVal.core->iSize + inc );
+			}
+			
+			for( int j = 0; j < rVal.core->iSize; j++ )
+			{
+				core->va.construct(
+					&core->pData[core->iSize++],
+					rVal.core->pData[j]
+					);
+			}
+
+			return *this;
+		}
 
 		//operator
 		value &operator[]( long iIndex )
@@ -427,6 +447,11 @@ namespace Bu
 			long iPos;
 
 		public:
+			const_iterator( iterator &rSrc ) :
+				src( rSrc.src ),
+				iPos( rSrc.iPos )
+			{
+			}
 			const_iterator operator++( int )
 			{
 				if( iPos < 0 )
@@ -568,6 +593,19 @@ namespace Bu
 		{
 			_hardCopy();
 			core->erase( i.iPos );
+		}
+
+		void erase( const value &v )
+		{
+			_hardCopy();
+			for( int j = 0; j < core->iSize; j++ )
+			{
+				if( core->pData[j] == v )
+				{
+					core->erase( j );
+					return;
+				}
+			}
 		}
 
 		void eraseLast()
