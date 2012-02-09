@@ -4,6 +4,7 @@
 #include <bu/deflate.h>
 #include <bu/bzip2.h>
 #include <bu/base64.h>
+#include <bu/hex.h>
 #include <bu/streamstack.h>
 
 #include <bu/strfilter.h>
@@ -18,7 +19,8 @@ public:
 	{
 		addOption( sClass, 'c', "Class name [default=\"Datafiles\"]");
 		addOption( sOutBase, 'o', "Output base filename [defaults to classname]");
-		addOption( slot(this, &Options::addFilter), 'f', "Add filter: deflate, bzip2, base64");
+		addOption( sOutDir, 'd', "Output directory [defaults to current dir]");
+		addOption( slot(this, &Options::addFilter), 'f', "Add filter: deflate, bzip2, base64, hex");
 		setNonOption( slot(this, &Options::addInput) );
 		addHelpOption();
 
@@ -26,6 +28,8 @@ public:
 
 		if( !sOutBase.isSet() )
 			sOutBase = sClass.toLower();
+		if( sOutDir.isSet() )
+			sOutDir += "/";
 	}
 
 	virtual ~Options()
@@ -46,6 +50,7 @@ public:
 
 	Bu::String sClass;
 	Bu::String sOutBase;
+	Bu::String sOutDir;
 	Bu::StringList slInput;
 	Bu::StringList slFilter;
 };
@@ -54,8 +59,10 @@ int main( int argc, char *argv[] )
 {
 	Options opt( argc, argv );
 
-	File fHdrOut( opt.sOutBase + ".h", File::WriteNew );
-	File fSrcOut( opt.sOutBase + ".cpp", File::WriteNew );
+	File fHdrOut( opt.sOutDir + opt.sOutBase + ".h", File::WriteNew );
+	File fSrcOut( opt.sOutDir + opt.sOutBase + ".cpp", File::WriteNew );
+
+	Bu::Hash<char, bool> hFilters;
 
 	Formatter fHdr( fHdrOut );
 	Formatter fSrc( fSrcOut );
@@ -83,6 +90,7 @@ int main( int argc, char *argv[] )
 		<< "#include <bu/deflate.h>" << fSrc.nl
 		<< "#include <bu/bzip2.h>" << fSrc.nl
 		<< "#include <bu/base64.h>" << fSrc.nl
+		<< "#include <bu/hex.h>" << fSrc.nl
 		<< "#include <bu/strfilter.h>" << fSrc.nl
 		<< "#include <bu/staticmembuf.h>" << fSrc.nl << fSrc.nl
 		<< "const " << opt.sClass << "::File " << opt.sClass << "::aFile[] = {" << fSrc.nl;
@@ -104,16 +112,25 @@ int main( int argc, char *argv[] )
 			{
 				sDat = encodeStr<Deflate>( sDat );
 				sFltDesc.prepend("d");
+				hFilters.insert('d', true );
 			}
 			else if( *f == "bzip2" )
 			{
 				sDat = encodeStr<BZip2>( sDat );
 				sFltDesc.prepend("b");
+				hFilters.insert('b', true );
 			}
 			else if( *f == "base64" )
 			{
 				sDat = encodeStr<Base64>( sDat );
 				sFltDesc.prepend("6");
+				hFilters.insert('6', true );
+			}
+			else if( *f == "hex" )
+			{
+				sDat = encodeStr<Hex>( sDat );
+				sFltDesc.prepend("h");
+				hFilters.insert('h', true );
 			}
 			else
 			{
@@ -152,17 +169,26 @@ int main( int argc, char *argv[] )
 	fSrc << "Bu::StreamStack *" << opt.sClass << "::open( const Bu::String &sName )" << fSrc.nl
 		<< "{" << fSrc.nl
 		<< "\tconst File &f = getFile( sName );" << fSrc.nl
-		<< "\tBu::StreamStack *s = new Bu::StreamStack( new Bu::StaticMemBuf( f.data, f.iSize ) );" << fSrc.nl
-		<< "\tfor( const char *t = f.flt; *t; t++ )" << fSrc.nl
-		<< "\t{" << fSrc.nl
-		<< "\t\tswitch( *t )" << fSrc.nl
-		<< "\t\t{" << fSrc.nl
-		<< "\t\t\tcase 'd': s->pushFilter<Bu::Deflate>(); break;" << fSrc.nl
-		<< "\t\t\tcase 'b': s->pushFilter<Bu::BZip2>(); break;" << fSrc.nl
-		<< "\t\t\tcase '6': s->pushFilter<Bu::Base64>(); break;" << fSrc.nl
-		<< "\t\t}" << fSrc.nl
-		<< "\t}" << fSrc.nl
-		<< "\treturn s;" << fSrc.nl
+		<< "\tBu::StreamStack *s = new Bu::StreamStack( new Bu::StaticMemBuf( f.data, f.iSize ) );" << fSrc.nl;
+
+	if( !hFilters.isEmpty() )
+	{
+		fSrc << "\tfor( const char *t = f.flt; *t; t++ )" << fSrc.nl
+			<< "\t{" << fSrc.nl
+			<< "\t\tswitch( *t )" << fSrc.nl
+			<< "\t\t{" << fSrc.nl;
+		if( hFilters.has('d') )
+			fSrc << "\t\t\tcase 'd': s->pushFilter<Bu::Deflate>(); break;" << fSrc.nl;
+		if( hFilters.has('b') )
+			fSrc << "\t\t\tcase 'b': s->pushFilter<Bu::BZip2>(); break;" << fSrc.nl;
+		if( hFilters.has('6') )
+			fSrc << "\t\t\tcase '6': s->pushFilter<Bu::Base64>(); break;" << fSrc.nl;
+		if( hFilters.has('h') )
+			fSrc << "\t\t\tcase 'h': s->pushFilter<Bu::Hex>(); break;" << fSrc.nl;
+		fSrc << "\t\t}" << fSrc.nl
+			<< "\t}" << fSrc.nl;
+	}
+	fSrc << "\treturn s;" << fSrc.nl
 		<< "}" << fSrc.nl << fSrc.nl;
 
 	fSrc << "Bu::StreamStack *" << opt.sClass << "::openRaw( const Bu::String &sName )" << fSrc.nl
