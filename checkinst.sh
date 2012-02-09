@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CMD="ln -svf $PWD/bu /usr/include; ln -svf $PWD/libbu++.a /usr/lib; ln -svf $PWD/{viewcsv,myriad} /usr/bin"
+CMD="ln -svf $PWD/bu /usr/include; ln -svf $PWD/libbu++.a /usr/lib; ln -svf $PWD/{viewcsv,myriad,bin2cpp} /usr/bin"
 
 if [ $UID == 0 ]; then
 	bash -c "$CMD"

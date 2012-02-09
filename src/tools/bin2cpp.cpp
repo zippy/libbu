@@ -14,14 +14,18 @@ class Options : public OptParser
 {
 public:
 	Options( int argc, char *argv[] ) :
-		sOutBase("bin")
+		sClass("Datafiles")
 	{
-		addOption( sOutBase, 'o', "Output base filename [default=\"bin\"]");
+		addOption( sClass, 'c', "Class name [default=\"Datafiles\"]");
+		addOption( sOutBase, 'o', "Output base filename [defaults to classname]");
 		addOption( slot(this, &Options::addFilter), 'f', "Add filter: deflate, bzip2, base64");
 		setNonOption( slot(this, &Options::addInput) );
 		addHelpOption();
 
 		parse( argc, argv );
+
+		if( !sOutBase.isSet() )
+			sOutBase = sClass.toLower();
 	}
 
 	virtual ~Options()
@@ -36,11 +40,11 @@ public:
 
 	int addInput( Bu::StrArray aArgs )
 	{
-		sio << "Input: " << aArgs[0] << sio.nl;
 		slInput.append( aArgs[0] );
 		return 0;
 	}
 
+	Bu::String sClass;
 	Bu::String sOutBase;
 	Bu::StringList slInput;
 	Bu::StringList slFilter;
@@ -55,12 +59,12 @@ int main( int argc, char *argv[] )
 
 	Formatter fHdr( fHdrOut );
 	Formatter fSrc( fSrcOut );
-	fHdr << "#ifndef BIN2CPP_DATAFILE_H" << fHdr.nl
-		<< "#define BIN2CPP_DATAFILE_H" << fHdr.nl << fHdr.nl
+	fHdr << "#ifndef BIN2CPP_" << opt.sClass.toUpper() << "_H" << fHdr.nl
+		<< "#define BIN2CPP_" << opt.sClass.toUpper() << "_H" << fHdr.nl << fHdr.nl
 		<< "#include <bu/string.h>" << fHdr.nl
 		<< "#include <bu/streamstack.h>" << fHdr.nl
 		<< fHdr.nl
-		<< "class Datafiles" << fHdr.nl
+		<< "class " << opt.sClass << fHdr.nl
 		<< "{" << fHdr.nl
 		<< "public:" << fHdr.nl
 		<< "\tclass File { public: int iSize; const char *data; const char *flt; };" << fHdr.nl << fHdr.nl
@@ -80,8 +84,8 @@ int main( int argc, char *argv[] )
 		<< "#include <bu/bzip2.h>" << fSrc.nl
 		<< "#include <bu/base64.h>" << fSrc.nl
 		<< "#include <bu/strfilter.h>" << fSrc.nl
-		<< "#include <bu/membuf.h>" << fSrc.nl << fSrc.nl
-		<< "const Datafiles::File Datafiles::aFile[] = {" << fSrc.nl;
+		<< "#include <bu/staticmembuf.h>" << fSrc.nl << fSrc.nl
+		<< "const " << opt.sClass << "::File " << opt.sClass << "::aFile[] = {" << fSrc.nl;
 
 	for( Bu::StringList::iterator i = opt.slInput.begin(); i; i++ )
 	{
@@ -128,7 +132,7 @@ int main( int argc, char *argv[] )
 	}
 	fSrc << "};" << fSrc.nl << fSrc.nl;
 
-	fSrc << "const Datafiles::File &Datafiles::getFile( const Bu::String &sName )"
+	fSrc << "const " << opt.sClass << "::File &" << opt.sClass << "::getFile( const Bu::String &sName )"
 		<< fSrc.nl
 		<< "{" << fSrc.nl
 		<< "\tswitch( Bu::__calcHashCode( sName ) )" << fSrc.nl
@@ -145,10 +149,10 @@ int main( int argc, char *argv[] )
 		<< "\tthrow Bu::ExceptionBase(\"No file matching \\\"%s\\\" found.\", sName.getStr() );" << fSrc.nl
 		<< "}" << fSrc.nl << fSrc.nl;
 	
-	fSrc << "Bu::StreamStack *Datafiles::open( const Bu::String &sName )" << fSrc.nl
+	fSrc << "Bu::StreamStack *" << opt.sClass << "::open( const Bu::String &sName )" << fSrc.nl
 		<< "{" << fSrc.nl
 		<< "\tconst File &f = getFile( sName );" << fSrc.nl
-		<< "\tBu::StreamStack *s = new Bu::StreamStack( new Bu::MemBuf( Bu::String( f.data, f.iSize ) ) );" << fSrc.nl
+		<< "\tBu::StreamStack *s = new Bu::StreamStack( new Bu::StaticMemBuf( f.data, f.iSize ) );" << fSrc.nl
 		<< "\tfor( const char *t = f.flt; *t; t++ )" << fSrc.nl
 		<< "\t{" << fSrc.nl
 		<< "\t\tswitch( *t )" << fSrc.nl
@@ -161,29 +165,26 @@ int main( int argc, char *argv[] )
 		<< "\treturn s;" << fSrc.nl
 		<< "}" << fSrc.nl << fSrc.nl;
 
-	fSrc << "Bu::StreamStack *Datafiles::openRaw( const Bu::String &sName )" << fSrc.nl
+	fSrc << "Bu::StreamStack *" << opt.sClass << "::openRaw( const Bu::String &sName )" << fSrc.nl
 		<< "{" << fSrc.nl
 		<< "\tconst File &f = getFile( sName );" << fSrc.nl
-		<< "\treturn new Bu::StreamStack( new Bu::MemBuf( Bu::String( f.data, f.iSize ) ) );" << fSrc.nl
+		<< "\treturn new Bu::StreamStack( new Bu::StaticMemBuf( f.data, f.iSize ) );" << fSrc.nl
 		<< "}" << fSrc.nl << fSrc.nl;
 
-	fSrc << "Bu::String Datafiles::getString( const Bu::String &sName )" << fSrc.nl
+	fSrc << "Bu::String " << opt.sClass << "::getString( const Bu::String &sName )" << fSrc.nl
 		<< "{" << fSrc.nl
-		<< "\tconst File &f = getFile( sName );" << fSrc.nl
-		<< "\tBu::String s( f.data, f.iSize );" << fSrc.nl
-		<< "\tfor( const char *t = f.flt; *t; t++ )" << fSrc.nl
+		<< "\tBu::StreamStack *ss = open( sName );" << fSrc.nl
+		<< "\tBu::String s;" << fSrc.nl
+		<< "\tchar buf[1024];" << fSrc.nl
+		<< "\twhile( !ss->isEos() )" << fSrc.nl
 		<< "\t{" << fSrc.nl
-		<< "\t\tswitch( *t )" << fSrc.nl
-		<< "\t\t{" << fSrc.nl
-		<< "\t\t\tcase 'd': s = Bu::decodeStr<Bu::Deflate>( s ); break;" << fSrc.nl
-		<< "\t\t\tcase 'b': s = Bu::decodeStr<Bu::BZip2>( s ); break;" << fSrc.nl
-		<< "\t\t\tcase '6': s = Bu::decodeStr<Bu::Base64>( s ); break;" << fSrc.nl
-		<< "\t\t}" << fSrc.nl
+		<< "\t\ts.append( buf, ss->read( buf, 1024 ) );" << fSrc.nl
 		<< "\t}" << fSrc.nl
+		<< "\tdelete ss;" << fSrc.nl
 		<< "\treturn s;" << fSrc.nl
 		<< "}" << fSrc.nl << fSrc.nl;
 	
-	fSrc << "Bu::String Datafiles::getStringRaw( const Bu::String &sName )" << fSrc.nl
+	fSrc << "Bu::String " << opt.sClass << "::getStringRaw( const Bu::String &sName )" << fSrc.nl
 		<< "{" << fSrc.nl
 		<< "\tconst File &f = getFile( sName );" << fSrc.nl
 		<< "\treturn Bu::String( f.data, f.iSize );" << fSrc.nl
