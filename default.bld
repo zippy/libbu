@@ -159,6 +159,11 @@ target "myriadfs"
 	LDFLAGS += "-lfuse";
 }
 
+target "bin2cpp"
+{
+	LDFLAGS += "-lz -lbz2";
+}
+
 //
 // General Tests
 //
