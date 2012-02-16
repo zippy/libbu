@@ -30,6 +30,22 @@ Bu::String Bu::Stream::readLine()
 	}
 }
 
+Bu::String Bu::Stream::readAll()
+{
+	Bu::String sRet;
+	char buf[4096];
+
+	while( !isEos() )
+	{
+		int iRead = read( buf, 4096 );
+		if( iRead == 0 )
+			return sRet;
+		sRet.append( buf, iRead );
+	}
+
+	return sRet;
+}
+
 Bu::size Bu::Stream::write( const Bu::String &sBuf )
 {
 	return write( sBuf.getStr(), sBuf.getSize() );

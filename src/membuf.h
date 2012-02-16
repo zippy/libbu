@@ -17,7 +17,12 @@
 namespace Bu
 {
 	/**
-	 * A memory buffer stream.
+	 * A memory buffer stream.  This provides a read/write stream in memory that
+	 * works exactly like a file stream...only in memory.  You can seed the
+	 * memory buffer with a Bu::String of your own, or start with an empty one.
+	 * Due to Bu::String using Bu::SharedCore starting with a string will not
+	 * necesarilly cause the MemBuf to make a copy of your memory, but if you're
+	 * sure you're not going to need to change the stream then use StaticMemBuf.
 	 *@ingroup Streams
 	 */
 	class MemBuf : public Stream

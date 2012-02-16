@@ -56,6 +56,16 @@ namespace Bu
 		virtual Bu::String readLine();
 
 		/**
+		 * Reads all data from the current position onward until isEos returns
+		 * true and returns it as a Bu::String.  This will also return if no
+		 * data is available and the stream is in non-blocking mode.  This
+		 * function is intended for very particular circumstances and is often
+		 * not the most efficient way to access the data that you would like.
+		 *@returns The entire stream contents.
+		 */
+		virtual Bu::String readAll();
+
+		/**
 		 * Write data to the stream.
 		 *@param pBuf (const void *) The data to be written.
 		 *@param nBytes (size_t) Amount of data to write from pBuf.
