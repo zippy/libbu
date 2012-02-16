@@ -59,9 +59,16 @@ namespace Bu
 		 * Get the number of references to this pointer.
 		 *@returns (int32_t) The number of references to this pointer.
 		 */
-		int32_t count() const
+		int32_t getRefCount() const
 		{
 			return *pRefCnt;
+		}
+
+		void clear()
+		{
+			decCount();
+			pRefCnt = NULL;
+			pData = NULL;
 		}
 
 		/**
