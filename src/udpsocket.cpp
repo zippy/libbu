@@ -104,7 +104,7 @@ Bu::size Bu::UdpSocket::read( void *pBuf, Bu::size nBytes,
 		Bu::UdpSocket::addr &aHost, int &iPort )
 {
 	sockaddr_in name;
-	size_t size = sizeof(name);
+	socklen_t size = sizeof(name);
 	Bu::size ret = recvfrom( iUdpSocket, pBuf, nBytes, 0,
 			(struct sockaddr *)&name, &size );
 	aHost = name.sin_addr.s_addr;
