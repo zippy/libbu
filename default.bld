@@ -73,8 +73,22 @@ target "autoconfig"
 	input "autoconfig.cpp";
 }
 
-target [files("src/*.h").replace("src/", "bu/"), "bu/autoconfig.h",
-	"bu/version.h", "bu/signals.h"]
+for base in ["stable", "unstable", "experimental"] do
+{
+	target files("src/${base}/*.h").replace("src/${base}/", "bu/")
+	{
+		tag "header-links";
+		display "symlink";
+		input OUTPUT.replace("bu/","src/${base}/");
+		profile "build"
+		{
+			DIR = OUTPUT.dirName();
+			execute("mkdir -p ${DIR}; ln -s ../${INPUT} ${OUTPUT}");
+		}
+	}
+}
+
+target ["bu/config.h", "bu/autoconfig.h", "bu/version.h", "bu/signals.h"]
 {
 	tag "header-links";
 	display "symlink";
@@ -110,7 +124,8 @@ target "header-links"
 
 target "libbu++.a"
 {
-	input files("src/*.cpp", "src/compat/*.cpp");
+	input files("src/stable/*.cpp", "src/unstable/*.cpp",
+		"src/experimental/*.cpp", "src/compat/*.cpp");
 	rule "lib";
 	CXXFLAGS += "-I. -fPIC";
 }

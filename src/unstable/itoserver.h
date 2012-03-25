@@ -19,7 +19,7 @@
 #include "bu/thread.h"
 #include "bu/mutex.h"
 #include "bu/synchroqueue.h"
-#include "bu/set.h"
+#include "bu/hash.h"
 
 #include "bu/clientlink.h"
 #include "bu/clientlinkfactory.h"
