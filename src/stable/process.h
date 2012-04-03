@@ -8,6 +8,10 @@
 #ifndef BU_PROCESS_H
 #define BU_PROCESS_H
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #include <stdint.h>
 #include <sys/types.h>
 
@@ -135,10 +139,23 @@ namespace Bu
 		bool childCoreDumped();
 
 	private:
-		int iStdIn;
-		int iStdOut;
-		int iStdErr;
-		pid_t iPid;
+		class ProcData
+		{
+		public:
+			ProcData();
+#ifdef WIN32
+			void *hStdIn;
+			void *hStdOut;
+			void *hStdErr;
+			PROCESS_INFORMATION piProcInfo;
+#else
+			int iStdIn;
+			int iStdOut;
+			int iStdErr;
+			pid_t iPid;
+#endif
+		};
+		ProcData pd;
 		int iProcStatus;
 		bool bBlocking;
 		bool bStdOutEos;

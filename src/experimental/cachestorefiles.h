@@ -58,7 +58,11 @@ namespace Bu
 		{
 			if( access( sPrefix.getStr(), W_OK|R_OK|X_OK ) )
 			{
+#ifdef WIN32
+				mkdir( sPrefix.getStr() );
+#else
 				mkdir( sPrefix.getStr(), 0755 );
+#endif
 			}
 		}
 

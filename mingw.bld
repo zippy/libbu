@@ -16,14 +16,18 @@ action "default"
 	build: [targets("header-links"), "libbu++win.a"];
 }
 
-target files("src/*.h").replace("src/", "bu/")
+for base in ["stable", "unstable", "experimental"] do
 {
-	tag "header-links";
-	display "symlink";
-	input OUTPUT.replace("bu/","src/");
-	profile "build"
+	target files("src/${base}/*.h").replace("src/${base}/", "bu/")
 	{
-		execute("mkdir -p $(dirname ${OUTPUT}); ln -s ../${INPUT} ${OUTPUT}");
+		tag "header-links";
+		display "symlink";
+		input OUTPUT.replace("bu/","src/${base}/");
+		profile "build"
+		{
+			DIR = OUTPUT.dirName();
+			execute("mkdir -p ${DIR}; ln -s ../${INPUT} ${OUTPUT}");
+		}
 	}
 }
 target files("src/compat/*.h").replace("src/", "bu/")
@@ -36,33 +40,31 @@ target files("src/compat/*.h").replace("src/", "bu/")
 		execute("mkdir -p $(dirname ${OUTPUT}); ln -s ../../${INPUT} ${OUTPUT}");
 	}
 }
+target ["bu/config.h", "bu/autoconfig.h", "bu/version.h", "bu/signals.h"]
+{
+	tag "header-links";
+	display "symlink";
+	input OUTPUT.replace("bu/","src/");
+	profile "build"
+	{
+		DIR = OUTPUT.dirName();
+		execute("mkdir -p ${DIR}; ln -s ../${INPUT} ${OUTPUT}");
+	}
+}
 
 target "libbu++win.a"
 {
-	input files("src/*.cpp", "src/compat/*.cpp");
+	input files("src/stable/*.cpp", "src/unstable/*.cpp",
+		"src/experimental/*.cpp", "src/compat/*.cpp");
 	rule "lib";
 	CXXFLAGS += "-I. -Isupport/windows";
 }
 
-target ["src/process.win_o", "src/lzma.win_o"]
+target ["src/stable/lzma.win_o", "src/experimental/cachestorefiles.win_o", "src/experimental/regex.win_o"]
 {
 	profile "build"
 	{
-		execute("rm -f src/process.win_o && touch src/process.win_o && echo NOT BUILDING PROCESS RIGHT NOW!!!");
-	}
-}
-target "src/regex.win_o"
-{
-	profile "build"
-	{
-		execute("rm -f src/regex.win_o && touch src/regex.win_o && echo NOT BUILDING REGEX RIGHT NOW!!!");
-	}
-}
-target "src/cachestorefiles.win_o"
-{
-	profile "build"
-	{
-		execute("rm -f src/cachestorefiles.win_o && touch src/cachestorefiles.win_o && echo NOT BUILDING REGEX RIGHT NOW!!!");
+		execute("rm -f ${OUTPUT} && touch ${OUTPUT} && echo NOT BUILDING PROCESS RIGHT NOW!!!");
 	}
 }
 
