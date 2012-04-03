@@ -8,10 +8,6 @@
 #ifndef BU_PROCESS_H
 #define BU_PROCESS_H
 
-#ifdef WIN32
-#include <windows.h>
-#endif
-
 #include <stdint.h>
 #include <sys/types.h>
 
@@ -147,7 +143,7 @@ namespace Bu
 			void *hStdIn;
 			void *hStdOut;
 			void *hStdErr;
-			PROCESS_INFORMATION piProcInfo;
+			void *hProcess;
 #else
 			int iStdIn;
 			int iStdOut;

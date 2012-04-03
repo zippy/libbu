@@ -130,6 +130,7 @@ void Bu::Process::gexec( Flags eFlags, const char *sName, char *const argv[] )
 	HANDLE hChildStd_IN_Wr;
 	HANDLE hChildStd_OUT_Rd;
 	HANDLE hChildStd_OUT_Wr;
+	PROCESS_INFORMATION piProcInfo;
 
 	saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
 	saAttr.bInheritHandle = TRUE;
@@ -165,7 +166,7 @@ void Bu::Process::gexec( Flags eFlags, const char *sName, char *const argv[] )
 	BOOL bSuccess = FALSE; 
 
 	// Set up members of the PROCESS_INFORMATION structure. 
-	ZeroMemory( &pd.piProcInfo, sizeof(PROCESS_INFORMATION) );
+	ZeroMemory( &piProcInfo, sizeof(PROCESS_INFORMATION) );
 
 	// Set up members of the STARTUPINFO structure. 
 	// This structure specifies the STDIN and STDOUT handles for redirection.
@@ -195,7 +196,7 @@ void Bu::Process::gexec( Flags eFlags, const char *sName, char *const argv[] )
 		NULL,          // use parent's environment 
 		NULL,          // use parent's current directory 
 		&siStartInfo,  // STARTUPINFO pointer 
-		&pd.piProcInfo );  // receives PROCESS_INFORMATION 
+		&piProcInfo );  // receives PROCESS_INFORMATION 
 
 	// If an error occurs, exit the application. 
 	if ( ! bSuccess ) 
@@ -210,7 +211,8 @@ void Bu::Process::gexec( Flags eFlags, const char *sName, char *const argv[] )
 		// of the child process, for example. 
 		
 		//CloseHandle(pData->pd.piProcInfo.hProcess);
-		CloseHandle(pd.piProcInfo.hThread);
+		CloseHandle(piProcInfo.hThread);
+		pd.hProcess = piProcInfo.hProcess;
 
 		// Close the ends we can't use
 		CloseHandle( hChildStd_OUT_Wr );
@@ -284,15 +286,15 @@ void Bu::Process::close()
 
 		pd.hStdIn = pd.hStdOut = pd.hStdErr = NULL;
 
-		if( !TerminateProcess(pd.piProcInfo.hProcess, 1) )
+		if( !TerminateProcess(pd.hProcess, 1) )
 		{
 			throw Bu::ExceptionBase("Error closing process.");
 		}
 		
-		GetExitCodeProcess( pd.piProcInfo.hProcess, (PDWORD)&iProcStatus );
+		GetExitCodeProcess( pd.hProcess, (PDWORD)&iProcStatus );
 
-		CloseHandle( pd.piProcInfo.hProcess );
-		pd.piProcInfo.hProcess = NULL;
+		CloseHandle( pd.hProcess );
+		pd.hProcess = NULL;
 	}
 #else
 	if( pd.iPid )
@@ -343,7 +345,7 @@ Bu::size Bu::Process::read( void *pBuf, Bu::size nBytes )
 			dwLen, &dwRead, NULL);
 //	if( dwRead < dwLen )
 	{
-		bSuccess = GetExitCodeProcess( pd.piProcInfo.hProcess, &lExitCode );
+		bSuccess = GetExitCodeProcess( pd.hProcess, &lExitCode );
 		if( lExitCode != STILL_ACTIVE )
 		{
 			bStdOutEos = true;
@@ -458,7 +460,7 @@ void Bu::Process::setPosEnd( Bu::size )
 bool Bu::Process::isEos()
 {
 #ifdef WIN32
-	return (pd.piProcInfo.hProcess == NULL);
+	return (pd.hProcess == NULL);
 #else
 	return (pd.iPid == 0);
 #endif
@@ -573,7 +575,7 @@ bool Bu::Process::isRunning()
 {
 #ifdef WIN32
 	DWORD lExitCode;
-	GetExitCodeProcess( pd.piProcInfo.hProcess, &lExitCode );
+	GetExitCodeProcess( pd.hProcess, &lExitCode );
 	if( lExitCode != STILL_ACTIVE )
 		checkClose();
 #else
@@ -607,7 +609,7 @@ pid_t Bu::Process::getPid()
 bool Bu::Process::childExited()
 {
 #ifdef WIN32
-	return pd.piProcInfo.hProcess != NULL;
+	return pd.hProcess != NULL;
 #else
 	return WIFEXITED( iProcStatus );
 #endif
