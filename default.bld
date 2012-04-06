@@ -210,8 +210,7 @@ target ["tests/lzma"]
 	LDFLAGS += "-llzma";
 }
 
-target ["tests/itoserver", "tests/socketblock", "tests/itoheap",
-	"tests/itoqueue1", "tests/itoqueue2", "tests/conduit"]
+target ["tests/threadid"]
 {
 	LDFLAGS += "-lpthread";
 }

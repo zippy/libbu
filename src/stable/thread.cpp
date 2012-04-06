@@ -9,12 +9,36 @@
 
 #include "bu/config.h"
 
+Bu::ThreadId::ThreadId( pthread_t tId ) :
+	tId( tId )
+{
+}
+
+Bu::ThreadId::ThreadId()
+{
+}
+
+bool Bu::ThreadId::operator==( const Bu::ThreadId &rhs )
+{
+	return pthread_equal( tId, rhs.tId );
+}
+
+bool Bu::ThreadId::operator!=( const ThreadId &rhs )
+{
+	return !pthread_equal( tId, rhs.tId );
+}
+
 Bu::Thread::Thread()
 {
 }
 
 Bu::Thread::~Thread()
 {
+}
+
+Bu::ThreadId Bu::Thread::currentThread()
+{
+	return ThreadId( pthread_self() );
 }
 
 bool Bu::Thread::start()

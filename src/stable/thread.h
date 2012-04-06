@@ -12,6 +12,22 @@
 
 namespace Bu
 {
+	class ThreadId
+	{
+	friend class Thread;
+	private:
+		ThreadId( pthread_t tId );
+
+	public:
+		ThreadId();
+
+		bool operator==( const ThreadId &rhs );
+		bool operator!=( const ThreadId &rhs );
+
+	private:
+		pthread_t tId;
+	};
+
 	/**
 	 * Simple thread class.  This wraps the basic pthread (posix threads)
 	 * system in an object oriented sort of way.  It allows you to create a
@@ -31,6 +47,8 @@ namespace Bu
 		 * Destroy an Thread thread.
 		 */
 		virtual ~Thread();
+
+		static ThreadId currentThread();
 
 		/**
 		 * Begin thread execution.  This will call the overridden run function,
@@ -100,7 +118,6 @@ namespace Bu
 		static void *threadRunner( void *pThread );
 
 		void yield();
-		
 	};
 }
 
