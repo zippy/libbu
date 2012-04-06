@@ -9,6 +9,8 @@
 
 #include "bu/config.h"
 
+namespace Bu { subExceptionDef( ThreadException ); }
+
 Bu::ThreadId::ThreadId( pthread_t tId ) :
 	tId( tId )
 {
@@ -43,7 +45,10 @@ Bu::ThreadId Bu::Thread::currentThread()
 
 bool Bu::Thread::start()
 {
-	nHandle = pthread_create( &ptHandle, NULL, threadRunner, this );
+	if( pthread_create( &ptHandle, NULL, threadRunner, this ) )
+	{
+		throw Bu::ThreadException("Could not start thread.");
+	}
 
 	return true;
 }

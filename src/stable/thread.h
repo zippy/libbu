@@ -10,8 +10,11 @@
 
 #include <pthread.h>
 
+#include "bu/exceptionbase.h"
+
 namespace Bu
 {
+	subExceptionDecl( ThreadException );
 	class ThreadId
 	{
 	friend class Thread;
@@ -49,6 +52,7 @@ namespace Bu
 		virtual ~Thread();
 
 		static ThreadId currentThread();
+		ThreadId getId() { return ThreadId( ptHandle ); }
 
 		/**
 		 * Begin thread execution.  This will call the overridden run function,
@@ -93,12 +97,11 @@ namespace Bu
 
 	private:
 		pthread_t ptHandle;	/**< Internal handle to the posix thread. */
-		int nHandle;	/**< Numeric handle to the posix thread. */
 
 	protected:
 		/**
-		 * The workhorse of the Thread class.  This is the function that will run
-		 * in the thread, when this function exits the thread dies and is
+		 * The workhorse of the Thread class.  This is the function that will
+		 * run in the thread, when this function exits the thread dies and is
 		 * cleaned up by the system.  Make sure to read up on ThreadMutex,
 		 * ThreadCondition, and cancel to see how to control and protect
 		 * everything you do in a safe way within this function.
