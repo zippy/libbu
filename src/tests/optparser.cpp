@@ -13,7 +13,8 @@ class Opts : public Bu::OptParser
 {
 public:
 	Opts() :
-		iBob( 542 )
+		iBob( 542 ),
+		bVal( false )
 	{
 		addHelpBanner("optparser - Test some option things...");
 
@@ -41,11 +42,13 @@ public:
 			true
 			);
 		addOption( sVar, 's', "str", "Set a variable, see what it does.");
+		addOption( bVal, 'b', "bool", "It's a thing.");
 		addOption( iBob, "bob", "Change iBob to whatever you want.");
 		addOption( dBob, 'd', "Change dBob to whatever you want.");
 
 		setOverride("str", "Bob!");
 		setHelpDefault("bob", "=542");
+		setOverride("bool", true );
 	
 		addHelpOption();
 
@@ -73,6 +76,7 @@ public:
 	int iBob;
 	float dBob;
 	Bu::String sVar;
+	bool bVal;
 };
 
 int main( int argc, char *argv[] )
@@ -84,5 +88,6 @@ int main( int argc, char *argv[] )
 	sio << "sVar = \"" << o.sVar << "\"" << sio.nl;
 	sio << "iBob = " << o.iBob << sio.nl;
 	sio << "dBob = " << o.dBob << sio.nl;
+	sio << "bVal = " << o.bVal << sio.nl;
 }
 
