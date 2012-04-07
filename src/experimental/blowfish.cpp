@@ -18,11 +18,13 @@ Bu::Blowfish::~Blowfish()
 	reset();
 }
 
+#define revBytes( x ) x = (((x&0xff)<<24)|((x&0xff00)<<8)|((x&0xff0000)>>8)|((x&0xff000000)>>24))
+
 void Bu::Blowfish::setPassword( const Bu::String &sPass )
 {
 	reset();
 
-	unsigned int i,j,len=sPass.getSize();
+	uint32_t i,j,len=sPass.getSize();
 	Word Work,null0,null1;
 
 	if (len > 0)
@@ -70,7 +72,7 @@ Bu::size Bu::Blowfish::stop()
 
 Bu::size Bu::Blowfish::read( void *pBuf, Bu::size iBytes )
 {
-	unsigned int i;
+	uint32_t i;
 	DWord dwWork;
 
 	if (iBytes%8)
@@ -83,8 +85,11 @@ Bu::size Bu::Blowfish::read( void *pBuf, Bu::size iBytes )
 	for (i=0;i<iBytes;i++)
 	{
 		int iRead = rNext.read( &dwWork, 8 );
-		sio << "Read: " << iRead << sio.nl;
+		revBytes( dwWork.word0.word );
+		revBytes( dwWork.word1.word );
 		BF_De(&dwWork.word0,&dwWork.word1);
+		dwWork.word0.word = htobe32( dwWork.word0.word );
+		dwWork.word1.word = htobe32( dwWork.word1.word );
 		memcpy( ((char *)pBuf)+(i*8), &dwWork, 8 );
 	}
 
@@ -94,7 +99,7 @@ Bu::size Bu::Blowfish::read( void *pBuf, Bu::size iBytes )
 
 Bu::size Bu::Blowfish::write( const void *pBuf, Bu::size iBytes )
 {
-	unsigned int i;
+	uint32_t i;
 	DWord dwWork;
 
 	if (iBytes%8)
@@ -107,7 +112,11 @@ Bu::size Bu::Blowfish::write( const void *pBuf, Bu::size iBytes )
 	for (i=0;i<iBytes;i++)
 	{
 		memcpy( &dwWork, ((const char *)pBuf)+(i*8), 8 );
+		dwWork.word0.word = be32toh( dwWork.word0.word );
+		dwWork.word1.word = be32toh( dwWork.word1.word );
 		BF_En(&dwWork.word0,&dwWork.word1);
+		revBytes( dwWork.word0.word );
+		revBytes( dwWork.word1.word );
 		rNext.write( &dwWork, 8 );
 	}
 
@@ -117,9 +126,9 @@ Bu::size Bu::Blowfish::write( const void *pBuf, Bu::size iBytes )
 
 void Bu::Blowfish::reset()
 {
-	unsigned int i,j;
+	uint32_t i,j;
 
-	static unsigned int PA_Init[NUM_SUBKEYS] =
+	static uint32_t PA_Init[NUM_SUBKEYS] =
 	{
 		0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344,
 		0xa4093822, 0x299f31d0, 0x082efa98, 0xec4e6c89,
@@ -128,7 +137,7 @@ void Bu::Blowfish::reset()
 		0x9216d5d9, 0x8979fb1b
 	};
 
-	static unsigned int SB_Init[NUM_S_BOXES][NUM_ENTRIES] = {
+	static uint32_t SB_Init[NUM_S_BOXES][NUM_ENTRIES] = {
 	{
 		0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7,
 		0xb8e1afed, 0x6a267e96, 0xba7c9045, 0xf12c7f99,

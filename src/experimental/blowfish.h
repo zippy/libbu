@@ -29,24 +29,24 @@ namespace Bu
 		using Bu::Stream::write;
 
 	private:
-		unsigned int PA[NUM_SUBKEYS];
-		unsigned int SB[NUM_S_BOXES][NUM_ENTRIES];
+		uint32_t PA[NUM_SUBKEYS];
+		uint32_t SB[NUM_S_BOXES][NUM_ENTRIES];
 
 #if __BYTE_ORDER == __BIG_ENDIAN
 		struct WordByte
 		{
-			unsigned int zero:8;
-			unsigned int one:8;
-			unsigned int two:8;
-			unsigned int three:8;
+			uint32_t zero:8;
+			uint32_t one:8;
+			uint32_t two:8;
+			uint32_t three:8;
 		};
 #elif __BYTE_ORDER == __LITTLE_ENDIAN
 		struct WordByte
 		{
-			unsigned int three:8;
-			unsigned int two:8;
-			unsigned int one:8;
-			unsigned int zero:8;
+			uint32_t three:8;
+			uint32_t two:8;
+			uint32_t one:8;
+			uint32_t zero:8;
 		};
 #else
 #error No endianness defined
@@ -54,7 +54,7 @@ namespace Bu
 
 		union Word
 		{
-			unsigned int word;
+			uint32_t word;
 			WordByte byte;
 		};
 
