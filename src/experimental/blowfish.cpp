@@ -9,7 +9,7 @@ using Bu::sio;
 	 SB[3][x.byte.three])
 
 Bu::Blowfish::Blowfish( Bu::Stream &rNext ) :
-	Bu::Filter( rNext )
+	Bu::Cipher( rNext )
 {
 }
 
@@ -43,7 +43,7 @@ void Bu::Blowfish::setPassword( const Bu::String &sPass )
 
 		for (i=0;i<NUM_SUBKEYS;i+=2)
 		{
-			BF_En(&null0,&null1);
+			keyEncipher( null0, null1 );
 			PA[i] = null0.word;
 			PA[i+1] = null1.word;
 		}
@@ -51,7 +51,7 @@ void Bu::Blowfish::setPassword( const Bu::String &sPass )
 		for (j=0;j<NUM_S_BOXES;j++)
 			for (i=0;i<NUM_ENTRIES;i+=2)
 			{
-				BF_En(&null0,&null1);
+				keyEncipher( null0, null1 );
 				SB[j][i] = null0.word;
 				SB[j][i+1] = null1.word;
 			}
@@ -59,69 +59,6 @@ void Bu::Blowfish::setPassword( const Bu::String &sPass )
 
 	Work.word = null0.word = null1.word = 0;
 	len = 0;
-}
-
-void Bu::Blowfish::start()
-{
-}
-
-Bu::size Bu::Blowfish::stop()
-{
-	return 0;
-}
-
-Bu::size Bu::Blowfish::read( void *pBuf, Bu::size iBytes )
-{
-	uint32_t i;
-	DWord dwWork;
-
-	if (iBytes%8)
-	{
-		return 0;
-	}
-
-	iBytes /= 8;
-
-	for (i=0;i<iBytes;i++)
-	{
-		int iRead = rNext.read( &dwWork, 8 );
-		revBytes( dwWork.word0.word );
-		revBytes( dwWork.word1.word );
-		BF_De(&dwWork.word0,&dwWork.word1);
-		dwWork.word0.word = htobe32( dwWork.word0.word );
-		dwWork.word1.word = htobe32( dwWork.word1.word );
-		memcpy( ((char *)pBuf)+(i*8), &dwWork, 8 );
-	}
-
-	memset( &dwWork, 0, 8 );
-	return iBytes*8;
-}
-
-Bu::size Bu::Blowfish::write( const void *pBuf, Bu::size iBytes )
-{
-	uint32_t i;
-	DWord dwWork;
-
-	if (iBytes%8)
-	{
-		return 0;
-	}
-
-	iBytes /= 8;
-
-	for (i=0;i<iBytes;i++)
-	{
-		memcpy( &dwWork, ((const char *)pBuf)+(i*8), 8 );
-		dwWork.word0.word = be32toh( dwWork.word0.word );
-		dwWork.word1.word = be32toh( dwWork.word1.word );
-		BF_En(&dwWork.word0,&dwWork.word1);
-		revBytes( dwWork.word0.word );
-		revBytes( dwWork.word1.word );
-		rNext.write( &dwWork, 8 );
-	}
-
-	memset( &dwWork, 0, 8 );
-	return iBytes*8;
 }
 
 void Bu::Blowfish::reset()
@@ -413,10 +350,22 @@ void Bu::Blowfish::reset()
 			SB[j][i] = SB_Init[j][i];
 }
 
-void Bu::Blowfish::BF_En( Word *x1, Word *x2 )
+void Bu::Blowfish::encipher( void *pData )
 {
-	Word w1=*x1,w2=*x2;
+	DWord *dwWork = (DWord *)pData;
+	Word &w1 = dwWork->word0, &w2 = dwWork->word1;
 
+	w1.word = be32toh( w1.word );
+	w2.word = be32toh( w2.word );
+
+	keyEncipher( w1, w2 );
+
+	revBytes( w1.word );
+	revBytes( w2.word );
+}
+
+void Bu::Blowfish::keyEncipher( Word &w1, Word &w2 )
+{
 	w1.word ^= PA[0];
 	w2.word ^= F(w1)^PA[1];       w1.word ^= F(w2)^PA[2];
 	w2.word ^= F(w1)^PA[3];       w1.word ^= F(w2)^PA[4];
@@ -428,14 +377,17 @@ void Bu::Blowfish::BF_En( Word *x1, Word *x2 )
 	w2.word ^= F(w1)^PA[15];      w1.word ^= F(w2)^PA[16];
 	w2.word ^= PA[17];
 
-	*x1 = w2;
-	*x2 = w1;
+	Bu::swap( w1, w2 );
 }
 
-void Bu::Blowfish::BF_De( Word *x1, Word *x2 )
+void Bu::Blowfish::decipher( void *pData )
 {
-	Word w1=*x1,w2=*x2;
+	DWord *dwWork = (DWord *)pData;
+	Word &w1 = dwWork->word0, &w2 = dwWork->word1;
 
+	revBytes( w1.word );
+	revBytes( w2.word );
+	
 	w1.word ^= PA[17];
 	w2.word ^= F(w1)^PA[16];      w1.word ^= F(w2)^PA[15];
 	w2.word ^= F(w1)^PA[14];      w1.word ^= F(w2)^PA[13];
@@ -446,8 +398,10 @@ void Bu::Blowfish::BF_De( Word *x1, Word *x2 )
 	w2.word ^= F(w1)^PA[4];       w1.word ^= F(w2)^PA[3];
 	w2.word ^= F(w1)^PA[2];       w1.word ^= F(w2)^PA[1];
 	w2.word ^= PA[0];
+	
+	Bu::swap( w1, w2 );
 
-	*x1 = w2;
-	*x2 = w1;
+	w1.word = htobe32( w1.word );
+	w2.word = htobe32( w2.word );
 }
 

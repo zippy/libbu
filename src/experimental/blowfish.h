@@ -1,7 +1,7 @@
 #ifndef BU_BLOWFISH_H
 #define BU_BLOWFISH_H
 
-#include "bu/filter.h"
+#include "bu/cipher.h"
 
 #define NUM_SUBKEYS  18
 #define NUM_S_BOXES  4
@@ -12,21 +12,13 @@
 
 namespace Bu
 {
-	class Blowfish : public Bu::Filter
+	class Blowfish : public Bu::Cipher
 	{
 	public:
 		Blowfish( Bu::Stream &rNext );
 		virtual ~Blowfish();
 
 		void setPassword( const Bu::String &sPass );
-
-		virtual void start();
-		virtual Bu::size stop();
-
-		virtual Bu::size read( void *pBuf, Bu::size iBytes );
-		virtual Bu::size write( const void *pBuf, Bu::size iBytes );
-		using Bu::Stream::read;
-		using Bu::Stream::write;
 
 	private:
 		uint32_t PA[NUM_SUBKEYS];
@@ -65,8 +57,9 @@ namespace Bu
 		};
 
 		void reset();
-		inline void BF_En( Word *, Word * );
-		inline void BF_De( Word *, Word * );
+		virtual void encipher( void *pData );
+		virtual void decipher( void *pData );
+		inline void keyEncipher( Word &w1, Word &w2 );
 	};
 };
 
