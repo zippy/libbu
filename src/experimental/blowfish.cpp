@@ -9,7 +9,7 @@ using Bu::sio;
 	 SB[3][x.byte.three])
 
 Bu::Blowfish::Blowfish( Bu::Stream &rNext ) :
-	Bu::Cipher( rNext )
+	Bu::Cipher<8>( rNext )
 {
 }
 

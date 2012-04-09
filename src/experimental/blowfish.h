@@ -12,7 +12,7 @@
 
 namespace Bu
 {
-	class Blowfish : public Bu::Cipher
+	class Blowfish : public Bu::Cipher<8>
 	{
 	public:
 		Blowfish( Bu::Stream &rNext );

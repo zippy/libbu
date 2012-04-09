@@ -5,17 +5,72 @@
 
 namespace Bu
 {
+	template<int iBlockSize>
 	class Cipher : Bu::Filter
 	{
 	public:
-		Cipher( Bu::Stream &rNext );
-		virtual ~Cipher();
+		Cipher( Bu::Stream &rNext ) :
+			Bu::Filter( rNext )
+		{
+		}
 
-		virtual void start();
-		virtual Bu::size stop();
+		virtual ~Cipher()
+		{
+		}
 
-		virtual Bu::size read( void *pBuf, Bu::size iBytes );
-		virtual Bu::size write( const void *pBuf, Bu::size iBytes );
+		virtual void start()
+		{
+		}
+
+		virtual Bu::size stop()
+		{
+			return 0;
+		}
+
+		virtual Bu::size read( void *pBuf, Bu::size iBytes )
+		{
+			uint32_t i;
+
+			if (iBytes%iBlockSize)
+			{
+				return 0;
+			}
+
+			iBytes /= iBlockSize;
+
+			for (i=0;i<iBytes;i++)
+			{
+				void *pSeg = ((char *)pBuf)+(i*iBlockSize);
+				int iRead = rNext.read( pSeg, iBlockSize );
+				decipher( pSeg );
+			}
+
+			return iBytes*iBlockSize;
+		}
+
+		virtual Bu::size write( const void *pBuf, Bu::size iBytes )
+		{
+			uint32_t i;
+
+			if (iBytes%iBlockSize)
+			{
+				return 0;
+			}
+
+			iBytes /= iBlockSize;
+
+			char buf[iBlockSize];
+
+			for (i=0;i<iBytes;i++)
+			{
+				memcpy( buf, ((const char *)pBuf)+(i*iBlockSize), 8 );
+				encipher( buf );
+				rNext.write( buf, iBlockSize );
+			}
+
+			memset( &buf, 0, iBlockSize );
+			return iBytes*iBlockSize;
+		}
 
 		using Bu::Stream::read;
 		using Bu::Stream::write;
