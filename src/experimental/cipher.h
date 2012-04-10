@@ -6,7 +6,7 @@
 namespace Bu
 {
 	template<int iBlockSize>
-	class Cipher : Bu::Filter
+	class Cipher : public Bu::Filter
 	{
 	public:
 		Cipher( Bu::Stream &rNext ) :

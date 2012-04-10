@@ -4,6 +4,8 @@
 #include <bu/hex.h>
 #include <bu/strfilter.h>
 #include <bu/sio.h>
+#include <bu/ciphermodecfb.h>
+#include <bu/ciphermodeecb.h>
 
 using namespace Bu;
 
@@ -50,13 +52,13 @@ int main( int argc, char *argv[] )
 	for( int j = 0; j < 34; j++ )
 	{
 		MemBuf mb;
-		Blowfish bf( mb );
+		BlowfishEcb bf( mb );
 		bf.setPassword( decodeStr<Hex>( testdat[j][0] ) );
 		bf.write( decodeStr<Hex>( testdat[j][1] ) );
 		sio << "Test " << j << ": " << (mb.getString() == decodeStr<Hex>( testdat[j][2] )) << " (" << encodeStr<Hex>( mb.getString(), true ) << " == " << testdat[j][2] << ")" << sio.nl;
 
 		mb.setPos( 0 );
-		Blowfish bf2( mb );
+		BlowfishEcb bf2( mb );
 		bf2.setPassword( decodeStr<Hex>( testdat[j][0] ) );
 		char buf[8];
 		bf2.read( buf, 8 );
@@ -64,29 +66,27 @@ int main( int argc, char *argv[] )
 		sio << "  - Back: " << (Bu::String(testdat[j][1]) == encodeStr<Hex>(String(buf,8),true)) << sio.nl;
 	}
 
-	/*
 	{
 		File fIn("data.plain", File::Read );
 		File fOut("data.crypt", File::WriteNew );
 
-		Blowfish bOut( fOut );
+		BlowfishOfb bOut( fOut );
+		bOut.setIv("01234567");
 		bOut.setPassword("abcdefghijklmnop");
 		bOut.write( fIn.readAll() );
 	}
-	*/
-	/*
 	{
 		File fIn("data.java", File::Read );
 		File fOut("data.stuff", File::WriteNew );
 
-		Blowfish bIn( fIn );
+		BlowfishOfb bIn( fIn );
+		bIn.setIv("01234567");
 		bIn.setPassword("abcdefghijklmnop");
 		char buf[64];
 		bIn.read( buf, 64 );
 		fOut.write( buf, 64 );
 		sio << sio.nl << "All done." << sio.nl;
 	}
-	*/
 
 	return 0;
 }
