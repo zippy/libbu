@@ -43,7 +43,7 @@ autoconfig: autoconfig.cpp
 src/autoconfig.h src/version.h: autoconfig
 	./autoconfig $@
 
-src/signals.h: signals-pregen.h
+src/signals.h: pregen/signals.h
 	cp $< $@
 
 headers: ${HEADERS}
