@@ -84,6 +84,9 @@ tests/deflate:
 tests/lzma:
 	g++ -ggdb -W -Wall -I. -L. $< -o $@ -lbu++ -llzma
 
+tests/threadid:
+	g++ -ggdb -W -Wall -I. -L. $< -o $@ -lbu++ -lpthread
+
 libbu++.a: ${HEADERS} ${OBJECTS}
 	ar -r libbu++.a ${OBJECTS}
 

@@ -71,7 +71,7 @@ int main( int argc, char *argv[] )
 			"#define LIBBU_VERSION		0\n"
 			"#define LIBBU_REVISION		1\n"
 			"#define LIBBU_VERSION_STR	\"0.1\"\n"
-			"#define LIBBU_API			0\n"
+			"#define LIBBU_API		0\n"
 			"#define LIBBU_VC_ID		\"");
 		FILE *psub = popen("svnversion -n", "r");
 		char buf[1024];
