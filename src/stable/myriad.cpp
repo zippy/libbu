@@ -8,6 +8,7 @@
 #include "bu/myriad.h"
 #include "bu/stream.h"
 #include "bu/myriadstream.h"
+#include "bu/mutexlocker.h"
 #include <stdio.h>
 
 #include "bu/sio.h"
@@ -50,11 +51,13 @@ Bu::Myriad::Myriad( Bu::Stream &sStore, int iBlockSize, int iPreallocate ) :
 
 Bu::Myriad::~Myriad()
 {
+	mActiveBlocks.lock();
 	if( !hActiveBlocks.isEmpty() )
 	{
 		sio << "Bu::Myriad::~Myriad(): Error: There are "
 			<< hActiveBlocks.getSize() << " unsynced blocks!" << sio.nl;
 	}
+	mActiveBlocks.unlock();
 	sync();
 
 	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
@@ -67,6 +70,7 @@ void Bu::Myriad::sync()
 {
 	updateHeader();
 
+	mActiveBlocks.lock();
 	for( BlockHash::iterator i = hActiveBlocks.begin(); i; i++ )
 	{
 		if( (*i)->bChanged )
@@ -74,10 +78,12 @@ void Bu::Myriad::sync()
 			syncBlock( *i );
 		}
 	}
+	mActiveBlocks.unlock();
 }
 
 void Bu::Myriad::initialize()
 {
+	MutexLocker mLock( mHeader );
 	sStore.setPosEnd( 0 );
 	int iSize = sStore.tell();
 	sStore.setPos( 0 );
@@ -173,6 +179,8 @@ void Bu::Myriad::initialize()
 
 void Bu::Myriad::initialize( int iBlockSize, int iPreAllocate )
 {
+	MutexLocker mLock( mHeader );
+
 	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
 	{
 		delete *i;
@@ -262,6 +270,8 @@ void Bu::Myriad::initialize( int iBlockSize, int iPreAllocate )
 
 void Bu::Myriad::updateHeader()
 {
+	MutexLocker mLock( mHeader );
+
 	if( bHeaderChanged == false )
 		return;
 	if( !sStore.canWrite() )
@@ -337,6 +347,8 @@ void Bu::Myriad::updateHeader()
 
 int Bu::Myriad::createStream( int iPreAllocate )
 {
+	MutexLocker mLock( mHeader );
+
 	Stream *pStr = new Stream();
 	pStr->iId = aStreams.last()->iId+1;
 	//sio << "Myriad: New stream id=" << pStr->iId << ", iPreAllocate="
@@ -360,6 +372,8 @@ int Bu::Myriad::createStream( int iPreAllocate )
 
 int Bu::Myriad::createStreamWithId( int iId, int iPreAllocate )
 {
+	MutexLocker mLock( mHeader );
+
 	try
 	{
 		findStream( iId );
@@ -432,6 +446,8 @@ int Bu::Myriad::findEmptyBlock()
 
 void Bu::Myriad::deleteStream( int iId )
 {
+	MutexLocker mLock( mHeader );
+
 	if( iId < 0 )
 		throw MyriadException( MyriadException::invalidStreamId,
 				"Invalid stream id.");
@@ -458,6 +474,8 @@ void Bu::Myriad::deleteStream( int iId )
 
 Bu::Array<int> Bu::Myriad::getStreamIds()
 {
+	MutexLocker mLock( mHeader );
+
 	Bu::Array<int> aRet( aStreams.getSize() );
 	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
 	{
@@ -469,11 +487,15 @@ Bu::Array<int> Bu::Myriad::getStreamIds()
 
 int Bu::Myriad::getStreamSize( int iId )
 {
+	MutexLocker mLock( mHeader );
+
 	return findStream( iId )->iSize;
 }
 
 bool Bu::Myriad::hasStream( int iId )
 {
+	MutexLocker mLock( mHeader );
+
 	try
 	{
 		findStream( iId );
@@ -486,12 +508,16 @@ bool Bu::Myriad::hasStream( int iId )
 
 Bu::MyriadStream Bu::Myriad::openStream( int iId )
 {
+	MutexLocker mLock( mHeader );
+
 	//sio << "Myriad:  Request to open stream: " << iId << sio.nl;
 	return MyriadStream( *this, findStream( iId ) );
 }
 
 int Bu::Myriad::getNumStreams()
 {
+	MutexLocker mLock( mHeader );
+
 	return aStreams.getSize();
 }
 
@@ -512,6 +538,8 @@ int Bu::Myriad::getNumUsedBlocks()
 
 int Bu::Myriad::getTotalUsedBytes()
 {
+	MutexLocker mLock( mHeader );
+
 	int iTotalSize = 0;
 	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
 	{
@@ -522,6 +550,8 @@ int Bu::Myriad::getTotalUsedBytes()
 
 int Bu::Myriad::getTotalUnusedBytes()
 {
+	MutexLocker mLock( mHeader );
+
 	int iTotalSize = (iBlocks-iUsed)*iBlockSize;
 	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
 	{
@@ -532,6 +562,8 @@ int Bu::Myriad::getTotalUnusedBytes()
 
 int Bu::Myriad::getTotalUnusedBytes( int iFakeBlockSize )
 {
+	MutexLocker mLock( mHeader );
+
 	int iTotalSize = (iBlocks-iUsed)*iFakeBlockSize;
 	for( StreamArray::iterator i = aStreams.begin(); i; i++ )
 	{
@@ -565,7 +597,9 @@ Bu::Myriad::Block *Bu::Myriad::getBlock( int iBlock )
 	pBlock->bChanged = false;
 	pBlock->iBlockIndex = iBlock;
 
+	mActiveBlocks.lock();
 	hActiveBlocks.insert( iBlock, pBlock );
+	mActiveBlocks.unlock();
 
 	return pBlock;
 }
@@ -576,7 +610,10 @@ void Bu::Myriad::releaseBlock( Bu::Myriad::Block *pBlock )
 		return;
 //	sio << "Myriad:  Releasing block " << pBlock->iBlockIndex << sio.nl;
 	syncBlock( pBlock );
+	mActiveBlocks.lock();
 	hActiveBlocks.erase( pBlock->iBlockIndex );
+	mActiveBlocks.unlock();
+
 	delete[] pBlock->pData;
 	delete pBlock;
 }
@@ -594,6 +631,8 @@ void Bu::Myriad::syncBlock( Block *pBlock )
 
 int Bu::Myriad::streamAddBlock( Stream *pStream )
 {
+	MutexLocker mLock( mHeader );
+
 	int iBlock = findEmptyBlock();
 	pStream->aBlocks.append( iBlock );
 	bsBlockUsed.setBit( iBlock );
@@ -604,6 +643,8 @@ int Bu::Myriad::streamAddBlock( Stream *pStream )
 
 void Bu::Myriad::setStreamSize( Stream *pStream, long iSize )
 {
+	MutexLocker mLock( mHeader );
+
 	if( pStream->iSize == iSize )
 	{
 		return;
@@ -616,6 +657,8 @@ void Bu::Myriad::setStreamSize( Stream *pStream, long iSize )
 		{
 			if( bsBlockUsed.getBit( pStream->aBlocks.last() ) )
 				iUsed--;
+			else
+				sio << "Unused block used in stream? " << pStream->aBlocks.last() << sio.nl;
 			bsBlockUsed.setBit( pStream->aBlocks.last(), false );
 			pStream->aBlocks.eraseLast();
 		}
@@ -628,7 +671,12 @@ void Bu::Myriad::setStreamSize( Stream *pStream, long iSize )
 		for( int iNewSize = pStream->aBlocks.getSize()*iBlockSize;
 			 iNewSize < iSize; iNewSize += iBlockSize )
 		{
-			streamAddBlock( pStream );
+			//streamAddBlock( pStream );
+			int iBlock = findEmptyBlock();
+			pStream->aBlocks.append( iBlock );
+			bsBlockUsed.setBit( iBlock );
+			bHeaderChanged = true;
+			iUsed++;
 		}
 		pStream->iSize = iSize;
 		bHeaderChanged = true;
@@ -642,12 +690,20 @@ void Bu::Myriad::headerChanged()
 
 bool Bu::Myriad::isMyriad( Bu::Stream &sStore )
 {
+	uint8_t uTmp;
+
+	return isMyriad( sStore, uTmp );
+}
+
+bool Bu::Myriad::isMyriad( Bu::Stream &sStore, uint8_t &uTmp )
+{
 	sStore.setPos( 0 );
 
 	unsigned char buf[4];
 	if( sStore.read( buf, 4 ) < 4 )
 		throw MyriadException( MyriadException::emptyStream,
 				"Input stream appears to be empty.");
+	sStore.read( &uTmp, 1 );
 	sStore.setPos( 0 );
 	if( memcmp( buf, Myriad_MAGIC_CODE, 4 ) )
 	{

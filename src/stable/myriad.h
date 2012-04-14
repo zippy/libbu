@@ -13,6 +13,7 @@
 #include "bu/exceptionbase.h"
 #include "bu/array.h"
 #include "bu/hash.h"
+#include "bu/mutex.h"
 
 namespace Bu
 {
@@ -153,6 +154,13 @@ namespace Bu
 		 * depending on weather or not it's a Myriad stream.  This will throw
 		 * an exception if the stream is empty, or is not random access.
 		 */
+		static bool isMyriad( Bu::Stream &sStore, uint8_t &uVer );
+		
+		/**
+		 * Read the first few bytes from the given stream and return true/false
+		 * depending on weather or not it's a Myriad stream.  This will throw
+		 * an exception if the stream is empty, or is not random access.
+		 */
 		static bool isMyriad( Bu::Stream &sStore );
 
 		const Bu::BitString &getBlocksUsed() const;
@@ -216,6 +224,9 @@ namespace Bu
 		typedef Bu::Hash<int, Block *> BlockHash;
 		BlockHash hActiveBlocks;
 		bool bHeaderChanged;
+
+		Bu::Mutex mHeader;
+		Bu::Mutex mActiveBlocks;
 	};
 };
 
