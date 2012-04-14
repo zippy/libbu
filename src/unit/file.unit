@@ -48,7 +48,11 @@ suite File
 			if( s < 50 )
 			{
 				unitTest( total == 256 );
+				unitTest( sf.isEos() == false );
+				unitTest( sf.read( buf, 1 ) == 0 );
 				unitTest( sf.isEos() == true );
+				// EOS is only set when an attempt to read past the end of
+				// the stream is made, not when a short block is returned.
 				break;
 			}
 		}

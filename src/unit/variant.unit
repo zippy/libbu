@@ -55,7 +55,7 @@ suite Variant
 			arg( mkastring().getStr() ).
 			arg( i1, Fmt(2).fill('0') ).
 			arg( i2, Fmt(2).fill('0') );
-		sio << sio.nl << out << sio.nl;
+		// sio << sio.nl << out << sio.nl;
 		unitTest( out == "hello-stuff-32-00.odp" );
 	}
 }

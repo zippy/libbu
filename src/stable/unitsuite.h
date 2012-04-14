@@ -13,6 +13,7 @@
 #include "bu/string.h"
 #include "bu/file.h"
 #include "bu/array.h"
+#include "bu/hash.h"
 
 namespace Bu
 {
@@ -103,6 +104,7 @@ namespace Bu
 
 	private:
 		int onListCases( Bu::Array<Bu::String> aParam );
+		int onAddTest( Bu::Array<Bu::String> aParam );
 
 	private:
 		typedef struct TestInfo
@@ -124,6 +126,8 @@ namespace Bu
 		int iStepCount;
 		int iProgress;
 		time_t tLastUpdate;
+
+		Bu::Hash<Bu::String, bool> hSelTests;
 	};
 
 Bu::Formatter &operator<<( Bu::Formatter &f, const Bu::UnitSuite::Expect &e );

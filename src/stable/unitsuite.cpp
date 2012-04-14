@@ -32,7 +32,6 @@ Bu::UnitSuite::~UnitSuite()
 {
 }
 
-// Argument handling is coming soon, I promise.
 int Bu::UnitSuite::run( int argc, char *argv[] )
 {
 	bool bCleanup = true;
@@ -41,8 +40,21 @@ int Bu::UnitSuite::run( int argc, char *argv[] )
 			"List available test cases." );
 	p.addOption( bCleanup, "no-cleanup", "Don't erase temp files.");
 	p.setOverride( "no-cleanup", false );
+	p.setNonOption( Bu::slot( this, &Bu::UnitSuite::onAddTest ) );
 	p.addHelpOption();
 	p.parse( argc, argv );
+
+	if( !hSelTests.isEmpty() )
+	{
+		TestList lSub;
+		for( TestList::iterator i = lTests.begin(); i != lTests.end(); i++ )
+		{
+			if( hSelTests.has( (*i).sName ) )
+				lSub.append( *i );
+		}
+
+		lTests = lSub;
+	}
 
 	int iEPass = 0;
 	int iEFail = 0;
@@ -236,6 +248,12 @@ int Bu::UnitSuite::onListCases( StrArray )
 	}
 	sio << sio.nl;
 	exit( 0 );
+	return 0;
+}
+
+int Bu::UnitSuite::onAddTest( StrArray aParam )
+{
+	hSelTests.insert( aParam[0], true );
 	return 0;
 }
 
