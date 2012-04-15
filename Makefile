@@ -1,12 +1,12 @@
 #
-# Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+# Copyright (C) 2007-2012 Xagasoft, All rights reserved.
 #
 # This file is part of the libbu++ library and is released under the
 # terms of the license contained in the file LICENSE.
 #
 
 OBJECTS := $(patsubst %.cpp,%.o,$(wildcard src/stable/*.cpp src/unstable/*.cpp src/experimental/*.cpp))
-HEADERS := bu/signals.h bu/autoconfig.h bu/version.h bu/config.h $(foreach fn,$(wildcard src/stable/*.h src/unstable/*.h src/experimental/*.h),bu/$(notdir ${fn})) $(patsubst src/%,bu/%,$(wildcard src/compat/*.h))
+HEADERS := bu bu/signals.h bu/autoconfig.h bu/version.h bu/config.h $(foreach fn,$(wildcard src/stable/*.h src/unstable/*.h src/experimental/*.h),bu/$(notdir ${fn})) $(patsubst src/%,bu/%,$(wildcard src/compat/*.h))
 TOOLS := $(patsubst src/tools/%.cpp,%,$(wildcard src/tools/*.cpp))
 UNITS := $(patsubst src/unit/%.unit,unit/%,$(wildcard src/unit/*.unit))
 TESTS := $(patsubst src/tests/%.cpp,tests/%,$(wildcard src/tests/*.cpp))
@@ -21,6 +21,9 @@ tests: ${UNITS} ${TESTS}
 
 clean:
 	-rm ${HEADERS} ${OBJECTS} libbu++.a ${TOOLS} ${UNITS} ${TESTS}
+
+bu:
+	mkdir -p bu/compat
 
 bu/signals.h bu/config.h bu/autoconfig.h bu/version.h: bu/%: src/%
 	ln -s ../$< $@
@@ -60,6 +63,9 @@ viewcsv:
 
 bin2cpp:
 	g++ -ggdb -W -Wall -I. -L. $< -o $@ -lbu++ -lbz2 -lz -llzma
+
+myriad:
+	g++ -ggdb -W -Wall -I. -L. $< -o $@ -lbu++ -lpthread
 
 ${OBJECTS}: %.o: %.cpp
 	g++ -ggdb -W -Wall -I. $< -c -o $@

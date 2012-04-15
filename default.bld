@@ -1,5 +1,5 @@
 /*  test
- * Copyright (C) 2007-2011 Xagasoft, All rights reserved.
+ * Copyright (C) 2007-2012 Xagasoft, All rights reserved.
  *
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
@@ -236,18 +236,28 @@ target files("src/unit/*.unit").replace("src/","").replace(".unit","")
 	LDFLAGS += "-L. -lbu++";
 }
 
-target "libbu++-r$(svnversion "-n").tar.bz2"
+PKG_BASE = "libbu++-$(cat version)-r$(svnversion "-n").tar";
+
+target PKG_BASE
 {
 	input [
 		"LICENSE",
 		"Doxyfile",
+		"Makefile",
 		files("*.bld"),
 		"support/vim/syntax/taf.vim",
 		"support/vim/ftdetect/taf.vim",
 		"support/vim/ftplugin/taf.vim",
 		files("*.sh"),
+		files("autoconfig.cpp"),
 		files("src/*.cpp"),
 		files("src/*.h"),
+		files("src/stable/*.cpp"),
+		files("src/stable/*.h"),
+		files("src/unstable/*.cpp"),
+		files("src/unstable/*.h"),
+		files("src/experimental/*.cpp"),
+		files("src/experimental/*.h"),
 		files("src/tests/*.cpp"),
 		files("src/tests*.h"),
 		files("src/tools/*.cpp"),
@@ -255,21 +265,57 @@ target "libbu++-r$(svnversion "-n").tar.bz2"
 		files("src/unit/*.unit"),
 		files("src/doxy/*.dox"),
 		files("src/compat/*.cpp"),
-		files("src/compat/*.h")
+		files("src/compat/*.h"),
+		files("src/extra/*.cpp"),
+		files("src/extra/*.h"),
+		files("pregen/*"),
+		"api"
 		];
 	rule "tarball";
 	tag "pkg";
 }
 
+target PKG_BASE + ".gz"
+{
+	input PKG_BASE;
+	tag "pkg";
+	display "gzip";
+	profile "build"
+	{
+		execute("gzip -9 < ${INPUT} > ${OUTPUT}");
+	}
+}
+
+target PKG_BASE + ".bz2"
+{
+	input PKG_BASE;
+	tag "pkg";
+	display "bzip2";
+	profile "build"
+	{
+		execute("bzip2 -9 < ${INPUT} > ${OUTPUT}");
+	}
+}
+
+target PKG_BASE + ".xz"
+{
+	input PKG_BASE;
+	tag "pkg";
+	display "xz";
+	profile "build"
+	{
+		execute("xz -9 < ${INPUT} > ${OUTPUT}");
+	}
+}
+
 rule "tarball"
 {
-	input matches("LICENSE", "*.cpp", "*.h", "*.conf", "*.bld", "Doxyfile",
-		"*.vim", "*.sh", "*.unit");
+	input matches("LICENSE", "Makefile", "*.cpp", "*.h", "*.conf", "*.bld",
+		"Doxyfile", "*.vim", "*.sh", "*.unit", "api");
 	profile "build"
 	{
 		OUTDIR = OUTPUT.replace(".tar.bz2","");
-		execute("tar --transform=\"s@^@${OUTDIR}/@\" -c ${INPUT} |"
-			" bzip2 -9 > ${OUTPUT}");
+		execute("tar -f ./${OUTPUT} --transform=\"s@^@${OUTDIR}/@\" -c ${INPUT}");
 	}
 }
 

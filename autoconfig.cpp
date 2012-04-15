@@ -64,17 +64,26 @@ int main( int argc, char *argv[] )
 	}
 	else if( strcmp( argv[1], "src/version.h" ) == 0 )
 	{
+		FILE *fVer = fopen("version", "rt");
+		char buf[1024];
+		buf[fread( buf, 1, 1024, fVer )] = '\0';
+		for( int j = 0; buf[j]; j++ )
+			if( buf[j] == '\n' )
+				buf[j] = '\0';
+		fclose( fVer );
+
 		fOut = fopen( argv[1], "w" );
 		fprintf( fOut,
 			"#ifndef BU_VERSION_H\n"
 			"#define BU_VERSION_H\n\n"
 			"#define LIBBU_VERSION		0\n"
 			"#define LIBBU_REVISION		1\n"
-			"#define LIBBU_VERSION_STR	\"0.1\"\n"
+			"#define LIBBU_VERSION_STR	\"%s\"\n"
 			"#define LIBBU_API		0\n"
-			"#define LIBBU_VC_ID		\"");
+			"#define LIBBU_VC_ID		\"",
+			buf
+			);
 		FILE *psub = popen("svnversion -n", "r");
-		char buf[1024];
 		fwrite( buf, fread( buf, 1, 1024, psub ), 1, fOut );
 		pclose( psub );
 		fprintf( fOut, "\"\n\n#endif\n");
