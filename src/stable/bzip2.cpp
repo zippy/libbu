@@ -47,6 +47,9 @@ void Bu::BZip2::start()
 Bu::size Bu::BZip2::stop()
 {
 	TRACE();
+	if( !pState )
+		return 0;
+
 	if( pState->state )
 	{
 		if( bReading )
