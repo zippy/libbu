@@ -67,16 +67,15 @@ namespace Bu
 				iStart = 0;
 				iEnd = 1;
 				va.construct( &aData[0], v );
+				return;
 			}
 			else if( iStart == iEnd )
 			{
-				throw ExceptionBase("Hey, it's full!");
+				// The ringbuffer is full
+				dequeue();
 			}
-			else
-			{
-				va.construct( &aData[iEnd], v );
-				iEnd = (iEnd+1)%iCapacity;
-			}
+			va.construct( &aData[iEnd], v );
+			iEnd = (iEnd+1)%iCapacity;
 		}
 
 		value dequeue()
@@ -102,6 +101,16 @@ namespace Bu
 		value &get( int iIndex )
 		{
 			return aData[(iIndex+iStart)%iCapacity];
+		}
+
+		value &first()
+		{
+			return aData[iStart];
+		}
+
+		value &last()
+		{
+			return aData[(iEnd-1+iCapacity)%iCapacity];
 		}
 
 		int getSize()
@@ -199,6 +208,20 @@ namespace Bu
 		virtual const value &peek() const
 		{
 			return core->get( 0 );
+		}
+
+		virtual value &first()
+		{
+			_hardCopy();
+
+			return core->first();
+		}
+
+		virtual value &last()
+		{
+			_hardCopy();
+
+			return core->last();
 		}
 
 		value &operator[]( int iIndex )

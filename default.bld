@@ -244,6 +244,7 @@ target PKG_BASE
 		"LICENSE",
 		"Doxyfile",
 		"Makefile",
+		"version",
 		files("*.bld"),
 		"support/vim/syntax/taf.vim",
 		"support/vim/ftdetect/taf.vim",
@@ -311,10 +312,10 @@ target PKG_BASE + ".xz"
 rule "tarball"
 {
 	input matches("LICENSE", "Makefile", "*.cpp", "*.h", "*.conf", "*.bld",
-		"Doxyfile", "*.vim", "*.sh", "*.unit", "api");
+		"Doxyfile", "*.vim", "*.sh", "*.unit", "api", "version");
 	profile "build"
 	{
-		OUTDIR = OUTPUT.replace(".tar.bz2","");
+		OUTDIR = OUTPUT.replace(".tar","");
 		execute("tar -f ./${OUTPUT} --transform=\"s@^@${OUTDIR}/@\" -c ${INPUT}");
 	}
 }

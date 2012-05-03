@@ -5,17 +5,25 @@
 # terms of the license contained in the file LICENSE.
 #
 
+PREFIX := /home/eichlan/testroot
 OBJECTS := $(patsubst %.cpp,%.o,$(wildcard src/stable/*.cpp src/unstable/*.cpp src/experimental/*.cpp))
-HEADERS := bu bu/signals.h bu/autoconfig.h bu/version.h bu/config.h $(foreach fn,$(wildcard src/stable/*.h src/unstable/*.h src/experimental/*.h),bu/$(notdir ${fn})) $(patsubst src/%,bu/%,$(wildcard src/compat/*.h))
+HEADERS := bu/signals.h bu/autoconfig.h bu/version.h bu/config.h $(foreach fn,$(wildcard src/stable/*.h src/unstable/*.h src/experimental/*.h),bu/$(notdir ${fn})) $(patsubst src/%,bu/%,$(wildcard src/compat/*.h))
 TOOLS := $(patsubst src/tools/%.cpp,%,$(wildcard src/tools/*.cpp))
 UNITS := $(patsubst src/unit/%.unit,unit/%,$(wildcard src/unit/*.unit))
 TESTS := $(patsubst src/tests/%.cpp,tests/%,$(wildcard src/tests/*.cpp))
 
-.PHONY: default all headers clean tests
+.PHONY: default all headers clean tests install
 
 default: libbu++.a tools
 
 all: default tests
+
+install: libbu++.a tools
+	install -d ${PREFIX}/{include/bu/compat,lib,bin}
+	install -m u=rw,go=r $(filter-out bu/compat/%,${HEADERS}) ${PREFIX}/include/bu
+	install -m u=rw,go=r $(filter bu/compat/%,${HEADERS}) ${PREFIX}/include/bu/compat
+	install -m u=rw,go=r libbu++.a ${PREFIX}/lib
+	install ${TOOLS} ${PREFIX}/bin
 
 tests: ${UNITS} ${TESTS}
 
@@ -49,7 +57,7 @@ src/autoconfig.h src/version.h: autoconfig
 src/signals.h: pregen/signals.h
 	cp $< $@
 
-headers: ${HEADERS}
+headers: bu ${HEADERS}
 
 tools: ${TOOLS}
 
@@ -93,6 +101,6 @@ tests/lzma:
 tests/threadid:
 	g++ -ggdb -W -Wall -I. -L. $< -o $@ -lbu++ -lpthread
 
-libbu++.a: ${HEADERS} ${OBJECTS}
+libbu++.a: bu ${HEADERS} ${OBJECTS}
 	ar -r libbu++.a ${OBJECTS}
 
