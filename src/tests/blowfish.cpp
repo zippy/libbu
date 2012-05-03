@@ -48,6 +48,32 @@ static const char *testdat[34][3] ={
 
 int main( int argc, char *argv[] )
 {
+	MemBuf mb;
+	{
+		BlowfishEcb bf( mb );
+		bf.setPassword( "01234567" );
+		for( int j = 0; j < 4; j++ )
+		{
+			bf.write("this is a test!!"+j, 1 );
+		}
+		bf.write("this is a test!!"+4, 12 );
+	}
+	mb.setPos( 0 );
+	BlowfishEcb bf( mb );
+	bf.setPassword( "01234567" );
+	for( int j = 0; j < 3; j++ )
+	{
+		char c;
+		bf.read( &c, 1 );
+		sio << "char: '" << c << "'" << sio.nl;
+	}
+
+	char buf[100];
+	int iR = bf.read( buf, 100 );
+	buf[iR] = '\0';
+	sio << "Got(" << iR << ") = '" << buf << "'" << sio.nl;
+
+	return 0;
 
 	for( int j = 0; j < 34; j++ )
 	{

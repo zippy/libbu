@@ -2,6 +2,7 @@
 #define BU_CIPHER_H
 
 #include "bu/filter.h"
+#include "bu/util.h"
 
 namespace Bu
 {
@@ -10,7 +11,10 @@ namespace Bu
 	{
 	public:
 		Cipher( Bu::Stream &rNext ) :
-			Bu::Filter( rNext )
+			Bu::Filter( rNext ),
+			iReadBufFill( 0 ),
+			iReadBufPos( 0 ),
+			iWriteBufFill( 0 )
 		{
 		}
 
@@ -29,47 +33,59 @@ namespace Bu
 
 		virtual Bu::size read( void *pBuf, Bu::size iBytes )
 		{
-			uint32_t i;
-
-			if (iBytes%iBlockSize)
+			Bu::size iRead = 0;
+			while( iRead < iBytes )
 			{
-				return 0;
+				if( iReadBufFill < iBlockSize )
+				{
+					int iR = rNext.read(
+						aReadBuf+iReadBufFill,
+						iBlockSize-iReadBufFill
+						);
+					if( iR == 0 )
+						return iRead;
+
+					iReadBufFill += iR;
+
+					if( iReadBufFill == iBlockSize )
+						decipher( aReadBuf );
+				}
+
+				if( iReadBufFill == iBlockSize )
+				{
+					int iCpy = Bu::min( (int)(iBytes-iRead), iBlockSize-iReadBufPos );
+					memcpy( ((char *)pBuf)+iRead, aReadBuf+iReadBufPos, iCpy );
+					iRead += iCpy;
+					iReadBufPos += iCpy;
+					if( iReadBufPos == iBlockSize )
+					{
+						iReadBufPos = iReadBufFill = 0;
+					}
+				}
 			}
 
-			iBytes /= iBlockSize;
-
-			for (i=0;i<iBytes;i++)
-			{
-				void *pSeg = ((char *)pBuf)+(i*iBlockSize);
-				int iRead = rNext.read( pSeg, iBlockSize );
-				decipher( pSeg );
-			}
-
-			return iBytes*iBlockSize;
+			return iRead;
 		}
 
 		virtual Bu::size write( const void *pBuf, Bu::size iBytes )
 		{
-			uint32_t i;
-
-			if (iBytes%iBlockSize)
+			Bu::size iPos = 0;
+			
+			while( iPos < iBytes )
 			{
-				return 0;
+				int iLeft = Bu::min((int)(iBytes-iPos),iBlockSize-iReadBufFill);
+				memcpy( aReadBuf+iReadBufFill, (char *)pBuf+iPos, iLeft );
+				iPos += iLeft;
+				iReadBufFill += iLeft;
+				if( iReadBufFill == iBlockSize )
+				{
+					encipher( aReadBuf );
+					rNext.write( aReadBuf, iBlockSize );
+					iReadBufFill = 0;
+				}
 			}
 
-			iBytes /= iBlockSize;
-
-			char buf[iBlockSize];
-
-			for (i=0;i<iBytes;i++)
-			{
-				memcpy( buf, ((const char *)pBuf)+(i*iBlockSize), 8 );
-				encipher( buf );
-				rNext.write( buf, iBlockSize );
-			}
-
-			memset( &buf, 0, iBlockSize );
-			return iBytes*iBlockSize;
+			return iPos;
 		}
 
 		using Bu::Stream::read;
@@ -78,6 +94,13 @@ namespace Bu
 	protected:
 		virtual void encipher( void *pData )=0;
 		virtual void decipher( void *pData )=0;
+
+	private:
+		char aReadBuf[iBlockSize];
+		char aWriteBuf[iBlockSize];
+		int iReadBufFill;
+		int iReadBufPos;
+		int iWriteBufFill;
 	};
 };
 
