@@ -8,8 +8,24 @@
 #include "bu/randombasic.h"
 
 Bu::RandomBasic::RandomBasic() :
-	c( 6364136223846793005 ),
-	m( 1442695040888963407 )
+	a( 6364136223846793005 ),
+	c( 1442695040888963407 ),
+	x( 0 )
 {
+}
+
+Bu::RandomBasic::~RandomBasic()
+{
+}
+
+void Bu::RandomBasic::seed( int32_t iSeed )
+{
+	c = iSeed;
+}
+
+int32_t Bu::RandomBasic::rand()
+{
+	x = (a*x + c);
+	return (int32_t)x;
 }
 
