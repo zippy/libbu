@@ -9,37 +9,37 @@
 
 #define PHI 0x9e3779b9
 
-RandomCmwc::RandomCmwc() :
-	q( NULL ),
+Bu::RandomCmwc::RandomCmwc() :
+	q( 0 ),
 	c( 362436 )
 {
 	q = new uint32_t[4096];
 }
 
-RandomCmwc::~RandomCmwc()
+Bu::RandomCmwc::~RandomCmwc()
 {
 	delete[] q;
 }
 
-void RandomCmwc::seed( int32_t iSeed )
+void Bu::RandomCmwc::seed( int32_t iSeed )
 {
 	int i;
 
-	Q[0] = iSeed;
-	Q[1] = iSeed + PHI;
-	Q[2] = iSeed + PHI + PHI;
+	q[0] = iSeed;
+	q[1] = iSeed + PHI;
+	q[2] = iSeed + PHI + PHI;
 
 	for (i = 3; i < 4096; i++)
-		Q[i] = Q[i - 3] ^ Q[i - 2] ^ PHI ^ i;	
+		q[i] = q[i - 3] ^ q[i - 2] ^ PHI ^ i;	
 }
 
-int32_t RandomCmwc::rand()
+int32_t Bu::RandomCmwc::rand()
 {
 	uint64_t t, a = 18782LL;
 	static uint32_t i = 4095;
 	uint32_t x, r = 0xfffffffe;
 	i = (i + 1) & 4095;
-	t = a * Q[i] + c;
+	t = a * q[i] + c;
 	c = (t >> 32);
 	x = t + c;
 	if( x < c )
@@ -47,6 +47,6 @@ int32_t RandomCmwc::rand()
 		x++;
 		c++;
 	}
-	return (Q[i] = r - x);
+	return (q[i] = r - x);
 }
 
