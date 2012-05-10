@@ -25,6 +25,7 @@ Bu::Buffer::Buffer( Bu::Stream &rNext, int iWhat, int iBufSize ) :
 
 Bu::Buffer::~Buffer()
 {
+	flush();
 	delete[] sReadBuf;
 	delete[] sWriteBuf;
 }
@@ -35,6 +36,7 @@ void Bu::Buffer::start()
 
 Bu::size Bu::Buffer::stop()
 {
+	flush();
 	iReadBufFill = iReadPos = iWriteBufFill = iWritePos = 0;
 	return sSoFar;
 }
