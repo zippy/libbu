@@ -305,7 +305,7 @@ target PKG_BASE + ".xz"
 	display "xz";
 	profile "build"
 	{
-		execute("xz -9 < ${INPUT} > ${OUTPUT}");
+		execute("xz -9vv < ${INPUT} > ${OUTPUT}");
 	}
 }
 

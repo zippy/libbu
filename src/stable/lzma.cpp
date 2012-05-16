@@ -141,8 +141,8 @@ Bu::size Bu::Lzma::read( void *pData, Bu::size nBytes )
 	for(;;)
 	{
 		int ret = lzma_code( pState, LZMA_RUN );
-		printf("inflate returned %d; avail in=%d, out=%d\n", ret,
-				pState->avail_in, pState->avail_out );
+//		printf("inflate returned %d; avail in=%d, out=%d\n", ret,
+//				pState->avail_in, pState->avail_out );
 	
 		nReadTotal += nRead-pState->avail_out;
 
