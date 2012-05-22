@@ -8,6 +8,7 @@
 #ifndef BU_BLOWFISH_H
 #define BU_BLOWFISH_H
 
+#include "bu/config.h"
 #include "bu/cipher.h"
 
 #include "bu/ciphermodeecb.h"
