@@ -6,15 +6,11 @@
  */
 
 #include "bu/bitstring.h"
-#include <stdlib.h>
+#include "bu/random.h"
 #include <stdio.h>
 #include <string.h>
 
 #include "bu/exceptionbase.h"
-
-#ifdef _WIN32
-#define random() rand()
-#endif
 
 #define bitsToBytes( iBits ) (((iBits/8)+((iBits%8)?(1):(0))));
 
@@ -51,7 +47,7 @@ Bu::BitString::BitString( long iNewBits, bool bFillRandomly )
 		// I'll just use the low order byte)
 		for( j = 0; j < iBytes; j++ )
 		{
-			caData[j] = (unsigned char)(random() & 0xFF);
+			caData[j] = (unsigned char)(Bu::Random::rand() & 0xFF);
 		}
 	}
 	else
@@ -413,7 +409,7 @@ void Bu::BitString::randomize()
 	{
 		for( int j = 0; j < iBytes; j++ )
 		{
-			caData[j] = (unsigned char)(random() & 0xFF);
+			caData[j] = (unsigned char)(Bu::Random::rand() & 0xFF);
 		}
 		fixup();
 	}

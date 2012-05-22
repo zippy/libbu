@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <time.h>
+#include "bu/random.h"
 
 #include "bu/config.h"
 
@@ -190,7 +191,6 @@ void Bu::File::setBlocking( bool bBlocking )
 Bu::File Bu::File::tempFile( Bu::String &sName )
 {
 	uint32_t iX;
-	iX = time( NULL ) + getpid();
 	int iXes;
 	for( iXes = sName.getSize()-1; iXes >= 0; iXes-- )
 	{
@@ -200,11 +200,11 @@ Bu::File Bu::File::tempFile( Bu::String &sName )
 	iXes++;
 	if( iXes == sName.getSize() )
 		throw Bu::ExceptionBase("Invalid temporary filename template.");
-	for( int iter = 0; iter < 100; iter++ )
+	for( int iter = 0; iter < 1000; iter++ )
 	{
 		for( int j = iXes; j < sName.getSize(); j++ )
 		{
-			iX = (1103515245 * iX + 12345);
+			uint32_t iX = Bu::Random::rand();
 			sName[j] = ('A'+(iX%26)) | ((iX&0x1000)?(0x20):(0));
 		}
 
@@ -214,7 +214,7 @@ Bu::File Bu::File::tempFile( Bu::String &sName )
 					|Bu::File::Create|Bu::File::Exclusive );
 		} catch(...) { }
 	}
-	throw Bu::FileException("Failed to create unique temporary file after 100"
+	throw Bu::FileException("Failed to create unique temporary file after 1000"
 			" iterations.");
 }
 
