@@ -64,7 +64,7 @@ target ["src/stable/lzma.win_o", "src/experimental/cachestorefiles.win_o", "src/
 {
 	profile "build"
 	{
-		execute("rm -f ${OUTPUT} && touch ${OUTPUT} && echo NOT BUILDING PROCESS RIGHT NOW!!!");
+		execute("rm -f ${OUTPUT} && touch ${OUTPUT} && echo NOT BUILDING ${OUTPUT}");
 	}
 }
 

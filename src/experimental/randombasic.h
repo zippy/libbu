@@ -7,19 +7,19 @@
 #ifndef BU_RANDOM_BASIC_H
 #define BU_RANDOM_BASIC_H
 
-#include <stdint.h>
+#include "bu/randombase.h"
 
 namespace Bu
 {
-	class RandomBasic
+	class RandomBasic : public RandomBase
 	{
 	public:
 		RandomBasic();
 		virtual ~RandomBasic();
 
-		void seed( int32_t iSeed );
+		virtual void seed( int32_t iSeed );
 
-		int32_t rand();
+		virtual int32_t rand();
 
 	private:
 		int64_t a, c, x;

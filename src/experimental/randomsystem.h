@@ -4,25 +4,33 @@
  * This file is part of the libbu++ library and is released under the
  * terms of the license contained in the file LICENSE.
  */
-#ifndef BU_RANDOM_CMWC_H
-#define BU_RANDOM_CMWC_H
+#ifndef BU_RANDOM_SYSTEM_H
+#define BU_RANDOM_SYSTEM_H
 
 #include "bu/randombase.h"
 
 namespace Bu
 {
-	class RandomCmwc : public RandomBase
+	class File;
+	class RandomSystem : public RandomBase
 	{
 	public:
-		RandomCmwc();
-		virtual ~RandomCmwc();
+		enum Type
+		{
+			Fast,
+			Good
+		};
+
+		RandomSystem( Type eType=Fast );
+		virtual ~RandomSystem();
 
 		virtual void seed( int32_t iSeed );
 
 		virtual int32_t rand();
 
 	private:
-		uint32_t *q, c;
+		Type eType;
+		File *pSrc;
 	};
 };
 
