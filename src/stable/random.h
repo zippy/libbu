@@ -44,8 +44,11 @@ namespace Bu
 		
 		RandomBase &getGenerator() { return *pGen; }
 
-		static int32_t rand();
 		static void seed( int32_t iSeed );
+		static int32_t rand();
+		static int32_t rand( int32_t iMax );
+		static int32_t rand( int32_t iMin, int32_t iMax );
+		static double randNorm();
 
 	private:
 		void checkInit();

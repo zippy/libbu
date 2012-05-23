@@ -14,3 +14,18 @@ Bu::RandomBase::~RandomBase()
 {
 }
 
+int32_t Bu::RandomBase::rand( int32_t iMax )
+{
+	return rand( 0, iMax );
+}
+
+int32_t Bu::RandomBase::rand( int32_t iMin, int32_t iMax )
+{
+	return iMin+(randNorm()*(iMax-iMin));
+}
+
+double Bu::RandomBase::randNorm()
+{
+	return (((uint32_t)rand())&0xfffffffeul)/(double)(0xfffffffful);
+}
+

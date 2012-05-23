@@ -190,7 +190,6 @@ void Bu::File::setBlocking( bool bBlocking )
 
 Bu::File Bu::File::tempFile( Bu::String &sName )
 {
-	uint32_t iX;
 	int iXes;
 	for( iXes = sName.getSize()-1; iXes >= 0; iXes-- )
 	{

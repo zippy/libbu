@@ -20,13 +20,28 @@ Bu::Random::~Random()
 	pGen = NULL;
 }
 
+void Bu::Random::seed( int32_t iSeed )
+{
+	getInstance().pGen->seed( iSeed );
+}
+
 int32_t Bu::Random::rand()
 {
 	return getInstance().pGen->rand();
 }
 
-void Bu::Random::seed( int32_t iSeed )
+int32_t Bu::Random::rand( int32_t iMax )
 {
-	getInstance().pGen->seed( iSeed );
+	return getInstance().pGen->rand( iMax );
+}
+
+int32_t Bu::Random::rand( int32_t iMin, int32_t iMax )
+{
+	return getInstance().pGen->rand( iMin, iMax );
+}
+
+double Bu::Random::randNorm()
+{
+	return getInstance().pGen->randNorm();
 }
 
