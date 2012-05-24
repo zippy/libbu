@@ -183,7 +183,7 @@ target "myriadfs"
 
 target "bin2cpp"
 {
-	LDFLAGS += "-lz -lbz2";
+	LDFLAGS += "-lz -lbz2 -llzma";
 }
 
 //

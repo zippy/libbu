@@ -3,6 +3,7 @@
 #include <bu/file.h>
 #include <bu/deflate.h>
 #include <bu/bzip2.h>
+#include <bu/lzma.h>
 #include <bu/base64.h>
 #include <bu/hex.h>
 #include <bu/streamstack.h>
@@ -20,7 +21,7 @@ public:
 		addOption( sClass, 'c', "Class name [default=\"Datafiles\"]");
 		addOption( sOutBase, 'o', "Output base filename [defaults to classname]");
 		addOption( sOutDir, 'd', "Output directory [defaults to current dir]");
-		addOption( slot(this, &Options::addFilter), 'f', "Add filter: deflate, bzip2, base64, hex");
+		addOption( slot(this, &Options::addFilter), 'f', "Add filter: deflate, bzip2, lzma, base64, hex");
 		setNonOption( slot(this, &Options::addInput) );
 		addHelpOption();
 
@@ -90,6 +91,7 @@ int main( int argc, char *argv[] )
 		<< "#include <bu/deflate.h>" << fSrc.nl
 		<< "#include <bu/bzip2.h>" << fSrc.nl
 		<< "#include <bu/base64.h>" << fSrc.nl
+		<< "#include <bu/lzma.h>" << fSrc.nl
 		<< "#include <bu/hex.h>" << fSrc.nl
 		<< "#include <bu/strfilter.h>" << fSrc.nl
 		<< "#include <bu/staticmembuf.h>" << fSrc.nl << fSrc.nl
@@ -119,6 +121,12 @@ int main( int argc, char *argv[] )
 				sDat = encodeStr<BZip2>( sDat );
 				sFltDesc.prepend("b");
 				hFilters.insert('b', true );
+			}
+			else if( *f == "lzma" )
+			{
+				sDat = encodeStr<Lzma>( sDat );
+				sFltDesc.prepend("l");
+				hFilters.insert('l', true );
 			}
 			else if( *f == "base64" )
 			{
@@ -181,6 +189,8 @@ int main( int argc, char *argv[] )
 			fSrc << "\t\t\tcase 'd': s->pushFilter<Bu::Deflate>(); break;" << fSrc.nl;
 		if( hFilters.has('b') )
 			fSrc << "\t\t\tcase 'b': s->pushFilter<Bu::BZip2>(); break;" << fSrc.nl;
+		if( hFilters.has('l') )
+			fSrc << "\t\t\tcase 'l': s->pushFilter<Bu::Lzma>(); break;" << fSrc.nl;
 		if( hFilters.has('6') )
 			fSrc << "\t\t\tcase '6': s->pushFilter<Bu::Base64>(); break;" << fSrc.nl;
 		if( hFilters.has('h') )
