@@ -54,7 +54,12 @@ namespace Bu
 			}
 			// This will hopefully prevent hash tables from growing needlessly
 			if( nFilled-nDeleted <= nCapacity/2 )
-				return nCapacity;
+			{
+				if( nDeleted == 0 )
+					return nCapacity/4*5+1;  // Grow just a little
+				else
+					return nCapacity;	// We're going to delete things
+			}
 			// Otherwise, just increase the capacity
 			return nCapacity*2+1;
 		}
@@ -306,6 +311,7 @@ namespace Bu
 
 		void reHash( uint32_t nNewSize )
 		{
+			//printf("--rehash: %d --> %d (%d, %d)\n", nCapacity, nNewSize, nFilled, nDeleted );
 			//printf("---REHASH---");
 			//printf("Filled: %d, Deleted: %d, Capacity: %d\n",
 			//	nFilled, nDeleted, nCapacity );
