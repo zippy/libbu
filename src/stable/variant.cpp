@@ -53,10 +53,17 @@ Bu::Variant::~Variant()
 
 Bu::String Bu::Variant::toString() const
 {
-	Bu::MemBuf mb;
-	Bu::Formatter f( mb );
-	f << *this;
-	return mb.getString();
+	if( getType() == typeid( Bu::String ) )
+	{
+		return get<Bu::String>();
+	}
+	else
+	{
+		Bu::MemBuf mb;
+		Bu::Formatter f( mb );
+		f << *this;
+		return mb.getString();
+	}
 }
 
 bool Bu::Variant::isSet() const

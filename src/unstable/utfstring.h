@@ -107,6 +107,8 @@ namespace Bu
 		 */
 		void append( UtfChar ch );
 
+		void append( const UtfString &rSrc );
+
 		/**
 		 * Set the value of the entire string based on the given input and
 		 * encoding.  The default encoding is Utf8, which is compatible with

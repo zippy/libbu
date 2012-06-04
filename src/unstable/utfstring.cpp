@@ -11,6 +11,7 @@
 #include "bu/stream.h"
 #include "bu/config.h"
 #include "bu/sio.h"
+#include "bu/membuf.h"
 using Bu::sio;
 
 Bu::UtfString::UtfString()
@@ -84,6 +85,13 @@ void Bu::UtfString::append( UtfChar ch )
 	{
 		append16( (uint16_t)(ch) );
 	}
+}
+
+void Bu::UtfString::append( const UtfString &rSrc )
+{
+	aData.append( rSrc.aData );
+	iRawLen += rSrc.iRawLen;
+	iCharLen += rSrc.iCharLen;
 }
 
 void Bu::UtfString::setUtf8( const Bu::String &sInput )
@@ -466,6 +474,13 @@ Bu::UtfChar Bu::UtfString::nextChar( int &iIndex )
 		default:
 			return i;
 	}
+}
+
+Bu::String Bu::UtfString::get( Encoding eEnc )
+{
+	Bu::MemBuf mb;
+	write( mb, eEnc );
+	return mb.getString();
 }
 
 void Bu::UtfString::debug()
