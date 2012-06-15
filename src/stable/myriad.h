@@ -14,6 +14,7 @@
 #include "bu/array.h"
 #include "bu/hash.h"
 #include "bu/mutex.h"
+#include "bu/extratypes.h"
 
 namespace Bu
 {
@@ -139,9 +140,9 @@ namespace Bu
 		int getBlockSize();
 		int getNumBlocks();
 		int getNumUsedBlocks();
-		int getTotalUsedBytes();
-		int getTotalUnusedBytes();
-		int getTotalUnusedBytes( int iFakeBlockSize );
+		Bu::size getTotalUsedBytes();
+		Bu::size getTotalUnusedBytes();
+		Bu::size getTotalUnusedBytes( int iFakeBlockSize );
 
 		/**
 		 * Syncronize the header data, etc. with the storage stream.  It's not
@@ -163,7 +164,7 @@ namespace Bu
 		 */
 		static bool isMyriad( Bu::Stream &sStore );
 
-		const Bu::BitString &getBlocksUsed() const;
+		const Bu::BitString getBlocksUsed() const;
 
 	private:
 		/**
@@ -219,7 +220,9 @@ namespace Bu
 		int iBlockSize;
 		int iBlocks;
 		int iUsed;
-		Bu::BitString bsBlockUsed;
+		typedef Bu::List<int> IndexList;
+		IndexList lFreeBlocks;
+//		Bu::BitString bsBlockUsed;
 		StreamArray aStreams;
 		typedef Bu::Hash<int, Block *> BlockHash;
 		BlockHash hActiveBlocks;

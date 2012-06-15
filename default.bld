@@ -14,8 +14,8 @@
 include "gensigs.bld";
 
 CXXFLAGS += "-ggdb -W -Wall -I.";
-// CXXFLAGS += "-pg";
-// LDFLAGS += "-pg";
+//CXXFLAGS += "-pg";
+//LDFLAGS += "-pg";
 
 action "default"
 {
@@ -151,7 +151,7 @@ target "viewcsv"
 	LDFLAGS += "-lncurses";
 }
 
-target ["myriad", "myriadfs", "tests/myriad", "tests/myriadfs", "unit/myriad"]
+target ["myriad", "myriadfs", "tests/myriad", "tests/myriadfs", "unit/myriad", "tests/bigmyriad"]
 {
 	LDFLAGS += "-lpthread";
 }

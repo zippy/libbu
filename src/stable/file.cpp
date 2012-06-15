@@ -91,7 +91,11 @@ Bu::size Bu::File::tell()
 	if( fd < 0 )
 		throw FileException("File not open.");
 
+#ifdef USE_64BIT_IO
+	return lseek64( fd, 0, SEEK_CUR );
+#else
 	return lseek( fd, 0, SEEK_CUR );
+#endif
 }
 
 void Bu::File::seek( Bu::size offset )
@@ -99,7 +103,11 @@ void Bu::File::seek( Bu::size offset )
 	if( fd < 0 )
 		throw FileException("File not open.");
 
+#ifdef USE_64BIT_IO
+	lseek64( fd, offset, SEEK_CUR );
+#else
 	lseek( fd, offset, SEEK_CUR );
+#endif
 	bEos = false;
 }
 
@@ -108,7 +116,11 @@ void Bu::File::setPos( Bu::size pos )
 	if( fd < 0 )
 		throw FileException("File not open.");
 
+#ifdef USE_64BIT_IO
+	lseek64( fd, pos, SEEK_SET );
+#else
 	lseek( fd, pos, SEEK_SET );
+#endif
 	bEos = false;
 }
 
@@ -117,7 +129,7 @@ void Bu::File::setPosEnd( Bu::size pos )
 	if( fd < 0 )
 		throw FileException("File not open.");
 	
-	lseek( fd, pos, SEEK_END );
+	lseek64( fd, pos, SEEK_END );
 	bEos = false;
 }
 
