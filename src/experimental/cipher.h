@@ -80,19 +80,31 @@ namespace Bu
 			
 			while( iPos < iBytes )
 			{
-				int iLeft = Bu::min((int)(iBytes-iPos),iBlockSize-iReadBufFill);
-				memcpy( aReadBuf+iReadBufFill, (char *)pBuf+iPos, iLeft );
+				int iLeft = Bu::min((int)(iBytes-iPos),iBlockSize-iWriteBufFill);
+				memcpy( aWriteBuf+iWriteBufFill, (char *)pBuf+iPos, iLeft );
 				iPos += iLeft;
-				iReadBufFill += iLeft;
-				if( iReadBufFill == iBlockSize )
+				iWriteBufFill += iLeft;
+				if( iWriteBufFill == iBlockSize )
 				{
-					encipher( aReadBuf );
-					rNext.write( aReadBuf, iBlockSize );
-					iReadBufFill = 0;
+					encipher( aWriteBuf );
+					rNext.write( aWriteBuf, iBlockSize );
+					iWriteBufFill = 0;
 				}
 			}
 
 			return iPos;
+		}
+
+		virtual void flush()
+		{
+			if( iWriteBufFill < iBlockSize )
+			{
+				memset( aWriteBuf+iWriteBufFill, 0, iBlockSize-iWriteBufFill );
+				encipher( aWriteBuf );
+				rNext.write( aWriteBuf, iBlockSize );
+				iWriteBufFill = 0;
+			}
+			rNext.flush();
 		}
 
 		using Bu::Stream::read;
