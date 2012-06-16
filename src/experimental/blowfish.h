@@ -40,6 +40,7 @@ namespace Bu
 
 		virtual ~Blowfish()
 		{
+			stop();
 			reset();
 		}
 

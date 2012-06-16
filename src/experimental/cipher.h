@@ -35,6 +35,7 @@ namespace Bu
 
 		virtual Bu::size stop()
 		{
+			flush();
 			return 0;
 		}
 
