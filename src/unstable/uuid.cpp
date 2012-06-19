@@ -82,14 +82,14 @@ void Bu::Uuid::clear()
 
 Bu::Uuid Bu::Uuid::gen()
 {
-#ifdef linux
+#if defined(linux)
 	Bu::File fIn( "/proc/sys/kernel/random/uuid", Bu::File::Read );
 	char dat[36];
 	fIn.read( dat, 36 );
 	Uuid id;
 	id.set( dat );
 	return id;
-#elif WIN32
+#elif defined(WIN32)
 	UUID uuid;
 	UuidCreate( &uuid );
 	Uuid id;
