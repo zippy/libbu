@@ -11,6 +11,11 @@
 #include "bu/membuf.h"
 #include <string.h>
 
+#ifdef WIN32
+#include <rpc.h>
+#include <Rpcdce.h>
+#endif
+
 Bu::Uuid::Uuid()
 {
 	clear();
@@ -77,12 +82,31 @@ void Bu::Uuid::clear()
 
 Bu::Uuid Bu::Uuid::gen()
 {
+#ifdef linux
 	Bu::File fIn( "/proc/sys/kernel/random/uuid", Bu::File::Read );
 	char dat[36];
 	fIn.read( dat, 36 );
 	Uuid id;
 	id.set( dat );
 	return id;
+#elif WIN32
+	UUID uuid;
+	UuidCreate( &uuid );
+	Uuid id;
+	id.data[0] = ((unsigned char *)&uuid.Data1)[3];
+	id.data[1] = ((unsigned char *)&uuid.Data1)[2];
+	id.data[2] = ((unsigned char *)&uuid.Data1)[1];
+	id.data[3] = ((unsigned char *)&uuid.Data1)[0];
+	id.data[4] = ((unsigned char *)&uuid.Data2)[1];
+	id.data[5] = ((unsigned char *)&uuid.Data2)[0];
+	id.data[6] = ((unsigned char *)&uuid.Data3)[1];
+	id.data[7] = ((unsigned char *)&uuid.Data3)[0];
+	memcpy( id.data+8, uuid.Data4, 8 );
+
+	return id;
+#else
+# error We should be using one of the other fallbacks, but your platform is not supported yet.  Sorry.
+#endif
 }
 
 void Bu::Uuid::set( const Bu::String &sSrc )
