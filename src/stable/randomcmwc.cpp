@@ -23,20 +23,19 @@ Bu::RandomCmwc::~RandomCmwc()
 
 void Bu::RandomCmwc::seed( int32_t iSeed )
 {
-	int i;
+	i = 4096;
 
 	q[0] = iSeed;
 	q[1] = iSeed + PHI;
 	q[2] = iSeed + PHI + PHI;
 
-	for (i = 3; i < 4096; i++)
-		q[i] = q[i - 3] ^ q[i - 2] ^ PHI ^ i;	
+	for (int j = 3; j < 4096; j++)
+		q[j] = q[j - 3] ^ q[j - 2] ^ PHI ^ j;	
 }
 
 int32_t Bu::RandomCmwc::rand()
 {
 	uint64_t t, a = 18782LL;
-	static uint32_t i = 4095;
 	uint32_t x, r = 0xfffffffe;
 	i = (i + 1) & 4095;
 	t = a * q[i] + c;

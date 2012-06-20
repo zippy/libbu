@@ -22,7 +22,7 @@ namespace Bu
 		virtual int32_t rand();
 
 	private:
-		uint32_t *q, c;
+		uint32_t *q, c, i;
 	};
 };
 
