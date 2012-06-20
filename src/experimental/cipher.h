@@ -98,7 +98,7 @@ namespace Bu
 
 		virtual void flush()
 		{
-			if( iWriteBufFill < iBlockSize )
+			if( iWriteBufFill > 0 && iWriteBufFill < iBlockSize )
 			{
 				memset( aWriteBuf+iWriteBufFill, 0, iBlockSize-iWriteBufFill );
 				encipher( aWriteBuf );
