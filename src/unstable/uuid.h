@@ -14,6 +14,8 @@ namespace Bu
 {
 	class Uuid
 	{
+	friend Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, Uuid &u );
+	friend Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const Uuid &u );
 	public:
 		Uuid();
 		Uuid( const Uuid &src );
@@ -34,11 +36,12 @@ namespace Bu
 		static Uuid genV5();
 
 		void clear();
+		void set( const Bu::String &sSrc );
 
 		bool operator==( const Uuid &rhs ) const;
+		Uuid &operator=( const Bu::String &rhs ) { set( rhs ); return *this; }
 
 	private:
-		void set( const Bu::String &sSrc );
 		unsigned char data[16];
 	};
 
@@ -51,6 +54,9 @@ namespace Bu
 	template<> uint32_t __calcHashCode<Uuid>( const Uuid &k );
 	template<> bool __cmpHashKeys<Uuid>(
 		const Uuid &a, const Uuid &b );
+
+	Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, Uuid &u );
+	Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const Uuid &u );
 };
 
 #endif

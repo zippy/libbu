@@ -139,3 +139,15 @@ template<> bool Bu::__cmpHashKeys<Bu::Uuid>( const Bu::Uuid &a, const Bu::Uuid &
 	return a == b;
 }
 
+Bu::ArchiveBase &Bu::operator>>( Bu::ArchiveBase &ar, Uuid &u )
+{
+	ar.read( u.data, 16 );
+	return ar;
+}
+
+Bu::ArchiveBase &Bu::operator<<( Bu::ArchiveBase &ar, const Uuid &u )
+{
+	ar.write( u.data, 16 );
+	return ar;
+}
+
