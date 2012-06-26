@@ -8,6 +8,7 @@
 #ifndef BU_UUID_H
 #define BU_UUID_H
 
+#include "bu/util.h"
 #include "bu/string.h"
 
 namespace Bu
@@ -26,20 +27,27 @@ namespace Bu
 		Bu::String toString() const;
 		Bu::String toUrn() const;
 
+		enum Type
+		{
+			System,
+			Version1,
+			Version2,
+			Version3,
+			Version4,
+			Version5,
+		};
+
 		int getVersion();
 
-		static Uuid gen();
-		static Uuid genV1();
-		static Uuid genV2();
-		static Uuid genV3();
-		static Uuid genV4();
-		static Uuid genV5();
+		static Uuid generate( Type eType = System );
+		DEPRECATED static Uuid gen() { return generate(); }
 
 		void clear();
 		void set( const Bu::String &sSrc );
 
 		bool operator==( const Uuid &rhs ) const;
 		Uuid &operator=( const Bu::String &rhs ) { set( rhs ); return *this; }
+		Uuid &operator=( const Uuid &rhs );
 
 	private:
 		unsigned char data[16];
