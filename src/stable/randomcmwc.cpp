@@ -7,6 +7,8 @@
 
 #include "bu/randomcmwc.h"
 
+#include "bu/randombasic.h"
+
 #define PHI 0x9e3779b9
 
 Bu::RandomCmwc::RandomCmwc() :
@@ -23,14 +25,24 @@ Bu::RandomCmwc::~RandomCmwc()
 
 void Bu::RandomCmwc::seed( int32_t iSeed )
 {
-	i = 4096;
+	i = 4095;
+	c = 362436;
 
-	q[0] = iSeed;
-	q[1] = iSeed + PHI;
-	q[2] = iSeed + PHI + PHI;
+	Bu::RandomBasic rb;
+	rb.seed( iSeed );
+
+	for( int j = 0; j < 4096; j++ )
+		q[j] = rb.rand();
+
+	c = rb.rand();
+
+	return;
+	q[0] = (uint32_t)rb.rand();
+	q[1] = (uint32_t)rb.rand() + PHI;
+	q[2] = (uint32_t)rb.rand() + PHI + PHI;
 
 	for (int j = 3; j < 4096; j++)
-		q[j] = q[j - 3] ^ q[j - 2] ^ PHI ^ j;	
+		q[j] = q[j - 3] ^ q[j - 2] ^ PHI ^ j;
 }
 
 int32_t Bu::RandomCmwc::rand()
