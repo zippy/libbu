@@ -124,23 +124,25 @@ namespace Bu
 			{
 				if( bBlock )
 				{
-					for(;;)
+					cBlock.wait();
+
+					if( pStart == NULL )
 					{
-						if( pStart != NULL )
-						{
-							cBlock.unlock();
-							break;
-						}
-						cBlock.wait();
+						cBlock.unlock();
+						return NULL;
 					}
-				
-					T tmp = dequeue( false );
+					T pTmp = pStart->pData;
+					Item *pDel = pStart;
+					pStart = pStart->pNext;
+					delete pDel;
+					nSize--;
 					
 					cBlock.unlock();
-					return tmp;
+					return pTmp;
 
 				}
 
+				cBlock.unlock();
 				return NULL;
 			}
 			else
@@ -224,6 +226,13 @@ namespace Bu
 			cBlock.unlock();
 
 			return nRet;
+		}
+
+		void unblockAll()
+		{
+			cBlock.lock();
+			cBlock.broadcast();
+			cBlock.unlock();
 		}
 
 	private:
