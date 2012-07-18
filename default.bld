@@ -151,7 +151,7 @@ target "viewcsv"
 	LDFLAGS += "-lncurses";
 }
 
-target ["myriad", "myriadfs", "tests/myriad", "tests/myriadfs", "unit/myriad", "tests/bigmyriad"]
+target ["myriad", "myriadfs", "tests/myriad", "tests/myriadfs", "unit/myriad", "tests/bigmyriad", "tests/synchroqueue"]
 {
 	LDFLAGS += "-lpthread";
 }

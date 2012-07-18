@@ -56,6 +56,7 @@ namespace Bu
 		 */
 		~SynchroQueue()
 		{
+			cBlock.lock();
 			Item *pCur = pStart;
 			while( pCur )
 			{
@@ -63,6 +64,7 @@ namespace Bu
 				delete pCur;
 				pCur = pTmp;
 			}
+			cBlock.unlock();
 		}
 
 		/**
@@ -74,7 +76,7 @@ namespace Bu
 		 */
 		void enqueue( T pData )
 		{
-			mOperate.lock();
+			cBlock.lock();
 
 			if( pStart == NULL )
 			{
@@ -93,8 +95,8 @@ namespace Bu
 			}
 
 			cBlock.signal();
-		
-			mOperate.unlock();
+
+			cBlock.unlock();
 		}
 
 		/**
@@ -117,17 +119,20 @@ namespace Bu
 		 */
 		T dequeue( bool bBlock=false )
 		{
-			mOperate.lock();
+			cBlock.lock();
 			if( pStart == NULL )
 			{
-				mOperate.unlock();
-
 				if( bBlock )
 				{
-					cBlock.lock();
-
-					while( pStart == NULL )
+					for(;;)
+					{
+						if( pStart != NULL )
+						{
+							cBlock.unlock();
+							break;
+						}
 						cBlock.wait();
+					}
 				
 					T tmp = dequeue( false );
 					
@@ -146,7 +151,7 @@ namespace Bu
 				delete pDel;
 				nSize--;
 			
-				mOperate.unlock();
+				cBlock.unlock();
 				return pTmp;
 			}
 		}
@@ -164,13 +169,9 @@ namespace Bu
 		 */
 		T dequeue( int nSec, int nUSec )
 		{
-			mOperate.lock();
+			cBlock.lock();
 			if( pStart == NULL )
 			{
-				mOperate.unlock();
-
-				cBlock.lock();
-				
 				cBlock.wait( nSec, nUSec );
 
 				if( pStart == NULL )
@@ -179,13 +180,11 @@ namespace Bu
 					return NULL;
 				}
 			
-				mOperate.lock();
 				T pTmp = pStart->pData;
 				Item *pDel = pStart;
 				pStart = pStart->pNext;
 				delete pDel;
 				nSize--;
-				mOperate.unlock();
 					
 				cBlock.unlock();
 				return pTmp;
@@ -198,7 +197,7 @@ namespace Bu
 				delete pDel;
 				nSize--;
 			
-				mOperate.unlock();
+				cBlock.unlock();
 				return pTmp;
 			}
 		}
@@ -211,18 +210,18 @@ namespace Bu
 		 */
 		bool isEmpty()
 		{
-			mOperate.lock();
+			cBlock.lock();
 			bool bEmpty = (pStart == NULL );
-			mOperate.unlock();
+			cBlock.unlock();
 
 			return bEmpty;
 		}
 
 		long getSize()
 		{
-			mOperate.lock();
+			cBlock.lock();
 			long nRet = nSize;
-			mOperate.unlock();
+			cBlock.unlock();
 
 			return nRet;
 		}
@@ -232,7 +231,6 @@ namespace Bu
 		Item *pEnd;		/**< The end of the queue, the last element to dequeue. */
 		long nSize;		/**< The number of items in the queue. */
 
-		Mutex mOperate;	/**< The master mutex, used on all operations. */
 		Condition cBlock;	/**< The condition for blocking dequeues. */
 	};
 }
