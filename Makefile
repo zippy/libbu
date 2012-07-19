@@ -6,7 +6,7 @@
 #
 
 PREFIX := /home/eichlan/testroot
-OBJECTS := $(patsubst %.cpp,%.o,$(wildcard src/stable/*.cpp src/unstable/*.cpp src/experimental/*.cpp))
+OBJECTS := $(patsubst %.cpp,%.o,$(wildcard src/stable/*.cpp src/unstable/*.cpp src/experimental/*.cpp src/compat/*.cpp))
 HEADERS := bu/signals.h bu/autoconfig.h bu/version.h bu/config.h $(foreach fn,$(wildcard src/stable/*.h src/unstable/*.h src/experimental/*.h),bu/$(notdir ${fn})) $(patsubst src/%,bu/%,$(wildcard src/compat/*.h))
 TOOLS := $(patsubst src/tools/%.cpp,%,$(wildcard src/tools/*.cpp))
 UNITS := $(patsubst src/unit/%.unit,unit/%,$(wildcard src/unit/*.unit))
