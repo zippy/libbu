@@ -76,7 +76,7 @@ myriad:
 	g++ -ggdb -W -Wall -I. -L. $< -o $@ -lbu++ -lpthread
 
 ${OBJECTS}: %.o: %.cpp
-	g++ -ggdb -W -Wall -I. $< -c -o $@
+	g++ -ggdb -W -Wall -I. ${CXXFLAGS} $< -c -o $@
 
 $(patsubst %,src/%.cpp,${UNITS}): %.cpp: %.unit mkunit
 	./mkunit $< $@
