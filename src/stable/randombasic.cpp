@@ -8,8 +8,8 @@
 #include "bu/randombasic.h"
 
 Bu::RandomBasic::RandomBasic() :
-	a( 6364136223846793005 ),
-	c( 1442695040888963407 ),
+	a( 6364136223846793005ll ),
+	c( 1442695040888963407ll ),
 	x( 0 )
 {
 }
