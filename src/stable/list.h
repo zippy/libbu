@@ -869,6 +869,30 @@ namespace Bu
 
 			return *this;
 		}
+		
+		/**
+		 * Erases the first item in the list, identical to pop, but better for
+		 * lists that aren't built as stacks, since you know where it will be
+		 * erasing from.
+		 */
+		MyType &eraseFirst()
+		{
+			_hardCopy();
+			erase( begin() );
+
+			return *this;
+		}
+		
+		/**
+		 * Erases the last item in the list.
+		 */
+		MyType &eraseLast()
+		{
+			_hardCopy();
+			core->erase( core->pLast ); 
+
+			return *this;
+		}
 
 		iterator find( const value &v )
 		{
