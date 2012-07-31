@@ -139,6 +139,11 @@ bool Bu::Uuid::operator==( const Uuid &rhs ) const
 	return memcmp( data, rhs.data, 16 ) == 0;
 }
 
+bool Bu::Uuid::operator!=( const Uuid &rhs ) const
+{
+	return !(*this == rhs);
+}
+
 Bu::Uuid &Bu::Uuid::operator=( const Uuid &rhs )
 {
 	memcpy( data, rhs.data, 16 );

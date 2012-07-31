@@ -46,6 +46,7 @@ namespace Bu
 		void set( const Bu::String &sSrc );
 
 		bool operator==( const Uuid &rhs ) const;
+		bool operator!=( const Uuid &rhs ) const;
 		Uuid &operator=( const Bu::String &rhs ) { set( rhs ); return *this; }
 		Uuid &operator=( const Uuid &rhs );
 
