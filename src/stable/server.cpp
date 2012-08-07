@@ -8,7 +8,6 @@
 #include "bu/server.h"
 #include <errno.h>
 #include <unistd.h>
-#include <poll.h>
 #include "bu/tcpserversocket.h"
 #include "bu/client.h"
 #include "bu/tcpsocket.h"
@@ -47,8 +46,6 @@ void Bu::Server::setTimeout( int nTimeoutSec, int nTimeoutUSec )
 {
 	this->nTimeoutSec = nTimeoutSec;
 	this->nTimeoutUSec = nTimeoutUSec;
-//	struct timespec xTimeout = { nTimeoutSec, nTimeoutUSec };
-//	ppoll( NULL, 0, &xTimeout, NULL );
 }
 
 void Bu::Server::scan()
