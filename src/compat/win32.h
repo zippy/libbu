@@ -13,7 +13,7 @@
 #ifdef __cplusplus
 extern "C" 
 {
-#define FD_SETSIZE 1024
+#define FD_SETSIZE (4096*2)
 #include <Winsock2.h>
 #include <ws2tcpip.h>
 }
