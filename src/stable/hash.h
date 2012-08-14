@@ -649,7 +649,7 @@ namespace Bu
 				if( bFilled == false )
 					throw HashException(
 							excodeNotFilled,
-							"No data assosiated with that key."
+							"No data associated with that key."
 							);
 				return pValue;
 			}
@@ -756,7 +756,7 @@ namespace Bu
 			{
 				throw HashException(
 						excodeNotFilled,
-						"No data assosiated with that key."
+						"No data associated with that key."
 						);
 			}
 		}
@@ -781,7 +781,7 @@ namespace Bu
 			{
 				throw HashException(
 						excodeNotFilled,
-						"No data assosiated with that key."
+						"No data associated with that key."
 						);
 			}
 		}
