@@ -1212,6 +1212,21 @@ namespace Bu
 			return !(*this == rhs);
 		}
 
+		MyType &operator+=( const MyType &rhs )
+		{
+			if( this == &rhs )
+				return *this;
+			if( core == rhs.core )
+				return *this;
+			if( core == NULL || rhs.core == NULL )
+				return *this;
+
+			for( const_iterator i = rhs.begin(); i; i++ )
+				insert( i.getKey(), i.getValue() );
+
+			return *this;
+		}
+
 	protected:
 		virtual Core *_copyCore( Core *src )
 		{

@@ -19,9 +19,16 @@ namespace Bu
 
 		virtual void seed( int32_t iSeed )=0;
 		virtual int32_t rand()=0;
-		virtual int32_t rand( int32_t iMax );
-		virtual int32_t rand( int32_t iMin, int32_t iMax );
-		virtual double randNorm();
+		virtual inline int32_t rand( int32_t iMax ) {
+			return rand( 0, iMax );
+		}
+		virtual inline int32_t rand( int32_t iMin, int32_t iMax ) {
+			return iMin+(randNorm()*(iMax-iMin));
+		}
+		virtual inline double randNorm() {
+			return (((uint32_t)rand())&0xfffffffeul)*0x1.00000001p-32;
+//			return (((uint32_t)rand())&0xfffffffeul)/(double)(0xfffffffful);
+		}
 	};
 };
 
