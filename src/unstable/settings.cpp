@@ -1,6 +1,7 @@
 #include "bu/settings.h"
 
 #include "bu/settingsdrivertaf.h"
+#include "bu/settingsdriverregistry.h"
 
 Bu::Settings::Settings( const Bu::UtfString &sCompany,
 		const Bu::UtfString &sProduct, Bu::Settings::Driver eDriver ) :
@@ -12,6 +13,7 @@ Bu::Settings::Settings( const Bu::UtfString &sCompany,
 	{
 		case DriverNative:
 #if defined( WIN32 )
+			pDriver = new Bu::SettingsDriverRegistry();
 #else
 			pDriver = new Bu::SettingsDriverTaf();
 #endif
