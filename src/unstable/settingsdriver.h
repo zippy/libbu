@@ -20,6 +20,8 @@ namespace Bu
 
 	protected:
 		virtual void init( const Bu::UtfString &sCompany, const Bu::UtfString &sProduct )=0;
+		virtual void set( const Bu::UtfString &sKey, const Bu::UtfString  &sValue )=0;
+		virtual Bu::UtfString get( const Bu::UtfString &sKey, const Bu::UtfString &sValue )=0;
 	};
 };
 

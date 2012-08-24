@@ -36,5 +36,12 @@ Bu::Settings::~Settings()
 
 void Bu::Settings::set( const Bu::UtfString &sKey, const Bu::UtfString &sValue )
 {
+	pDriver->set( sKey, sValue );
+}
+
+Bu::UtfString Bu::Settings::get( const Bu::UtfString &sKey,
+		const Bu::UtfString &sValue )
+{
+	return pDriver->get( sKey, sValue );
 }
 

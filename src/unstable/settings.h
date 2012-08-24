@@ -23,6 +23,7 @@ namespace Bu
 		virtual ~Settings();
 
 		void set( const Bu::UtfString &sKey, const Bu::UtfString &sValue );
+		Bu::UtfString get( const Bu::UtfString &sKey, const Bu::UtfString &sValue=Bu::UtfString() );
 
 	private:
 		Bu::UtfString sCompany;
