@@ -23,8 +23,23 @@ Bu::UtfString::UtfString( const Bu::String &sInput, Encoding eEnc )
 	set( sInput, eEnc );
 }
 
+Bu::UtfString::UtfString( const char *sInput, Encoding eEnc )
+{
+	set( sInput, eEnc );
+}
+
 Bu::UtfString::~UtfString()
 {
+}
+
+Bu::UtfString::iterator Bu::UtfString::begin()
+{
+	return Bu::UtfString::iterator( this, 0 );
+}
+
+Bu::UtfString::const_iterator Bu::UtfString::begin() const
+{
+	return Bu::UtfString::const_iterator( this, 0 );
 }
 
 void Bu::UtfString::set( const Bu::String &sInput, Encoding eEnc )
@@ -258,7 +273,7 @@ void Bu::UtfString::setUtf32le( const Bu::String &sInput )
 	}
 }
 
-void Bu::UtfString::write( Bu::Stream &sOut, Encoding eEnc )
+void Bu::UtfString::write( Bu::Stream &sOut, Encoding eEnc ) const
 {
 	switch( eEnc )
 	{
@@ -306,7 +321,7 @@ void Bu::UtfString::write( Bu::Stream &sOut, Encoding eEnc )
 	}
 }
 
-void Bu::UtfString::writeUtf8( Bu::Stream &sOut )
+void Bu::UtfString::writeUtf8( Bu::Stream &sOut ) const
 {
 	int iPos = 0;
 	while( iPos < aData.getSize() )
@@ -359,12 +374,12 @@ void Bu::UtfString::writeUtf16( Bu::Stream &sOut )
 {
 }
 */
-void Bu::UtfString::writeUtf16be( Bu::Stream &sOut )
+void Bu::UtfString::writeUtf16be( Bu::Stream &sOut ) const
 {
 #if BYTE_ORDER == BIG_ENDIAN
 	uint16_t iTmp = 0xFEFF; // Byte Order Marker
 	sOut.write( &iTmp, 2 );
-	for( Array<uint16_t>::iterator i = aData.begin(); i; i++ )
+	for( Array<uint16_t>::const_iterator i = aData.begin(); i; i++ )
 	{
 		iTmp = *i;
 		sOut.write( &iTmp, 2 );
@@ -373,7 +388,7 @@ void Bu::UtfString::writeUtf16be( Bu::Stream &sOut )
 	uint16_t iTmp = 0xFEFF; // Byte Order Marker
 	iTmp = (iTmp>>8) | (iTmp<<8);
 	sOut.write( &iTmp, 2 );
-	for( Array<uint16_t>::iterator i = aData.begin(); i; i++ )
+	for( Array<uint16_t>::const_iterator i = aData.begin(); i; i++ )
 	{
 		iTmp = *i;
 		iTmp = (iTmp>>8) | (iTmp<<8);
@@ -382,12 +397,12 @@ void Bu::UtfString::writeUtf16be( Bu::Stream &sOut )
 #endif
 }
 
-void Bu::UtfString::writeUtf16le( Bu::Stream &sOut )
+void Bu::UtfString::writeUtf16le( Bu::Stream &sOut ) const
 {
 #if BYTE_ORDER == LITTLE_ENDIAN
 	uint16_t iTmp = 0xFEFF; // Byte Order Marker
 	sOut.write( &iTmp, 2 );
-	for( Array<uint16_t>::iterator i = aData.begin(); i; i++ )
+	for( Array<uint16_t>::const_iterator i = aData.begin(); i; i++ )
 	{
 		iTmp = *i;
 		sOut.write( &iTmp, 2 );
@@ -396,7 +411,7 @@ void Bu::UtfString::writeUtf16le( Bu::Stream &sOut )
 	uint16_t iTmp = 0xFEFF; // Byte Order Marker
 	iTmp = (iTmp>>8) | (iTmp<<8);
 	sOut.write( &iTmp, 2 );
-	for( Array<uint16_t>::iterator i = aData.begin(); i; i++ )
+	for( Array<uint16_t>::const_iterator i = aData.begin(); i; i++ )
 	{
 		iTmp = *i;
 		iTmp = (iTmp>>8) | (iTmp<<8);
@@ -405,7 +420,7 @@ void Bu::UtfString::writeUtf16le( Bu::Stream &sOut )
 #endif
 }
 
-void Bu::UtfString::writeUtf32be( Bu::Stream &sOut )
+void Bu::UtfString::writeUtf32be( Bu::Stream &sOut ) const
 {
 #if BYTE_ORDER == BIG_ENDIAN
 	uint32_t iTmp = 0xFEFF; // Byte Order Marker
@@ -430,7 +445,7 @@ void Bu::UtfString::writeUtf32be( Bu::Stream &sOut )
 #endif
 }
 
-void Bu::UtfString::writeUtf32le( Bu::Stream &sOut )
+void Bu::UtfString::writeUtf32le( Bu::Stream &sOut ) const
 {
 #if BYTE_ORDER == LITTLE_ENDIAN
 	uint32_t iTmp = 0xFEFF; // Byte Order Marker
@@ -455,12 +470,12 @@ void Bu::UtfString::writeUtf32le( Bu::Stream &sOut )
 #endif
 }
 
-Bu::UtfChar Bu::UtfString::get( int iIndex )
+Bu::UtfChar Bu::UtfString::get( int iIndex ) const
 {
 	return nextChar( iIndex );
 }
 
-Bu::UtfChar Bu::UtfString::nextChar( int &iIndex )
+Bu::UtfChar Bu::UtfString::nextChar( int &iIndex ) const
 {
 	Bu::UtfChar i = aData[iIndex++];
 	switch( i&0xFC00 )
@@ -476,14 +491,31 @@ Bu::UtfChar Bu::UtfString::nextChar( int &iIndex )
 	}
 }
 
-Bu::String Bu::UtfString::get( Encoding eEnc )
+bool Bu::UtfString::operator==( const Bu::UtfString &rhs ) const
+{
+	return aData == rhs.aData;
+}
+
+Bu::UtfString &Bu::UtfString::operator+=( const Bu::UtfString &rhs )
+{
+	append( rhs );
+	return *this;
+}
+
+Bu::UtfString &Bu::UtfString::operator+=( const UtfChar &rhs )
+{
+	append( rhs );
+	return *this;
+}
+
+Bu::String Bu::UtfString::get( Encoding eEnc ) const
 {
 	Bu::MemBuf mb;
 	write( mb, eEnc );
 	return mb.getString();
 }
 
-void Bu::UtfString::debug()
+void Bu::UtfString::debug() const
 {
 	sio << "Raw Utf16: ";
 	for( int i = 0; i < aData.getSize(); i++ )
@@ -552,3 +584,21 @@ void Bu::UtfString::debugUtf8( const Bu::String &sUtf8 )
 	sio << sio.nl;
 }
 */
+
+template<> uint32_t Bu::__calcHashCode<Bu::UtfString>( const Bu::UtfString &k )
+{
+	uint32_t uCode = 0;
+
+	for( Bu::UtfString::const_iterator i = k.begin(); i; i++ )
+	{
+		uCode = *i + (uCode<<6) + (uCode<<16) - uCode;
+	}
+
+	return uCode;
+}
+
+template<> bool Bu::__cmpHashKeys<Bu::UtfString>(
+		const Bu::UtfString &a, const Bu::UtfString &b )
+{
+	return a == b;
+}

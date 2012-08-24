@@ -72,10 +72,12 @@ namespace Bu
 
 		UtfString();
 		UtfString( const Bu::String &sInput, Encoding eEnc=Utf8 );
+		UtfString( const char *sInput, Encoding eEnc=Utf8 );
 		virtual ~UtfString();
 
 		class iterator
 		{
+		friend class UtfString;
 		private:
 			iterator( UtfString *pSrc, int iCodePos ) :
 				pSrc( pSrc ), iCodePos( iCodePos )
@@ -92,13 +94,77 @@ namespace Bu
 			{
 				if( !pSrc )
 					throw Bu::ExceptionBase("invalid UtfString::iterator dereferenced.");
-				return pSrc->nextChar( iCodePos );
+				return pSrc->get( iCodePos );
+			}
+
+			iterator operator++()
+			{
+				pSrc->nextChar( iCodePos );
+				return *this;
+			}
+
+			iterator operator++( int )
+			{
+				pSrc->nextChar( iCodePos );
+				return *this;
+			}
+
+			operator bool() const
+			{
+				return iCodePos < pSrc->aData.getSize();
 			}
 
 		private:
 			UtfString *pSrc;
 			int iCodePos;
 		};
+		
+		class const_iterator
+		{
+		friend class UtfString;
+		private:
+			const_iterator( const UtfString *pSrc, int iCodePos ) :
+				pSrc( pSrc ), iCodePos( iCodePos )
+			{
+			}
+
+		public:
+			const_iterator() :
+				pSrc( NULL ), iCodePos( 0 )
+			{
+			}
+
+			UtfChar operator*()
+			{
+				if( !pSrc )
+					throw Bu::ExceptionBase("invalid UtfString::iterator dereferenced.");
+				return pSrc->get( iCodePos );
+			}
+
+			const_iterator operator++()
+			{
+				pSrc->nextChar( iCodePos );
+				return *this;
+			}
+
+			const_iterator operator++( int )
+			{
+				pSrc->nextChar( iCodePos );
+				return *this;
+			}
+
+			operator bool() const
+			{
+				return iCodePos < pSrc->aData.getSize();
+			}
+
+		private:
+			const UtfString *pSrc;
+			int iCodePos;
+		};
+
+		iterator begin();
+		const_iterator begin() const;
 
 		/**
 		 * Append a UtfChar (A unicode code point) to the string.  This can be
@@ -122,23 +188,23 @@ namespace Bu
 		 * the provided stream.  all Utf16 and Utf32 encodings will have the
 		 * correct BOM (byte order marker) at the begining.
 		 */
-		void write( Bu::Stream &sOut, Encoding eEnc=Utf8 );
+		void write( Bu::Stream &sOut, Encoding eEnc=Utf8 ) const;
 
 		/**
 		 * This encodes the UtfString in the given encoding and returns it as
 		 * a binary Bu::String.  Like write, this also includes the proper BOM
 		 * at the begining.
 		 */
-		Bu::String get( Encoding eEnc=Utf8 );
+		Bu::String get( Encoding eEnc=Utf8 ) const;
 
-		void debug();
+		void debug() const;
 
 		/**
 		 * This may or may not stick around, given an index, this returns a
 		 * codepoint, however there isn't necesarilly a 1:1 ratio between
 		 * indexes and code points.
 		 */
-		UtfChar get( int iIndex );
+		UtfChar get( int iIndex ) const;
 
 		/**
 		 * This is what to use if you want to iterate through a section of the
@@ -147,7 +213,11 @@ namespace Bu
 		 * will return the codepoint at that position and increment iIndex an
 		 * appropriate amount for it to point to the next code point.
 		 */
-		UtfChar nextChar( int &iIndex );
+		UtfChar nextChar( int &iIndex ) const;
+
+		bool operator==( const Bu::UtfString &rhs ) const;
+		UtfString &operator+=( const Bu::UtfString &rhs );
+		UtfString &operator+=( const UtfChar &rhs );
 
 	private:
 		void append16( uint16_t i ) { aData.append( i ); }
@@ -160,17 +230,30 @@ namespace Bu
 		void setUtf32be( const Bu::String &sInput );
 		void setUtf32le( const Bu::String &sInput );
 		
-		void writeUtf8( Bu::Stream &sOut );
-		void writeUtf16be( Bu::Stream &sOut );
-		void writeUtf16le( Bu::Stream &sOut );
-		void writeUtf32be( Bu::Stream &sOut );
-		void writeUtf32le( Bu::Stream &sOut );
+		void writeUtf8( Bu::Stream &sOut ) const;
+		void writeUtf16be( Bu::Stream &sOut ) const;
+		void writeUtf16le( Bu::Stream &sOut ) const;
+		void writeUtf32be( Bu::Stream &sOut ) const;
+		void writeUtf32le( Bu::Stream &sOut ) const;
 
 	private:
 		Bu::Array<uint16_t> aData;
 		int iRawLen;
 		int iCharLen;
 	};
+
+	//
+	// Hash support
+	//
+	template<typename T>
+	uint32_t __calcHashCode( const T &k );
+
+	template<typename T>
+	bool __cmpHashKeys( const T &a, const T &b );
+
+	template<> uint32_t __calcHashCode<UtfString>( const UtfString &k );
+	template<> bool __cmpHashKeys<UtfString>(
+		const UtfString &a, const UtfString &b );
 };
 
 #endif

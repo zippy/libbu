@@ -1,9 +1,15 @@
 #include <bu/file.h>
 #include <bu/string.h>
 #include <bu/utfstring.h>
+#include <bu/sio.h>
+
+using namespace Bu;
 
 int main()
 {
+	sio << "Code: " << Bu::__calcHashCode( Bu::UtfString("Hello there") )
+		<< sio.nl;
+
 	Bu::File fIn("utf8.in", Bu::File::Read );
 	Bu::String sUtf8;
 	char buf[4096];
