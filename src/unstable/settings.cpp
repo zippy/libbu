@@ -2,6 +2,7 @@
 
 #include "bu/settingsdrivertaf.h"
 #include "bu/settingsdriverregistry.h"
+#include "bu/settingsdriverini.h"
 
 Bu::Settings::Settings( const Bu::UtfString &sCompany,
 		const Bu::UtfString &sProduct, Bu::Settings::Driver eDriver ) :
@@ -15,7 +16,7 @@ Bu::Settings::Settings( const Bu::UtfString &sCompany,
 #if defined( WIN32 )
 			pDriver = new Bu::SettingsDriverRegistry();
 #else
-			pDriver = new Bu::SettingsDriverTaf();
+			pDriver = new Bu::SettingsDriverIni();
 #endif
 			break;
 
@@ -24,7 +25,7 @@ Bu::Settings::Settings( const Bu::UtfString &sCompany,
 			break;
 
 		case DriverIni:
-			throw Bu::ExceptionBase("Not supported");
+			pDriver = new Bu::SettingsDriverIni();
 			break;
 	}
 

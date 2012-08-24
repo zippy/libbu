@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 #include "bu/settingsdriverregistry.h"
 #include <windows.h>
 #include "bu/string.h"
@@ -86,3 +88,4 @@ Bu::UtfString Bu::SettingsDriverRegistry::get( const Bu::UtfString &sKey, const 
 	return Bu::UtfString( Bu::String( buf, iRet ) );
 }
 
+#endif
