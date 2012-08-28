@@ -5,13 +5,12 @@
  * terms of the license contained in the file LICENSE.
  */
 
+#include "bu/config.h"
 #include "bu/itoserver.h"
 #include <errno.h>
 #include "bu/tcpserversocket.h"
 #include "bu/client.h"
 #include "bu/tcpsocket.h"
-
-#include "bu/config.h"
 
 Bu::ItoServer::ItoServer() :
 	nTimeoutSec( 1 ),
@@ -42,7 +41,7 @@ Bu::ItoServer::~ItoServer()
 void Bu::ItoServer::addPort( int nPort, int nPoolSize )
 {
 	TcpServerSocket *s = new TcpServerSocket( nPort, nPoolSize );
-	int nSocket = s->getSocket();
+	socket_t nSocket = s->getSocket();
 	FD_SET( nSocket, &fdActive );
 	hServers.insert( nSocket, s );
 }
@@ -50,7 +49,7 @@ void Bu::ItoServer::addPort( int nPort, int nPoolSize )
 void Bu::ItoServer::addPort( const String &sAddr, int nPort, int nPoolSize )
 {
 	TcpServerSocket *s = new TcpServerSocket( sAddr, nPort, nPoolSize );
-	int nSocket = s->getSocket();
+	socket_t nSocket = s->getSocket();
 	FD_SET( nSocket, &fdActive );
 	hServers.insert( nSocket, s );
 }
@@ -61,7 +60,7 @@ void Bu::ItoServer::setTimeout( int nTimeoutSec, int nTimeoutUSec )
 	this->nTimeoutUSec = nTimeoutUSec;
 }
 
-void Bu::ItoServer::addClient( int nSocket, int nPort )
+void Bu::ItoServer::addClient( socket_t nSocket, int nPort )
 {
 	ItoClient *pC = new ItoClient( *this, nSocket, nPort, nTimeoutSec,
 			nTimeoutUSec );
@@ -106,7 +105,7 @@ void Bu::ItoServer::run()
 	}
 }
 
-void Bu::ItoServer::clientCleanup( int iSocket )
+void Bu::ItoServer::clientCleanup( socket_t iSocket )
 {
 	imClients.lock();
 	ItoClient *pCli = hClients.get( iSocket );
@@ -114,7 +113,7 @@ void Bu::ItoServer::clientCleanup( int iSocket )
 	qClientCleanup.enqueue( pCli );
 }
 
-Bu::ItoServer::ItoClient::ItoClient( ItoServer &rSrv, int iSocket, int iPort,
+Bu::ItoServer::ItoClient::ItoClient( ItoServer &rSrv, Bu::ItoServer::socket_t iSocket, int iPort,
 		int nTimeoutSec, int nTimeoutUSec ) :
 	rSrv( rSrv ),
 	iSocket( iSocket ),

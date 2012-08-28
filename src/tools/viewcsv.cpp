@@ -105,8 +105,8 @@ public:
 		int maxx, maxy;
 		getmaxyx( stdscr, maxy, maxx );
 
-		int iRows = min( (int)doc.sgData.getSize(), maxy-((bHeaderRow)?(4):(3)) );
-		int iCols = min( doc.iMaxCols, (int)maxx-1 );
+		int iRows = buMin( (int)doc.sgData.getSize(), maxy-((bHeaderRow)?(4):(3)) );
+		int iCols = buMin( doc.iMaxCols, (int)maxx-1 );
 
 		int iHdrHeight = 1;
 		if( bHeaderRow )
@@ -129,7 +129,7 @@ public:
 			{
 				if( iXPos >= maxx )
 					break;
-				int iWidth = min( doc.aWidths[iCol+iXOff], maxx-iXPos-1 );
+				int iWidth = buMin( doc.aWidths[iCol+iXOff], maxx-iXPos-1 );
 				char buf[6];
 				snprintf( buf, 6, "%d", iCol+iXOff );
 				mvaddch( 0, iXPos, ACS_VLINE );
@@ -165,7 +165,7 @@ public:
 			{
 				if( iXPos >= maxx )
 					break;
-				int iWidth = min( doc.aWidths[iCol+iXOff], maxx-iXPos-1 );
+				int iWidth = buMin( doc.aWidths[iCol+iXOff], maxx-iXPos-1 );
 				mvaddch( iRow+iHdrHeight+1, iXPos, ACS_VLINE );
 				mvaddnstr( iRow+iHdrHeight+1, iXPos+1,
 						doc.sgData[iRow+iYOff][iCol+iXOff].getStr(), iWidth );

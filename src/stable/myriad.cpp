@@ -5,6 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
+#include "bu/config.h"
 #include "bu/myriad.h"
 #include "bu/stream.h"
 #include "bu/myriadstream.h"

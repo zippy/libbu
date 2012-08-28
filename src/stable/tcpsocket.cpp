@@ -55,7 +55,11 @@ Bu::TcpSocket::TcpSocket( const Bu::String &sAddr, int nPort, int nTimeout,
 	/* Create the socket. */
 	nTcpSocket = bu_socket( PF_INET, SOCK_STREAM, 0 );
 	
+#ifdef WIN32
+	if( nTcpSocket == INVALID_SOCKET )
+#else
 	if( nTcpSocket < 0 )
+#endif
 	{
 		throw ExceptionBase("Couldn't create socket.\n");
 	}

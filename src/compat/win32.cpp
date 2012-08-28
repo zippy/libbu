@@ -12,7 +12,7 @@
 #define deffunc( name ) \
 	Bu::Winsock2::FNDEF_DYN_ ##name Bu::Winsock2::_fnptr_ ##name = NULL
 
-char Bu::Winsock2::scode[15];
+char Bu::Winsock2::scode[32];
 
 deffunc( WSAStartup );
 deffunc( WSACleanup );
@@ -85,7 +85,7 @@ Bu::Winsock2::~Winsock2()
 
 char *Bu::Winsock2::gai_strerror( int iCode )
 {
-	sprintf( scode, "%d", Bu::Winsock2::WSAGetLastError() );
+	sprintf( scode, "%d (%d)", iCode, Bu::Winsock2::WSAGetLastError() );
 	return scode;
 }
 

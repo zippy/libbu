@@ -39,11 +39,6 @@ namespace Bu
 		b = tmp;
 	}
 
-#ifdef WIN32
-	#warning: removing min and max win32 macros because of compile conflict
-	#undef min
-	#undef max
-#endif
 	/**
 	 * Finds the lesser of the two objects, objects passed in must be
 	 * less-than-comparable.
@@ -52,7 +47,7 @@ namespace Bu
 	 *@returns A reference to the lesser of a or b.
 	 */
 	template<typename item>
-	const item &min( const item &a, const item &b )
+	const item &buMin( const item &a, const item &b )
 	{
 		return a<b?a:b;
 	}
@@ -65,7 +60,7 @@ namespace Bu
 	 *@returns A reference to the lesser of a or b.
 	 */
 	template<typename item>
-	item &min( item &a, item &b )
+	item &buMin( item &a, item &b )
 	{
 		return a<b?a:b;
 	}
@@ -78,7 +73,7 @@ namespace Bu
 	 *@returns A reference to the greater of a or b.
 	 */
 	template<typename item>
-	const item &max( const item &a, const item &b )
+	const item &buMax( const item &a, const item &b )
 	{
 		return b<a?a:b;
 	}
@@ -91,7 +86,7 @@ namespace Bu
 	 *@returns A reference to the greater of a or b.
 	 */
 	template<typename item>
-	item &max( item &a, item &b )
+	item &buMax( item &a, item &b )
 	{
 		return b<a?a:b;
 	}
@@ -104,9 +99,9 @@ namespace Bu
 	 *@returns A reference to the mid-value of a, b, and c.
 	 */
 	template<typename item>
-	const item &mid( const item &a, const item &b, const item &c )
+	const item &buMid( const item &a, const item &b, const item &c )
 	{
-		return min( max( a, b ), c );
+		return buMin( buMax( a, b ), c );
 	}
 		
 	/**
@@ -117,9 +112,9 @@ namespace Bu
 	 *@returns A reference to the mid-value of a, b, and c.
 	 */
 	template<typename item>
-	item &mid( item &a, item &b, item &c )
+	item &buMid( item &a, item &b, item &c )
 	{
-		return min( max( a, b ), c );
+		return buMin( buMax( a, b ), c );
 	}
 	
 	//

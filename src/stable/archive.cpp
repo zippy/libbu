@@ -35,7 +35,7 @@ void Bu::Archive::read( void *pData, size_t nSize )
 	if( nSize == 0 || pData == NULL )
 		return;
 
-	if( rStream.read( (char *)pData, nSize ) < nSize )
+	if( (size_t)rStream.read( (char *)pData, nSize ) < nSize )
 		throw Bu::ExceptionBase("Insufficient data to unarchive object.");
 }
 

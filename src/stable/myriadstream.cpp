@@ -84,8 +84,8 @@ Bu::size Bu::MyriadStream::read( void *pBuf, Bu::size nBytes )
 			pCurBlock = rMyriad.getBlock( iCurBlock );
 		}
 
-		int iAmnt = Bu::min(
-			Bu::min(
+		int iAmnt = Bu::buMin(
+			Bu::buMin(
 				rMyriad.iBlockSize - iPos%rMyriad.iBlockSize,
 				iLeft
 				),
@@ -165,8 +165,8 @@ Bu::size Bu::MyriadStream::write( const void *pBuf, Bu::size nBytes )
 		// happens when creating a new stream.
 		if( iPos < pStream->iSize )
 		{
-			int iAmnt = Bu::min(
-				Bu::min(
+			int iAmnt = Bu::buMin(
+				Bu::buMin(
 					rMyriad.iBlockSize - iPos%rMyriad.iBlockSize,
 					iLeft
 					),
@@ -189,7 +189,7 @@ Bu::size Bu::MyriadStream::write( const void *pBuf, Bu::size nBytes )
 		}
 		else
 		{
-			int iAmnt = Bu::min(
+			int iAmnt = Bu::buMin(
 				rMyriad.iBlockSize - iPos%rMyriad.iBlockSize,
 				iLeft
 				);

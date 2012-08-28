@@ -58,13 +58,19 @@ namespace Bu
 		ItoServer();
 		virtual ~ItoServer();
 
+#ifdef WIN32
+		typedef unsigned int socket_t;
+#else
+		typedef int socket_t;
+#endif
+
 		void addPort( int nPort, int nPoolSize=40 );
 		void addPort( const String &sAddr, int nPort, int nPoolSize=40 );
 
 		//void scan();
 		void setTimeout( int nTimeoutSec, int nTimeoutUSec=0 );
 
-		void addClient( int nSocket, int nPort );
+		void addClient( socket_t nSocket, int nPort );
 
 		virtual void onNewConnection( Client *pClient, int nPort )=0;
 		virtual void onClosedConnection( Client *pClient )=0;
@@ -78,7 +84,7 @@ namespace Bu
 		{
 		friend class Bu::ItoServer::SrvClientLink;
 		public:
-			ItoClient( ItoServer &rSrv, int nSocket, int nPort,
+			ItoClient( ItoServer &rSrv, socket_t nSocket, int nPort,
 					int nTimeoutSec, int nTimeoutUSec );
 			virtual ~ItoClient();
 
@@ -92,7 +98,7 @@ namespace Bu
 			ItoServer &rSrv;
 			Client *pClient;
 			fd_set fdActive;
-			int iSocket;
+			socket_t iSocket;
 			int iPort;
 			int nTimeoutSec;
 			int nTimeoutUSec;
@@ -126,15 +132,15 @@ namespace Bu
 		int nTimeoutSec;
 		int nTimeoutUSec;
 		fd_set fdActive;
-		typedef Hash<int,TcpServerSocket *> ServerHash;
+		typedef Hash<socket_t,TcpServerSocket *> ServerHash;
 		ServerHash hServers;
-		typedef Hash<int,ItoClient *> ClientHash;
+		typedef Hash<socket_t,ItoClient *> ClientHash;
 		typedef SynchroQueue<ItoClient *> ClientQueue;
 		ClientHash hClients;
 		ClientQueue qClientCleanup;
 		Mutex imClients;
 
-		void clientCleanup( int iSocket );
+		void clientCleanup( socket_t iSocket );
 	};
 }
 

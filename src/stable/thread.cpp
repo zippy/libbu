@@ -5,9 +5,8 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/thread.h"
-
 #include "bu/config.h"
+#include "bu/thread.h"
 
 namespace Bu { subExceptionDef( ThreadException ); }
 
@@ -78,7 +77,7 @@ void Bu::Thread::yield()
 #ifndef WIN32
 	pthread_yield();
 #else
-	#warning Bu::Thread::yield IS A STUB for WIN32!!!!	
+	sched_yield();
 #endif
 }
 

@@ -55,13 +55,19 @@ namespace Bu
 		Server();
 		virtual ~Server();
 
+#ifdef WIN32
+		typedef unsigned int socket_t;
+#else
+		typedef int socket_t;
+#endif
+
 		void addPort( int nPort, int nPoolSize=40 );
 		void addPort( const String &sAddr, int nPort, int nPoolSize=40 );
 
 		virtual void scan();
 		void setTimeout( int nTimeoutSec, int nTimeoutUSec=0 );
 
-		void addClient( int nSocket, int nPort );
+		void addClient( socket_t nSocket, int nPort );
 
 		void setAutoTick( bool bEnable=true );
 		void tick();
@@ -72,7 +78,7 @@ namespace Bu
 		void shutdown();
 
 	private:
-		void closeClient( int iSocket );
+		void closeClient( socket_t iSocket );
 		class SrvClientLink : public Bu::ClientLink
 		{
 		public:
@@ -97,9 +103,9 @@ namespace Bu
 		int nTimeoutSec;
 		int nTimeoutUSec;
 		fd_set fdActive;
-		typedef Hash<int,TcpServerSocket *> SrvHash;
+		typedef Hash<socket_t,TcpServerSocket *> SrvHash;
 		SrvHash hServers;
-		typedef Hash<int,Client *> ClientHash;
+		typedef Hash<socket_t,Client *> ClientHash;
 		ClientHash hClients;
 		bool bAutoTick;
 	};

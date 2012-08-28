@@ -87,7 +87,7 @@ namespace Bu
 		decltype( int, send, SOCKET s, const char *buf, int len, int flags );
 		decltype( int, __WSAFDIsSet, SOCKET s, fd_set *set );
 	
-		static char scode[15];
+		static char scode[32];
 		static char *gai_strerror( int iCode );
 	};
 

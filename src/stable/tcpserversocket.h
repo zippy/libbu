@@ -37,9 +37,14 @@ namespace Bu
 	class TcpServerSocket
 	{
 	public:
+#ifdef WIN32
+		typedef unsigned int socket_t;
+#else
+		typedef int socket_t;
+#endif
 		TcpServerSocket( int nPort, int nPoolSize=40 );
 		TcpServerSocket( const String &sAddr, int nPort, int nPoolSize=40 );
-		TcpServerSocket( int nSocket, bool bInit, int nPoolSize=40 );
+		TcpServerSocket( socket_t nSocket, bool bInit, int nPoolSize=40 );
 		TcpServerSocket( const TcpServerSocket &rSrc );
 		virtual ~TcpServerSocket();
 
@@ -52,11 +57,7 @@ namespace Bu
 		void initServer( struct sockaddr_in &name, int nPoolSize );
 
 		fd_set fdActive;
-#ifdef WIN32
-		unsigned int nServer;
-#else
-		int nServer;
-#endif
+		socket_t nServer;
 		int nPort;
 	};
 }

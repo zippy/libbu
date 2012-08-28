@@ -5,6 +5,7 @@
  * terms of the license contained in the file LICENSE.
  */
 
+#include "bu/config.h"
 #include "bu/myriadfs.h"
 #include "bu/myriadstream.h"
 
@@ -434,7 +435,7 @@ int32_t Bu::MyriadFs::lookupInode( Bu::String::const_iterator iStart,
 void Bu::MyriadFs::readInode( int32_t iNode, RawStat &rs, MyriadStream &rIs )
 {
 	rIs.setPos( hNodeIndex.get( iNode )*sizeof(RawStat) );
-	if( rIs.read( &rs, sizeof(RawStat) ) < sizeof(RawStat) )
+	if( rIs.read( &rs, sizeof(RawStat) ) < (int)sizeof(RawStat) )
 		throw Bu::MyriadFsException("Filesystem corruption detected.");
 	if( rs.iNode != iNode )
 		throw Bu::MyriadFsException("Filesystem corruption detected.");
@@ -451,7 +452,7 @@ void Bu::MyriadFs::writeInode( const RawStat &rs,
 {
 	rOs.setSize( hNodeIndex.getSize()*sizeof(RawStat) );
 	rOs.setPos( hNodeIndex.get( rs.iNode )*sizeof(RawStat) );
-	if( rOs.write( &rs, sizeof(RawStat) ) < sizeof(RawStat) )
+	if( rOs.write( &rs, sizeof(RawStat) ) < (int)sizeof(RawStat) )
 		throw Bu::MyriadFsException("Error writing inode to header stream.");
 }
 

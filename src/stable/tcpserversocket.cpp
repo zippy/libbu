@@ -5,6 +5,8 @@
  * terms of the license contained in the file LICENSE.
  */
 
+#include "bu/config.h"
+
 #ifndef WIN32
  #include <sys/socket.h>
  #include <netinet/in.h>
@@ -22,8 +24,6 @@
 //#include <termios.h>
 #include <fcntl.h>
 #include "bu/tcpserversocket.h"
-
-#include "bu/config.h"
 
 namespace Bu { subExceptionDef( TcpServerSocketException ) }
 
@@ -72,7 +72,7 @@ Bu::TcpServerSocket::TcpServerSocket(const String &sAddr,int nPort, int nPoolSiz
 	startServer( name, nPoolSize );
 }
 
-Bu::TcpServerSocket::TcpServerSocket( int nServer, bool bInit, int nPoolSize ) :
+Bu::TcpServerSocket::TcpServerSocket( socket_t nServer, bool bInit, int nPoolSize ) :
 	nServer( nServer ),
 	nPort( 0 )
 {
@@ -109,7 +109,11 @@ Bu::TcpServerSocket::TcpServerSocket( const TcpServerSocket &rSrc )
 
 Bu::TcpServerSocket::~TcpServerSocket()
 {
+#ifdef WIN32
+	if( nServer != INVALID_SOCKET )
+#else
 	if( nServer > -1 )
+#endif
 		::close( nServer );
 }
 
@@ -118,7 +122,11 @@ void Bu::TcpServerSocket::startServer( struct sockaddr_in &name, int nPoolSize )
 	/* Create the socket. */
 	nServer = bu_socket( PF_INET, SOCK_STREAM, 0 );
 
+#ifdef WIN32
+	if( nServer == INVALID_SOCKET )
+#else
 	if( nServer < 0 )
+#endif
 	{
 		throw Bu::TcpServerSocketException("Couldn't create a listen socket.");
 	}

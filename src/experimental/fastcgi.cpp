@@ -24,7 +24,7 @@ Bu::FastCgi::FastCgi() :
 	pSrv( NULL ),
 	bRunning( true )
 {
-	pSrv = new Bu::TcpServerSocket( STDIN_FILENO, false );
+	pSrv = new Bu::TcpServerSocket( (Bu::TcpServerSocket::socket_t)STDIN_FILENO, false );
 }
 
 Bu::FastCgi::FastCgi( int iPort ) :

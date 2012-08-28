@@ -61,7 +61,7 @@ namespace Bu
 
 				if( iReadBufFill == iBlockSize )
 				{
-					int iCpy = Bu::min( (int)(iBytes-iRead), iBlockSize-iReadBufPos );
+					int iCpy = Bu::buMin( (int)(iBytes-iRead), iBlockSize-iReadBufPos );
 					memcpy( ((char *)pBuf)+iRead, aReadBuf+iReadBufPos, iCpy );
 					iRead += iCpy;
 					iReadBufPos += iCpy;
@@ -81,7 +81,7 @@ namespace Bu
 			
 			while( iPos < iBytes )
 			{
-				int iLeft = Bu::min((int)(iBytes-iPos),iBlockSize-iWriteBufFill);
+				int iLeft = Bu::buMin((int)(iBytes-iPos),iBlockSize-iWriteBufFill);
 				memcpy( aWriteBuf+iWriteBufFill, (char *)pBuf+iPos, iLeft );
 				iPos += iLeft;
 				iWriteBufFill += iLeft;

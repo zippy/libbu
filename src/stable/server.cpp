@@ -29,7 +29,7 @@ Bu::Server::~Server()
 void Bu::Server::addPort( int nPort, int nPoolSize )
 {
 	TcpServerSocket *s = new TcpServerSocket( nPort, nPoolSize );
-	int nSocket = s->getSocket();
+	socket_t nSocket = s->getSocket();
 	FD_SET( nSocket, &fdActive );
 	hServers.insert( nSocket, s );
 }
@@ -37,7 +37,7 @@ void Bu::Server::addPort( int nPort, int nPoolSize )
 void Bu::Server::addPort( const String &sAddr, int nPort, int nPoolSize )
 {
 	TcpServerSocket *s = new TcpServerSocket( sAddr, nPort, nPoolSize );
-	int nSocket = s->getSocket();
+	socket_t nSocket = s->getSocket();
 	FD_SET( nSocket, &fdActive );
 	hServers.insert( nSocket, s );
 }
@@ -131,7 +131,7 @@ void Bu::Server::scan()
 		tick();
 }
 
-void Bu::Server::addClient( int nSocket, int nPort )
+void Bu::Server::addClient( socket_t nSocket, int nPort )
 {
 	FD_SET( nSocket, &fdActive );
 
@@ -202,7 +202,7 @@ void Bu::Server::shutdown()
 	hClients.clear();
 }
 
-void Bu::Server::closeClient( int iSocket )
+void Bu::Server::closeClient( socket_t iSocket )
 {
 	Bu::Client *pClient = hClients.get( iSocket );
 	onClosedConnection( pClient );
