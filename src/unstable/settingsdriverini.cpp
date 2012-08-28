@@ -24,7 +24,7 @@ Bu::SettingsDriverIni::~SettingsDriverIni()
 		f << "[" << i.getKey().get() << "]" << f.nl;
 		for( StrHash::iterator k = (*i).begin(); k; k++ )
 		{
-			f << k.getKey().get() << "=" << k.getValue().get() << f.nl;
+			f << k.getKey().get() << " = " << k.getValue().get() << f.nl;
 		}
 		f << f.nl;
 	}
@@ -45,17 +45,21 @@ void Bu::SettingsDriverIni::init( const Bu::UtfString &sCompany,
 		Bu::Buffer bIn( fIn );
 		StrHash hKeys;
 		Bu::String sGroup;
+		bool bStart = true;
 		while( !bIn.isEos() )
 		{
 			Bu::String sIn = bIn.readLine();
+			if( sIn.isEmpty() )
+				continue;
 			if( sIn[0] == '[' )
 			{
-				if( !sGroup.isEmpty() )
+				if( bStart != true )
 				{
 					hGroup.insert( sGroup, hKeys );
 					hKeys.clear();
 				}
 				sGroup = Bu::String( sIn.begin()+1, sIn.find(']') );
+				bStart = false;
 			}
 			else
 			{
@@ -63,10 +67,11 @@ void Bu::SettingsDriverIni::init( const Bu::UtfString &sCompany,
 				if( !i )
 					continue;
 
-				hKeys.insert( Bu::String( sIn.begin(), i ),
-					Bu::String( i+1, sIn.end() ) );
+				hKeys.insert( Bu::String( sIn.begin(), i ).trimWhitespace(),
+					Bu::String( i+1, sIn.end() ).trimWhitespace() );
 			}
 		}
+		hGroup.insert( sGroup, hKeys );
 	}
 	catch(...)
 	{
@@ -140,8 +145,8 @@ Bu::UtfString Bu::SettingsDriverIni::get( const Bu::UtfString &sKey, const Bu::U
 		sId.set( Bu::String( in+1, suKey.end() ) );
 	}
 
-	sio << "Group: " << sGrp.get() << sio.nl
-		<< "Key:   " << sId.get() << sio.nl;
+//	sio << "Group: " << sGrp.get() << sio.nl
+//		<< "Key:   " << sId.get() << sio.nl;
 
 	try
 	{
