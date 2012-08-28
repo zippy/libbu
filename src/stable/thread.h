@@ -102,15 +102,23 @@ namespace Bu
 		/**
 		 * The workhorse of the Thread class.  This is the function that will
 		 * run in the thread, when this function exits the thread dies and is
-		 * cleaned up by the system.  Make sure to read up on ThreadMutex,
-		 * ThreadCondition, and cancel to see how to control and protect
-		 * everything you do in a safe way within this function.
+		 * cleaned up by the system.  Make sure to read up on Bu::Mutex,
+		 * Bu::Condition, and the Bu::Synchro* classes to see how to control
+		 * and protect everything you do in a safe way within this function.
 		 *@returns I'm not sure right now, but this is the posix standard form.
 		 */
 		virtual void run()=0;
 
 		/**
-		 * This is the hidden-heard of the thread system.  While run is what the
+		 * Gives up some cpu-time in the currently running thread.  If a thread
+		 * is working hard, but you want to give other threads on the system
+		 * some time to do some work, call yield.
+		 */
+		void yield();
+
+	private:
+		/**
+		 * This is the hidden-heart of the thread system.  While run is what the
 		 * user gets to override, and everything said about it is true, this is
 		 * the function that actually makes up the thread, it simply calls the
 		 * run member function in an OO-friendly way.  This is what allows us to
@@ -119,8 +127,6 @@ namespace Bu
 		 *@returns This is specified by posix, I'm not sure yet.
 		 */
 		static void *threadRunner( void *pThread );
-
-		void yield();
 	};
 }
 
