@@ -8,6 +8,7 @@
 #ifndef BU_THREAD_H
 #define BU_THREAD_H
 
+#include "bu/config.h"
 #include <pthread.h>
 
 #include "bu/exceptionbase.h"

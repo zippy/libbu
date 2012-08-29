@@ -5,7 +5,6 @@
  * terms of the license contained in the file LICENSE.
  */
 
-#include "bu/config.h"
 #include "bu/thread.h"
 
 namespace Bu { subExceptionDef( ThreadException ); }
