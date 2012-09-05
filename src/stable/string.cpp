@@ -1252,7 +1252,7 @@ Bu::String::FormatProxy::operator Bu::String() const
 	}
 	Bu::MemBuf mbOut;
 	Bu::Formatter f( mbOut );
-	for( String::const_iterator s = rFmt.begin(); s; s++ )
+	for( String::const_iterator s = rFmt.begin(); s; )
 	{
 		if( *s == '%' )
 		{
@@ -1278,14 +1278,14 @@ Bu::String::FormatProxy::operator Bu::String() const
 				}
 
 				f << (*aArg[iIndex]).format << (*aArg[iIndex]).value;
-				if( s )
-					f << *s;
+				continue;
 			}
 		}
 		else
 		{
 			f << *s;
 		}
+		s++;
 	}
 
 	delete[] aArg;

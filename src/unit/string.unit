@@ -573,6 +573,14 @@ suite String
 		unitTest( Bu::String(" \tHello   \t\t\r\nthere\r\n \t").trimWhitespace()
 			== "Hello   \t\t\r\nthere" );
 	}
+
+	test format1
+	{
+		unitTest( (Bu::String)Bu::String("%1").arg( 12, Bu::Fmt().width(3) ) == " 12" );
+		unitTest( (Bu::String)Bu::String("%1 %2").arg("IQ").arg(4, Bu::Fmt().plus()) == "IQ +4" );
+		unitTest( (Bu::String)Bu::String("%1%2").arg("IQ").arg(4, Bu::Fmt().plus()) == "IQ+4" );
+		unitTest( (Bu::String)Bu::String("Sup #%1-Guy!").arg( 1 ) == "Sup #1-Guy!" );
+	}
 }
 // 03F09CA4F58AC8CA0E80F0D9D409D0A60700A192270004BC3A99E91D0001034F544603362E35013103313130019CA4F58AC8CA0E0002830800002C4200008AC200EBF7D9D4090127BB010000E3
 // 
