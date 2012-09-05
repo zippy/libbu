@@ -8,13 +8,16 @@
 #ifndef BU_SIO_H
 #define BU_SIO_H
 
-#include "bu/stdstream.h"
 #include "bu/formatter.h"
 
 namespace Bu
 {
-	extern Bu::StdStream sioRaw;
+	class StreamStack;
+
+	extern Bu::StreamStack sioRaw;
 	extern Bu::Formatter sio;
+	extern Bu::StreamStack serrRaw;
+	extern Bu::Formatter serr;
 
 	Bu::String::FormatProxy print( Bu::Stream &s, const Bu::String &str );
 	Bu::String::FormatProxy print( const Bu::String &str );

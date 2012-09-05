@@ -19,7 +19,12 @@ namespace Bu
 	class StdStream : public Stream
 	{
 	public:
-		StdStream();
+		enum OutMode
+		{
+			StdOut,
+			StdError
+		};
+		StdStream( OutMode eOut=StdOut );
 		virtual ~StdStream();
 
 		virtual void close();
@@ -43,7 +48,10 @@ namespace Bu
 		virtual void setSize( size iSize );
 		virtual size getSize() const;
 		virtual size getBlockSize() const;
-		virtual Bu::String getLocation() const;		
+		virtual Bu::String getLocation() const;
+	
+	private:
+		OutMode eOut;
 	};
 }
 

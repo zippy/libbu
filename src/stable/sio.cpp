@@ -6,9 +6,13 @@
  */
 
 #include "bu/sio.h"
+#include "bu/streamstack.h"
+#include "bu/stdstream.h"
 
-Bu::StdStream Bu::sioRaw;
+Bu::StreamStack Bu::sioRaw( new Bu::StdStream() );
 Bu::Formatter Bu::sio( Bu::sioRaw );
+Bu::StreamStack Bu::serrRaw( new Bu::StdStream( Bu::StdStream::StdError ) );
+Bu::Formatter Bu::serr( Bu::serrRaw );
 
 class PrintEndAction : public Bu::String::FormatProxyEndAction
 {

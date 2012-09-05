@@ -8,6 +8,8 @@ int main()
 		arg("totally").arg( 47.2 );
 	Bu::println("This is unsubstituted?");
 
+	Bu::serr << "This is error text." << Bu::serr.nl;
+
 	return 0;
 }
 

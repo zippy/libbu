@@ -8,7 +8,8 @@
 #include <stdio.h>
 #include "bu/stdstream.h"
 
-Bu::StdStream::StdStream()
+Bu::StdStream::StdStream( OutMode eOut ) :
+	eOut( eOut )
 {
 }
 
@@ -27,7 +28,7 @@ Bu::size Bu::StdStream::read( void *pBuf, Bu::size nBytes )
 
 Bu::size Bu::StdStream::write( const void *pBuf, Bu::size nBytes )
 {
-	return fwrite( pBuf, 1, nBytes, stdout );
+	return fwrite( pBuf, 1, nBytes, eOut==StdOut?stdout:stderr );
 }
 
 Bu::size Bu::StdStream::tell()
@@ -59,7 +60,7 @@ bool Bu::StdStream::isOpen()
 
 void Bu::StdStream::flush()
 {
-	fflush( stdout );
+	fflush( eOut==StdOut?stdout:stderr );
 }
 
 bool Bu::StdStream::canRead()
