@@ -946,12 +946,21 @@ namespace Bu
 		void flatten() const;
 		bool isFlat() const;
 
-		class FormatProxy
+	public:
+		class FormatProxyEndAction
 		{
 		public:
-			FormatProxy( const String &rFmt );
-			virtual ~FormatProxy();
+			virtual void operator()( const Bu::String &sFinal )=0;
+		};
 
+		class FormatProxy
+		{
+		friend class Bu::String;
+		private:
+			FormatProxy( const String &rFmt, FormatProxyEndAction *pAct=NULL );
+
+		public:
+			virtual ~FormatProxy();
 			template<typename T>
 			FormatProxy &arg( const T &x )
 			{
@@ -968,7 +977,8 @@ namespace Bu
 				return *this;
 			}
 
-			operator String() const;
+			String end() const;
+			operator String() const { return end(); }
 
 		private:
 			const String &rFmt;
@@ -993,19 +1003,31 @@ namespace Bu
 			};
 			typedef Bu::List<Arg> ArgList;
 			ArgList lArgs;
+			FormatProxyEndAction *pAct;
+			mutable bool bOpen;
 		};
 
 	public:
 		template<typename ArgType>
-		FormatProxy arg( const ArgType &x )
+		FormatProxy arg( const ArgType &x ) const
 		{
 			return FormatProxy( *this ).arg( x );
 		}
 
 		template<typename ArgType>
-		FormatProxy arg( const ArgType &x, const Bu::Fmt &f )
+		FormatProxy arg( const ArgType &x, const Bu::Fmt &f ) const
 		{
 			return FormatProxy( *this ).arg( x, f );
+		}
+		
+		FormatProxy format() const
+		{
+			return FormatProxy( *this );
+		}
+
+		FormatProxy format( FormatProxyEndAction *pEndAction ) const
+		{
+			return FormatProxy( *this, pEndAction );
 		}
 	};
 	

@@ -16,11 +16,11 @@ namespace Bu
 	extern Bu::StdStream sioRaw;
 	extern Bu::Formatter sio;
 
-	Bu::size print( Bu::Stream &s, const Bu::String &str );
-	Bu::size print( const Bu::String &str );
+	Bu::String::FormatProxy print( Bu::Stream &s, const Bu::String &str );
+	Bu::String::FormatProxy print( const Bu::String &str );
 
-	Bu::size println( Bu::Stream &s, const Bu::String &str );
-	Bu::size println( const Bu::String &str );
+	Bu::String::FormatProxy println( Bu::Stream &s, const Bu::String &str );
+	Bu::String::FormatProxy println( const Bu::String &str );
 };
 
 #endif

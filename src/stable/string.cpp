@@ -1228,16 +1228,23 @@ bool Bu::String::isFlat() const
 // Sub-class Bu::String::FormatProxy
 //
 
-Bu::String::FormatProxy::FormatProxy( const String &rFmt ) :
-	rFmt( rFmt )
+Bu::String::FormatProxy::FormatProxy( const String &rFmt,
+		String::FormatProxyEndAction *pAct ) :
+	rFmt( rFmt ),
+	pAct( pAct ),
+	bOpen( true )
 {
 }
 
 Bu::String::FormatProxy::~FormatProxy()
 {
+	if( pAct && bOpen )
+		end();
+
+	delete pAct;
 }
 
-Bu::String::FormatProxy::operator Bu::String() const
+Bu::String Bu::String::FormatProxy::end() const
 {
 	int iCount = lArgs.getSize();
 	ArgList::const_iterator *aArg =
@@ -1287,8 +1294,12 @@ Bu::String::FormatProxy::operator Bu::String() const
 		}
 		s++;
 	}
-
+	
+	bOpen = false;
 	delete[] aArg;
+
+	if( pAct )
+		(*pAct)( mbOut.getString() );
 	return mbOut.getString();
 }
 

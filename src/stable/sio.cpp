@@ -10,25 +10,45 @@
 Bu::StdStream Bu::sioRaw;
 Bu::Formatter Bu::sio( Bu::sioRaw );
 
-Bu::size Bu::print( Bu::Stream &s, const Bu::String &str )
+class PrintEndAction : public Bu::String::FormatProxyEndAction
 {
-	return s.write( str.getStr(), str.getSize() );
+public:
+	PrintEndAction( Bu::Stream &s, bool bEndLn ) :
+		s( s ),
+		bEndLn( bEndLn )
+	{
+	}
+
+	virtual void operator()( const Bu::String &sFinal )
+	{
+		s.write( sFinal.getStr(), sFinal.getSize() );
+		if( bEndLn )
+		{
+			s.write("\n", 1);
+			s.flush();
+		}
+	}
+
+	Bu::Stream &s;
+	bool bEndLn;
+};
+
+Bu::String::FormatProxy Bu::print( Bu::Stream &s, const Bu::String &str )
+{
+	return str.format( new PrintEndAction( s, false ) );
 }
 
-Bu::size Bu::print( const Bu::String &str )
+Bu::String::FormatProxy Bu::print( const Bu::String &str )
 {
 	return print( sioRaw, str );
 }
 
-Bu::size Bu::println( Bu::Stream &s, const Bu::String &str )
+Bu::String::FormatProxy Bu::println( Bu::Stream &s, const Bu::String &str )
 {
-	Bu::size sRet = s.write( str.getStr(), str.getSize() );
-	sRet += s.write("\n", 1 );
-	s.flush();
-	return sRet;
+	return str.format( new PrintEndAction( s, true ) );
 }
 
-Bu::size Bu::println( const Bu::String &str )
+Bu::String::FormatProxy Bu::println( const Bu::String &str )
 {
 	return println( sioRaw, str );
 }
