@@ -247,6 +247,9 @@ namespace Bu
 
 		void doFlush();
 
+		Stream &getStream() { return rStream; }
+		operator Stream&() { return rStream; }
+
 	private:
 		Stream &rStream;
 		Fmt fLast;

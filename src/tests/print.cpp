@@ -9,6 +9,7 @@ int main()
 	Bu::println("This is unsubstituted?");
 
 	Bu::serr << "This is error text." << Bu::serr.nl;
+	Bu::println( Bu::serr, "This is also error text?");
 
 	return 0;
 }
