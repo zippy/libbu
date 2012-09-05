@@ -19,6 +19,10 @@ public:
 	{
 	}
 
+	virtual ~PrintEndAction()
+	{
+	}
+
 	virtual void operator()( const Bu::String &sFinal )
 	{
 		s.write( sFinal.getStr(), sFinal.getSize() );
