@@ -1269,10 +1269,30 @@ Bu::String Bu::String::FormatProxy::end() const
 			else
 			{
 				String sNum;
-				while( s && *s >= '0' && *s <= '9' )
+				if( *s == '{' )
 				{
-					sNum += *s;
 					s++;
+					while( s && *s >= '0' && *s <= '9' )
+					{
+						sNum += *s;
+						s++;
+					}
+					if( !s || *s != '}' )
+					{
+						delete[] aArg;
+						throw Bu::ExceptionBase(
+							"Argument started with a '{' but terminated "
+							"with a '%c' instead of '}'.", *s );
+					}
+					s++;
+				}
+				else
+				{
+					while( s && *s >= '0' && *s <= '9' )
+					{
+						sNum += *s;
+						s++;
+					}
 				}
 				int iIndex = strtol( sNum.getStr(), 0, 10 )-1;
 				if( iIndex < 0 || iIndex >= iCount )

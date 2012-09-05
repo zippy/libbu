@@ -950,6 +950,7 @@ namespace Bu
 		class FormatProxyEndAction
 		{
 		public:
+			virtual ~FormatProxyEndAction() { };
 			virtual void operator()( const Bu::String &sFinal )=0;
 		};
 
