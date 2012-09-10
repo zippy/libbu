@@ -294,6 +294,18 @@ Bu::Fmt &Bu::Fmt::caps( bool bCaps )
 	return *this;
 }
 
+Bu::Fmt &Bu::Fmt::upper()
+{
+	this->bCaps = true;
+	return *this;
+}
+
+Bu::Fmt &Bu::Fmt::lower()
+{
+	this->bCaps = false;
+	return *this;
+}
+
 Bu::Fmt &Bu::Fmt::tokenize( bool bTokenize )
 {
 	this->bTokenize = bTokenize;

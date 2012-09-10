@@ -17,7 +17,7 @@ namespace Bu
 			uRadix( 10 ),
 			uAlign( Right ),
 			bPlus( false ),
-			bCaps( true ),
+			bCaps( false ),
 			bTokenize( true )
 		{
 		}
@@ -47,7 +47,7 @@ namespace Bu
 		{
 		}
 
-		static Fmt hex( unsigned int uWidth=0, bool bCaps=true )
+		static Fmt hex( unsigned int uWidth=0, bool bCaps=false )
 		{
 			return Fmt( uWidth, 16, Right, false, bCaps, '0' );
 		}
@@ -73,6 +73,8 @@ namespace Bu
 		Fmt &align( Alignment eAlign );
 		Fmt &plus( bool bPlus=true );
 		Fmt &caps( bool bCaps=true );
+		Fmt &upper();
+		Fmt &lower();
 		Fmt &tokenize( bool bTokenize=true );
 
 		Fmt &left();
