@@ -1,14 +1,15 @@
 #include <bu/sio.h>
 #include <bu/optparser.h>
 #include <bu/file.h>
+#include <bu/streamstack.h>
+#include <bu/strfilter.h>
+#include <bu/taf.h>
+
 #include <bu/deflate.h>
 #include <bu/bzip2.h>
 #include <bu/lzma.h>
 #include <bu/base64.h>
 #include <bu/hex.h>
-#include <bu/streamstack.h>
-
-#include <bu/strfilter.h>
 
 using namespace Bu;
 
@@ -18,10 +19,15 @@ public:
 	Options( int argc, char *argv[] ) :
 		sClass("Datafiles")
 	{
+		addHelpBanner("bin2cpp - convert files into executable-embeddable C++ code.\n");
+		addHelpBanner("Each file in the input is loaded, filtered according to your options, and written as stack allocated, static variables in a generated class.  You can then access the files as though they were on disk through that class.");
+		addHelpBanner("\nUsage: bin2cpp [options] [input1] [input2] [...] [inputN]");
+		addHelpBanner(  "   Or: bin2cpp -s <taf spec file>\n");
 		addOption( sClass, 'c', "Class name [default=\"Datafiles\"]");
 		addOption( sOutBase, 'o', "Output base filename [defaults to classname]");
 		addOption( sOutDir, 'd', "Output directory [defaults to current dir]");
 		addOption( slot(this, &Options::addFilter), 'f', "Add filter: deflate, bzip2, lzma, base64, hex");
+		addOption( sSpecFile, 's', "Use the specified spec file instead of providing options on the command line.  If you use this option all others are ignored.");
 		setNonOption( slot(this, &Options::addInput) );
 		addHelpOption();
 
@@ -54,11 +60,33 @@ public:
 	Bu::String sOutDir;
 	Bu::StringList slInput;
 	Bu::StringList slFilter;
+	Bu::String sSpecFile;
 };
 
 int main( int argc, char *argv[] )
 {
 	Options opt( argc, argv );
+
+	if( !opt.sSpecFile.isEmpty() )
+	{
+		Bu::File fTaf( opt.sSpecFile, Bu::File::Read );
+		Bu::TafReader rTaf( fTaf );
+		Bu::TafGroup *pRoot = rTaf.readGroup();
+
+		if( pRoot == NULL || pRoot->getName() != "bin2cpp" )
+		{
+			sio << "Specfied spec file does not appear to be a bin2cpp taf "
+				"specifications file." << sio.nl;
+			return 5;
+		}
+
+		opt.sOutBase = opt.sClass = pRoot->getProperty("class");
+		if( pRoot->hasProperty("output") )
+			opt.sOutBase = pRoot->getProperty("output");
+		opt.sOutDir = pRoot->getProperty("dir", ".") + "/";
+
+		delete pRoot;
+	}
 
 	File fHdrOut( opt.sOutDir + opt.sOutBase + ".h", File::WriteNew );
 	File fSrcOut( opt.sOutDir + opt.sOutBase + ".cpp", File::WriteNew );
