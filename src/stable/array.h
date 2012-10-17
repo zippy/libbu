@@ -280,6 +280,15 @@ namespace Bu
 		}
 
 		/**
+		 * Returns true if the array is empty.  The capacity has no bearing on
+		 * this, only the size.
+		 */
+		bool isEmpty() const
+		{
+			return core->iSize==0;
+		}
+
+		/**
 		 * Get the current size of the array.
 		 *@returns The current size of the array.
 		 */
