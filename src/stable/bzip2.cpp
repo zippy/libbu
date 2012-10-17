@@ -162,7 +162,7 @@ Bu::size Bu::BZip2::read( void *pData, Bu::size nBytes )
 			{
 				if( rNext.isSeekable() )
 				{
-					rNext.seek( -pState->avail_in );
+					rNext.seek( -(Bu::size)pState->avail_in );
 				}
 			}
 			return nBytes-pState->avail_out;
