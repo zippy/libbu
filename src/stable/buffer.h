@@ -12,47 +12,47 @@
 
 namespace Bu
 {
-	class Buffer : public Bu::Filter
-	{
-	public:
-		Buffer( Bu::Stream &rNext, int iWhat=Both, int iBufSize=4096 );
-		virtual ~Buffer();
+    class Buffer : public Bu::Filter
+    {
+    public:
+        Buffer( Bu::Stream &rNext, int iWhat=Both, int iBufSize=4096 );
+        virtual ~Buffer();
 
-		enum
-		{
-			Write	= 1,
-			Read	= 2,
-			Both	= 3
-		};
+        enum
+        {
+            Write   = 1,
+            Read    = 2,
+            Both    = 3
+        };
 
-		virtual void start();
-		virtual Bu::size stop();
+        virtual void start();
+        virtual Bu::size stop();
 
-		virtual Bu::size read( void *pBuf, Bu::size nBytes );
-		virtual Bu::size write( const void *pBuf, Bu::size nBytes );
-		using Stream::write;
+        virtual Bu::size read( void *pBuf, Bu::size nBytes );
+        virtual Bu::size write( const void *pBuf, Bu::size nBytes );
+        using Stream::write;
 
-		Bu::size getReadFill() { return iReadBufFill; }
-		bool isWritePending() { return iWriteBufFill > 0; }
+        Bu::size getReadFill() { return iReadBufFill; }
+        bool isWritePending() { return iWriteBufFill > 0; }
 
-		virtual void flush();
+        virtual void flush();
 
-		virtual bool isEos();
+        virtual bool isEos();
 
-	private:
-		void fillReadBuf();
+    private:
+        void fillReadBuf();
 
-	private:
-		Bu::size sSoFar;
-		int iBufSize;
-		char *sReadBuf;
-		char *sWriteBuf;
-		int iReadBufFill;
-		int iReadPos;
-		int iWriteBufFill;
-		int iWritePos;
-		int iWhat;
-	};
+    private:
+        Bu::size sSoFar;
+        int iBufSize;
+        char *sReadBuf;
+        char *sWriteBuf;
+        int iReadBufFill;
+        int iReadPos;
+        int iWriteBufFill;
+        int iWritePos;
+        int iWhat;
+    };
 };
 
 #endif

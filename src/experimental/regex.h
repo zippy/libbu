@@ -14,31 +14,31 @@
 
 namespace Bu
 {
-	class RegEx
-	{
-	public:
-		RegEx();
-		RegEx( const Bu::String &sSrc );
-		virtual ~RegEx();
+    class RegEx
+    {
+    public:
+        RegEx();
+        RegEx( const Bu::String &sSrc );
+        virtual ~RegEx();
 
-		void compile( const Bu::String &sSrc );
-		int getNumSubStrings();
-		bool execute( const Bu::String &sSrc );
-		void getSubStringRange( int nIndex, int &iStart, int &iEnd );
-		Bu::String getSubString( int nIndex );
-		const Bu::String &getSource()
-		{
-			return sSrc;
-		}
+        void compile( const Bu::String &sSrc );
+        int getNumSubStrings();
+        bool execute( const Bu::String &sSrc );
+        void getSubStringRange( int nIndex, int &iStart, int &iEnd );
+        Bu::String getSubString( int nIndex );
+        const Bu::String &getSource()
+        {
+            return sSrc;
+        }
 
-	private:
-		Bu::String sSrc;
-		Bu::String sTest;
-		void *pRegEx;
-		bool bCompiled;
-		int nSubStr;
-		void *paSubStr;
-	};
+    private:
+        Bu::String sSrc;
+        Bu::String sTest;
+        void *pRegEx;
+        bool bCompiled;
+        int nSubStr;
+        void *paSubStr;
+    };
 };
 
 #endif

@@ -9,64 +9,64 @@ using namespace Bu;
 class CopyThing
 {
 public:
-	CopyThing()
-	{
-		TRACE();
-		tidHome = Thread::currentThread();
-	}
+    CopyThing()
+    {
+        TRACE();
+        tidHome = Thread::currentThread();
+    }
 
-	CopyThing( const CopyThing &rSrc )
-	{
-		TRACE();
-		tidHome = Thread::currentThread();
-		sio << "Same thread?  " << (tidHome == rSrc.tidHome) << sio.nl;
-	}
+    CopyThing( const CopyThing &rSrc )
+    {
+        TRACE();
+        tidHome = Thread::currentThread();
+        sio << "Same thread?  " << (tidHome == rSrc.tidHome) << sio.nl;
+    }
 
-	void doThings()
-	{
-		TRACE();
-		if( tidHome != Thread::currentThread() )
-			sio << "Different threads, hard copy here." << sio.nl;
-		else
-			sio << "Same thread, everything is cool." << sio.nl;
-	}
+    void doThings()
+    {
+        TRACE();
+        if( tidHome != Thread::currentThread() )
+            sio << "Different threads, hard copy here." << sio.nl;
+        else
+            sio << "Same thread, everything is cool." << sio.nl;
+    }
 
 private:
-	ThreadId tidHome;
+    ThreadId tidHome;
 };
 
 class SubThread : public Thread
 {
 public:
-	SubThread( CopyThing &src ) :
-		src( src )
-	{
-		src.doThings();
-	}
+    SubThread( CopyThing &src ) :
+        src( src )
+    {
+        src.doThings();
+    }
 
 protected:
-	void run()
-	{
-		src.doThings();
-		sio << "run-Child is me? " << (getId() == Thread::currentThread()) << sio.nl;
-	}
+    void run()
+    {
+        src.doThings();
+        sio << "run-Child is me? " << (getId() == Thread::currentThread()) << sio.nl;
+    }
 
 private:
-	CopyThing src;
+    CopyThing src;
 };
 
 int main( int argc, char *argv[] )
 {
-	CopyThing a;
+    CopyThing a;
 
-	SubThread st( a );
-	st.start();
+    SubThread st( a );
+    st.start();
 
-	sio << "Child is me? " << (st.getId() == Thread::currentThread()) << sio.nl;
+    sio << "Child is me? " << (st.getId() == Thread::currentThread()) << sio.nl;
 
-	st.join();
+    st.join();
 
 
-	return 0;
+    return 0;
 }
 

@@ -13,37 +13,37 @@
 
 namespace Bu
 {
-	class TafNode;
-	class TafGroup;
-	class TafProperty;
-	class TafComment;
-	class Stream;
+    class TafNode;
+    class TafGroup;
+    class TafProperty;
+    class TafComment;
+    class Stream;
 
-	/**
-	 *
-	 *@ingroup Taf
-	 */
-	class TafReader
-	{
-	public:
-		TafReader( Bu::Stream &sIn );
-		virtual ~TafReader();
+    /**
+     *
+     *@ingroup Taf
+     */
+    class TafReader
+    {
+    public:
+        TafReader( Bu::Stream &sIn );
+        virtual ~TafReader();
 
-		Bu::TafGroup *readGroup();
+        Bu::TafGroup *readGroup();
 
-	private:
-		void groupContent( Bu::TafGroup *pNode );
-		Bu::TafProperty *readProperty();
-		Bu::TafComment *readComment( bool bEOL=false );
-		void ws();
-		bool isws();
-		void next();
-		Bu::String readStr();
-		void rawread( char *c );
-		char c, la;
-		Bu::Stream &sIn;
-		int iLine, iCol;
-	};
+    private:
+        void groupContent( Bu::TafGroup *pNode );
+        Bu::TafProperty *readProperty();
+        Bu::TafComment *readComment( bool bEOL=false );
+        void ws();
+        bool isws();
+        void next();
+        Bu::String readStr();
+        void rawread( char *c );
+        char c, la;
+        Bu::Stream &sIn;
+        int iLine, iCol;
+    };
 }
 
 #endif

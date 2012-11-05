@@ -14,91 +14,91 @@ using Bu::sio;
 
 suite Array
 {
-	test general
-	{
-		Bu::Array<int> ai;
+    test general
+    {
+        Bu::Array<int> ai;
 
-		ai.append( 5 );
-		ai.append( 10 );
-		unitTest( ai.getSize() == 2 );
-		unitTest( ai.getCapacity() == 10 );
-		unitTest( ai[0] == 5 );
-		unitTest( ai[1] == 10 );
-	}
+        ai.append( 5 );
+        ai.append( 10 );
+        unitTest( ai.getSize() == 2 );
+        unitTest( ai.getCapacity() == 10 );
+        unitTest( ai[0] == 5 );
+        unitTest( ai[1] == 10 );
+    }
 
-	test iterate1
-	{
-		Bu::Array<int> ai;
-		for( int j = 0; j < 10; j++ )
-			ai.append( j );
+    test iterate1
+    {
+        Bu::Array<int> ai;
+        for( int j = 0; j < 10; j++ )
+            ai.append( j );
 
-		int j = 0;
-		for( Bu::Array<int>::iterator i = ai.begin(); i != ai.end(); i++ )
-			unitTest( (*i) == j++ );
-		unitTest( j == 10 );
-		
-		const Bu::Array<int> &ci = ai;
-		j = 0;
-		for( Bu::Array<int>::const_iterator i = ci.begin(); i; i++ )
-			unitTest( (*i) == j++ );
-		unitTest( j == 10 );
-	}
+        int j = 0;
+        for( Bu::Array<int>::iterator i = ai.begin(); i != ai.end(); i++ )
+            unitTest( (*i) == j++ );
+        unitTest( j == 10 );
+        
+        const Bu::Array<int> &ci = ai;
+        j = 0;
+        for( Bu::Array<int>::const_iterator i = ci.begin(); i; i++ )
+            unitTest( (*i) == j++ );
+        unitTest( j == 10 );
+    }
 
-	test iterate2
-	{
-		Bu::Array<int> ai;
-		for( Bu::Array<int>::iterator i = ai.begin(); i != ai.end(); i++ )
-			unitFailed("Empty lists shouldn't be iterated through.");
-		for( Bu::Array<int>::iterator i = ai.begin(); i; i++ )
-			unitFailed("Empty lists shouldn't be iterated through.");
-	}
+    test iterate2
+    {
+        Bu::Array<int> ai;
+        for( Bu::Array<int>::iterator i = ai.begin(); i != ai.end(); i++ )
+            unitFailed("Empty lists shouldn't be iterated through.");
+        for( Bu::Array<int>::iterator i = ai.begin(); i; i++ )
+            unitFailed("Empty lists shouldn't be iterated through.");
+    }
 
-	test copy
-	{
-		typedef Bu::Hash<Bu::String, Bu::String> StrHash;
-		typedef Bu::Array<StrHash> StrHashArray;
+    test copy
+    {
+        typedef Bu::Hash<Bu::String, Bu::String> StrHash;
+        typedef Bu::Array<StrHash> StrHashArray;
 
-		StrHash h1;
-		h1["Hi"] = "Yo";
-		h1["Bye"] = "Later";
+        StrHash h1;
+        h1["Hi"] = "Yo";
+        h1["Bye"] = "Later";
 
-		StrHash h2;
-		h2["Test"] = "Bloop";
-		h2["Foo"] = "ooF";
+        StrHash h2;
+        h2["Test"] = "Bloop";
+        h2["Foo"] = "ooF";
 
-		StrHashArray a1;
-		a1.append( h1 );
-		a1.append( h2 );
+        StrHashArray a1;
+        a1.append( h1 );
+        a1.append( h2 );
 
-		StrHashArray a2(a1);
+        StrHashArray a2(a1);
 
-		unitTest( a2[0].get("Hi") == "Yo" );
-		unitTest( a2[0].get("Bye") == "Later" );
-		unitTest( a2[1].get("Test") == "Bloop" );
-		unitTest( a2[1].get("Foo") == "ooF" );
+        unitTest( a2[0].get("Hi") == "Yo" );
+        unitTest( a2[0].get("Bye") == "Later" );
+        unitTest( a2[1].get("Test") == "Bloop" );
+        unitTest( a2[1].get("Foo") == "ooF" );
 
-		StrHashArray a3;
-		a3 = a1;
-		
-		unitTest( a3[0].get("Hi") == "Yo" );
-		unitTest( a3[0].get("Bye") == "Later" );
-		unitTest( a3[1].get("Test") == "Bloop" );
-		unitTest( a3[1].get("Foo") == "ooF" );
-	}
+        StrHashArray a3;
+        a3 = a1;
+        
+        unitTest( a3[0].get("Hi") == "Yo" );
+        unitTest( a3[0].get("Bye") == "Later" );
+        unitTest( a3[1].get("Test") == "Bloop" );
+        unitTest( a3[1].get("Foo") == "ooF" );
+    }
 
-	test insert
-	{
-		Bu::Array<int> aInts;
-		aInts.insert( aInts.end(), 4 );
-		aInts.insert( aInts.begin(), 1 );
-		aInts.insert( aInts.end(), 5 );
-		aInts.insert( aInts.begin()+1, 3 );
-		aInts.insert( aInts.begin()+1, 2 );
-		aInts.insert( aInts.begin(), 0 );
+    test insert
+    {
+        Bu::Array<int> aInts;
+        aInts.insert( aInts.end(), 4 );
+        aInts.insert( aInts.begin(), 1 );
+        aInts.insert( aInts.end(), 5 );
+        aInts.insert( aInts.begin()+1, 3 );
+        aInts.insert( aInts.begin()+1, 2 );
+        aInts.insert( aInts.begin(), 0 );
 
-		for( int j = 0; j < 6; j++ )
-		{
-			unitTest( aInts[j] == j );
-		}
-	}
+        for( int j = 0; j < 6; j++ )
+        {
+            unitTest( aInts[j] == j );
+        }
+    }
 }

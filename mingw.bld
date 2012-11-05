@@ -13,90 +13,90 @@ CXXFLAGS += "-ggdb -W -Wall";
 
 action "default"
 {
-	build: [targets("header-links"), "libbu++win.a"];
+    build: [targets("header-links"), "libbu++win.a"];
 }
 
 for base in ["stable", "unstable", "experimental"] do
 {
-	target files("src/${base}/*.h").replace("src/${base}/", "bu/")
-	{
-		tag "header-links";
-		display "symlink";
-		input OUTPUT.replace("bu/","src/${base}/");
-		profile "build"
-		{
-			DIR = OUTPUT.dirName();
-			execute("mkdir -p ${DIR}; ln -s ../${INPUT} ${OUTPUT}");
-		}
-	}
+    target files("src/${base}/*.h").replace("src/${base}/", "bu/")
+    {
+        tag "header-links";
+        display "symlink";
+        input OUTPUT.replace("bu/","src/${base}/");
+        profile "build"
+        {
+            DIR = OUTPUT.dirName();
+            execute("mkdir -p ${DIR}; ln -s ../${INPUT} ${OUTPUT}");
+        }
+    }
 }
 target files("src/compat/*.h").replace("src/", "bu/")
 {
-	tag "header-links";
-	display "symlink";
-	input OUTPUT.replace("bu/","src/");
-	profile "build"
-	{
-		execute("mkdir -p $(dirname ${OUTPUT}); ln -s ../../${INPUT} ${OUTPUT}");
-	}
+    tag "header-links";
+    display "symlink";
+    input OUTPUT.replace("bu/","src/");
+    profile "build"
+    {
+        execute("mkdir -p $(dirname ${OUTPUT}); ln -s ../../${INPUT} ${OUTPUT}");
+    }
 }
 target ["bu/config.h", "bu/autoconfig.h", "bu/version.h", "bu/signals.h"]
 {
-	tag "header-links";
-	display "symlink";
-	input OUTPUT.replace("bu/","src/");
-	profile "build"
-	{
-		DIR = OUTPUT.dirName();
-		execute("mkdir -p ${DIR}; ln -s ../${INPUT} ${OUTPUT}");
-	}
+    tag "header-links";
+    display "symlink";
+    input OUTPUT.replace("bu/","src/");
+    profile "build"
+    {
+        DIR = OUTPUT.dirName();
+        execute("mkdir -p ${DIR}; ln -s ../${INPUT} ${OUTPUT}");
+    }
 }
 
 target "libbu++win.a"
 {
-	input files("src/stable/*.cpp", "src/unstable/*.cpp",
-		"src/experimental/*.cpp", "src/compat/*.cpp");
-	rule "lib";
-	CXXFLAGS += "-I. -Isupport/windows";
+    input files("src/stable/*.cpp", "src/unstable/*.cpp",
+        "src/experimental/*.cpp", "src/compat/*.cpp");
+    rule "lib";
+    CXXFLAGS += "-I. -Isupport/windows";
 }
 
 target ["src/stable/lzma.win_o", "src/experimental/cachestorefiles.win_o", "src/experimental/regex.win_o"]
 {
-	profile "build"
-	{
-		execute("rm -f ${OUTPUT} && touch ${OUTPUT} && echo NOT BUILDING ${OUTPUT}");
-	}
+    profile "build"
+    {
+        execute("rm -f ${OUTPUT} && touch ${OUTPUT} && echo NOT BUILDING ${OUTPUT}");
+    }
 }
 
 function cppToWinObj()
 {
-	if OBJ_DIR == null then
-	{
-		return INPUT.regex("\\.cpp$", ".win_o");
-	}
-	else
-	{
-		return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cpp$", ".win_o");
-	}
+    if OBJ_DIR == null then
+    {
+        return INPUT.regex("\\.cpp$", ".win_o");
+    }
+    else
+    {
+        return OBJ_DIR + "/" + INPUT.fileName().regex("\\.cpp$", ".win_o");
+    }
 
 }
 
 rule "lib"
 {
-	input "*.win_o";
-	profile "build"
-	{
-		execute("wine C:/MinGW/bin/ar.exe cr ${OUTPUT} ${INPUT}");
-	}
+    input "*.win_o";
+    profile "build"
+    {
+        execute("wine C:/MinGW/bin/ar.exe cr ${OUTPUT} ${INPUT}");
+    }
 }
 
 rule "wincpp"
 {
-	input "*.cpp";
-	output INPUT.cppToWinObj();
-	//requires getMakeDeps("wine C:/MinGW/bin/g++.exe ${CXXFLAGS} -M ${INPUT}");
-	profile "build"
-	{
-		execute("wine C:/MinGW/bin/g++.exe ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
-	}
+    input "*.cpp";
+    output INPUT.cppToWinObj();
+    //requires getMakeDeps("wine C:/MinGW/bin/g++.exe ${CXXFLAGS} -M ${INPUT}");
+    profile "build"
+    {
+        execute("wine C:/MinGW/bin/g++.exe ${CXXFLAGS} -c -o ${OUTPUT} ${INPUT}", "g++");
+    }
 }

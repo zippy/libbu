@@ -10,31 +10,31 @@
 
 namespace Bu
 {
-	/**
-	 * Queue abstract baseclass
-	 */
-	template<typename value>
-	class Queue
-	{
-	public:
-		Queue()
-		{
-		}
+    /**
+     * Queue abstract baseclass
+     */
+    template<typename value>
+    class Queue
+    {
+    public:
+        Queue()
+        {
+        }
 
-		virtual ~Queue()
-		{
-		}
+        virtual ~Queue()
+        {
+        }
 
-		virtual void enqueue( const value &i )=0;
-		virtual value dequeue()=0;
-		virtual value &peek()=0;
-		virtual const value &peek() const=0;
-		virtual bool isEmpty() const=0;
-		virtual int getSize() const=0;
+        virtual void enqueue( const value &i )=0;
+        virtual value dequeue()=0;
+        virtual value &peek()=0;
+        virtual const value &peek() const=0;
+        virtual bool isEmpty() const=0;
+        virtual int getSize() const=0;
 
-	private:
+    private:
 
-	};
+    };
 }
 
 #endif

@@ -11,27 +11,27 @@
 
 namespace Bu
 {
-	class File;
-	class RandomSystem : public RandomBase
-	{
-	public:
-		enum Type
-		{
-			Fast,
-			Good
-		};
+    class File;
+    class RandomSystem : public RandomBase
+    {
+    public:
+        enum Type
+        {
+            Fast,
+            Good
+        };
 
-		RandomSystem( Type eType=Fast );
-		virtual ~RandomSystem();
+        RandomSystem( Type eType=Fast );
+        virtual ~RandomSystem();
 
-		virtual void seed( int32_t iSeed );
+        virtual void seed( int32_t iSeed );
 
-		virtual int32_t rand();
+        virtual int32_t rand();
 
-	private:
-		Type eType;
-		File *pSrc;
-	};
+    private:
+        Type eType;
+        File *pSrc;
+    };
 };
 
 #endif

@@ -14,36 +14,36 @@
 
 namespace Bu
 {
-	/**
-	 * Provides BZip2 type compression and decompression.
-	 *
-	 *@ingroup Streams
-	 *@ingroup Compression
-	 */
-	class BZip2 : public Bu::Filter
-	{
-	public:
-		BZip2( Bu::Stream &rNext, int nCompression=9 );
-		virtual ~BZip2();
+    /**
+     * Provides BZip2 type compression and decompression.
+     *
+     *@ingroup Streams
+     *@ingroup Compression
+     */
+    class BZip2 : public Bu::Filter
+    {
+    public:
+        BZip2( Bu::Stream &rNext, int nCompression=9 );
+        virtual ~BZip2();
 
-		virtual void start();
-		virtual Bu::size stop();
-		virtual Bu::size read( void *pBuf, Bu::size nBytes );
-		virtual Bu::size write( const void *pBuf, Bu::size nBytes );
+        virtual void start();
+        virtual Bu::size stop();
+        virtual Bu::size read( void *pBuf, Bu::size nBytes );
+        virtual Bu::size write( const void *pBuf, Bu::size nBytes );
 
-		virtual bool isOpen();
+        virtual bool isOpen();
 
-		Bu::size getCompressedSize();
+        Bu::size getCompressedSize();
 
-	private:
-		void bzError( int code );
-		void *prState;
-		bool bReading;
-		int nCompression;
-		char *pBuf;
-		uint32_t nBufSize;
-		Bu::size sTotalOut;
-	};
+    private:
+        void bzError( int code );
+        void *prState;
+        bool bReading;
+        int nCompression;
+        char *pBuf;
+        uint32_t nBufSize;
+        Bu::size sTotalOut;
+    };
 }
 
 #endif

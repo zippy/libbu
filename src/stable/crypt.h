@@ -12,8 +12,8 @@
 
 namespace Bu
 {
-	String cryptPass( const Bu::String &sPass, const Bu::String &sSalt );
-	String cryptPass( const Bu::String &sPass );
+    String cryptPass( const Bu::String &sPass, const Bu::String &sSalt );
+    String cryptPass( const Bu::String &sPass );
 };
 
 #endif

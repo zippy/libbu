@@ -8,7 +8,7 @@
 #include <dirent.h>
 
 #ifndef WIN32
-	#include <sys/wait.h>
+    #include <sys/wait.h>
 #endif 
 
 #include <errno.h>
@@ -32,9 +32,9 @@ Bu::ProtocolHttp::~ProtocolHttp()
 
 void Bu::ProtocolHttp::onNewConnection( Bu::Client *pClient )
 {
-	this->pClient = pClient;
+    this->pClient = pClient;
 
-	iState = 0;
+    iState = 0;
 }
 
 #define SDB( i ) (void)0
@@ -42,196 +42,196 @@ void Bu::ProtocolHttp::onNewConnection( Bu::Client *pClient )
 
 void Bu::ProtocolHttp::onNewData( Bu::Client *pClient )
 {
-/*	logHexDump(
-		1,
-		pClient->getInput().getStr(),
-		pClient->getInput().getSize(),
-		"input"
-		);*/
+/*  logHexDump(
+        1,
+        pClient->getInput().getStr(),
+        pClient->getInput().getSize(),
+        "input"
+        );*/
 
-	for(;;)
-	{
-		Bu::String sToken;
-		TokenType tt = getToken( sToken );
+    for(;;)
+    {
+        Bu::String sToken;
+        TokenType tt = getToken( sToken );
 
-		if( tt == ttOutOfData )
-			return;
+        if( tt == ttOutOfData )
+            return;
 
-		switch( iState )
-		{
-			case 0:		// Start token, should be "method" (get, put, etc)
-				SDB( 0 );
-				sMethod = sToken;
-				iState = 1;
-				break;
+        switch( iState )
+        {
+            case 0:     // Start token, should be "method" (get, put, etc)
+                SDB( 0 );
+                sMethod = sToken;
+                iState = 1;
+                break;
 
-			case 1:		// The path requested
-				SDB( 1 );
-				sPath = sToken;
-				iState = 2;
-				break;
+            case 1:     // The path requested
+                SDB( 1 );
+                sPath = sToken;
+                iState = 2;
+                break;
 
-			case 2:		// The protocol name and version
-				SDB( 2 );
-				if( strncmp( sToken.getStr(), "HTTP/", 5 ) )
-				{
-					pClient->disconnect();
-					return;
-				}
-				else
-				{
-					char *s, *s2;
-					s = sToken.getStr()+5;
-					iMajor = strtol( s, &s2, 10 );
-					iMinor = strtol( s2+1, NULL, 10 );
-					iState = 3;
-				}
-				break;
+            case 2:     // The protocol name and version
+                SDB( 2 );
+                if( strncmp( sToken.getStr(), "HTTP/", 5 ) )
+                {
+                    pClient->disconnect();
+                    return;
+                }
+                else
+                {
+                    char *s, *s2;
+                    s = sToken.getStr()+5;
+                    iMajor = strtol( s, &s2, 10 );
+                    iMinor = strtol( s2+1, NULL, 10 );
+                    iState = 3;
+                }
+                break;
 
-			case 3:		// End of initial header, now comes mime-style blocks.
-				SDB( 3 );
-				if( tt == ttNewline )
-				{
-					iState = 10;
-				}
-				else if( tt == ttDoubleNewline )
-				{
-					earlyResponse();
-				}
-				else
-				{
-					pClient->disconnect();
-					return;
-				}
-				break;
+            case 3:     // End of initial header, now comes mime-style blocks.
+                SDB( 3 );
+                if( tt == ttNewline )
+                {
+                    iState = 10;
+                }
+                else if( tt == ttDoubleNewline )
+                {
+                    earlyResponse();
+                }
+                else
+                {
+                    pClient->disconnect();
+                    return;
+                }
+                break;
 
-			case 10:		// HTTP-Message (skipped for now...)
-				SDB( 10 );
-				if( tt == ttString )
-				{
-					iState = 11;
-				}
-				else
-				{
-					pClient->disconnect();
-				}
-				break;
+            case 10:        // HTTP-Message (skipped for now...)
+                SDB( 10 );
+                if( tt == ttString )
+                {
+                    iState = 11;
+                }
+                else
+                {
+                    pClient->disconnect();
+                }
+                break;
 
-			case 11:		// Should be a colon...
-				SDB( 11 );
-				if( tt == ttSeperator && sToken == ":" )
-				{
-					iState = 12;
-				}
-				else
-				{
-					pClient->disconnect();
-				}
-				break;
+            case 11:        // Should be a colon...
+                SDB( 11 );
+                if( tt == ttSeperator && sToken == ":" )
+                {
+                    iState = 12;
+                }
+                else
+                {
+                    pClient->disconnect();
+                }
+                break;
 
-			case 12:
-				SDB( 12 );
-				if( tt == ttNewline )
-				{
-					iState = 10;
-				}
-				if( tt == ttDoubleNewline )
-				{
-					earlyResponse();
-				}
-				break;
+            case 12:
+                SDB( 12 );
+                if( tt == ttNewline )
+                {
+                    iState = 10;
+                }
+                if( tt == ttDoubleNewline )
+                {
+                    earlyResponse();
+                }
+                break;
 
-			case 20:
-				SDB( 20 );
-				break;
-		}
-	}
+            case 20:
+                SDB( 20 );
+                break;
+        }
+    }
 }
 
 Bu::ProtocolHttp::TokenType Bu::ProtocolHttp::getToken( Bu::String &line )
 {
-	char s;
-	int jmax = pClient->getInputSize();
-	bool bNonWS = false;
-	
-	for( int j = 0; j < jmax; j++ )
-	{
-		pClient->peek( &s, 1, j );
-		if( iState > 2 && isSeperator( s ) )
-		{
-			if( j == 0 )
-			{
-				line += s;
-				pClient->seek( 1 );
-				return ttSeperator;
-			}
-			else
-			{
-				pClient->seek( j );
-				return ttString;
-			}
-		}
-		else if( isWS( s ) )
-		{
-			if( bNonWS )
-			{
-				pClient->seek( j );
-				return ttString;
-			}
-		}
-		else if( s == CR )
-		{
-			if( pClient->getInputSize() < 4 )
-				return ttOutOfData;
-			
-			char ss[3];
-			pClient->peek( ss, 3, j+1 );
-			if( ss[0] == LF && ss[1] != ' ' && ss[1] != '\t' )
-			{
-				if( bNonWS )
-				{
-					pClient->seek( j );
-					return ttString;
-				}
-				else if( ss[1] == CR && ss[2] == LF )
-				{
-					pClient->seek( 4 );
-					return ttDoubleNewline;
-				}
-				else
-				{
-					pClient->seek( 2 );
-					return ttNewline;
-				}
-			}
-			
-			j += 2;
-			if( bNonWS )
-			{
-				pClient->seek( j );
-				return ttString;
-			}
-		}
-		else
-		{
-			line += s;
-			bNonWS = true;
-		}
-	}
+    char s;
+    int jmax = pClient->getInputSize();
+    bool bNonWS = false;
+    
+    for( int j = 0; j < jmax; j++ )
+    {
+        pClient->peek( &s, 1, j );
+        if( iState > 2 && isSeperator( s ) )
+        {
+            if( j == 0 )
+            {
+                line += s;
+                pClient->seek( 1 );
+                return ttSeperator;
+            }
+            else
+            {
+                pClient->seek( j );
+                return ttString;
+            }
+        }
+        else if( isWS( s ) )
+        {
+            if( bNonWS )
+            {
+                pClient->seek( j );
+                return ttString;
+            }
+        }
+        else if( s == CR )
+        {
+            if( pClient->getInputSize() < 4 )
+                return ttOutOfData;
+            
+            char ss[3];
+            pClient->peek( ss, 3, j+1 );
+            if( ss[0] == LF && ss[1] != ' ' && ss[1] != '\t' )
+            {
+                if( bNonWS )
+                {
+                    pClient->seek( j );
+                    return ttString;
+                }
+                else if( ss[1] == CR && ss[2] == LF )
+                {
+                    pClient->seek( 4 );
+                    return ttDoubleNewline;
+                }
+                else
+                {
+                    pClient->seek( 2 );
+                    return ttNewline;
+                }
+            }
+            
+            j += 2;
+            if( bNonWS )
+            {
+                pClient->seek( j );
+                return ttString;
+            }
+        }
+        else
+        {
+            line += s;
+            bNonWS = true;
+        }
+    }
 
-	return ttOutOfData;
+    return ttOutOfData;
 }
 
 bool Bu::ProtocolHttp::isWS( char buf )
 {
-	return (buf == ' ' || buf == '\t');
+    return (buf == ' ' || buf == '\t');
 }
 
 bool Bu::ProtocolHttp::isSeperator( char buf )
 {
-	return (buf == '(' || buf == ')' || buf == '<' || buf == '>' ||
-			buf == '@' || buf == ',' || buf == ';' || buf == ':' ||
-			buf == '\\' || buf == '\"' || buf == '/' || buf == '[' ||
+    return (buf == '(' || buf == ')' || buf == '<' || buf == '>' ||
+            buf == '@' || buf == ',' || buf == ';' || buf == ':' ||
+            buf == '\\' || buf == '\"' || buf == '/' || buf == '[' ||
 			buf == ']' || buf == '?' || buf == '=' || buf == '{' ||
 			buf == '}' );
 }

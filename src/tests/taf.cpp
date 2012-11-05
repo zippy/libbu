@@ -10,35 +10,35 @@
 
 int main( int argc, char *argv[] )
 {
-	if( argc == 1 )
-	{
-		Bu::File f("test.taf", Bu::File::Read );
-		Bu::TafReader tr( f );
+    if( argc == 1 )
+    {
+        Bu::File f("test.taf", Bu::File::Read );
+        Bu::TafReader tr( f );
 
-		Bu::TafGroup *pGroup = tr.readGroup();
-		
-		{
-			Bu::File fo("out.taf", Bu::File::Write|Bu::File::Create );
-			Bu::TafWriter tw( fo );
-			tw.writeGroup( pGroup );
-		}
+        Bu::TafGroup *pGroup = tr.readGroup();
+        
+        {
+            Bu::File fo("out.taf", Bu::File::Write|Bu::File::Create );
+            Bu::TafWriter tw( fo );
+            tw.writeGroup( pGroup );
+        }
 
-		delete pGroup;
-	}
-	else if( argc == 3 )
-	{
-		Bu::File f( argv[1], Bu::File::Read );
-		Bu::TafReader tr( f );
+        delete pGroup;
+    }
+    else if( argc == 3 )
+    {
+        Bu::File f( argv[1], Bu::File::Read );
+        Bu::TafReader tr( f );
 
-		Bu::TafGroup *pGroup = tr.readGroup();
-		
-		{
-			Bu::File fo( argv[2], Bu::File::Write|Bu::File::Create );
-			Bu::TafWriter tw( fo );
-			tw.writeGroup( pGroup );
-		}
+        Bu::TafGroup *pGroup = tr.readGroup();
+        
+        {
+            Bu::File fo( argv[2], Bu::File::Write|Bu::File::Create );
+            Bu::TafWriter tw( fo );
+            tw.writeGroup( pGroup );
+        }
 
-		delete pGroup;
-	}
+        delete pGroup;
+    }
 }
 

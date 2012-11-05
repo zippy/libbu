@@ -12,16 +12,16 @@
 
 suite Buffer
 {
-	test emptyFile
-	{
-		Bu::String sTmp("empty-XXXXXX");
-		Bu::File fEmpty = tempFile(sTmp);
-		Bu::Buffer buf( fEmpty );
+    test emptyFile
+    {
+        Bu::String sTmp("empty-XXXXXX");
+        Bu::File fEmpty = tempFile(sTmp);
+        Bu::Buffer buf( fEmpty );
 
-		unitTest( buf.isEos() == false );
-		Bu::String sLine = buf.readLine();
-		unitTest( sLine == "" );
-		unitTest( fEmpty.isEos() == true );
-		unitTest( buf.isEos() == true );
-	}
+        unitTest( buf.isEos() == false );
+        Bu::String sLine = buf.readLine();
+        unitTest( sLine == "" );
+        unitTest( fEmpty.isEos() == true );
+        unitTest( buf.isEos() == true );
+    }
 }

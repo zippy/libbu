@@ -10,17 +10,17 @@
 
 namespace Bu
 {
-	class Client;
-	class ClientLink;
+    class Client;
+    class ClientLink;
 
-	class ClientLinkFactory
-	{
-	public:
-		ClientLinkFactory();
-		virtual ~ClientLinkFactory();
+    class ClientLinkFactory
+    {
+    public:
+        ClientLinkFactory();
+        virtual ~ClientLinkFactory();
 
-		virtual Bu::ClientLink *createLink( Bu::Client *pClient )=0;
-	};
+        virtual Bu::ClientLink *createLink( Bu::Client *pClient )=0;
+    };
 };
 
 #endif

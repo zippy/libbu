@@ -10,7 +10,7 @@
 namespace Bu { subExceptionDef( TafException ) }
 
 Bu::TafNode::TafNode( NodeType eType ) :
-	eType( eType )
+    eType( eType )
 {
 }
 
@@ -20,6 +20,6 @@ Bu::TafNode::~TafNode()
 
 Bu::TafNode::NodeType Bu::TafNode::getType() const
 {
-	return eType;
+    return eType;
 }
 

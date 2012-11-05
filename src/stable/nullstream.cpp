@@ -8,8 +8,8 @@
 #include "bu/nullstream.h"
 
 Bu::NullStream::NullStream() :
-	sRead( 0 ),
-	sWrote( 0 )
+    sRead( 0 ),
+    sWrote( 0 )
 {
 }
 
@@ -19,31 +19,31 @@ Bu::NullStream::~NullStream()
 
 void Bu::NullStream::close()
 {
-	sRead = sWrote = 0;
+    sRead = sWrote = 0;
 }
 
 Bu::size Bu::NullStream::read( void *pBuf, Bu::size nBytes )
 {
-	memset( pBuf, 0, nBytes );
-	sRead += nBytes;
-	return nBytes;
+    memset( pBuf, 0, nBytes );
+    sRead += nBytes;
+    return nBytes;
 }
 
 Bu::String Bu::NullStream::readLine()
 {
-	sRead++;
-	return Bu::String("\0", 1 );
+    sRead++;
+    return Bu::String("\0", 1 );
 }
 
 Bu::size Bu::NullStream::write( const void *, Bu::size nBytes )
 {
-	sWrote += nBytes;
-	return nBytes;
+    sWrote += nBytes;
+    return nBytes;
 }
 
 Bu::size Bu::NullStream::tell()
 {
-	return sRead + sWrote;
+    return sRead + sWrote;
 }
 
 void Bu::NullStream::seek( Bu::size )
@@ -60,12 +60,12 @@ void Bu::NullStream::setPosEnd( Bu::size )
 
 bool Bu::NullStream::isEos()
 {
-	return false;
+    return false;
 }
 
 bool Bu::NullStream::isOpen()
 {
-	return true;
+    return true;
 }
 
 void Bu::NullStream::flush()
@@ -74,32 +74,32 @@ void Bu::NullStream::flush()
 
 bool Bu::NullStream::canRead()
 {
-	return true;
+    return true;
 }
 
 bool Bu::NullStream::canWrite()
 {
-	return true;
+    return true;
 }
 
 bool Bu::NullStream::isReadable()
 {
-	return true;
+    return true;
 }
 
 bool Bu::NullStream::isWritable()
 {
-	return true;
+    return true;
 }
 
 bool Bu::NullStream::isSeekable()
 {
-	return false;
+    return false;
 }
 
 bool Bu::NullStream::isBlocking()
 {
-	return true;
+    return true;
 }
 
 void Bu::NullStream::setBlocking( bool )
@@ -112,16 +112,16 @@ void Bu::NullStream::setSize( Bu::size )
 
 Bu::size Bu::NullStream::getSize() const
 {
-	return 0;
+    return 0;
 }
 
 Bu::size Bu::NullStream::getBlockSize() const
 {
-	return 0;
+    return 0;
 }
 
 Bu::String Bu::NullStream::getLocation() const
 {
-	return "";
+    return "";
 }
 

@@ -14,25 +14,25 @@
 
 namespace Bu
 {
-	class Client;
+    class Client;
 
-	/**
-	 *@ingroup Serving
-	 */
-	class Protocol
-	{
-	public:
-		Protocol();
-		virtual ~Protocol();
+    /**
+     *@ingroup Serving
+     */
+    class Protocol
+    {
+    public:
+        Protocol();
+        virtual ~Protocol();
 
-		virtual void onNewConnection( Bu::Client *pClient );
-		virtual void onNewData( Bu::Client *pClient );
-		virtual void onMessage( Bu::Client *pClient, const Bu::String &sMsg );
-		virtual void onTick( Bu::Client *pClient );
+        virtual void onNewConnection( Bu::Client *pClient );
+        virtual void onNewData( Bu::Client *pClient );
+        virtual void onMessage( Bu::Client *pClient, const Bu::String &sMsg );
+        virtual void onTick( Bu::Client *pClient );
 
-	private:
+    private:
 
-	};
+    };
 }
 
 #endif

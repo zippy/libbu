@@ -12,38 +12,38 @@
 
 namespace Bu
 {
-	/**
-	 * A simple thread-safe counter class.  This is handy for assigning unique
-	 * IDs to objects that are being created in different threads.
-	 *@ingroup Threading Containers
-	 */
-	template <class T>
-	class SynchroCounter
-	{
-	public:
-		SynchroCounter() :
-			tCounter( 0 )
-		{
-		}
-		
-		virtual ~SynchroCounter()
-		{
-		}
+    /**
+     * A simple thread-safe counter class.  This is handy for assigning unique
+     * IDs to objects that are being created in different threads.
+     *@ingroup Threading Containers
+     */
+    template <class T>
+    class SynchroCounter
+    {
+    public:
+        SynchroCounter() :
+            tCounter( 0 )
+        {
+        }
+        
+        virtual ~SynchroCounter()
+        {
+        }
 
-		T next()
-		{
-			mOperate.lock();
-			T tRet = tCounter;
-			tCounter++;
-			mOperate.unlock();
+        T next()
+        {
+            mOperate.lock();
+            T tRet = tCounter;
+            tCounter++;
+            mOperate.unlock();
 
-			return tRet;
-		}
+            return tRet;
+        }
 
-	private:
-		T tCounter;				/**< The counter itself. */
-		Mutex mOperate;	/**< The master mutex, used on all operations. */
-	};
+    private:
+        T tCounter;             /**< The counter itself. */
+        Mutex mOperate; /**< The master mutex, used on all operations. */
+    };
 }
 
 #endif

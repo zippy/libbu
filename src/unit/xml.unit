@@ -12,10 +12,10 @@
 
 suite Xml
 {
-	test declaration
-	{
-		Bu::String sXml("<?xml ?> <hi />");
-		Bu::MemBuf buf( sXml );
-		Bu::XmlReader xr( buf );
-	}
+    test declaration
+    {
+        Bu::String sXml("<?xml ?> <hi />");
+        Bu::MemBuf buf( sXml );
+        Bu::XmlReader xr( buf );
+    }
 }

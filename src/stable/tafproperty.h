@@ -13,24 +13,24 @@
 
 namespace Bu
 {
-	/**
-	 *
-	 *@ingroup Taf
-	 */
-	class TafProperty : public TafNode
-	{
-	public:
-		TafProperty( const Bu::TafProperty &rSrc );
-		TafProperty( const Bu::String &sName, const Bu::String &sValue );
-		virtual ~TafProperty();
+    /**
+     *
+     *@ingroup Taf
+     */
+    class TafProperty : public TafNode
+    {
+    public:
+        TafProperty( const Bu::TafProperty &rSrc );
+        TafProperty( const Bu::String &sName, const Bu::String &sValue );
+        virtual ~TafProperty();
 
-		const Bu::String &getName() const;
-		const Bu::String &getValue() const;
+        const Bu::String &getName() const;
+        const Bu::String &getValue() const;
 
-	private:
-		Bu::String sName;
-		Bu::String sValue;
-	};
+    private:
+        Bu::String sName;
+        Bu::String sValue;
+    };
 }
 
 #endif

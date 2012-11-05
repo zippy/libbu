@@ -12,35 +12,35 @@
 
 namespace Bu
 {
-	/**
-	 * Handles I/O for data in the cache.  This also assigns ID's to the newly
-	 * created objects that are requested through this system.
-	 */
-	template<class keytype, class obtype>
-	class CacheStore
-	{
-	public:
-		CacheStore()
-		{
-		}
+    /**
+     * Handles I/O for data in the cache.  This also assigns ID's to the newly
+     * created objects that are requested through this system.
+     */
+    template<class keytype, class obtype>
+    class CacheStore
+    {
+    public:
+        CacheStore()
+        {
+        }
 
-		virtual ~CacheStore()
-		{
-		}
+        virtual ~CacheStore()
+        {
+        }
 
-		virtual obtype *load( const keytype &key )=0;
-		virtual void unload( obtype *pObj, const keytype &key )=0;
-		virtual keytype create( obtype *pSrc )=0;
-		virtual void sync()=0;
-		virtual void sync( obtype *pObj, const keytype &key )=0;
-		virtual void destroy( obtype *pObj, const keytype &key )=0;
-		virtual void destroy( const keytype &key )=0;
-		virtual bool has( const keytype &key )=0;
-		virtual Bu::List<keytype> getKeys() { return Bu::List<keytype>(); }
-		virtual int getSize() { return -1; }
+        virtual obtype *load( const keytype &key )=0;
+        virtual void unload( obtype *pObj, const keytype &key )=0;
+        virtual keytype create( obtype *pSrc )=0;
+        virtual void sync()=0;
+        virtual void sync( obtype *pObj, const keytype &key )=0;
+        virtual void destroy( obtype *pObj, const keytype &key )=0;
+        virtual void destroy( const keytype &key )=0;
+        virtual bool has( const keytype &key )=0;
+        virtual Bu::List<keytype> getKeys() { return Bu::List<keytype>(); }
+        virtual int getSize() { return -1; }
 
-	private:
-	};
+    private:
+    };
 };
 
 #endif

@@ -8,16 +8,16 @@
 #include "bu/tafcomment.h"
 
 Bu::TafComment::TafComment( const Bu::TafComment &rSrc ) :
-	TafNode( typeComment ),
-	sText( rSrc.sText ),
-	bEOL( rSrc.bEOL )
+    TafNode( typeComment ),
+    sText( rSrc.sText ),
+    bEOL( rSrc.bEOL )
 {
 }
 
 Bu::TafComment::TafComment( const Bu::String &sText, bool bEOL ) :
-	TafNode( typeComment ),
-	sText( sText ),
-	bEOL( bEOL )
+    TafNode( typeComment ),
+    sText( sText ),
+    bEOL( bEOL )
 {
 }
 
@@ -27,11 +27,11 @@ Bu::TafComment::~TafComment()
 
 const Bu::String &Bu::TafComment::getText() const
 {
-	return sText;
+    return sText;
 }
 
 bool Bu::TafComment::isEOLStyle() const
 {
-	return bEOL;
+    return bEOL;
 }
 

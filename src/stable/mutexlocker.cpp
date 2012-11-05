@@ -2,23 +2,23 @@
 #include "bu/mutex.h"
 
 Bu::MutexLocker::MutexLocker( Bu::Mutex &mu ) :
-	mu( mu )
+    mu( mu )
 {
-	mu.lock();
+    mu.lock();
 }
 
 Bu::MutexLocker::~MutexLocker()
 {
-	mu.unlock();
+    mu.unlock();
 }
 
 void Bu::MutexLocker::unlock()
 {
-	mu.unlock();
+    mu.unlock();
 }
 
 void Bu::MutexLocker::relock()
 {
-	mu.lock();
+    mu.lock();
 }
 

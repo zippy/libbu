@@ -14,50 +14,50 @@
 
 namespace Bu
 {
-	/**
-	 * A thread-safe wrapper class.
-	 *@ingroup Threading
-	 */
-	template <class T>
-	class SynchroAtom
-	{
-	public:
-		/**
-		 * Construct an empty queue.
-		 */
-		SynchroAtom()
-		{
-		}
+    /**
+     * A thread-safe wrapper class.
+     *@ingroup Threading
+     */
+    template <class T>
+    class SynchroAtom
+    {
+    public:
+        /**
+         * Construct an empty queue.
+         */
+        SynchroAtom()
+        {
+        }
 
-		SynchroAtom( const T &src ) :
-			data( src )
-		{
-		}
-		
-		~SynchroAtom()
-		{
-		}
+        SynchroAtom( const T &src ) :
+            data( src )
+        {
+        }
+        
+        ~SynchroAtom()
+        {
+        }
 
-		T get()
-		{
-			mOperate.lock();
-			T ret = data;
-			mOperate.unlock();
-			return ret;
-		}
+        T get()
+        {
+            mOperate.lock();
+            T ret = data;
+            mOperate.unlock();
+            return ret;
+        }
 
-		void set( const T &val )
-		{
-			mOperate.lock();
-			data = val;
-			mOperate.unlock();
-		}
+        void set( const T &val )
+        {
+            mOperate.lock();
+            data = val;
+            mOperate.unlock();
+        }
 
-	private:
-		T data;
+    private:
+        T data;
 
-		Mutex mOperate;	/**< The master mutex, used on all operations. */
-	};
+        Mutex mOperate; /**< The master mutex, used on all operations. */
+    };
 };
 
 #endif

@@ -12,30 +12,30 @@
 
 namespace Bu
 {
-	/**
-	 * Converts new-line characters from any standard convention into linefeeds
-	 * (\\n) on reading, and converts them to either your OS's standard or a
-	 * specified standard, depending on how you construct the class.
-	 *
-	 * If you're reading in a text file, then this filter is practically
-	 * required.
-	 */
-	class NewLine : public Bu::Filter
-	{
-	public:
-		NewLine( Bu::Stream &rNext );
-		virtual ~NewLine();
+    /**
+     * Converts new-line characters from any standard convention into linefeeds
+     * (\\n) on reading, and converts them to either your OS's standard or a
+     * specified standard, depending on how you construct the class.
+     *
+     * If you're reading in a text file, then this filter is practically
+     * required.
+     */
+    class NewLine : public Bu::Filter
+    {
+    public:
+        NewLine( Bu::Stream &rNext );
+        virtual ~NewLine();
 
-		virtual void start();
-		virtual Bu::size stop();
+        virtual void start();
+        virtual Bu::size stop();
 
-		virtual Bu::size read( void *pBuf, Bu::size iAmnt );
-		virtual Bu::size write( const void *pBuf, Bu::size iAmnt );
+        virtual Bu::size read( void *pBuf, Bu::size iAmnt );
+        virtual Bu::size write( const void *pBuf, Bu::size iAmnt );
 
-	private:
-		bool bExChar;
-		char cExChar;
-	};
+    private:
+        bool bExChar;
+        char cExChar;
+    };
 };
 
 #endif

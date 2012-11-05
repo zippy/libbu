@@ -11,19 +11,19 @@
 
 namespace Bu
 {
-	class RandomBasic : public RandomBase
-	{
-	public:
-		RandomBasic();
-		virtual ~RandomBasic();
+    class RandomBasic : public RandomBase
+    {
+    public:
+        RandomBasic();
+        virtual ~RandomBasic();
 
-		virtual void seed( int32_t iSeed );
+        virtual void seed( int32_t iSeed );
 
-		virtual int32_t rand();
+        virtual int32_t rand();
 
-	private:
-		int64_t a, c, x;
-	};
+    private:
+        int64_t a, c, x;
+    };
 };
 
 #endif

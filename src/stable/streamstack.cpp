@@ -13,222 +13,222 @@ Bu::StreamStack::StreamStack()
 
 Bu::StreamStack::StreamStack( Bu::Stream *pStream )
 {
-	lFilts.prepend( pStream );
+    lFilts.prepend( pStream );
 }
 
 Bu::StreamStack::~StreamStack()
 {
-	clear();
+    clear();
 }
 
 bool Bu::StreamStack::isEmpty()
 {
-	return lFilts.isEmpty();
+    return lFilts.isEmpty();
 }
 
 bool Bu::StreamStack::hasStream()
 {
-	return !lFilts.isEmpty();
+    return !lFilts.isEmpty();
 }
 
 void Bu::StreamStack::setStream( Bu::Stream *pStream )
 {
-	if( !lFilts.isEmpty() )
-		throw Bu::ExceptionBase("There is already a stream set.");
+    if( !lFilts.isEmpty() )
+        throw Bu::ExceptionBase("There is already a stream set.");
 
-	lFilts.prepend( pStream );
+    lFilts.prepend( pStream );
 }
 
 void Bu::StreamStack::clear()
 {
-	for( FilterList::iterator i = lFilts.begin(); i; i++ )
-	{
-		delete *i;
-	}
+    for( FilterList::iterator i = lFilts.begin(); i; i++ )
+    {
+        delete *i;
+    }
 
-	lFilts.clear();
+    lFilts.clear();
 }
 
 void Bu::StreamStack::popFilter()
 {
-	if( lFilts.isEmpty() )
-		return;
+    if( lFilts.isEmpty() )
+        return;
 
-	delete lFilts.first();
-	lFilts.erase( lFilts.begin() );
+    delete lFilts.first();
+    lFilts.erase( lFilts.begin() );
 }
 
 Bu::Stream *Bu::StreamStack::getTop()
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first();
+    return lFilts.first();
 }
 
 Bu::Stream *Bu::StreamStack::getStream()
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.last();
+    return lFilts.last();
 }
 
 void Bu::StreamStack::close()
 {
-	checkStack();
+    checkStack();
 
-	lFilts.first()->close();
+    lFilts.first()->close();
 }
 
 Bu::size Bu::StreamStack::read( void *pBuf, Bu::size nBytes )
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->read( pBuf, nBytes );
+    return lFilts.first()->read( pBuf, nBytes );
 }
 
 Bu::size Bu::StreamStack::write( const void *pBuf, Bu::size nBytes )
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->write( pBuf, nBytes );
+    return lFilts.first()->write( pBuf, nBytes );
 }
 
 Bu::size Bu::StreamStack::write( const Bu::String &sBuf )
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->write( sBuf );
+    return lFilts.first()->write( sBuf );
 }
 
 Bu::size Bu::StreamStack::tell()
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->tell();
+    return lFilts.first()->tell();
 }
 
 void Bu::StreamStack::seek( Bu::size offset )
 {
-	checkStack();
+    checkStack();
 
-	lFilts.first()->seek( offset );
+    lFilts.first()->seek( offset );
 }
 
 void Bu::StreamStack::setPos( Bu::size pos )
 {
-	checkStack();
+    checkStack();
 
-	lFilts.first()->setPos( pos );
+    lFilts.first()->setPos( pos );
 }
 
 void Bu::StreamStack::setPosEnd( Bu::size pos )
 {
-	checkStack();
+    checkStack();
 
-	lFilts.first()->setPosEnd( pos );
+    lFilts.first()->setPosEnd( pos );
 }
 
 bool Bu::StreamStack::isEos()
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->isEos();
+    return lFilts.first()->isEos();
 }
 
 bool Bu::StreamStack::isOpen()
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->isOpen();
+    return lFilts.first()->isOpen();
 }
 
 void Bu::StreamStack::flush()
 {
-	checkStack();
+    checkStack();
 
-	lFilts.first()->flush();
+    lFilts.first()->flush();
 }
 
 bool Bu::StreamStack::canRead()
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->canRead();
+    return lFilts.first()->canRead();
 }
 
 bool Bu::StreamStack::canWrite()
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->canWrite();
+    return lFilts.first()->canWrite();
 }
 
 bool Bu::StreamStack::isReadable()
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->isReadable();
+    return lFilts.first()->isReadable();
 }
 
 bool Bu::StreamStack::isWritable()
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->isWritable();
+    return lFilts.first()->isWritable();
 }
 
 bool Bu::StreamStack::isSeekable()
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->isSeekable();
+    return lFilts.first()->isSeekable();
 }
 
 bool Bu::StreamStack::isBlocking()
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->isBlocking();
+    return lFilts.first()->isBlocking();
 }
 
 void Bu::StreamStack::setBlocking( bool bBlocking )
 {
-	checkStack();
+    checkStack();
 
-	lFilts.first()->setBlocking( bBlocking );
+    lFilts.first()->setBlocking( bBlocking );
 }
 
 void Bu::StreamStack::setSize( Bu::size iSize )
 {
-	checkStack();
+    checkStack();
 
-	lFilts.first()->setSize( iSize );
+    lFilts.first()->setSize( iSize );
 }
 
 Bu::size Bu::StreamStack::getSize() const
 {
-	checkStack();
-	
-	return lFilts.first()->getSize();
+    checkStack();
+    
+    return lFilts.first()->getSize();
 }
 
 Bu::size Bu::StreamStack::getBlockSize() const
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->getBlockSize();
+    return lFilts.first()->getBlockSize();
 }
 
 Bu::String Bu::StreamStack::getLocation() const
 {
-	checkStack();
+    checkStack();
 
-	return lFilts.first()->getLocation();
+    return lFilts.first()->getLocation();
 }
 
 inline void Bu::StreamStack::checkStack() const
 {
-	if( lFilts.isEmpty() )
-		throw Bu::ExceptionBase("StreamStack is empty.");
+    if( lFilts.isEmpty() )
+        throw Bu::ExceptionBase("StreamStack is empty.");
 }
 

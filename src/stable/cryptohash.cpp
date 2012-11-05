@@ -17,22 +17,22 @@ Bu::CryptoHash::~CryptoHash()
 
 void Bu::CryptoHash::addData( const Bu::String &sData )
 {
-	addData( sData.getStr(), sData.getSize() );
+    addData( sData.getStr(), sData.getSize() );
 }
 
 Bu::String Bu::CryptoHash::getHexResult()
 {
-	Bu::String sResult = getResult();
-	Bu::String sRet( 2*sResult.getSize() );
-	static const char hex_tab[] = {"0123456789abcdef"};
+    Bu::String sResult = getResult();
+    Bu::String sRet( 2*sResult.getSize() );
+    static const char hex_tab[] = {"0123456789abcdef"};
 
-	int k = 0;
-	for( int i = 0; i < sResult.getSize(); i++ )
-	{
-		sRet[k++] = hex_tab[(((unsigned char)sResult[i])>>4) & 0xF];
-		sRet[k++] = hex_tab[((unsigned char)sResult[i]) & 0xF];
-	}
+    int k = 0;
+    for( int i = 0; i < sResult.getSize(); i++ )
+    {
+        sRet[k++] = hex_tab[(((unsigned char)sResult[i])>>4) & 0xF];
+        sRet[k++] = hex_tab[((unsigned char)sResult[i]) & 0xF];
+    }
 
-	return sRet;	
+    return sRet;    
 }
 

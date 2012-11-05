@@ -14,46 +14,46 @@
 
 namespace Bu
 {
-	/**
-	 * Provides XZ compression and decompression, both LZMA1 (LzmaAlone) as
-	 * well as the newer LZMA2 (xz) format.  This uses .xz by default.
-	 *
-	 *@ingroup Streams
-	 *@ingroup Compression
-	 */
-	class Lzma : public Bu::Filter
-	{
-	public:
-		enum Format
-		{
-			Xz			= 0x01,
-			LzmaAlone	= 0x02,
-		};
+    /**
+     * Provides XZ compression and decompression, both LZMA1 (LzmaAlone) as
+     * well as the newer LZMA2 (xz) format.  This uses .xz by default.
+     *
+     *@ingroup Streams
+     *@ingroup Compression
+     */
+    class Lzma : public Bu::Filter
+    {
+    public:
+        enum Format
+        {
+            Xz          = 0x01,
+            LzmaAlone   = 0x02,
+        };
 
-		Lzma( Bu::Stream &rNext, int nCompression=6, Format eFmt=Xz );
-		virtual ~Lzma();
+        Lzma( Bu::Stream &rNext, int nCompression=6, Format eFmt=Xz );
+        virtual ~Lzma();
 
-		virtual void start();
-		virtual Bu::size stop();
-		virtual Bu::size read( void *pBuf, Bu::size nBytes );
-		virtual Bu::size write( const void *pBuf, Bu::size nBytes );
+        virtual void start();
+        virtual Bu::size stop();
+        virtual Bu::size read( void *pBuf, Bu::size nBytes );
+        virtual Bu::size write( const void *pBuf, Bu::size nBytes );
 
-		virtual bool isOpen();
-		virtual bool isEos();
+        virtual bool isOpen();
+        virtual bool isEos();
 
-		Bu::size getCompressedSize();
+        Bu::size getCompressedSize();
 
-	private:
-		void lzmaError( int code );
-		void *prState;
-		bool bReading;
-		int nCompression;
-		char *pBuf;
-		uint32_t nBufSize;
-		Bu::size sTotalOut;
-		Format eFmt;
-		bool bEos;
-	};
+    private:
+        void lzmaError( int code );
+        void *prState;
+        bool bReading;
+        int nCompression;
+        char *pBuf;
+        uint32_t nBufSize;
+        Bu::size sTotalOut;
+        Format eFmt;
+        bool bEos;
+    };
 }
 
 #endif

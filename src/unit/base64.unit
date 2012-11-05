@@ -11,18 +11,18 @@
 
 suite MemBuf
 {
-	test decode01
-	{
-		unitTest( Bu::decodeStr<Bu::Base64>("RnVu") == "Fun" );
-		unitTest( Bu::decodeStr<Bu::Base64>("V2hhdA==") == "What" );
-		unitTest( Bu::decodeStr<Bu::Base64>("SGVsbG8=") == "Hello" );
-	}
+    test decode01
+    {
+        unitTest( Bu::decodeStr<Bu::Base64>("RnVu") == "Fun" );
+        unitTest( Bu::decodeStr<Bu::Base64>("V2hhdA==") == "What" );
+        unitTest( Bu::decodeStr<Bu::Base64>("SGVsbG8=") == "Hello" );
+    }
 
-	test encode01
-	{
-		unitTest( Bu::decodeStr<Bu::Base64>("R n V  u") == "Fun" );
-		unitTest( Bu::decodeStr<Bu::Base64>("V2\n\n\thh   dA==") == "What" );
-		unitTest( Bu::decodeStr<Bu::Base64>("\n\n\t\t   SGV\r\ns\tbG8\n=") == "Hello" );
-	}
+    test encode01
+    {
+        unitTest( Bu::decodeStr<Bu::Base64>("R n V  u") == "Fun" );
+        unitTest( Bu::decodeStr<Bu::Base64>("V2\n\n\thh   dA==") == "What" );
+        unitTest( Bu::decodeStr<Bu::Base64>("\n\n\t\t   SGV\r\ns\tbG8\n=") == "Hello" );
+    }
 }
 

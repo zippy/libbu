@@ -16,46 +16,46 @@ using namespace Bu;
 
 Bu::String mkastring()
 {
-	Bu::String a = "s";
-	a += "tu";
-	a += "f";
-	a += "f";
-	return a;
+    Bu::String a = "s";
+    a += "tu";
+    a += "f";
+    a += "f";
+    return a;
 }
 
 suite Variant
 {
-	test construction
-	{
-		Bu::Variant v( 55 );
-		v.get<int>();
+    test construction
+    {
+        Bu::Variant v( 55 );
+        v.get<int>();
 
-		Bu::Variant v2( v );
-		v2.get<int>();
-	}
+        Bu::Variant v2( v );
+        v2.get<int>();
+    }
 
-	test formatting
-	{
-		Bu::Variant v("hello");
-		Bu::MemBuf mb;
-		Bu::Formatter f( mb );
-		f << v;
-		unitTest( mb.getString() == v.get<Bu::String>() );
-	}
+    test formatting
+    {
+        Bu::Variant v("hello");
+        Bu::MemBuf mb;
+        Bu::Formatter f( mb );
+        f << v;
+        unitTest( mb.getString() == v.get<Bu::String>() );
+    }
 
-	test stringForamtting
-	{
-		Bu::String s1;
-		s1 = "hello";
-		int32_t i1, i2;
-		i1 = 32;
-		i2 = 0;
-		Bu::String out = Bu::String("%1-%2-%3-%4.odp").
-			arg( s1.getStr() ).
-			arg( mkastring().getStr() ).
-			arg( i1, Fmt(2).fill('0') ).
-			arg( i2, Fmt(2).fill('0') );
-		// sio << sio.nl << out << sio.nl;
-		unitTest( out == "hello-stuff-32-00.odp" );
-	}
+    test stringForamtting
+    {
+        Bu::String s1;
+        s1 = "hello";
+        int32_t i1, i2;
+        i1 = 32;
+        i2 = 0;
+        Bu::String out = Bu::String("%1-%2-%3-%4.odp").
+            arg( s1.getStr() ).
+            arg( mkastring().getStr() ).
+            arg( i1, Fmt(2).fill('0') ).
+            arg( i2, Fmt(2).fill('0') );
+        // sio << sio.nl << out << sio.nl;
+        unitTest( out == "hello-stuff-32-00.odp" );
+    }
 }

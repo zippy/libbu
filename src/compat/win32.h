@@ -32,9 +32,9 @@ extern "C"
 #endif
 
 #define decltype( ret, name, ... ) \
-	typedef ret (__cdecl *FNDEF_DYN_ ##name)( __VA_ARGS__ ); \
-	static FNDEF_DYN_ ##name _fnptr_ ##name; \
-	static ret name( __VA_ARGS__ )
+    typedef ret (__cdecl *FNDEF_DYN_ ##name)( __VA_ARGS__ ); \
+    static FNDEF_DYN_ ##name _fnptr_ ##name; \
+    static ret name( __VA_ARGS__ )
 
 __extension__ typedef int socklen_t;
 
@@ -44,54 +44,54 @@ __extension__ typedef int socklen_t;
 
 namespace Bu
 {
-	class Winsock2 : public Bu::Singleton<Winsock2>
-	{
-	friend class Bu::Singleton<Winsock2>;
-	private:
-		Winsock2();
-		virtual ~Winsock2();
+    class Winsock2 : public Bu::Singleton<Winsock2>
+    {
+    friend class Bu::Singleton<Winsock2>;
+    private:
+        Winsock2();
+        virtual ~Winsock2();
 
-		WSADATA wsaData;
-		HINSTANCE Ws2_32;
+        WSADATA wsaData;
+        HINSTANCE Ws2_32;
 
-	public:
-		// decltype( return type, function name<, optional parameters> )
-		decltype( int, WSAStartup, WORD, LPWSADATA );
-		decltype( int, WSACleanup );
-		decltype( int, WSAGetLastError );
-		decltype( char *, inet_ntoa, struct in_addr );
-		decltype( unsigned long, inet_addr, const char *s_in );
-		decltype( int, select, int nfds, fd_set *readfds, fd_set *writefds, 
-				fd_set *exceptfds, const struct timeval *timeout );
-		decltype( SOCKET, socket, int domain, int type, int protocol );
-		decltype( int, shutdown, SOCKET s, int how );
-		decltype( int, ioctlsocket, SOCKET s, long cmd, u_long *argp );
-		decltype( u_short, htons, u_short in );
-		decltype( u_long, htonl, u_long in );
-		decltype( struct hostent *, gethostbyname, const char *name );
-		decltype( void, freeaddrinfo, struct addrinfo *ai );
-		decltype( int, getaddrinfo, const char *nodename, const char *servname,
-				const struct addrinfo *hints, struct addrinfo **res );
-		decltype( int, connect, SOCKET s, const struct sockaddr *serv_addr,
-				int addrlen );
-		decltype( int, getpeername, SOCKET s, struct sockaddr *name,
-				int *namelen );
-		decltype( int, setsockopt, SOCKET s, int level, int optname,
-				const char *optval, int optlen );
-		decltype( int, bind, SOCKET s, const struct sockaddr *my_addr,
-				int addrlen );
-		decltype( int, listen, SOCKET s, int backlog );
-		decltype( SOCKET, accept, SOCKET s, struct sockaddr *addr,
-				int *addrlen);	
-		decltype( int, recv, SOCKET s, char *buf, int len, int flags );
-		decltype( int, send, SOCKET s, const char *buf, int len, int flags );
-		decltype( int, __WSAFDIsSet, SOCKET s, fd_set *set );
-	
-		static char scode[32];
-		static char *gai_strerror( int iCode );
-	};
+    public:
+        // decltype( return type, function name<, optional parameters> )
+        decltype( int, WSAStartup, WORD, LPWSADATA );
+        decltype( int, WSACleanup );
+        decltype( int, WSAGetLastError );
+        decltype( char *, inet_ntoa, struct in_addr );
+        decltype( unsigned long, inet_addr, const char *s_in );
+        decltype( int, select, int nfds, fd_set *readfds, fd_set *writefds, 
+                fd_set *exceptfds, const struct timeval *timeout );
+        decltype( SOCKET, socket, int domain, int type, int protocol );
+        decltype( int, shutdown, SOCKET s, int how );
+        decltype( int, ioctlsocket, SOCKET s, long cmd, u_long *argp );
+        decltype( u_short, htons, u_short in );
+        decltype( u_long, htonl, u_long in );
+        decltype( struct hostent *, gethostbyname, const char *name );
+        decltype( void, freeaddrinfo, struct addrinfo *ai );
+        decltype( int, getaddrinfo, const char *nodename, const char *servname,
+                const struct addrinfo *hints, struct addrinfo **res );
+        decltype( int, connect, SOCKET s, const struct sockaddr *serv_addr,
+                int addrlen );
+        decltype( int, getpeername, SOCKET s, struct sockaddr *name,
+                int *namelen );
+        decltype( int, setsockopt, SOCKET s, int level, int optname,
+                const char *optval, int optlen );
+        decltype( int, bind, SOCKET s, const struct sockaddr *my_addr,
+                int addrlen );
+        decltype( int, listen, SOCKET s, int backlog );
+        decltype( SOCKET, accept, SOCKET s, struct sockaddr *addr,
+                int *addrlen);  
+        decltype( int, recv, SOCKET s, char *buf, int len, int flags );
+        decltype( int, send, SOCKET s, const char *buf, int len, int flags );
+        decltype( int, __WSAFDIsSet, SOCKET s, fd_set *set );
+    
+        static char scode[32];
+        static char *gai_strerror( int iCode );
+    };
 
-	Bu::String getLastWinError();
+    Bu::String getLastWinError();
 };
 
 #ifdef FD_ISSET
@@ -117,7 +117,7 @@ namespace Bu
 #define bu_setsockopt (*Bu::Winsock2::setsockopt)
 #define bu_bind (*Bu::Winsock2::bind)
 #define bu_listen (*Bu::Winsock2::listen)
-#define bu_accept (*Bu::Winsock2::accept)	
+#define bu_accept (*Bu::Winsock2::accept)   
 #define bu_recv (*Bu::Winsock2::recv)
 #define bu_send (*Bu::Winsock2::send)
 #define bu___WSAFDIsSet (*Bu::Winsock2::__WSAFDIsSet)

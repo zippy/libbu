@@ -10,7 +10,7 @@
 namespace Bu { subExceptionDef( ThreadException ); }
 
 Bu::ThreadId::ThreadId( pthread_t tId ) :
-	tId( tId )
+    tId( tId )
 {
 }
 
@@ -20,12 +20,12 @@ Bu::ThreadId::ThreadId()
 
 bool Bu::ThreadId::operator==( const Bu::ThreadId &rhs )
 {
-	return pthread_equal( tId, rhs.tId );
+    return pthread_equal( tId, rhs.tId );
 }
 
 bool Bu::ThreadId::operator!=( const ThreadId &rhs )
 {
-	return !pthread_equal( tId, rhs.tId );
+    return !pthread_equal( tId, rhs.tId );
 }
 
 Bu::Thread::Thread()
@@ -38,45 +38,45 @@ Bu::Thread::~Thread()
 
 Bu::ThreadId Bu::Thread::currentThread()
 {
-	return ThreadId( pthread_self() );
+    return ThreadId( pthread_self() );
 }
 
 bool Bu::Thread::start()
 {
-	if( pthread_create( &ptHandle, NULL, threadRunner, this ) )
-	{
-		throw Bu::ThreadException("Could not start thread.");
-	}
+    if( pthread_create( &ptHandle, NULL, threadRunner, this ) )
+    {
+        throw Bu::ThreadException("Could not start thread.");
+    }
 
-	return true;
+    return true;
 }
 
 bool Bu::Thread::stop()
 {
-	pthread_cancel( ptHandle );
+    pthread_cancel( ptHandle );
 
-	return true;
+    return true;
 }
 
 void *Bu::Thread::threadRunner( void *pThread )
 {
-	((Thread *)pThread)->run();
-	pthread_exit( NULL );
-	return NULL;
+    ((Thread *)pThread)->run();
+    pthread_exit( NULL );
+    return NULL;
 }
 
 bool Bu::Thread::join()
 {
-	pthread_join( ptHandle, NULL );
-	return true;
+    pthread_join( ptHandle, NULL );
+    return true;
 }
 
 void Bu::Thread::yield()
 {
 #ifndef WIN32
-	pthread_yield();
+    pthread_yield();
 #else
-	sched_yield();
+    sched_yield();
 #endif
 }
 

@@ -16,89 +16,89 @@
 
 suite QueueBuf
 {
-	test testBasic01
-	{
-		Bu::QueueBuf qb;
-		unitTest( qb.write("ab", 2 ) == 2 );
-		unitTest( qb.write("cde", 3 ) == 3 );
-		unitTest( qb.write("FG", 2 ) == 2 );
+    test testBasic01
+    {
+        Bu::QueueBuf qb;
+        unitTest( qb.write("ab", 2 ) == 2 );
+        unitTest( qb.write("cde", 3 ) == 3 );
+        unitTest( qb.write("FG", 2 ) == 2 );
 
-		char buf[8];
-		buf[7] = '\0';
-		unitTest( qb.read( buf, 7 ) == 7 );
-		unitTest( !strncmp( buf, "abcdeFG", 7 ) );
-		unitTest( qb.read( buf, 7 ) == 0 );
-	}
+        char buf[8];
+        buf[7] = '\0';
+        unitTest( qb.read( buf, 7 ) == 7 );
+        unitTest( !strncmp( buf, "abcdeFG", 7 ) );
+        unitTest( qb.read( buf, 7 ) == 0 );
+    }
 
-	void QBUF_RANDSTR( Bu::String &fill, unsigned int iSize )
-	{
-		char c;
-		for( unsigned int i=0; i<iSize; ++i )
-		{
-			c = RNDCHR;
-			fill.append(&c,1);
-		}
-	}
+    void QBUF_RANDSTR( Bu::String &fill, unsigned int iSize )
+    {
+        char c;
+        for( unsigned int i=0; i<iSize; ++i )
+        {
+            c = RNDCHR;
+            fill.append(&c,1);
+        }
+    }
 
-	test testAmounts
-	{
-		srandom(time(NULL));
-		Bu::QueueBuf qb;
-		Bu::String sTmp;
-		char buf[4096];
+    test testAmounts
+    {
+        srandom(time(NULL));
+        Bu::QueueBuf qb;
+        Bu::String sTmp;
+        char buf[4096];
 
-		for( int i=0; i<200; ++i )
-		{
-			unsigned int iAmt = (int)RNDCHR+128;
-			sTmp.clear();
-			QBUF_RANDSTR( sTmp, iAmt );
-			unitTest( qb.write( sTmp.getStr(), sTmp.getSize() ) == 
-				(uint32_t)sTmp.getSize() );
-			size_t iRead = qb.read( buf, 4096 );
-			unitTest( iRead == iAmt );
-		}
-	}
+        for( int i=0; i<200; ++i )
+        {
+            unsigned int iAmt = (int)RNDCHR+128;
+            sTmp.clear();
+            QBUF_RANDSTR( sTmp, iAmt );
+            unitTest( qb.write( sTmp.getStr(), sTmp.getSize() ) == 
+                (uint32_t)sTmp.getSize() );
+            size_t iRead = qb.read( buf, 4096 );
+            unitTest( iRead == iAmt );
+        }
+    }
 
-	void QBUF_HEXOUT( const char *s, int iSize )
-	{
-		for( int i=0; i<iSize; ++i )
-			printf("%02x",(int)(uint8_t)s[i]);
-	}
+    void QBUF_HEXOUT( const char *s, int iSize )
+    {
+        for( int i=0; i<iSize; ++i )
+            printf("%02x",(int)(uint8_t)s[i]);
+    }
 
-	void QBUF_HASH( Bu::String &fill, const char *s, int iSize )
-	{
-		Bu::Md5 hash;
-		hash.reset();
-		hash.addData( s, iSize );
-		const Bu::String &sTmp = hash.getResult();
-		fill.append( sTmp.getStr(), 16 );
-	}
+    void QBUF_HASH( Bu::String &fill, const char *s, int iSize )
+    {
+        Bu::Md5 hash;
+        hash.reset();
+        hash.addData( s, iSize );
+        const Bu::String &sTmp = hash.getResult();
+        fill.append( sTmp.getStr(), 16 );
+    }
 
-	test testRandomData
-	{
-		srandom(time(NULL));
-		Bu::QueueBuf qb;
-		Bu::String sTmp;
-		Bu::String sTmp2;
-		char buf[4096];
+    test testRandomData
+    {
+        srandom(time(NULL));
+        Bu::QueueBuf qb;
+        Bu::String sTmp;
+        Bu::String sTmp2;
+        char buf[4096];
 
-		for( int i=0; i<200; ++i )
-		{
-			uint32_t iAmt = (uint32_t)RNDCHR+128;
-			sTmp.clear();
-			sTmp.append( (const char *)&iAmt, 4 );
-			QBUF_RANDSTR( sTmp, iAmt );
-			sTmp2.clear();
-			QBUF_HASH( sTmp2, sTmp.getStr()+4, iAmt );
-			sTmp.append( sTmp2 );
-			unitTest( qb.write( sTmp.getStr(), sTmp.getSize() ) == 
-				(uint32_t)sTmp.getSize() );
-			size_t iRead = qb.read( buf, 4096 );
-			uint32_t iGotSize = *((uint32_t *)buf);
-			unitTest( iRead == iGotSize+4+16 );
-			sTmp2.clear();
-			QBUF_HASH( sTmp2, buf+4, iGotSize );
-			unitTest( !strncmp(sTmp2.getStr(),buf+4+iGotSize,16) );
-		}
-	}
+        for( int i=0; i<200; ++i )
+        {
+            uint32_t iAmt = (uint32_t)RNDCHR+128;
+            sTmp.clear();
+            sTmp.append( (const char *)&iAmt, 4 );
+            QBUF_RANDSTR( sTmp, iAmt );
+            sTmp2.clear();
+            QBUF_HASH( sTmp2, sTmp.getStr()+4, iAmt );
+            sTmp.append( sTmp2 );
+            unitTest( qb.write( sTmp.getStr(), sTmp.getSize() ) == 
+                (uint32_t)sTmp.getSize() );
+            size_t iRead = qb.read( buf, 4096 );
+            uint32_t iGotSize = *((uint32_t *)buf);
+            unitTest( iRead == iGotSize+4+16 );
+            sTmp2.clear();
+            QBUF_HASH( sTmp2, buf+4, iGotSize );
+            unitTest( !strncmp(sTmp2.getStr(),buf+4+iGotSize,16) );
+        }
+    }
 }

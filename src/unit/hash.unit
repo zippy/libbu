@@ -19,193 +19,193 @@ typedef Bu::Hash<int, Bu::String> IntStrHash;
 
 suite Hash
 {
-	test probe1
-	{
-		StrIntHash h;
-		char buf[20];
-		for(int i=1;i<10000;i++)
-		{
-			sprintf(buf,"%d",i);
-			Bu::String sTmp(buf);
-			h[sTmp] = i;
-			unitTest( h.has(sTmp) );
-		}
-	}
+    test probe1
+    {
+        StrIntHash h;
+        char buf[20];
+        for(int i=1;i<10000;i++)
+        {
+            sprintf(buf,"%d",i);
+            Bu::String sTmp(buf);
+            h[sTmp] = i;
+            unitTest( h.has(sTmp) );
+        }
+    }
 
-	test insert1
-	{
-		StrIntHash h;
-		h["Hi"] = 42;
-		unitTest( h["Hi"] == 42 );
-	}
+    test insert1
+    {
+        StrIntHash h;
+        h["Hi"] = 42;
+        unitTest( h["Hi"] == 42 );
+    }
 
-	test insert2
-	{
-		StrStrHash h;
-		h["Hi"] = "Yo";
-		h["Bye"] = "Later";
-		unitTest( h["Hi"].getValue() == "Yo" );
+    test insert2
+    {
+        StrStrHash h;
+        h["Hi"] = "Yo";
+        h["Bye"] = "Later";
+        unitTest( h["Hi"].getValue() == "Yo" );
 
-		StrStrHash h2(h);
-		unitTest( h2["Hi"].getValue() == "Yo" );
-		unitTest( h2["Bye"].getValue() == "Later" );
+        StrStrHash h2(h);
+        unitTest( h2["Hi"].getValue() == "Yo" );
+        unitTest( h2["Bye"].getValue() == "Later" );
 
-		StrStrHash h3;
-		h3 = h;
-		unitTest( h3["Hi"].getValue() == "Yo" );
-		unitTest( h3["Bye"].getValue() == "Later" );
-	}
+        StrStrHash h3;
+        h3 = h;
+        unitTest( h3["Hi"].getValue() == "Yo" );
+        unitTest( h3["Bye"].getValue() == "Later" );
+    }
 
-	test insert3
-	{
-		IntStrHash h;
+    test insert3
+    {
+        IntStrHash h;
 
-		for( unsigned int i=1; i<50; i++ )
-		{
-			h[i] = "testing";
-			unitTest( h.getSize() == i );
-		}
-	}
+        for( unsigned int i=1; i<50; i++ )
+        {
+            h[i] = "testing";
+            unitTest( h.getSize() == i );
+        }
+    }
 
-	test erase1
-	{
-		StrIntHash h;
-		h.insert("Number 1", 1 );
-		h.insert("Number 2", 2 );
-		h.insert("Number 3", 3 );
-		h.erase("Number 2");
-		h.get("Number 3");
-		try {
-			h.get("Number 2");
-			unitFailed("h.get(\"Number 2\") should have thrown an exception.");
-		} catch( Bu::HashException &e ) { }
+    test erase1
+    {
+        StrIntHash h;
+        h.insert("Number 1", 1 );
+        h.insert("Number 2", 2 );
+        h.insert("Number 3", 3 );
+        h.erase("Number 2");
+        h.get("Number 3");
+        try {
+            h.get("Number 2");
+            unitFailed("h.get(\"Number 2\") should have thrown an exception.");
+        } catch( Bu::HashException &e ) { }
 
-	/*	printf("\n");
-		for( StrIntHash::iterator i = h.begin(); i != h.end(); i++ )
-		{
-			printf(" - \"%s\" = %d\n", i.getKey().getStr(), i.getValue() );
-		} */
-	}
+    /*  printf("\n");
+        for( StrIntHash::iterator i = h.begin(); i != h.end(); i++ )
+        {
+            printf(" - \"%s\" = %d\n", i.getKey().getStr(), i.getValue() );
+        } */
+    }
 
-	test copy
-	{
-		StrIntHash h;
-		h.insert("hello", 55 );
-		h.insert("goodbye", -1812 );
+    test copy
+    {
+        StrIntHash h;
+        h.insert("hello", 55 );
+        h.insert("goodbye", -1812 );
 
-		StrIntHash h2 = h;
-		unitTest( h2.isCoreShared( h ) );
+        StrIntHash h2 = h;
+        unitTest( h2.isCoreShared( h ) );
 
-		StrIntHash h3 = h.clone();
-		unitTest( !h3.isCoreShared( h ) );
-	}
+        StrIntHash h3 = h.clone();
+        unitTest( !h3.isCoreShared( h ) );
+    }
 
-	test reHashSpecial
-	{
-		IntStrHash hTest;
+    test reHashSpecial
+    {
+        IntStrHash hTest;
 
-		setStepCount( 1000000 );
-		for( int i=0; i<1000000; ++i )
-		{
-			char buf[40]; snprintf(buf,40,"num%d",i);
-			incProgress();
+        setStepCount( 1000000 );
+        for( int i=0; i<1000000; ++i )
+        {
+            char buf[40]; snprintf(buf,40,"num%d",i);
+            incProgress();
 
-			if( ((double)random()/(double)RAND_MAX)<.01 )
-			{
-				//printf("ERASE: %d (%s)\n",i%64,buf);
-				hTest.erase(i%64);
-			}
-			else
-			{
-				hTest[i%64]=buf;
-			}
+            if( ((double)random()/(double)RAND_MAX)<.01 )
+            {
+                //printf("ERASE: %d (%s)\n",i%64,buf);
+                hTest.erase(i%64);
+            }
+            else
+            {
+                hTest[i%64]=buf;
+            }
 
-			/*printf("(%d) size: %u fill: %u cap:%u\n",
-				i,
-				hTest.getSize(),
-				hTest.getFill(),
-				hTest.getCapacity()
-				);*/
-		}
-	}
+            /*printf("(%d) size: %u fill: %u cap:%u\n",
+                i,
+                hTest.getSize(),
+                hTest.getFill(),
+                hTest.getCapacity()
+                );*/
+        }
+    }
 
-	test stress
-	{
-		srandom(time(NULL));
+    test stress
+    {
+        srandom(time(NULL));
 
-		IntStrHash hTest;
-		IntStrHash hReUse;
-		setStepCount( 100000 );
+        IntStrHash hTest;
+        IntStrHash hReUse;
+        setStepCount( 100000 );
 
-		for( int i=0; i<100000; ++i )
-		{
-			char buf[40]; snprintf(buf,40,"num%d",i);
-			hTest[i] = buf;
-			incProgress();
+        for( int i=0; i<100000; ++i )
+        {
+            char buf[40]; snprintf(buf,40,"num%d",i);
+            hTest[i] = buf;
+            incProgress();
 
-			
-			if( ((double)random()/(double)RAND_MAX)<.01 )
-			{
-				Bu::List<int> lKeys = hReUse.getKeys();
-				Bu::List<int>::const_iterator it = lKeys.begin();
-				int iIdx = (int)(((double)random()/(double)RAND_MAX)
-					*lKeys.getSize());
-				for( int l=0; it; ++it, ++l )
-				{
-					if( l==iIdx )
-					{
-						int iVal = *it;
-						hReUse.erase( *it );
-						char buf[40]; snprintf(buf,40,"num%d",iVal);
-						hTest[i] = buf;
-						//printf("re-use: %s\n",buf);
-					}
-				}
-			}
+            
+            if( ((double)random()/(double)RAND_MAX)<.01 )
+            {
+                Bu::List<int> lKeys = hReUse.getKeys();
+                Bu::List<int>::const_iterator it = lKeys.begin();
+                int iIdx = (int)(((double)random()/(double)RAND_MAX)
+                    *lKeys.getSize());
+                for( int l=0; it; ++it, ++l )
+                {
+                    if( l==iIdx )
+                    {
+                        int iVal = *it;
+                        hReUse.erase( *it );
+                        char buf[40]; snprintf(buf,40,"num%d",iVal);
+                        hTest[i] = buf;
+                        //printf("re-use: %s\n",buf);
+                    }
+                }
+            }
 
-			/*printf("(%s) size: %u fill: %u cap:%u\n",
-				buf,
-				hTest.getSize(),
-				hTest.getFill(),
-				hTest.getCapacity()
-				);*/
+            /*printf("(%s) size: %u fill: %u cap:%u\n",
+                buf,
+                hTest.getSize(),
+                hTest.getFill(),
+                hTest.getCapacity()
+                );*/
 
-			if( ((double)random()/(double)RAND_MAX)<.3 )
-			{
-				Bu::List<int> lKeys = hTest.getKeys();
-				int iIdx = (int)(((double)random()/(double)RAND_MAX)
-					*lKeys.getSize());
-				Bu::List<int>::const_iterator it = lKeys.begin();
-				for( int k=0; it; ++it, ++k )
-				{
-					if( k == iIdx )
-					{
-						hReUse.insert(*it,"yo");
-						hTest.erase( *it );
-					}
-				}
-			}
+            if( ((double)random()/(double)RAND_MAX)<.3 )
+            {
+                Bu::List<int> lKeys = hTest.getKeys();
+                int iIdx = (int)(((double)random()/(double)RAND_MAX)
+                    *lKeys.getSize());
+                Bu::List<int>::const_iterator it = lKeys.begin();
+                for( int k=0; it; ++it, ++k )
+                {
+                    if( k == iIdx )
+                    {
+                        hReUse.insert(*it,"yo");
+                        hTest.erase( *it );
+                    }
+                }
+            }
 
-			if( hTest.getSize() > 100 )
-			{
-				int iK = (int)(((double)random()/(double)RAND_MAX)*50)+10;
-				for( int j=0; j<iK; ++j )
-				{
-					Bu::List<int> lKeys = hTest.getKeys();
-					int iIdx = (int)(((double)random()/(double)RAND_MAX)
-						*lKeys.getSize());
-					Bu::List<int>::const_iterator it = lKeys.begin();
-					for( int k=0; it; ++it, ++k )
-					{
-						if( k == iIdx )
-						{
-							hReUse.insert(*it,"yo");
-							hTest.erase( *it );
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
+            if( hTest.getSize() > 100 )
+            {
+                int iK = (int)(((double)random()/(double)RAND_MAX)*50)+10;
+                for( int j=0; j<iK; ++j )
+                {
+                    Bu::List<int> lKeys = hTest.getKeys();
+                    int iIdx = (int)(((double)random()/(double)RAND_MAX)
+                        *lKeys.getSize());
+                    Bu::List<int>::const_iterator it = lKeys.begin();
+                    for( int k=0; it; ++it, ++k )
+                    {
+                        if( k == iIdx )
+                        {
+                            hReUse.insert(*it,"yo");
+                            hTest.erase( *it );
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

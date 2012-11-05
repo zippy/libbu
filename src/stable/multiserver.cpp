@@ -20,36 +20,36 @@ Bu::MultiServer::~MultiServer()
 }
 
 void Bu::MultiServer::addProtocol( Bu::Protocol *(*proc)(), int iPort,
-	int nPoolSize )
+    int nPoolSize )
 {
-	hProtos[iPort] = proc;
-	addPort( iPort, nPoolSize );
+    hProtos[iPort] = proc;
+    addPort( iPort, nPoolSize );
 }
 
 void Bu::MultiServer::addProtocol( Protocol *(*proc)(), const String &sAddr,
-	int iPort, int nPoolSize )
+    int iPort, int nPoolSize )
 {
-	hProtos[iPort] = proc;
-	addPort( sAddr, iPort, nPoolSize );
+    hProtos[iPort] = proc;
+    addPort( sAddr, iPort, nPoolSize );
 }
 
 void Bu::MultiServer::onNewConnection( Bu::Client *pClient, int nPort )
 {
-	pClient->setProtocol( hProtos.get( nPort )() );
+    pClient->setProtocol( hProtos.get( nPort )() );
 }
 
 void Bu::MultiServer::onClosedConnection( Bu::Client *pClient )
 {
-	delete pClient->getProtocol();
+    delete pClient->getProtocol();
 }
 
 void Bu::MultiServer::shutdown()
 {
-	Bu::Server::shutdown();
+    Bu::Server::shutdown();
 }
 
 void Bu::MultiServer::tick()
 {
-	Bu::Server::tick();
+    Bu::Server::tick();
 }
 

@@ -16,51 +16,51 @@
 
 namespace Bu
 {
-	class HttpGet : public Bu::Stream
-	{
-	public:
-		HttpGet( const Bu::Url &uSrc, const Bu::String &sMethod="GET" );
-		virtual ~HttpGet();
+    class HttpGet : public Bu::Stream
+    {
+    public:
+        HttpGet( const Bu::Url &uSrc, const Bu::String &sMethod="GET" );
+        virtual ~HttpGet();
 
-		void get();
+        void get();
 
-		// From Bu::Stream
-		virtual void close();
-		virtual Bu::size read( void *pBuf, Bu::size nBytes );
-		virtual Bu::size write( const void *pBuf, Bu::size nBytes );
-		using Stream::write;
+        // From Bu::Stream
+        virtual void close();
+        virtual Bu::size read( void *pBuf, Bu::size nBytes );
+        virtual Bu::size write( const void *pBuf, Bu::size nBytes );
+        using Stream::write;
 
-		virtual Bu::size tell();
-		virtual void seek( Bu::size offset );
-		virtual void setPos( Bu::size pos );
-		virtual void setPosEnd( Bu::size pos );
-		virtual bool isEos();
-		virtual bool isOpen();
+        virtual Bu::size tell();
+        virtual void seek( Bu::size offset );
+        virtual void setPos( Bu::size pos );
+        virtual void setPosEnd( Bu::size pos );
+        virtual bool isEos();
+        virtual bool isOpen();
 
-		virtual void flush();
+        virtual void flush();
 
-		virtual bool canRead();
-		virtual bool canWrite();
+        virtual bool canRead();
+        virtual bool canWrite();
 
-		virtual bool isReadable();
-		virtual bool isWritable();
-		virtual bool isSeekable();
+        virtual bool isReadable();
+        virtual bool isWritable();
+        virtual bool isSeekable();
 
-		virtual bool isBlocking();
-		virtual void setBlocking( bool bBlocking=true );
+        virtual bool isBlocking();
+        virtual void setBlocking( bool bBlocking=true );
 
-		virtual size getSize() const;
-		virtual size getBlockSize() const;
-		virtual Bu::String getLocation() const;
+        virtual size getSize() const;
+        virtual size getBlockSize() const;
+        virtual Bu::String getLocation() const;
 
-	private:
-		Bu::Url uSrc;
-		Bu::String sMethod;
-		Bu::TcpSocket sSrv;
-		typedef Bu::Hash<Bu::String,Bu::String> MimeHash;
-		MimeHash hMimeIn;
-		MimeHash hMimeOut;
-	};
+    private:
+        Bu::Url uSrc;
+        Bu::String sMethod;
+        Bu::TcpSocket sSrv;
+        typedef Bu::Hash<Bu::String,Bu::String> MimeHash;
+        MimeHash hMimeIn;
+        MimeHash hMimeOut;
+    };
 };
 
 #endif

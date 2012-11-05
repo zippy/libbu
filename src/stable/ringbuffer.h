@@ -15,237 +15,237 @@
 
 namespace Bu
 {
-	template<typename value, typename valuealloc> class RingBuffer;
+    template<typename value, typename valuealloc> class RingBuffer;
 
-	/** @cond DEVEL */
-	template<typename value, typename valuealloc>
-	class RingBufferCore
-	{
-	friend class RingBuffer<value, valuealloc>;
-	friend class SharedCore<RingBuffer<value, valuealloc>,
-		   RingBufferCore<value, valuealloc> >;
-	private:
-		RingBufferCore() :
-			iCapacity( 0 ),
-			iStart( -1 ),
-			iEnd( -2 ),
-			aData( NULL )
-		{
-		}
+    /** @cond DEVEL */
+    template<typename value, typename valuealloc>
+    class RingBufferCore
+    {
+    friend class RingBuffer<value, valuealloc>;
+    friend class SharedCore<RingBuffer<value, valuealloc>,
+           RingBufferCore<value, valuealloc> >;
+    private:
+        RingBufferCore() :
+            iCapacity( 0 ),
+            iStart( -1 ),
+            iEnd( -2 ),
+            aData( NULL )
+        {
+        }
 
-		virtual ~RingBufferCore()
-		{
-			clear();
-		}
+        virtual ~RingBufferCore()
+        {
+            clear();
+        }
 
-		void init( int iNewCapacity )
-		{
-			if( iCapacity > 0 )
-				return;
+        void init( int iNewCapacity )
+        {
+            if( iCapacity > 0 )
+                return;
 
-			iCapacity = iNewCapacity;
-			iStart = -1;
-			iEnd = -2;
-			aData = va.allocate( iCapacity );
-		}
+            iCapacity = iNewCapacity;
+            iStart = -1;
+            iEnd = -2;
+            aData = va.allocate( iCapacity );
+        }
 
-		void clear()
-		{
-			for( int j = iStart; j < iEnd; j=(j+1%iCapacity) )
-			{
-				va.destroy( &aData[j] );
-			}
-			va.deallocate( aData, iCapacity );
-			aData = NULL;
-			iCapacity = 0;
-		}
-		
-		void enqueue( const value &v )
-		{
-			if( iStart == -1 )
-			{
-				iStart = 0;
-				iEnd = 1;
-				va.construct( &aData[0], v );
-				return;
-			}
-			else if( iStart == iEnd )
-			{
-				// The ringbuffer is full
-				dequeue();
-			}
-			va.construct( &aData[iEnd], v );
-			iEnd = (iEnd+1)%iCapacity;
-		}
+        void clear()
+        {
+            for( int j = iStart; j < iEnd; j=(j+1%iCapacity) )
+            {
+                va.destroy( &aData[j] );
+            }
+            va.deallocate( aData, iCapacity );
+            aData = NULL;
+            iCapacity = 0;
+        }
+        
+        void enqueue( const value &v )
+        {
+            if( iStart == -1 )
+            {
+                iStart = 0;
+                iEnd = 1;
+                va.construct( &aData[0], v );
+                return;
+            }
+            else if( iStart == iEnd )
+            {
+                // The ringbuffer is full
+                dequeue();
+            }
+            va.construct( &aData[iEnd], v );
+            iEnd = (iEnd+1)%iCapacity;
+        }
 
-		value dequeue()
-		{
-			if( iStart == -1 )
-			{
-				throw ExceptionBase("No data");
-			}
-			else
-			{
-				value &v = aData[iStart];
-				va.destroy( &aData[iStart] );
-				iStart = (iStart+1)%iCapacity;
-				if( iStart == iEnd )
-				{
-					iStart = -1;
-					iEnd = -2;
-				}
-				return v;
-			}
-		}
+        value dequeue()
+        {
+            if( iStart == -1 )
+            {
+                throw ExceptionBase("No data");
+            }
+            else
+            {
+                value &v = aData[iStart];
+                va.destroy( &aData[iStart] );
+                iStart = (iStart+1)%iCapacity;
+                if( iStart == iEnd )
+                {
+                    iStart = -1;
+                    iEnd = -2;
+                }
+                return v;
+            }
+        }
 
-		value &get( int iIndex )
-		{
-			return aData[(iIndex+iStart)%iCapacity];
-		}
+        value &get( int iIndex )
+        {
+            return aData[(iIndex+iStart)%iCapacity];
+        }
 
-		value &first()
-		{
-			return aData[iStart];
-		}
+        value &first()
+        {
+            return aData[iStart];
+        }
 
-		value &last()
-		{
-			return aData[(iEnd-1+iCapacity)%iCapacity];
-		}
+        value &last()
+        {
+            return aData[(iEnd-1+iCapacity)%iCapacity];
+        }
 
-		int getSize()
-		{
-			if( iStart < 0 )
-				return 0;
-			if( iEnd == iStart )
-				return iCapacity;
-			if( iEnd < iStart )
-				return iEnd-iStart;
-			return iCapacity-(iEnd-iStart);
-		}
+        int getSize()
+        {
+            if( iStart < 0 )
+                return 0;
+            if( iEnd == iStart )
+                return iCapacity;
+            if( iEnd < iStart )
+                return iEnd-iStart;
+            return iCapacity-(iEnd-iStart);
+        }
 
-		int iCapacity;
-		int iStart, iEnd;
-		value *aData;
-		valuealloc va;
-	};
-	/** @endcond */
+        int iCapacity;
+        int iStart, iEnd;
+        value *aData;
+        valuealloc va;
+    };
+    /** @endcond */
 
-	/**
-	 *@ingroup Containers
-	 */
-	template<typename value, typename valuealloc=std::allocator<value> >
-	class RingBuffer : public Queue<value>, public SharedCore<
-					   RingBuffer<value, valuealloc>,
-					   RingBufferCore<value, valuealloc>
-					   >
-	{
-	private:
-		typedef RingBuffer<value, valuealloc> MyType;
-		typedef RingBufferCore<value, valuealloc> Core;
+    /**
+     *@ingroup Containers
+     */
+    template<typename value, typename valuealloc=std::allocator<value> >
+    class RingBuffer : public Queue<value>, public SharedCore<
+                       RingBuffer<value, valuealloc>,
+                       RingBufferCore<value, valuealloc>
+                       >
+    {
+    private:
+        typedef RingBuffer<value, valuealloc> MyType;
+        typedef RingBufferCore<value, valuealloc> Core;
 
-	protected:
-		using SharedCore<MyType, Core>::core;
-		using SharedCore<MyType, Core>::_hardCopy;
-		using SharedCore<MyType, Core>::_allocateCore;
+    protected:
+        using SharedCore<MyType, Core>::core;
+        using SharedCore<MyType, Core>::_hardCopy;
+        using SharedCore<MyType, Core>::_allocateCore;
 
-	public:
-		RingBuffer( int iCapacity )
-		{
-			core->init( iCapacity );
-		}
+    public:
+        RingBuffer( int iCapacity )
+        {
+            core->init( iCapacity );
+        }
 
-		RingBuffer( const RingBuffer &rSrc ) :
-			SharedCore<MyType, Core>( rSrc )
-		{
-		}
+        RingBuffer( const RingBuffer &rSrc ) :
+            SharedCore<MyType, Core>( rSrc )
+        {
+        }
 
-		virtual ~RingBuffer()
-		{
-		}
+        virtual ~RingBuffer()
+        {
+        }
 
-		int getCapacity() const
-		{
-			return core->iCapacity;
-		}
+        int getCapacity() const
+        {
+            return core->iCapacity;
+        }
 
-		bool isFilled() const
-		{
-			return (core->iStart == core->iEnd);
-		}
+        bool isFilled() const
+        {
+            return (core->iStart == core->iEnd);
+        }
 
-		bool isEmpty() const
-		{
-			return (core->iStart == -1);
-		}
+        bool isEmpty() const
+        {
+            return (core->iStart == -1);
+        }
 
-		virtual void enqueue( const value &v )
-		{
-			_hardCopy();
+        virtual void enqueue( const value &v )
+        {
+            _hardCopy();
 
-			core->enqueue( v );
-		}
+            core->enqueue( v );
+        }
 
-		virtual value dequeue()
-		{
-			_hardCopy();
+        virtual value dequeue()
+        {
+            _hardCopy();
 
-			return core->dequeue();
-		}
+            return core->dequeue();
+        }
 
-		virtual int getSize() const
-		{
-			return core->getSize();
-		}
+        virtual int getSize() const
+        {
+            return core->getSize();
+        }
 
-		virtual value &peek()
-		{
-			_hardCopy();
+        virtual value &peek()
+        {
+            _hardCopy();
 
-			return core->get( 0 );
-		}
+            return core->get( 0 );
+        }
 
-		virtual const value &peek() const
-		{
-			return core->get( 0 );
-		}
+        virtual const value &peek() const
+        {
+            return core->get( 0 );
+        }
 
-		virtual value &first()
-		{
-			_hardCopy();
+        virtual value &first()
+        {
+            _hardCopy();
 
-			return core->first();
-		}
+            return core->first();
+        }
 
-		virtual value &last()
-		{
-			_hardCopy();
+        virtual value &last()
+        {
+            _hardCopy();
 
-			return core->last();
-		}
+            return core->last();
+        }
 
-		value &operator[]( int iIndex )
-		{
-			_hardCopy();
+        value &operator[]( int iIndex )
+        {
+            _hardCopy();
 
-			return core->get( iIndex );
-		}
+            return core->get( iIndex );
+        }
 
-	protected:
-		virtual Core *_copyCore( Core *src )
-		{
-			Core *pRet = _allocateCore();
+    protected:
+        virtual Core *_copyCore( Core *src )
+        {
+            Core *pRet = _allocateCore();
 
-			pRet->init( src->iCapacity );
-			int iSize = src->getSize();
-			for( int j = 0; j < iSize; j++ )
-			{
-				pRet->enqueue( src->get( j ) );
-			}
+            pRet->init( src->iCapacity );
+            int iSize = src->getSize();
+            for( int j = 0; j < iSize; j++ )
+            {
+                pRet->enqueue( src->get( j ) );
+            }
 
-			return pRet;
-		}
-	};
+            return pRet;
+        }
+    };
 }
 
 #endif

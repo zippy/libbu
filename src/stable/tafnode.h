@@ -15,30 +15,30 @@
 
 namespace Bu
 {
-	subExceptionDecl( TafException );
-	/**
-	 *
-	 *@ingroup Taf
-	 */
-	class TafNode
-	{
-	public:
-		enum NodeType
-		{
-			typeGroup,
-			typeProperty,
-			typeComment
-		};
+    subExceptionDecl( TafException );
+    /**
+     *
+     *@ingroup Taf
+     */
+    class TafNode
+    {
+    public:
+        enum NodeType
+        {
+            typeGroup,
+            typeProperty,
+            typeComment
+        };
 
-	public:
-		TafNode( NodeType eType );
-		virtual ~TafNode();
+    public:
+        TafNode( NodeType eType );
+        virtual ~TafNode();
 
-		NodeType getType() const;
+        NodeType getType() const;
 
-	private:
-		NodeType eType;
-	};
+    private:
+        NodeType eType;
+    };
 }
 
 #endif

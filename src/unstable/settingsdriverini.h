@@ -7,23 +7,23 @@
 
 namespace Bu
 {
-	class SettingsDriverIni : public SettingsDriver
-	{
-	public:
-		SettingsDriverIni();
-		virtual ~SettingsDriverIni();
+    class SettingsDriverIni : public SettingsDriver
+    {
+    public:
+        SettingsDriverIni();
+        virtual ~SettingsDriverIni();
 
-	protected:
-		virtual void init( const Bu::UtfString &sCompany, const Bu::UtfString &sProduct );
-		virtual void set( const Bu::UtfString &sKey, const Bu::UtfString  &sValue );		
-		virtual Bu::UtfString get( const Bu::UtfString &sKey, const Bu::UtfString &sValue );
+    protected:
+        virtual void init( const Bu::UtfString &sCompany, const Bu::UtfString &sProduct );
+        virtual void set( const Bu::UtfString &sKey, const Bu::UtfString  &sValue );        
+        virtual Bu::UtfString get( const Bu::UtfString &sKey, const Bu::UtfString &sValue );
 
-	private:
-		Bu::String sPath;
-		typedef Bu::Hash<Bu::UtfString, Bu::UtfString> StrHash;
-		typedef Bu::Hash<Bu::UtfString, StrHash> GroupHash;
-		GroupHash hGroup;
-	};
+    private:
+        Bu::String sPath;
+        typedef Bu::Hash<Bu::UtfString, Bu::UtfString> StrHash;
+        typedef Bu::Hash<Bu::UtfString, StrHash> GroupHash;
+        GroupHash hGroup;
+    };
 };
 
 #endif

@@ -16,51 +16,51 @@ Bu::Formatter Bu::serr( Bu::serrRaw );
 
 namespace Bu
 {
-	class PrintEndAction : public Bu::String::FormatProxyEndAction
-	{
-	public:
-		PrintEndAction( Bu::Stream &s, bool bEndLn ) :
-			s( s ),
-			bEndLn( bEndLn )
-		{
-		}
+    class PrintEndAction : public Bu::String::FormatProxyEndAction
+    {
+    public:
+        PrintEndAction( Bu::Stream &s, bool bEndLn ) :
+            s( s ),
+            bEndLn( bEndLn )
+        {
+        }
 
-		virtual ~PrintEndAction()
-		{
-		}
+        virtual ~PrintEndAction()
+        {
+        }
 
-		virtual void operator()( const Bu::String &sFinal )
-		{
-			s.write( sFinal.getStr(), sFinal.getSize() );
-			if( bEndLn )
-			{
-				s.write("\n", 1);
-				s.flush();
-			}
-		}
+        virtual void operator()( const Bu::String &sFinal )
+        {
+            s.write( sFinal.getStr(), sFinal.getSize() );
+            if( bEndLn )
+            {
+                s.write("\n", 1);
+                s.flush();
+            }
+        }
 
-		Bu::Stream &s;
-		bool bEndLn;
-	};
+        Bu::Stream &s;
+        bool bEndLn;
+    };
 }
 
 Bu::String::FormatProxy Bu::print( Bu::Stream &s, const Bu::String &str )
 {
-	return str.format( new Bu::PrintEndAction( s, false ) );
+    return str.format( new Bu::PrintEndAction( s, false ) );
 }
 
 Bu::String::FormatProxy Bu::print( const Bu::String &str )
 {
-	return print( sioRaw, str );
+    return print( sioRaw, str );
 }
 
 Bu::String::FormatProxy Bu::println( Bu::Stream &s, const Bu::String &str )
 {
-	return str.format( new Bu::PrintEndAction( s, true ) );
+    return str.format( new Bu::PrintEndAction( s, true ) );
 }
 
 Bu::String::FormatProxy Bu::println( const Bu::String &str )
 {
-	return println( sioRaw, str );
+    return println( sioRaw, str );
 }
 

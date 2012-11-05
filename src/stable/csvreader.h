@@ -14,32 +14,32 @@
 
 namespace Bu
 {
-	class Stream;
-	typedef Bu::Array<Bu::String> StrArray;
+    class Stream;
+    typedef Bu::Array<Bu::String> StrArray;
 
-	class CsvReader
-	{
-	public:
-		typedef Bu::Signal1<Bu::String, Bu::String::iterator &> DecodeSignal;
-		enum Style
-		{
-			styleExcel, ///< Excel style quotes around things that need em
-			styleC		///< Escape things that need it C-style
-		};
+    class CsvReader
+    {
+    public:
+        typedef Bu::Signal1<Bu::String, Bu::String::iterator &> DecodeSignal;
+        enum Style
+        {
+            styleExcel, ///< Excel style quotes around things that need em
+            styleC      ///< Escape things that need it C-style
+        };
 
-		CsvReader( Stream &sIn, Style eStyle=styleExcel );
-		CsvReader( Stream &sIn, DecodeSignal sDecode );
-		virtual ~CsvReader();
+        CsvReader( Stream &sIn, Style eStyle=styleExcel );
+        CsvReader( Stream &sIn, DecodeSignal sDecode );
+        virtual ~CsvReader();
 
-		StrArray readLine();
+        StrArray readLine();
 
-	private:
-		Stream &sIn;
-		DecodeSignal sDecode;
+    private:
+        Stream &sIn;
+        DecodeSignal sDecode;
 
-		static Bu::String decodeExcel( Bu::String::iterator &i );
-		static Bu::String decodeC( Bu::String::iterator &i );
-	};
+        static Bu::String decodeExcel( Bu::String::iterator &i );
+        static Bu::String decodeC( Bu::String::iterator &i );
+    };
 };
 
 #endif

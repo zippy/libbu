@@ -11,7 +11,7 @@
 
 namespace Bu
 {
-	Formatter &operator<<( Formatter &f, const String &s );
+    Formatter &operator<<( Formatter &f, const String &s );
 };
 
 Bu::VariantTypeRoot::VariantTypeRoot()
@@ -23,84 +23,84 @@ Bu::VariantTypeRoot::~VariantTypeRoot()
 }
 
 Bu::Variant::Variant() :
-	pCore( NULL )
+    pCore( NULL )
 {
 }
 
 Bu::Variant::Variant( const Variant &v ) :
-	pCore( NULL )
+    pCore( NULL )
 {
-	if( v.pCore )
-	{
-		pCore = v.pCore->clone();
-	}
+    if( v.pCore )
+    {
+        pCore = v.pCore->clone();
+    }
 }
 
 Bu::Variant::Variant( const char *t ) :
-	pCore( NULL )
+    pCore( NULL )
 {
-	set( Bu::String( t ) );
+    set( Bu::String( t ) );
 }
 
 Bu::Variant::~Variant()
 {
-	if( pCore )
-	{
-		delete pCore;
-		pCore = NULL;
-	}
+    if( pCore )
+    {
+        delete pCore;
+        pCore = NULL;
+    }
 }
 
 Bu::String Bu::Variant::toString() const
 {
-	if( getType() == typeid( Bu::String ) )
-	{
-		return get<Bu::String>();
-	}
-	else
-	{
-		Bu::MemBuf mb;
-		Bu::Formatter f( mb );
-		f << *this;
-		return mb.getString();
-	}
+    if( getType() == typeid( Bu::String ) )
+    {
+        return get<Bu::String>();
+    }
+    else
+    {
+        Bu::MemBuf mb;
+        Bu::Formatter f( mb );
+        f << *this;
+        return mb.getString();
+    }
 }
 
 bool Bu::Variant::isSet() const
 {
-	return pCore != NULL;
+    return pCore != NULL;
 }
 
 const std::type_info &Bu::Variant::getType() const
 {
-	if( !pCore )
-	{
-		throw Bu::ExceptionBase("No data!");
-	}
-	return pCore->getType();
+    if( !pCore )
+    {
+        throw Bu::ExceptionBase("No data!");
+    }
+    return pCore->getType();
 }
 
 Bu::Variant &Bu::Variant::operator=( const Bu::Variant &rhs )
 {
-	if( pCore )
-	{
-		delete pCore;
-		pCore = NULL;
-	}
-	if( rhs.pCore )
-	{
-		pCore = rhs.pCore->clone();
-	}
+    if( pCore )
+    {
+        delete pCore;
+        pCore = NULL;
+    }
+    if( rhs.pCore )
+    {
+        pCore = rhs.pCore->clone();
+    }
 
-	return *this;
+    return *this;
 }
 
 Bu::Formatter &Bu::operator<<( Bu::Formatter &f, const Bu::Variant &v )
 {
-	if( !v.pCore )
-		return f << "(null)";
+    if( !v.pCore )
+        return f << "(null)";
 
-	v.pCore->format( f );
-	return f;
+    v.pCore->format( f );
+    return f;
 }
 

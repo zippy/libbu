@@ -12,18 +12,18 @@
 
 namespace Bu
 {
-	class StreamStack;
+    class StreamStack;
 
-	extern Bu::StreamStack sioRaw;
-	extern Bu::Formatter sio;
-	extern Bu::StreamStack serrRaw;
-	extern Bu::Formatter serr;
+    extern Bu::StreamStack sioRaw;
+    extern Bu::Formatter sio;
+    extern Bu::StreamStack serrRaw;
+    extern Bu::Formatter serr;
 
-	Bu::String::FormatProxy print( Bu::Stream &s, const Bu::String &str );
-	Bu::String::FormatProxy print( const Bu::String &str );
+    Bu::String::FormatProxy print( Bu::Stream &s, const Bu::String &str );
+    Bu::String::FormatProxy print( const Bu::String &str );
 
-	Bu::String::FormatProxy println( Bu::Stream &s, const Bu::String &str );
-	Bu::String::FormatProxy println( const Bu::String &str );
+    Bu::String::FormatProxy println( Bu::Stream &s, const Bu::String &str );
+    Bu::String::FormatProxy println( const Bu::String &str );
 };
 
 #endif

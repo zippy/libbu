@@ -13,45 +13,45 @@
 
 namespace Bu
 {
-	class Protocol;
-	class Client;
+    class Protocol;
+    class Client;
 
-	template<class T>
-	Protocol *genProtocol()
-	{
-		return new T;
-	}
+    template<class T>
+    Protocol *genProtocol()
+    {
+        return new T;
+    }
 
-	class MultiServer : protected Server
-	{
-	public:
-		MultiServer();
-		virtual ~MultiServer();
+    class MultiServer : protected Server
+    {
+    public:
+        MultiServer();
+        virtual ~MultiServer();
 
-		void addProtocol( Protocol *(*proc)(), int iPort, int nPoolSize=40 );
-		void addProtocol( Protocol *(*proc)(), const String &sAddr, int iPort,
-				int nPoolSize=40 );
-		
-		void scan()
-		{
-			Server::scan();
-		}
+        void addProtocol( Protocol *(*proc)(), int iPort, int nPoolSize=40 );
+        void addProtocol( Protocol *(*proc)(), const String &sAddr, int iPort,
+                int nPoolSize=40 );
+        
+        void scan()
+        {
+            Server::scan();
+        }
 
-		void setTimeout( int nTimeoutSec, int nTimeoutUSec=0 )
-		{
-			Server::setTimeout( nTimeoutSec, nTimeoutUSec );
-		}
+        void setTimeout( int nTimeoutSec, int nTimeoutUSec=0 )
+        {
+            Server::setTimeout( nTimeoutSec, nTimeoutUSec );
+        }
 
-		virtual void onNewConnection( Client *pClient, int nPort );
-		virtual void onClosedConnection( Client *pClient );
+        virtual void onNewConnection( Client *pClient, int nPort );
+        virtual void onClosedConnection( Client *pClient );
 
-		void shutdown();
+        void shutdown();
 
-		void tick();
+        void tick();
 
-	private:
-		Bu::Hash<int, Protocol *(*)()> hProtos;
-	};
+    private:
+        Bu::Hash<int, Protocol *(*)()> hProtos;
+    };
 }
 
 #endif

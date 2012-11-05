@@ -3,30 +3,30 @@
 
 namespace Bu
 {
-	template<int iBlockSize, typename CipherType>
-	class CipherModeEcb : public CipherType
-	{
-	public:
-		CipherModeEcb( class Stream &rNext ) :
-			CipherType( rNext )
-		{
-		}
+    template<int iBlockSize, typename CipherType>
+    class CipherModeEcb : public CipherType
+    {
+    public:
+        CipherModeEcb( class Stream &rNext ) :
+            CipherType( rNext )
+        {
+        }
 
-		virtual ~CipherModeEcb()
-		{
-		}
-	
-	protected:
-		virtual void decipher( void *pBuf )
-		{
-			CipherType::decipher( pBuf );
-		}
+        virtual ~CipherModeEcb()
+        {
+        }
+    
+    protected:
+        virtual void decipher( void *pBuf )
+        {
+            CipherType::decipher( pBuf );
+        }
 
-		virtual void encipher( void *pBuf )
-		{
-			CipherType::encipher( pBuf );
-		}
-	};
+        virtual void encipher( void *pBuf )
+        {
+            CipherType::encipher( pBuf );
+        }
+    };
 };
 
 #endif

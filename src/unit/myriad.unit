@@ -26,360 +26,360 @@ class VerifyObject
 friend Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const VerifyObject &vo );
 friend Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, VerifyObject &vo );
 public:
-	VerifyObject( int iUnits ) :
-		iUnits( iUnits ),
-		iBytesWritten( 0 )
-	{
-	}
+    VerifyObject( int iUnits ) :
+        iUnits( iUnits ),
+        iBytesWritten( 0 )
+    {
+    }
 
-	virtual ~VerifyObject()
-	{
-	}
+    virtual ~VerifyObject()
+    {
+    }
 
-	int getBytesWritten()
-	{
-		return iBytesWritten;
-	}
+    int getBytesWritten()
+    {
+        return iBytesWritten;
+    }
 
 private:
-	int iUnits;
-	mutable int iBytesWritten;
+    int iUnits;
+    mutable int iBytesWritten;
 };
 
 Bu::ArchiveBase &operator<<( Bu::ArchiveBase &ar, const VerifyObject &vo )
 {
-	Md5 sum;
-	ar << vo.iUnits;
-	vo.iBytesWritten = 4;
-	sum.addData( &vo.iUnits, 4 );
-	for( int j = 0; j < vo.iUnits; j++ )
-	{
-		int iRand = random()%128;
-//		ar << iRand;
-		Bu::String sDat( iRand );
-		for( int j = 0; j < iRand; j++ )
-			sDat[j] = (char)((uint8_t)(random()%256));
-		ar << sDat;
-		sum.addData( &iRand, 4 );
-		sum.addData( sDat.getStr(), iRand );
-		vo.iBytesWritten += 4 + iRand;
-	}
-	Bu::String sRes = sum.getResult();
-	ar << sRes;
-	vo.iBytesWritten += 4 + sRes.getSize();
-	return ar;
+    Md5 sum;
+    ar << vo.iUnits;
+    vo.iBytesWritten = 4;
+    sum.addData( &vo.iUnits, 4 );
+    for( int j = 0; j < vo.iUnits; j++ )
+    {
+        int iRand = random()%128;
+//      ar << iRand;
+        Bu::String sDat( iRand );
+        for( int j = 0; j < iRand; j++ )
+            sDat[j] = (char)((uint8_t)(random()%256));
+        ar << sDat;
+        sum.addData( &iRand, 4 );
+        sum.addData( sDat.getStr(), iRand );
+        vo.iBytesWritten += 4 + iRand;
+    }
+    Bu::String sRes = sum.getResult();
+    ar << sRes;
+    vo.iBytesWritten += 4 + sRes.getSize();
+    return ar;
 }
 
 Bu::ArchiveBase &operator>>( Bu::ArchiveBase &ar, VerifyObject &vo )
 {
-	Md5 sum;
-	ar >> vo.iUnits;
-	sum.addData( &vo.iUnits, 4 );
-	for( int j = 0; j < vo.iUnits; j++ )
-	{
-		int iRand;
-//		ar >> iRand;
-		Bu::String sStr;
-		ar >> sStr;
-		iRand = sStr.getSize();
-		sum.addData( &iRand, 4 );
-		sum.addData( sStr.getStr(), iRand );
-	}
-	Bu::String sSum;
-	ar >> sSum;
-	unitTest( sSum == sum.getResult() );
-	int iTooMuch;
-	try
-	{
-		ar >> iTooMuch;
-		unitFailed("should have thrown an exception.");
-	}
-	catch( Bu::ExceptionBase &e )
-	{
-	}
-	return ar;
+    Md5 sum;
+    ar >> vo.iUnits;
+    sum.addData( &vo.iUnits, 4 );
+    for( int j = 0; j < vo.iUnits; j++ )
+    {
+        int iRand;
+//      ar >> iRand;
+        Bu::String sStr;
+        ar >> sStr;
+        iRand = sStr.getSize();
+        sum.addData( &iRand, 4 );
+        sum.addData( sStr.getStr(), iRand );
+    }
+    Bu::String sSum;
+    ar >> sSum;
+    unitTest( sSum == sum.getResult() );
+    int iTooMuch;
+    try
+    {
+        ar >> iTooMuch;
+        unitFailed("should have thrown an exception.");
+    }
+    catch( Bu::ExceptionBase &e )
+    {
+    }
+    return ar;
 }
 
 suite Myriad
 {
-	test setSize
-	{
-		String sFileName("myriad-XXXXXXX");
+    test setSize
+    {
+        String sFileName("myriad-XXXXXXX");
 
-		File fMyriad = tempFile( sFileName );
-		Myriad m( fMyriad, 32 );
+        File fMyriad = tempFile( sFileName );
+        Myriad m( fMyriad, 32 );
 
-		MyriadStream ms = m.openStream( m.createStream() );
-		ms.setSize( 150 );
-		ms.setPos( 145 );
-		char stuff[10];
-		unitTest( ms.read( stuff, 10 ) == 5 );
+        MyriadStream ms = m.openStream( m.createStream() );
+        ms.setSize( 150 );
+        ms.setPos( 145 );
+        char stuff[10];
+        unitTest( ms.read( stuff, 10 ) == 5 );
 
-		ms.setSize( 12 );
-		unitTest( ms.read( stuff, 10 ) == 0 );
-		unitTest( ms.write( "hello", 5 ) == 5 );
-		unitTest( ms.tell() == 17 );
+        ms.setSize( 12 );
+        unitTest( ms.read( stuff, 10 ) == 0 );
+        unitTest( ms.write( "hello", 5 ) == 5 );
+        unitTest( ms.tell() == 17 );
 
-		ms.setSize( 500 );
-		unitTest( ms.tell() == 17 );
-	}
+        ms.setSize( 500 );
+        unitTest( ms.tell() == 17 );
+    }
 
-	void addBlock( Stream &s, bool bAppend=true )
-	{
-		if( bAppend )
-			s.setPosEnd( 0 );
-		int iSize = (random()%1016)+8;
-		s.write( &iSize, 4 );
-		char *buf = new char[iSize-8];
-		for( int j = 0; j < iSize-8; j++ )
-		{
-			buf[j] = (j+iSize)%256;
-		}
-		if( random()%2 == 0 )
-		{
-			s.write( buf, iSize-8 );
-		}
-		else
-		{
-			for( int j = 0; j < iSize-8; )
-			{
-				int iAmnt = (random()%8)+1;
-				if( iAmnt+j > iSize-8 )
-					iAmnt = iSize-8-j;
-				iAmnt = s.write( buf+j, iAmnt );
-				j += iAmnt;
-			}
-		}
-		delete[] buf;
-		iSize = ~iSize;
-		s.write( &iSize, 4 );
-	}
+    void addBlock( Stream &s, bool bAppend=true )
+    {
+        if( bAppend )
+            s.setPosEnd( 0 );
+        int iSize = (random()%1016)+8;
+        s.write( &iSize, 4 );
+        char *buf = new char[iSize-8];
+        for( int j = 0; j < iSize-8; j++ )
+        {
+            buf[j] = (j+iSize)%256;
+        }
+        if( random()%2 == 0 )
+        {
+            s.write( buf, iSize-8 );
+        }
+        else
+        {
+            for( int j = 0; j < iSize-8; )
+            {
+                int iAmnt = (random()%8)+1;
+                if( iAmnt+j > iSize-8 )
+                    iAmnt = iSize-8-j;
+                iAmnt = s.write( buf+j, iAmnt );
+                j += iAmnt;
+            }
+        }
+        delete[] buf;
+        iSize = ~iSize;
+        s.write( &iSize, 4 );
+    }
 
-	void verifyBlock( Stream &s )
-	{
-		int iSize, iInv;
-		if( s.read( &iSize, 4 ) == 0 )
-			return;
-		if( iSize < 8 || iSize > 1024 )
-			throw ExceptionBase("Read bad data, %d", iSize );
-		char *buf = new char[iSize-8];
-		if( s.read( buf, iSize-8 ) < (size_t)iSize-8 )
-		{
-			delete[] buf;
-			throw ExceptionBase("Block failed verify (insuffient block data).");
-		}
-		for( int j = 0; j < iSize-8; j++ )
-		{
-			if( buf[j] != (char)((j+iSize)%256) )
-			{
-				char b = buf[j];
-				delete[] buf;
-				throw ExceptionBase("Block failed computed data verify "
-					"(%02X==%02X).", b, (char)((j+iSize)%256) );
-			}
-		}
-		delete[] buf;
-		if( s.read( &iInv, 4 ) < 4 )
-			throw ExceptionBase("Block failed verify (insufficient data).");
-		if( iInv != ~iSize )
-			throw ExceptionBase("Block failed inversion verify.");
-	}
-	
-	void verifyStream( Stream &s )
-	{
-		s.setPos( 0 );
-		while( !s.isEos() )
-			verifyBlock( s );
-	}
+    void verifyBlock( Stream &s )
+    {
+        int iSize, iInv;
+        if( s.read( &iSize, 4 ) == 0 )
+            return;
+        if( iSize < 8 || iSize > 1024 )
+            throw ExceptionBase("Read bad data, %d", iSize );
+        char *buf = new char[iSize-8];
+        if( s.read( buf, iSize-8 ) < (size_t)iSize-8 )
+        {
+            delete[] buf;
+            throw ExceptionBase("Block failed verify (insuffient block data).");
+        }
+        for( int j = 0; j < iSize-8; j++ )
+        {
+            if( buf[j] != (char)((j+iSize)%256) )
+            {
+                char b = buf[j];
+                delete[] buf;
+                throw ExceptionBase("Block failed computed data verify "
+                    "(%02X==%02X).", b, (char)((j+iSize)%256) );
+            }
+        }
+        delete[] buf;
+        if( s.read( &iInv, 4 ) < 4 )
+            throw ExceptionBase("Block failed verify (insufficient data).");
+        if( iInv != ~iSize )
+            throw ExceptionBase("Block failed inversion verify.");
+    }
+    
+    void verifyStream( Stream &s )
+    {
+        s.setPos( 0 );
+        while( !s.isEos() )
+            verifyBlock( s );
+    }
 
-	test stressGrow
-	{
-		String sFileName("myriad-XXXXXXX");
+    test stressGrow
+    {
+        String sFileName("myriad-XXXXXXX");
 
-		File fMyriad = tempFile( sFileName );
-		Myriad m( fMyriad );
-		m.initialize( 64 );
+        File fMyriad = tempFile( sFileName );
+        Myriad m( fMyriad );
+        m.initialize( 64 );
 
-		Array<int> aStreams;
-		for( int j = 0; j < 5; j++ )
-		{
-			aStreams.append( m.createStream() );
-		}
+        Array<int> aStreams;
+        for( int j = 0; j < 5; j++ )
+        {
+            aStreams.append( m.createStream() );
+        }
 
-		srandom( 512 );
+        srandom( 512 );
 
-		for( int j = 0; j < 2500; j++ )
-		{
-			switch( random()%5 )
-			{
-				case 0:
-					aStreams.append( m.createStream() );
-					break;
+        for( int j = 0; j < 2500; j++ )
+        {
+            switch( random()%5 )
+            {
+                case 0:
+                    aStreams.append( m.createStream() );
+                    break;
 
-				case 1:
-					if( aStreams.getSize() > 0 )
-					{
-						int iStream = random()%aStreams.getSize();
-						{
-							MyriadStream ms = m.openStream( aStreams[iStream] );
-							verifyStream( ms );
-						}
-						m.deleteStream( aStreams[iStream] );
-						Array<int>::iterator i = aStreams.begin();
-						for( int k = 0; k < iStream; k++ )
-							i++;
-						aStreams.erase( i );
-					}
-					break;
+                case 1:
+                    if( aStreams.getSize() > 0 )
+                    {
+                        int iStream = random()%aStreams.getSize();
+                        {
+                            MyriadStream ms = m.openStream( aStreams[iStream] );
+                            verifyStream( ms );
+                        }
+                        m.deleteStream( aStreams[iStream] );
+                        Array<int>::iterator i = aStreams.begin();
+                        for( int k = 0; k < iStream; k++ )
+                            i++;
+                        aStreams.erase( i );
+                    }
+                    break;
 
-				default:
-					if( aStreams.getSize() == 0 )
-					{
-						aStreams.append( m.createStream() );
-					}
-					{
-						int iStream = random()%aStreams.getSize();
-						MyriadStream ms = m.openStream( aStreams[iStream] );
-						addBlock( ms );
-						verifyStream( ms );
-					}
-					break;
-			}
-		}
+                default:
+                    if( aStreams.getSize() == 0 )
+                    {
+                        aStreams.append( m.createStream() );
+                    }
+                    {
+                        int iStream = random()%aStreams.getSize();
+                        MyriadStream ms = m.openStream( aStreams[iStream] );
+                        addBlock( ms );
+                        verifyStream( ms );
+                    }
+                    break;
+            }
+        }
 
-		for( Array<int>::iterator i = aStreams.begin(); i; i++ )
-		{
-			MyriadStream ms = m.openStream( *i );
-			verifyStream( ms );
-		}
-	}
-	
-	test stressTruncate
-	{
-		String sFileName("myriad-XXXXXXX");
+        for( Array<int>::iterator i = aStreams.begin(); i; i++ )
+        {
+            MyriadStream ms = m.openStream( *i );
+            verifyStream( ms );
+        }
+    }
+    
+    test stressTruncate
+    {
+        String sFileName("myriad-XXXXXXX");
 
-		File fMyriad = tempFile( sFileName );
-		Myriad m( fMyriad );
-		m.initialize( 128 );
+        File fMyriad = tempFile( sFileName );
+        Myriad m( fMyriad );
+        m.initialize( 128 );
 
-		Array<int> aStream;
+        Array<int> aStream;
 
-		for( int j = 0; j < 5; j++ )
-		{
-			aStream.append( m.createStream() );
-		}
-		
-		srandom( 1024 );
+        for( int j = 0; j < 5; j++ )
+        {
+            aStream.append( m.createStream() );
+        }
+        
+        srandom( 1024 );
 
-		char b;
-		for( int iter = 0; iter < 2500; iter++ )
-		{
-			for( Array<int>::iterator i = aStream.begin(); i; i++ )
-			{
-				MyriadStream ms = m.openStream( *i );
-				addBlock( ms, false );
-				ms.setSize( ms.tell() );
-				unitTest( ms.read( &b, 1 ) == 0 );
-				ms.setPos( 0 );
-				verifyBlock( ms );
-				unitTest( ms.read( &b, 1 ) == 0 );
-			}
-		}
-	}
-	
-	test stressTruncate2
-	{
-		String sFileName("myriad-XXXXXXX");
+        char b;
+        for( int iter = 0; iter < 2500; iter++ )
+        {
+            for( Array<int>::iterator i = aStream.begin(); i; i++ )
+            {
+                MyriadStream ms = m.openStream( *i );
+                addBlock( ms, false );
+                ms.setSize( ms.tell() );
+                unitTest( ms.read( &b, 1 ) == 0 );
+                ms.setPos( 0 );
+                verifyBlock( ms );
+                unitTest( ms.read( &b, 1 ) == 0 );
+            }
+        }
+    }
+    
+    test stressTruncate2
+    {
+        String sFileName("myriad-XXXXXXX");
 
-		Array<int> aStream;
+        Array<int> aStream;
 
-		setStepCount( 5*2500 + 5 );
+        setStepCount( 5*2500 + 5 );
 
-		{
-			File fMyriad = tempFile( sFileName );
-			Myriad m( fMyriad, 128 );
+        {
+            File fMyriad = tempFile( sFileName );
+            Myriad m( fMyriad, 128 );
 
-			for( int j = 0; j < 5; j++ )
-			{
-				aStream.append( m.createStream() );
-				incProgress();
-			}
-		}
-		
-		srandom( 1024 );
+            for( int j = 0; j < 5; j++ )
+            {
+                aStream.append( m.createStream() );
+                incProgress();
+            }
+        }
+        
+        srandom( 1024 );
 
-		char b;
-		for( int iter = 0; iter < 2500; iter++ )
-		{
-			File fMyriad( sFileName, File::ReadWrite );
-			Myriad m( fMyriad );
-			for( Array<int>::iterator i = aStream.begin(); i; i++ )
-			{
-				MyriadStream ms = m.openStream( *i );
-				addBlock( ms, false );
-				ms.setSize( ms.tell() );
-				unitTest( ms.read( &b, 1 ) == 0 );
-				ms.setPos( 0 );
-				verifyBlock( ms );
-				unitTest( ms.read( &b, 1 ) == 0 );
-				incProgress();
-			}
-		}
-	}
+        char b;
+        for( int iter = 0; iter < 2500; iter++ )
+        {
+            File fMyriad( sFileName, File::ReadWrite );
+            Myriad m( fMyriad );
+            for( Array<int>::iterator i = aStream.begin(); i; i++ )
+            {
+                MyriadStream ms = m.openStream( *i );
+                addBlock( ms, false );
+                ms.setSize( ms.tell() );
+                unitTest( ms.read( &b, 1 ) == 0 );
+                ms.setPos( 0 );
+                verifyBlock( ms );
+                unitTest( ms.read( &b, 1 ) == 0 );
+                incProgress();
+            }
+        }
+    }
 
-	test stressArchive
-	{
-		String sFileName("myriad-XXXXXX");
-		Array<int> aStream;
-		
-		srandom( 2096 );
+    test stressArchive
+    {
+        String sFileName("myriad-XXXXXX");
+        Array<int> aStream;
+        
+        srandom( 2096 );
 
-		setStepCount( 15*250 + 15 );
-		
-		{
-			File fMyriad = tempFile( sFileName );
-			Myriad m( fMyriad, 1024 );
+        setStepCount( 15*250 + 15 );
+        
+        {
+            File fMyriad = tempFile( sFileName );
+            Myriad m( fMyriad, 1024 );
 
-			for( int j = 0; j < 15; j++ )
-			{
-				int iStream = m.createStream();
-				aStream.append( iStream );
-				VerifyObject vo( random()%1024 );
-				{
-					MyriadStream ms = m.openStream( iStream );
-					Archive ar( ms, Archive::save );
-					ar << vo;
-					unitTest( ms.tell() == vo.getBytesWritten() );
-					ms.setSize( ms.tell() );
-				}
-				unitTest( m.getStreamSize( iStream ) == vo.getBytesWritten() );
-				incProgress();
-			}
-		}
+            for( int j = 0; j < 15; j++ )
+            {
+                int iStream = m.createStream();
+                aStream.append( iStream );
+                VerifyObject vo( random()%1024 );
+                {
+                    MyriadStream ms = m.openStream( iStream );
+                    Archive ar( ms, Archive::save );
+                    ar << vo;
+                    unitTest( ms.tell() == vo.getBytesWritten() );
+                    ms.setSize( ms.tell() );
+                }
+                unitTest( m.getStreamSize( iStream ) == vo.getBytesWritten() );
+                incProgress();
+            }
+        }
 
-		for( int iter = 0; iter < 250; iter++ )
-		{
-			File fMyriad( sFileName, File::ReadWrite );
-			Myriad m( fMyriad );
-			for( Array<int>::iterator i = aStream.begin(); i; i++ )
-			{
-				VerifyObject vo( random()%1024 );
-				{
-					MyriadStream ms = m.openStream( *i );
-					Archive ar( ms, Archive::load );
-					ar >> vo;
-				}
-				{
-					MyriadStream ms = m.openStream( *i );
-					Archive ar( ms, Archive::save );
-					ar << vo;
-					unitTest( ms.tell() == vo.getBytesWritten() );
-					ms.setSize( ms.tell() );
-				}
-				unitTest( m.getStreamSize( *i ) == vo.getBytesWritten() );
-				incProgress();
-			}
-		}
-	}
+        for( int iter = 0; iter < 250; iter++ )
+        {
+            File fMyriad( sFileName, File::ReadWrite );
+            Myriad m( fMyriad );
+            for( Array<int>::iterator i = aStream.begin(); i; i++ )
+            {
+                VerifyObject vo( random()%1024 );
+                {
+                    MyriadStream ms = m.openStream( *i );
+                    Archive ar( ms, Archive::load );
+                    ar >> vo;
+                }
+                {
+                    MyriadStream ms = m.openStream( *i );
+                    Archive ar( ms, Archive::save );
+                    ar << vo;
+                    unitTest( ms.tell() == vo.getBytesWritten() );
+                    ms.setSize( ms.tell() );
+                }
+                unitTest( m.getStreamSize( *i ) == vo.getBytesWritten() );
+                incProgress();
+            }
+        }
+    }
 }
 

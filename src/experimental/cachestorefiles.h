@@ -23,188 +23,188 @@
 
 namespace Bu
 {
-	template<class keytype, class obtype>
-	keytype __cacheGetKey( const obtype *pObj );
+    template<class keytype, class obtype>
+    keytype __cacheGetKey( const obtype *pObj );
 
-	template<class keytype, class obtype>
-	obtype *__cacheStoreFilesAlloc( const keytype &key )
-	{
-		return new obtype();
-	}
+    template<class keytype, class obtype>
+    obtype *__cacheStoreFilesAlloc( const keytype &key )
+    {
+        return new obtype();
+    }
 
-	template<class keytype, class obtype>
-	void __cacheStoreFilesStore( Bu::Stream &s, obtype &rObj,
-			const keytype & )
-	{
-		Bu::Archive ar( s, Bu::Archive::save );
-		ar << rObj;
-	}
+    template<class keytype, class obtype>
+    void __cacheStoreFilesStore( Bu::Stream &s, obtype &rObj,
+            const keytype & )
+    {
+        Bu::Archive ar( s, Bu::Archive::save );
+        ar << rObj;
+    }
 
-	template<class keytype, class obtype>
-	obtype *__cacheStoreFilesLoad( Bu::Stream &s, const keytype &key )
-	{
-		obtype *pObj = __cacheStoreFilesAlloc<keytype, obtype>( key );
-		Bu::Archive ar( s, Bu::Archive::load );
-		ar >> (*pObj);
-		return pObj;
-	}
+    template<class keytype, class obtype>
+    obtype *__cacheStoreFilesLoad( Bu::Stream &s, const keytype &key )
+    {
+        obtype *pObj = __cacheStoreFilesAlloc<keytype, obtype>( key );
+        Bu::Archive ar( s, Bu::Archive::load );
+        ar >> (*pObj);
+        return pObj;
+    }
 
-	template<class keytype, class obtype>
-	class CacheStoreFiles : public CacheStore<keytype, obtype>
-	{
-	public:
-		CacheStoreFiles( const Bu::String &sPrefix ) :
-			sPrefix( sPrefix )
-		{
-			if( access( sPrefix.getStr(), W_OK|R_OK|X_OK ) )
-			{
+    template<class keytype, class obtype>
+    class CacheStoreFiles : public CacheStore<keytype, obtype>
+    {
+    public:
+        CacheStoreFiles( const Bu::String &sPrefix ) :
+            sPrefix( sPrefix )
+        {
+            if( access( sPrefix.getStr(), W_OK|R_OK|X_OK ) )
+            {
 #ifdef WIN32
-				mkdir( sPrefix.getStr() );
+                mkdir( sPrefix.getStr() );
 #else
-				mkdir( sPrefix.getStr(), 0755 );
+                mkdir( sPrefix.getStr(), 0755 );
 #endif
-			}
-		}
+            }
+        }
 
-		virtual ~CacheStoreFiles()
-		{
-		}
-		
-		virtual obtype *load( const keytype &key )
-		{
-//			try
-//			{
-				Bu::MemBuf mb;
-				Bu::Formatter f( mb );
-				f << sPrefix << "/" << key;
-				Bu::File fIn( mb.getString(), Bu::File::Read );
-				obtype *pOb = __cacheStoreFilesLoad<keytype, obtype>( fIn, key );
-				return pOb;
-//			}
-//			catch( std::exception &e )
-//			{
-//				throw Bu::HashException( e.what() );
-//			}
-		}
+        virtual ~CacheStoreFiles()
+        {
+        }
+        
+        virtual obtype *load( const keytype &key )
+        {
+//          try
+//          {
+                Bu::MemBuf mb;
+                Bu::Formatter f( mb );
+                f << sPrefix << "/" << key;
+                Bu::File fIn( mb.getString(), Bu::File::Read );
+                obtype *pOb = __cacheStoreFilesLoad<keytype, obtype>( fIn, key );
+                return pOb;
+//          }
+//          catch( std::exception &e )
+//          {
+//              throw Bu::HashException( e.what() );
+//          }
+        }
 
-		virtual void unload( obtype *pObj, const keytype & )
-		{
-			delete pObj;
-		}
+        virtual void unload( obtype *pObj, const keytype & )
+        {
+            delete pObj;
+        }
 
-		virtual keytype create( obtype *pSrc )
-		{
-			keytype key = __cacheGetKey<keytype, obtype>( pSrc );
-			Bu::MemBuf mb;
-			Bu::Formatter f( mb );
-			f << sPrefix << "/" << key;
+        virtual keytype create( obtype *pSrc )
+        {
+            keytype key = __cacheGetKey<keytype, obtype>( pSrc );
+            Bu::MemBuf mb;
+            Bu::Formatter f( mb );
+            f << sPrefix << "/" << key;
 
-			Bu::File fTouch( mb.getString(), Bu::File::WriteNew );
+            Bu::File fTouch( mb.getString(), Bu::File::WriteNew );
 
-			return key;
-		}
+            return key;
+        }
 
-		virtual void sync()
-		{
-		}
+        virtual void sync()
+        {
+        }
 
-		virtual void sync( obtype *pSrc, const keytype &key )
-		{
-			Bu::MemBuf mb;
-			Bu::Formatter f( mb );
-			f << sPrefix << "/" << key;
+        virtual void sync( obtype *pSrc, const keytype &key )
+        {
+            Bu::MemBuf mb;
+            Bu::Formatter f( mb );
+            f << sPrefix << "/" << key;
 
-			Bu::File fOut( mb.getString(), Bu::File::WriteNew );
-			__cacheStoreFilesStore<keytype, obtype>( fOut, *pSrc, key );
-		}
+            Bu::File fOut( mb.getString(), Bu::File::WriteNew );
+            __cacheStoreFilesStore<keytype, obtype>( fOut, *pSrc, key );
+        }
 
-		virtual void destroy( obtype *pObj, const keytype &key )
-		{
-			Bu::MemBuf mb;
-			Bu::Formatter f( mb );
-			f << sPrefix << "/" << key;
+        virtual void destroy( obtype *pObj, const keytype &key )
+        {
+            Bu::MemBuf mb;
+            Bu::Formatter f( mb );
+            f << sPrefix << "/" << key;
 
-			unlink( mb.getString().getStr() );
-			delete pObj;
-		}
+            unlink( mb.getString().getStr() );
+            delete pObj;
+        }
 
-		virtual void destroy( const keytype &key )
-		{
-			Bu::MemBuf mb;
-			Bu::Formatter f( mb );
-			f << sPrefix << "/" << key;
+        virtual void destroy( const keytype &key )
+        {
+            Bu::MemBuf mb;
+            Bu::Formatter f( mb );
+            f << sPrefix << "/" << key;
 
-			unlink( mb.getString().getStr() );
-		}
+            unlink( mb.getString().getStr() );
+        }
 
-		virtual bool has( const keytype &key )
-		{
-			Bu::MemBuf mb;
-			Bu::Formatter f( mb );
-			f << sPrefix << "/";
-			Bu::String sBase = mb.getString();
-			f << key;
+        virtual bool has( const keytype &key )
+        {
+            Bu::MemBuf mb;
+            Bu::Formatter f( mb );
+            f << sPrefix << "/";
+            Bu::String sBase = mb.getString();
+            f << key;
 
-			if( sBase == mb.getString() )
-				return false;
+            if( sBase == mb.getString() )
+                return false;
 
-			return access( mb.getString().getStr(), F_OK ) == 0;
-		}
+            return access( mb.getString().getStr(), F_OK ) == 0;
+        }
 
-		virtual Bu::List<keytype> getKeys()
-		{
-			DIR *dir = opendir( sPrefix.getStr() );
-			struct dirent *de;
-			Bu::List<keytype> lKeys;
+        virtual Bu::List<keytype> getKeys()
+        {
+            DIR *dir = opendir( sPrefix.getStr() );
+            struct dirent *de;
+            Bu::List<keytype> lKeys;
 
-			while( (de = readdir( dir ) ) )
-			{
-				if( de->d_type != DT_REG )
-					continue;
+            while( (de = readdir( dir ) ) )
+            {
+                if( de->d_type != DT_REG )
+                    continue;
 
-				keytype tmp;
-				Bu::MemBuf mb( de->d_name );
-				Bu::Formatter f( mb );
-				try
-				{
-					Fmt fm;
-					fm.tokenize( false );
-					f << fm;
-					f >> tmp;
-				}
-				catch( Bu::ExceptionBase &e )
-				{
-					Bu::sio << "Parse error in dir-scan: " << e.what()
-						<< Bu::sio.nl;
-				}
-				lKeys.append( tmp );
-			}
-			closedir( dir );
+                keytype tmp;
+                Bu::MemBuf mb( de->d_name );
+                Bu::Formatter f( mb );
+                try
+                {
+                    Fmt fm;
+                    fm.tokenize( false );
+                    f << fm;
+                    f >> tmp;
+                }
+                catch( Bu::ExceptionBase &e )
+                {
+                    Bu::sio << "Parse error in dir-scan: " << e.what()
+                        << Bu::sio.nl;
+                }
+                lKeys.append( tmp );
+            }
+            closedir( dir );
 
-			return lKeys;
-		}
+            return lKeys;
+        }
 
-		virtual int getSize()
-		{
-			DIR *dir = opendir( sPrefix.getStr() );
-			struct dirent *de;
-			int iCount = 0;
+        virtual int getSize()
+        {
+            DIR *dir = opendir( sPrefix.getStr() );
+            struct dirent *de;
+            int iCount = 0;
 
-			while( (de = readdir( dir ) ) )
-			{
-				if( de->d_type != DT_REG )
-					continue;
+            while( (de = readdir( dir ) ) )
+            {
+                if( de->d_type != DT_REG )
+                    continue;
 
-				iCount++;
-			}
-			closedir( dir );
+                iCount++;
+            }
+            closedir( dir );
 
-			return iCount;
-		}
+            return iCount;
+        }
 
-	private:
-		Bu::String sPrefix;
-	};
+    private:
+        Bu::String sPrefix;
+    };
 
 };
 

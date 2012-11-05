@@ -12,580 +12,580 @@
 
 suite String
 {
-	test compare1
-	{
-		Bu::String b("Bob");
-		unitTest( !(b == "Bobo") );
-		unitTest( b == "Bob" );
-	}
+    test compare1
+    {
+        Bu::String b("Bob");
+        unitTest( !(b == "Bobo") );
+        unitTest( b == "Bob" );
+    }
 
-	test compare2
-	{
-		Bu::String b("Bobo");
-		unitTest( !(b == "Bob") );
-		unitTest( b == "Bobo" );
-	}
+    test compare2
+    {
+        Bu::String b("Bobo");
+        unitTest( !(b == "Bob") );
+        unitTest( b == "Bobo" );
+    }
 
-	test appendSingle
-	{
-		Bu::String b;
-		for( char l = 'a'; l < 'g'; l++ )
-			b += l;
-		unitTest( b == "abcdef" );
-		unitTest( strcmp( b.getStr(), "abcdef" ) == 0 );
-	}
+    test appendSingle
+    {
+        Bu::String b;
+        for( char l = 'a'; l < 'g'; l++ )
+            b += l;
+        unitTest( b == "abcdef" );
+        unitTest( strcmp( b.getStr(), "abcdef" ) == 0 );
+    }
 
-	test shared1
-	{
-		Bu::String a("Hey there");
-		Bu::String b( a );
-		unitTest( a.getConstStr() == b.getConstStr() );
-		b += " guy";
-		unitTest( a.getConstStr() != b.getConstStr() );
-		a = b;
-		unitTest( a.getConstStr() == b.getConstStr() );
-	}
+    test shared1
+    {
+        Bu::String a("Hey there");
+        Bu::String b( a );
+        unitTest( a.getConstStr() == b.getConstStr() );
+        b += " guy";
+        unitTest( a.getConstStr() != b.getConstStr() );
+        a = b;
+        unitTest( a.getConstStr() == b.getConstStr() );
+    }
 
-	test insert
-	{
-		Bu::String a("abcd");
-		a.insert( 2, "-!-", 3 );
-		unitTest( a == "ab-!-cd" );
-		
-		a.insert( 0, "!!", 2 );
-		unitTest( a == "!!ab-!-cd" );
-		
-		a.insert( -10, "789", 3 );
-		unitTest( a == "789!!ab-!-cd" );
-		
-		a.insert( 12, "89", 2 );
-		unitTest( a == "789!!ab-!-cd89" );
-		
-		a.insert( 1203, "12", 2 );
-		unitTest( a == "789!!ab-!-cd8912" );
-	}
+    test insert
+    {
+        Bu::String a("abcd");
+        a.insert( 2, "-!-", 3 );
+        unitTest( a == "ab-!-cd" );
+        
+        a.insert( 0, "!!", 2 );
+        unitTest( a == "!!ab-!-cd" );
+        
+        a.insert( -10, "789", 3 );
+        unitTest( a == "789!!ab-!-cd" );
+        
+        a.insert( 12, "89", 2 );
+        unitTest( a == "789!!ab-!-cd89" );
+        
+        a.insert( 1203, "12", 2 );
+        unitTest( a == "789!!ab-!-cd8912" );
+    }
 
-	test remove
-	{
-		Bu::String a("abHEYcd");
-		a.remove( 2, 3 );
-		unitTest( a == "abcd" );
-		a.remove( 2, 5 );
-		unitTest( a == "ab" );
-		a += "cdefghijklmnop";
-		a.remove( 5, 1 );
-		unitTest( a == "abcdeghijklmnop" );
-	}
+    test remove
+    {
+        Bu::String a("abHEYcd");
+        a.remove( 2, 3 );
+        unitTest( a == "abcd" );
+        a.remove( 2, 5 );
+        unitTest( a == "ab" );
+        a += "cdefghijklmnop";
+        a.remove( 5, 1 );
+        unitTest( a == "abcdeghijklmnop" );
+    }
 
-	test add1
-	{
-		Bu::String a("hi there");
-		Bu::String b(", yeah!");
-		Bu::String c = a + b;
+    test add1
+    {
+        Bu::String a("hi there");
+        Bu::String b(", yeah!");
+        Bu::String c = a + b;
 
-		unitTest( c == "hi there, yeah!" );
-	}
+        unitTest( c == "hi there, yeah!" );
+    }
 
-	test add2
-	{
-		Bu::String a("hi there");
-		Bu::String c = a + ", yeah!";
+    test add2
+    {
+        Bu::String a("hi there");
+        Bu::String c = a + ", yeah!";
 
-		unitTest( c == "hi there, yeah!" );
-	}
+        unitTest( c == "hi there, yeah!" );
+    }
 
-	test add3
-	{
-		Bu::String a("hi there");
-		Bu::String b(", yeah!");
-		Bu::String c = a + ", Mr. Man" + b;
+    test add3
+    {
+        Bu::String a("hi there");
+        Bu::String b(", yeah!");
+        Bu::String c = a + ", Mr. Man" + b;
 
-		unitTest( c == "hi there, Mr. Man, yeah!" );
-	}
+        unitTest( c == "hi there, Mr. Man, yeah!" );
+    }
 
-	test add4
-	{
-		Bu::String b(", yeah!");
-		Bu::String c = "hi there" + b;
+    test add4
+    {
+        Bu::String b(", yeah!");
+        Bu::String c = "hi there" + b;
 
-		unitTest( c == "hi there, yeah!" );
-	}
+        unitTest( c == "hi there, yeah!" );
+    }
 
-	test add5
-	{
-		Bu::String b;
-		Bu::String c = "sup?";
-		b += "hey, " + c;
-		
-		unitTest( b == "hey, sup?" );
-	}
+    test add5
+    {
+        Bu::String b;
+        Bu::String c = "sup?";
+        b += "hey, " + c;
+        
+        unitTest( b == "hey, sup?" );
+    }
 
-	test add6
-	{
-		Bu::String a("Hello");
-		char b[256] = {"Dude"};
-		Bu::String c = a + "/" + b;
+    test add6
+    {
+        Bu::String a("Hello");
+        char b[256] = {"Dude"};
+        Bu::String c = a + "/" + b;
 
-		unitTest( c == "Hello/Dude" );
-	}
+        unitTest( c == "Hello/Dude" );
+    }
 
-	test add7
-	{
-		const Bu::String a("hello ");
-		Bu::String b(" how ");
-		unitTest( a == "hello " );
-		unitTest( a + "dude" == "hello dude" );
-		unitTest( a + "dude" + b + "are you?" == "hello dude how are you?" );
-	}
+    test add7
+    {
+        const Bu::String a("hello ");
+        Bu::String b(" how ");
+        unitTest( a == "hello " );
+        unitTest( a + "dude" == "hello dude" );
+        unitTest( a + "dude" + b + "are you?" == "hello dude how are you?" );
+    }
 
-	test subStr1
-	{
-		Bu::String a("abcdefghijklmnop");
-		Bu::String::iterator i = a.find('f');
-		unitTest( a.getSubStr( i, Bu::String::iterator() ) == "fghijklmnop" );
-		Bu::String::iterator j = i.find('l');
-		unitTest( a.getSubStr( i, j ) == "fghijk" );
-	}
+    test subStr1
+    {
+        Bu::String a("abcdefghijklmnop");
+        Bu::String::iterator i = a.find('f');
+        unitTest( a.getSubStr( i, Bu::String::iterator() ) == "fghijklmnop" );
+        Bu::String::iterator j = i.find('l');
+        unitTest( a.getSubStr( i, j ) == "fghijk" );
+    }
 
-	test compareSub1
-	{
-		Bu::String a("just a string.");
-		unitTest( a.compareSub("a ", 5, 2) == true );
-		unitTest( a.compareSub("string.aoeu", 7, 11 ) == false );
-		unitTest( a.compareSub("string.aoeu", 7, 3 ) == true );
-	}
+    test compareSub1
+    {
+        Bu::String a("just a string.");
+        unitTest( a.compareSub("a ", 5, 2) == true );
+        unitTest( a.compareSub("string.aoeu", 7, 11 ) == false );
+        unitTest( a.compareSub("string.aoeu", 7, 3 ) == true );
+    }
 
-	test compareSub2
-	{
-		Bu::String a("just a string.");
-		unitTest( a.compareSub(Bu::String("a "), 5, 2) == true );
-		unitTest( a.compareSub(Bu::String("string.aoeu"), 7, 11 ) == false );
-		unitTest( a.compareSub(Bu::String("string.aoeu"), 7, 3 ) == true );
-	}
+    test compareSub2
+    {
+        Bu::String a("just a string.");
+        unitTest( a.compareSub(Bu::String("a "), 5, 2) == true );
+        unitTest( a.compareSub(Bu::String("string.aoeu"), 7, 11 ) == false );
+        unitTest( a.compareSub(Bu::String("string.aoeu"), 7, 3 ) == true );
+    }
 
-	test iterator1
-	{
-		Bu::String a("This is a test.");
-		Bu::String b;
-		for( Bu::String::iterator i = a.begin(); i; i++ )
-		{
-			b += *i;
-		}
-		unitTest( a == b );
-	}
+    test iterator1
+    {
+        Bu::String a("This is a test.");
+        Bu::String b;
+        for( Bu::String::iterator i = a.begin(); i; i++ )
+        {
+            b += *i;
+        }
+        unitTest( a == b );
+    }
 
-	test iteratorCompare1
-	{
-		Bu::String a("This is a test.");
-		Bu::String b("--This is a test.");
-		Bu::String::iterator ai = a.begin();
-		Bu::String::iterator bi = b.begin();
-		unitTest( ai.compare( bi ) == false );
-		unitTest( bi.compare( ai ) == false );
-		bi++; bi++;
-		unitTest( ai.compare( bi ) == true );
-		unitTest( bi.compare( ai ) == true );
-		b += "hi";
-		unitTest( ai.compare( bi ) == false );
-		unitTest( bi.compare( ai ) == false );
-	}
+    test iteratorCompare1
+    {
+        Bu::String a("This is a test.");
+        Bu::String b("--This is a test.");
+        Bu::String::iterator ai = a.begin();
+        Bu::String::iterator bi = b.begin();
+        unitTest( ai.compare( bi ) == false );
+        unitTest( bi.compare( ai ) == false );
+        bi++; bi++;
+        unitTest( ai.compare( bi ) == true );
+        unitTest( bi.compare( ai ) == true );
+        b += "hi";
+        unitTest( ai.compare( bi ) == false );
+        unitTest( bi.compare( ai ) == false );
+    }
 
-	test iteratorCompare2
-	{
-		Bu::String a("1234honour");
-		Bu::String b("--1234ueje");
-		Bu::String::iterator ai = a.begin();
-		Bu::String::iterator bi = b.begin();
-		unitTest( ai.compare( bi, 4 ) == false );
-		unitTest( bi.compare( ai, 4 ) == false );
-		bi++; bi++;
-		unitTest( ai.compare( bi, 4 ) == true );
-		unitTest( bi.compare( ai, 4 ) == true );
-		unitTest( ai.compare( bi, 5 ) == false );
-		unitTest( bi.compare( ai, 5 ) == false );
-		
-		a = "fell";
-		b = "-felloo";
-		ai = a.begin();
-		bi = b.begin()+1;
-		unitTest( ai.compare( bi, 4 ) == true );
-		ai++;
-		bi++;
-		unitTest( ai.compare( bi, 4 ) == false );
-	}
+    test iteratorCompare2
+    {
+        Bu::String a("1234honour");
+        Bu::String b("--1234ueje");
+        Bu::String::iterator ai = a.begin();
+        Bu::String::iterator bi = b.begin();
+        unitTest( ai.compare( bi, 4 ) == false );
+        unitTest( bi.compare( ai, 4 ) == false );
+        bi++; bi++;
+        unitTest( ai.compare( bi, 4 ) == true );
+        unitTest( bi.compare( ai, 4 ) == true );
+        unitTest( ai.compare( bi, 5 ) == false );
+        unitTest( bi.compare( ai, 5 ) == false );
+        
+        a = "fell";
+        b = "-felloo";
+        ai = a.begin();
+        bi = b.begin()+1;
+        unitTest( ai.compare( bi, 4 ) == true );
+        ai++;
+        bi++;
+        unitTest( ai.compare( bi, 4 ) == false );
+    }
 
-	test iteratorCompare3
-	{
-		Bu::String a("1234aoeu");
-		Bu::String::iterator ai = a.begin();
-		unitTest( ai.compare("1234") == false );
-		unitTest( ai.compare("1234aoeu") == true );
-		unitTest( ai.compare("1234aoeuee") == false );
-		ai += 4;
-		unitTest( ai.compare("aoeu") == true );
-		unitTest( ai.compare("aoeubo") == false );
-		unitTest( ai.compare("aoe") == false );
-		unitTest( ai.compare("wrong") == false );
-		unitTest( ai.compare("boeu") == false );
-	}
+    test iteratorCompare3
+    {
+        Bu::String a("1234aoeu");
+        Bu::String::iterator ai = a.begin();
+        unitTest( ai.compare("1234") == false );
+        unitTest( ai.compare("1234aoeu") == true );
+        unitTest( ai.compare("1234aoeuee") == false );
+        ai += 4;
+        unitTest( ai.compare("aoeu") == true );
+        unitTest( ai.compare("aoeubo") == false );
+        unitTest( ai.compare("aoe") == false );
+        unitTest( ai.compare("wrong") == false );
+        unitTest( ai.compare("boeu") == false );
+    }
 
-	test iteratorCompare4
-	{
-		Bu::String a("1234aoeu");
-		Bu::String::iterator ai = a.begin();
-		unitTest( ai.compare("1234", 4) == true );
-		unitTest( ai.compare("1234aoeu", 8) == true );
-		unitTest( ai.compare("1234aoeuee", 10) == false );
-	}
+    test iteratorCompare4
+    {
+        Bu::String a("1234aoeu");
+        Bu::String::iterator ai = a.begin();
+        unitTest( ai.compare("1234", 4) == true );
+        unitTest( ai.compare("1234aoeu", 8) == true );
+        unitTest( ai.compare("1234aoeuee", 10) == false );
+    }
 
-	test iteratorCompare5
-	{
-		Bu::String a("1234aoeu");
-		Bu::String b("34ao");
-		Bu::String::iterator ai = a.begin();
-		unitTest( ai.compare( b ) == false );
-		ai += 2;
-		unitTest( ai.compare( b ) == false );
-		b = "oeu";
-		ai += 3;
-		unitTest( ai.compare( b ) == true );
-		b += "boo";
-		unitTest( ai.compare( b ) == false );
-	}
+    test iteratorCompare5
+    {
+        Bu::String a("1234aoeu");
+        Bu::String b("34ao");
+        Bu::String::iterator ai = a.begin();
+        unitTest( ai.compare( b ) == false );
+        ai += 2;
+        unitTest( ai.compare( b ) == false );
+        b = "oeu";
+        ai += 3;
+        unitTest( ai.compare( b ) == true );
+        b += "boo";
+        unitTest( ai.compare( b ) == false );
+    }
 
-	test iteratorCompare6
-	{
-		Bu::String a("1234aoeu");
-		Bu::String::iterator ai = a.begin();
-		unitTest( ai.compare( Bu::String("1234"), 4) == true );
-		unitTest( ai.compare( Bu::String("1234aoeu"), 8) == true );
-		unitTest( ai.compare( Bu::String("1234aoeuee"), 10) == false );
-	}
+    test iteratorCompare6
+    {
+        Bu::String a("1234aoeu");
+        Bu::String::iterator ai = a.begin();
+        unitTest( ai.compare( Bu::String("1234"), 4) == true );
+        unitTest( ai.compare( Bu::String("1234aoeu"), 8) == true );
+        unitTest( ai.compare( Bu::String("1234aoeuee"), 10) == false );
+    }
 
-	test const_iteratorCompare1
-	{
-		Bu::String a("This is a test.");
-		Bu::String b("--This is a test.");
-		Bu::String::const_iterator ai = a.begin();
-		Bu::String::const_iterator bi = b.begin();
-		unitTest( ai.compare( bi ) == false );
-		unitTest( bi.compare( ai ) == false );
-		bi++; bi++;
-		unitTest( ai.compare( bi ) == true );
-		unitTest( bi.compare( ai ) == true );
-		b += "hi";
-		unitTest( ai.compare( bi ) == false );
-		unitTest( bi.compare( ai ) == false );
-	}
+    test const_iteratorCompare1
+    {
+        Bu::String a("This is a test.");
+        Bu::String b("--This is a test.");
+        Bu::String::const_iterator ai = a.begin();
+        Bu::String::const_iterator bi = b.begin();
+        unitTest( ai.compare( bi ) == false );
+        unitTest( bi.compare( ai ) == false );
+        bi++; bi++;
+        unitTest( ai.compare( bi ) == true );
+        unitTest( bi.compare( ai ) == true );
+        b += "hi";
+        unitTest( ai.compare( bi ) == false );
+        unitTest( bi.compare( ai ) == false );
+    }
 
-	test const_iteratorCompare2
-	{
-		Bu::String a("1234honour");
-		Bu::String b("--1234ueje");
-		Bu::String::const_iterator ai = a.begin();
-		Bu::String::const_iterator bi = b.begin();
-		unitTest( ai.compare( bi, 4 ) == false );
-		unitTest( bi.compare( ai, 4 ) == false );
-		bi++; bi++;
-		unitTest( ai.compare( bi, 4 ) == true );
-		unitTest( bi.compare( ai, 4 ) == true );
-		unitTest( ai.compare( bi, 5 ) == false );
-		unitTest( bi.compare( ai, 5 ) == false );
-		
-		a = "fell";
-		b = "-felloo";
-		ai = a.begin();
-		bi = b.begin()+1;
-		unitTest( ai.compare( bi, 4 ) == true );
-		ai++;
-		bi++;
-		unitTest( ai.compare( bi, 4 ) == false );
-	}
+    test const_iteratorCompare2
+    {
+        Bu::String a("1234honour");
+        Bu::String b("--1234ueje");
+        Bu::String::const_iterator ai = a.begin();
+        Bu::String::const_iterator bi = b.begin();
+        unitTest( ai.compare( bi, 4 ) == false );
+        unitTest( bi.compare( ai, 4 ) == false );
+        bi++; bi++;
+        unitTest( ai.compare( bi, 4 ) == true );
+        unitTest( bi.compare( ai, 4 ) == true );
+        unitTest( ai.compare( bi, 5 ) == false );
+        unitTest( bi.compare( ai, 5 ) == false );
+        
+        a = "fell";
+        b = "-felloo";
+        ai = a.begin();
+        bi = b.begin()+1;
+        unitTest( ai.compare( bi, 4 ) == true );
+        ai++;
+        bi++;
+        unitTest( ai.compare( bi, 4 ) == false );
+    }
 
-	test const_iteratorCompare3
-	{
-		Bu::String a("1234aoeu");
-		Bu::String::const_iterator ai = a.begin();
-		unitTest( ai.compare("1234") == false );
-		unitTest( ai.compare("1234aoeu") == true );
-		unitTest( ai.compare("1234aoeuee") == false );
-		ai += 4;
-		unitTest( ai.compare("aoeu") == true );
-		unitTest( ai.compare("aoeubo") == false );
-		unitTest( ai.compare("aoe") == false );
-		unitTest( ai.compare("wrong") == false );
-		unitTest( ai.compare("boeu") == false );
-	}
+    test const_iteratorCompare3
+    {
+        Bu::String a("1234aoeu");
+        Bu::String::const_iterator ai = a.begin();
+        unitTest( ai.compare("1234") == false );
+        unitTest( ai.compare("1234aoeu") == true );
+        unitTest( ai.compare("1234aoeuee") == false );
+        ai += 4;
+        unitTest( ai.compare("aoeu") == true );
+        unitTest( ai.compare("aoeubo") == false );
+        unitTest( ai.compare("aoe") == false );
+        unitTest( ai.compare("wrong") == false );
+        unitTest( ai.compare("boeu") == false );
+    }
 
-	test const_iteratorCompare4
-	{
-		Bu::String a("1234aoeu");
-		Bu::String::const_iterator ai = a.begin();
-		unitTest( ai.compare("1234", 4) == true );
-		unitTest( ai.compare("1234aoeu", 8) == true );
-		unitTest( ai.compare("1234aoeuee", 10) == false );
-	}
+    test const_iteratorCompare4
+    {
+        Bu::String a("1234aoeu");
+        Bu::String::const_iterator ai = a.begin();
+        unitTest( ai.compare("1234", 4) == true );
+        unitTest( ai.compare("1234aoeu", 8) == true );
+        unitTest( ai.compare("1234aoeuee", 10) == false );
+    }
 
-	test const_iteratorCompare5
-	{
-		Bu::String a("1234aoeu");
-		Bu::String b("34ao");
-		Bu::String::const_iterator ai = a.begin();
-		unitTest( ai.compare( b ) == false );
-		ai += 2;
-		unitTest( ai.compare( b ) == false );
-		b = "oeu";
-		ai += 3;
-		unitTest( ai.compare( b ) == true );
-		b += "boo";
-		unitTest( ai.compare( b ) == false );
-	}
+    test const_iteratorCompare5
+    {
+        Bu::String a("1234aoeu");
+        Bu::String b("34ao");
+        Bu::String::const_iterator ai = a.begin();
+        unitTest( ai.compare( b ) == false );
+        ai += 2;
+        unitTest( ai.compare( b ) == false );
+        b = "oeu";
+        ai += 3;
+        unitTest( ai.compare( b ) == true );
+        b += "boo";
+        unitTest( ai.compare( b ) == false );
+    }
 
-	test const_iteratorCompare6
-	{
-		Bu::String a("1234aoeu");
-		Bu::String::const_iterator ai = a.begin();
-		unitTest( ai.compare( Bu::String("1234"), 4) == true );
-		unitTest( ai.compare( Bu::String("1234aoeu"), 8) == true );
-		unitTest( ai.compare( Bu::String("1234aoeuee"), 10) == false );
-	}
+    test const_iteratorCompare6
+    {
+        Bu::String a("1234aoeu");
+        Bu::String::const_iterator ai = a.begin();
+        unitTest( ai.compare( Bu::String("1234"), 4) == true );
+        unitTest( ai.compare( Bu::String("1234aoeu"), 8) == true );
+        unitTest( ai.compare( Bu::String("1234aoeuee"), 10) == false );
+    }
 
-	test iteratorAppend1
-	{
-		Bu::String a("just ->this part");
-		Bu::String b;
-		Bu::String::iterator s = a.begin();
-		for(; s; s++ )
-		{
-			if( *s == '>' )
-			{
-				s++;
-				b.set( s );
-				break;
-			}
-		}
-		unitTest( b == "this part" );
+    test iteratorAppend1
+    {
+        Bu::String a("just ->this part");
+        Bu::String b;
+        Bu::String::iterator s = a.begin();
+        for(; s; s++ )
+        {
+            if( *s == '>' )
+            {
+                s++;
+                b.set( s );
+                break;
+            }
+        }
+        unitTest( b == "this part" );
 
-		b.append( s );
+        b.append( s );
 
-		Bu::String c;
-		c.set( b.begin() );
+        Bu::String c;
+        c.set( b.begin() );
 
-		// This is here because the comparison operator used to cause flattening.
-		unitTest( b == "this partthis part" );
-		unitTest( c == b );
-	}
+        // This is here because the comparison operator used to cause flattening.
+        unitTest( b == "this partthis part" );
+        unitTest( c == b );
+    }
 
-	test iteratorAppend2
-	{
-		Bu::String a("just [this] part");
-		Bu::String b;
-		Bu::String::iterator s = a.begin();
-		for(; s; s++ )
-		{
-			if( *s == '[' )
-			{
-				s++;
-				break;
-			}
-		}
-		Bu::String::iterator e = s;
-		for(; e; e++ )
-		{
-			if( *e == ']' )
-			{
-				b.set( s, e );
-				break;
-			}
-		}
-		unitTest( b == "this" );
+    test iteratorAppend2
+    {
+        Bu::String a("just [this] part");
+        Bu::String b;
+        Bu::String::iterator s = a.begin();
+        for(; s; s++ )
+        {
+            if( *s == '[' )
+            {
+                s++;
+                break;
+            }
+        }
+        Bu::String::iterator e = s;
+        for(; e; e++ )
+        {
+            if( *e == ']' )
+            {
+                b.set( s, e );
+                break;
+            }
+        }
+        unitTest( b == "this" );
 
-		b.append( s, e );
+        b.append( s, e );
 
-		for( Bu::String::iterator i = b.begin(); i;)
-		{
-			Bu::String::iterator k = i;
-			k++;
-			if( !k )
-			{
-				b.append( b.begin(), i );
-				break;
-			}
-			i = k;
-		}
-		Bu::String l;
-		l.set( b.begin() );
-		unitTest( l == "thisthisthisthi" );
-		for( Bu::String::iterator i = b.begin(); i;)
-		{
-			Bu::String::iterator k = i;
-			k++;
-			if( !k )
-			{
-				b.append( b.begin(), i );
-				break;
-			}
-			i = k;
-		}
-		l.set( b.begin() );
-		unitTest( l == "thisthisthisthithisthisthisth" );
-	}
+        for( Bu::String::iterator i = b.begin(); i;)
+        {
+            Bu::String::iterator k = i;
+            k++;
+            if( !k )
+            {
+                b.append( b.begin(), i );
+                break;
+            }
+            i = k;
+        }
+        Bu::String l;
+        l.set( b.begin() );
+        unitTest( l == "thisthisthisthi" );
+        for( Bu::String::iterator i = b.begin(); i;)
+        {
+            Bu::String::iterator k = i;
+            k++;
+            if( !k )
+            {
+                b.append( b.begin(), i );
+                break;
+            }
+            i = k;
+        }
+        l.set( b.begin() );
+        unitTest( l == "thisthisthisthithisthisthisth" );
+    }
 
-	test isSet1
-	{
-		Bu::String bob;
+    test isSet1
+    {
+        Bu::String bob;
 
-		unitTest( bob.isSet() == false );
-		bob = "something";
-		unitTest( bob.isSet() == true );
-		bob = "";
-		unitTest( bob.isSet() == false );
-	}
+        unitTest( bob.isSet() == false );
+        bob = "something";
+        unitTest( bob.isSet() == true );
+        bob = "";
+        unitTest( bob.isSet() == false );
+    }
 
-	test swap1
-	{
-		Bu::String a, b;
-		a = "Goodbye";
-		b = "Hello";
-		Bu::swap( a, b );
-		unitTest( a == "Hello" );
-		unitTest( b == "Goodbye" );
-	}
+    test swap1
+    {
+        Bu::String a, b;
+        a = "Goodbye";
+        b = "Hello";
+        Bu::swap( a, b );
+        unitTest( a == "Hello" );
+        unitTest( b == "Goodbye" );
+    }
 
-	test swap2
-	{
-		Bu::String a, b;
-		a = "Goodbye";
-		b = "Hello";
-		std::swap( a, b );
-		unitTest( a == "Hello" );
-		unitTest( b == "Goodbye" );
-	}
+    test swap2
+    {
+        Bu::String a, b;
+        a = "Goodbye";
+        b = "Hello";
+        std::swap( a, b );
+        unitTest( a == "Hello" );
+        unitTest( b == "Goodbye" );
+    }
 
-	test replace1
-	{
-		Bu::String a;
-		a = "This is a test.";
-		unitTest( a.replace("i", "ooo") == "Thooos ooos a test." );
-	}
+    test replace1
+    {
+        Bu::String a;
+        a = "This is a test.";
+        unitTest( a.replace("i", "ooo") == "Thooos ooos a test." );
+    }
 
-	test replace2
-	{
-		Bu::String a;
-		a = "aaaboostuffb";
-		unitTest( a.replace("boo", "/") == "aaa/stuffb" );
-	}
+    test replace2
+    {
+        Bu::String a;
+        a = "aaaboostuffb";
+        unitTest( a.replace("boo", "/") == "aaa/stuffb" );
+    }
 
-	test coreDerefBug1
-	{
-		Bu::String a, b;
-		a = "bob";
-		a.setSize( 0 );
-		b = a;
-		b.getStr();
-	}
+    test coreDerefBug1
+    {
+        Bu::String a, b;
+        a = "bob";
+        a.setSize( 0 );
+        b = a;
+        b.getStr();
+    }
 
-	test padding1
-	{
-		Bu::String a;
-		a.append('a');
-		a.append('b');
-		a.append('c');
-		a.append("hello");
-		a.clear();
-	}
+    test padding1
+    {
+        Bu::String a;
+        a.append('a');
+        a.append('b');
+        a.append('c');
+        a.append("hello");
+        a.clear();
+    }
 
-	test padding2
-	{
-		Bu::String src("It's all sorts of things");
-		Bu::String::const_iterator i = src.find('a');
-		Bu::String::const_iterator j = src.find('f');
-		Bu::String a, b;
-		a.append( i );
-		i += 2;
-		a.append( i, j );
-		a.append('a');
-		a.append('b');
-		a.append('c');
-		a.append("hello");
-		a.append( src );
-		b = a;
-		a.clear();
-	}
+    test padding2
+    {
+        Bu::String src("It's all sorts of things");
+        Bu::String::const_iterator i = src.find('a');
+        Bu::String::const_iterator j = src.find('f');
+        Bu::String a, b;
+        a.append( i );
+        i += 2;
+        a.append( i, j );
+        a.append('a');
+        a.append('b');
+        a.append('c');
+        a.append("hello");
+        a.append( src );
+        b = a;
+        a.clear();
+    }
 
-	test append
-	{
-		// This is the byte sequence that caused += to die
-		//	03 F0 9C A4 F5 8A C8 CA 0E
-		uint8_t b;
-		Bu::String m1;
-		b = 0x03; m1 += (char)b;
-		b = 0xF0; m1 += (char)b;
-		b = 0x9C; m1 += (char)b;
-		b = 0xA4; m1 += (char)b;
-		b = 0xF5; m1 += (char)b;
-		b = 0x8A; m1 += (char)b;
-		b = 0xC8; m1 += (char)b;
-		b = 0xCA; m1 += (char)b;
-		b = 0x0E; m1 += (char)b;
+    test append
+    {
+        // This is the byte sequence that caused += to die
+        //  03 F0 9C A4 F5 8A C8 CA 0E
+        uint8_t b;
+        Bu::String m1;
+        b = 0x03; m1 += (char)b;
+        b = 0xF0; m1 += (char)b;
+        b = 0x9C; m1 += (char)b;
+        b = 0xA4; m1 += (char)b;
+        b = 0xF5; m1 += (char)b;
+        b = 0x8A; m1 += (char)b;
+        b = 0xC8; m1 += (char)b;
+        b = 0xCA; m1 += (char)b;
+        b = 0x0E; m1 += (char)b;
 
-		Bu::String m2;
-		b = 0x03; m2.append( (const char *)&b, 1 );
-		b = 0xF0; m2.append( (const char *)&b, 1 );
-		b = 0x9C; m2.append( (const char *)&b, 1 );
-		b = 0xA4; m2.append( (const char *)&b, 1 );
-		b = 0xF5; m2.append( (const char *)&b, 1 );
-		b = 0x8A; m2.append( (const char *)&b, 1 );
-		b = 0xC8; m2.append( (const char *)&b, 1 );
-		b = 0xCA; m2.append( (const char *)&b, 1 );
-		b = 0x0E; m2.append( (const char *)&b, 1 );
+        Bu::String m2;
+        b = 0x03; m2.append( (const char *)&b, 1 );
+        b = 0xF0; m2.append( (const char *)&b, 1 );
+        b = 0x9C; m2.append( (const char *)&b, 1 );
+        b = 0xA4; m2.append( (const char *)&b, 1 );
+        b = 0xF5; m2.append( (const char *)&b, 1 );
+        b = 0x8A; m2.append( (const char *)&b, 1 );
+        b = 0xC8; m2.append( (const char *)&b, 1 );
+        b = 0xCA; m2.append( (const char *)&b, 1 );
+        b = 0x0E; m2.append( (const char *)&b, 1 );
 
-		unitTest( m1 == m2 );
-		unitTest( m1 == "\x03\xF0\x9C\xA4\xF5\x8A\xC8\xCA\x0E" );
-	}
+        unitTest( m1 == m2 );
+        unitTest( m1 == "\x03\xF0\x9C\xA4\xF5\x8A\xC8\xCA\x0E" );
+    }
 
-	test toUpper1
-	{
-		Bu::String s1("HeLlO ThErE, HoW ArE YoU DoInG?");
-		unitTest( s1.toUpper() == "HELLO THERE, HOW ARE YOU DOING?" );
-		unitTest( s1 == "HeLlO ThErE, HoW ArE YoU DoInG?" );
-	}
+    test toUpper1
+    {
+        Bu::String s1("HeLlO ThErE, HoW ArE YoU DoInG?");
+        unitTest( s1.toUpper() == "HELLO THERE, HOW ARE YOU DOING?" );
+        unitTest( s1 == "HeLlO ThErE, HoW ArE YoU DoInG?" );
+    }
 
-	test toLower1
-	{
-		Bu::String s1("HeLlO ThErE, HoW ArE YoU DoInG?");
-		unitTest( s1.toLower() == "hello there, how are you doing?" );
-		unitTest( s1 == "HeLlO ThErE, HoW ArE YoU DoInG?" );
-	}
+    test toLower1
+    {
+        Bu::String s1("HeLlO ThErE, HoW ArE YoU DoInG?");
+        unitTest( s1.toLower() == "hello there, how are you doing?" );
+        unitTest( s1 == "HeLlO ThErE, HoW ArE YoU DoInG?" );
+    }
 
-	test trimWhitespace1
-	{
-		unitTest( Bu::String("Hello there").trimWhitespace()
-			== "Hello there" );
-		unitTest( Bu::String(" \t\r\r\nHello there").trimWhitespace()
-			== "Hello there" );
-		unitTest( Bu::String("Hello there \r\n\n\t\t ").trimWhitespace()
-			== "Hello there" );
-		unitTest( Bu::String(" \tHello there\r\n \t").trimWhitespace()
-			== "Hello there" );
-		unitTest( Bu::String("   \t\t\r\n").trimWhitespace() == "" );
-		unitTest( Bu::String().trimWhitespace() == "" );
-		unitTest( Bu::String(" \tHello   \t\t\r\nthere\r\n \t").trimWhitespace()
-			== "Hello   \t\t\r\nthere" );
-	}
+    test trimWhitespace1
+    {
+        unitTest( Bu::String("Hello there").trimWhitespace()
+            == "Hello there" );
+        unitTest( Bu::String(" \t\r\r\nHello there").trimWhitespace()
+            == "Hello there" );
+        unitTest( Bu::String("Hello there \r\n\n\t\t ").trimWhitespace()
+            == "Hello there" );
+        unitTest( Bu::String(" \tHello there\r\n \t").trimWhitespace()
+            == "Hello there" );
+        unitTest( Bu::String("   \t\t\r\n").trimWhitespace() == "" );
+        unitTest( Bu::String().trimWhitespace() == "" );
+        unitTest( Bu::String(" \tHello   \t\t\r\nthere\r\n \t").trimWhitespace()
+            == "Hello   \t\t\r\nthere" );
+    }
 
-	test format1
-	{
-		unitTest( (Bu::String)Bu::String("%1").arg( 12, Bu::Fmt().width(3) ) == " 12" );
-		unitTest( (Bu::String)Bu::String("%1 %2").arg("IQ").arg(4, Bu::Fmt().plus()) == "IQ +4" );
-		unitTest( (Bu::String)Bu::String("%1%2").arg("IQ").arg(4, Bu::Fmt().plus()) == "IQ+4" );
-		unitTest( (Bu::String)Bu::String("Sup #%1-Guy!").arg( 1 ) == "Sup #1-Guy!" );
-	}
+    test format1
+    {
+        unitTest( (Bu::String)Bu::String("%1").arg( 12, Bu::Fmt().width(3) ) == " 12" );
+        unitTest( (Bu::String)Bu::String("%1 %2").arg("IQ").arg(4, Bu::Fmt().plus()) == "IQ +4" );
+        unitTest( (Bu::String)Bu::String("%1%2").arg("IQ").arg(4, Bu::Fmt().plus()) == "IQ+4" );
+        unitTest( (Bu::String)Bu::String("Sup #%1-Guy!").arg( 1 ) == "Sup #1-Guy!" );
+    }
 
-	test format2
-	{
-		unitTest( Bu::String("0x%{1}00").arg( 75, Bu::Fmt::hex() ).end() == "0x4B00" );
-	}
+    test format2
+    {
+        unitTest( Bu::String("0x%{1}00").arg( 75, Bu::Fmt::hex() ).end() == "0x4B00" );
+    }
 }
 // 03F09CA4F58AC8CA0E80F0D9D409D0A60700A192270004BC3A99E91D0001034F544603362E35013103313130019CA4F58AC8CA0E0002830800002C4200008AC200EBF7D9D4090127BB010000E3
 // 

@@ -11,19 +11,19 @@
 
 namespace Bu
 {
-	class RandomCmwc : public RandomBase
-	{
-	public:
-		RandomCmwc();
-		virtual ~RandomCmwc();
+    class RandomCmwc : public RandomBase
+    {
+    public:
+        RandomCmwc();
+        virtual ~RandomCmwc();
 
-		virtual void seed( int32_t iSeed );
+        virtual void seed( int32_t iSeed );
 
-		virtual int32_t rand();
+        virtual int32_t rand();
 
-	private:
-		uint32_t *q, c, i;
-	};
+    private:
+        uint32_t *q, c, i;
+    };
 };
 
 #endif

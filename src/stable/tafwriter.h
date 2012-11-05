@@ -14,32 +14,32 @@
 
 namespace Bu
 {
-	class Stream;
-	class TafNode;
-	class TafGroup;
-	class TafProperty;
-	class TafComment;
+    class Stream;
+    class TafNode;
+    class TafGroup;
+    class TafProperty;
+    class TafComment;
 
-	/**
-	 *
-	 *@ingroup Taf
-	 */
-	class TafWriter
-	{
-	public:
-		TafWriter( Bu::Stream &sOut );
-		virtual ~TafWriter();
+    /**
+     *
+     *@ingroup Taf
+     */
+    class TafWriter
+    {
+    public:
+        TafWriter( Bu::Stream &sOut );
+        virtual ~TafWriter();
 
-		void writeGroup( const Bu::TafGroup *pRoot );
+        void writeGroup( const Bu::TafGroup *pRoot );
 
-	private:
-		void writeProperty( const Bu::TafProperty *pProp );
-		void writeComment( const Bu::TafComment *pComment );
-		void writeString( const Bu::String &str );
-		void ident();
-		Bu::Stream &sOut;
-		int iDepth;
-	};
+    private:
+        void writeProperty( const Bu::TafProperty *pProp );
+        void writeComment( const Bu::TafComment *pComment );
+        void writeString( const Bu::String &str );
+        void ident();
+        Bu::Stream &sOut;
+        int iDepth;
+    };
 }
 
 #endif

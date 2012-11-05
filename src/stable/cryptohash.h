@@ -12,22 +12,22 @@
 
 namespace Bu
 {
-	class Stream;
+    class Stream;
 
-	class CryptoHash
-	{
-	public:
-		CryptoHash();
-		virtual ~CryptoHash();
+    class CryptoHash
+    {
+    public:
+        CryptoHash();
+        virtual ~CryptoHash();
 
-		virtual void reset() = 0;
-		virtual void setSalt( const Bu::String &sSalt ) = 0;
-		virtual void addData( const void *sData, int iSize ) = 0;
-		virtual void addData( const Bu::String &sData );
-		virtual String getResult() = 0;
-		virtual void writeResult( Stream &sOut ) = 0;
-		virtual Bu::String getHexResult();
-	};
+        virtual void reset() = 0;
+        virtual void setSalt( const Bu::String &sSalt ) = 0;
+        virtual void addData( const void *sData, int iSize ) = 0;
+        virtual void addData( const Bu::String &sData );
+        virtual String getResult() = 0;
+        virtual void writeResult( Stream &sOut ) = 0;
+        virtual Bu::String getHexResult();
+    };
 };
 
 #endif

@@ -12,71 +12,71 @@
 
 suite Md5
 {
-	test basics
-	{
+    test basics
+    {
 #define tryStr( a, b ) \
-	{ Bu::Md5 m; m.addData(a); unitTest( m.getHexResult() == b ); } (void)0
-		tryStr("", "d41d8cd98f00b204e9800998ecf8427e");
-		tryStr("a", "0cc175b9c0f1b6a831c399e269772661");
-		tryStr("abc", "900150983cd24fb0d6963f7d28e17f72");
-		tryStr("message digest", "f96b697d7cb7938d525a2f31aaf161d0");
-		tryStr("abcdefghijklmnopqrstuvwxyz",
-			"c3fcd3d76192e4007dfb496cca67e13b");
-		tryStr("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-			"d174ab98d277d9f5a5611c2c9f419d9f");
-		tryStr("12345678901234567890123456789012345"
-			"678901234567890123456789012345678901234567890",
-			"57edf4a22be3c955ac49da2e2107b67a");
-	}
+    { Bu::Md5 m; m.addData(a); unitTest( m.getHexResult() == b ); } (void)0
+        tryStr("", "d41d8cd98f00b204e9800998ecf8427e");
+        tryStr("a", "0cc175b9c0f1b6a831c399e269772661");
+        tryStr("abc", "900150983cd24fb0d6963f7d28e17f72");
+        tryStr("message digest", "f96b697d7cb7938d525a2f31aaf161d0");
+        tryStr("abcdefghijklmnopqrstuvwxyz",
+            "c3fcd3d76192e4007dfb496cca67e13b");
+        tryStr("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+            "d174ab98d277d9f5a5611c2c9f419d9f");
+        tryStr("12345678901234567890123456789012345"
+            "678901234567890123456789012345678901234567890",
+            "57edf4a22be3c955ac49da2e2107b67a");
+    }
 
-	test twoChunks
-	{
-		Bu::Md5 m;
-		m.addData("12345678901234567890123456789012345");
-		m.addData("678901234567890123456789012345678901234567890");
-		unitTest( m.getHexResult() == "57edf4a22be3c955ac49da2e2107b67a" );
-	}
+    test twoChunks
+    {
+        Bu::Md5 m;
+        m.addData("12345678901234567890123456789012345");
+        m.addData("678901234567890123456789012345678901234567890");
+        unitTest( m.getHexResult() == "57edf4a22be3c955ac49da2e2107b67a" );
+    }
 
-	test biggerBlocks
-	{
-		const char *sums[33] = {
-			"75fcf199abe516903321095a588b938d",
-			"e26a863c96d6bdba6601175aedaae108",
-			"2b207fdcb222078d3ebfeb8d5e7c9315",
-			"b08683aaa465add72cc2b43ae42f4f70",
-			"638bb73963b2d925771c3579ccb5e879",
-			"c727bd4b48a88e3df5924a2604de0790",
-			"f33d21203c80490f7342e5853c5550eb",
-			"db449faca66a177aae59b1e36a19d053",
-			"c800d429afb5f5c820f75c2c94e2e2bb",
-			"43b79c70b9a6a11e823ffbfa0f45a4db",
-			"0177ffc483cf598ae3966b3a5ae00c8c",
-			"1a68fdf4b17a3820d48d101e9355a818"
-		};
+    test biggerBlocks
+    {
+        const char *sums[33] = {
+            "75fcf199abe516903321095a588b938d",
+            "e26a863c96d6bdba6601175aedaae108",
+            "2b207fdcb222078d3ebfeb8d5e7c9315",
+            "b08683aaa465add72cc2b43ae42f4f70",
+            "638bb73963b2d925771c3579ccb5e879",
+            "c727bd4b48a88e3df5924a2604de0790",
+            "f33d21203c80490f7342e5853c5550eb",
+            "db449faca66a177aae59b1e36a19d053",
+            "c800d429afb5f5c820f75c2c94e2e2bb",
+            "43b79c70b9a6a11e823ffbfa0f45a4db",
+            "0177ffc483cf598ae3966b3a5ae00c8c",
+            "1a68fdf4b17a3820d48d101e9355a818"
+        };
 
-		char block[128];
-		for( int i = 0; i < 128; i++ )
-			block[i] = i*2;
+        char block[128];
+        for( int i = 0; i < 128; i++ )
+            block[i] = i*2;
 
-		const char **curSum = sums;
-		for( int j = 1; j < 4096; j*=2 )
-		{
-			/*
-			Bu::File fOut("temp", Bu::File::WriteNew );
-			for( int b = 0; b < j; b++ )
-			{
-				fOut.write( block, 128 );
-			}
-			fOut.close();
-			system("md5sum -b temp");
-			*/
-			Bu::Md5 m;
-			for( int b = 0; b < j; b++ )
-			{
-				m.addData( block, 128 );
-			}
-			unitTest( m.getHexResult() == *curSum );
-			curSum++;
-		} 
-	}
+        const char **curSum = sums;
+        for( int j = 1; j < 4096; j*=2 )
+        {
+            /*
+            Bu::File fOut("temp", Bu::File::WriteNew );
+            for( int b = 0; b < j; b++ )
+            {
+                fOut.write( block, 128 );
+            }
+            fOut.close();
+            system("md5sum -b temp");
+            */
+            Bu::Md5 m;
+            for( int b = 0; b < j; b++ )
+            {
+                m.addData( block, 128 );
+            }
+            unitTest( m.getHexResult() == *curSum );
+            curSum++;
+        } 
+    }
 }

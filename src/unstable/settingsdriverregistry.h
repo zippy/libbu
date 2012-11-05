@@ -7,20 +7,20 @@
 
 namespace Bu
 {
-	class SettingsDriverRegistry : public SettingsDriver
-	{
-	public:
-		SettingsDriverRegistry();
-		virtual ~SettingsDriverRegistry();
+    class SettingsDriverRegistry : public SettingsDriver
+    {
+    public:
+        SettingsDriverRegistry();
+        virtual ~SettingsDriverRegistry();
 
-	protected:
-		virtual void init( const Bu::UtfString &sCompany, const Bu::UtfString &sProduct );
-		virtual void set( const Bu::UtfString &sKey, const Bu::UtfString  &sValue );
-		virtual Bu::UtfString get( const Bu::UtfString &sKey, const Bu::UtfString &sValue );
+    protected:
+        virtual void init( const Bu::UtfString &sCompany, const Bu::UtfString &sProduct );
+        virtual void set( const Bu::UtfString &sKey, const Bu::UtfString  &sValue );
+        virtual Bu::UtfString get( const Bu::UtfString &sKey, const Bu::UtfString &sValue );
 
-	private:
-		void *rphKey;
-	};
+    private:
+        void *rphKey;
+    };
 };
 
 #endif

@@ -17,75 +17,75 @@
 namespace Bu { subExceptionDef( FifoException ) }
 
 Bu::Fifo::Fifo( const Bu::String &sName, int iFlags, mode_t mAcc ) :
-	iFlags( iFlags ),
-	iIn( -1 ),
-	iOut( -1 )
+    iFlags( iFlags ),
+    iIn( -1 ),
+    iOut( -1 )
 {
 #ifndef WIN32
-	if( iFlags&Create )
-	{
-		if( mkfifo( sName.getStr(), mAcc ) )
-		{
-			throw FifoException("Error creating fifo: %s\n", strerror( errno ) );
-		}
-	}
-	if( iFlags&Read )
-	{
-		iIn = ::open(
-			sName.getStr(),
-			O_RDONLY|((iFlags&NonBlock)?O_NONBLOCK:0)
-			);
-	}
-	if( iFlags&Write )
-	{
-		iOut = ::open(
-			sName.getStr(),
-			O_WRONLY
-			);
-	}
+    if( iFlags&Create )
+    {
+        if( mkfifo( sName.getStr(), mAcc ) )
+        {
+            throw FifoException("Error creating fifo: %s\n", strerror( errno ) );
+        }
+    }
+    if( iFlags&Read )
+    {
+        iIn = ::open(
+            sName.getStr(),
+            O_RDONLY|((iFlags&NonBlock)?O_NONBLOCK:0)
+            );
+    }
+    if( iFlags&Write )
+    {
+        iOut = ::open(
+            sName.getStr(),
+            O_WRONLY
+            );
+    }
 #else
-	#warning Bu::Fifo::Fifo IS A STUB for WIN32!!!!	
+    #warning Bu::Fifo::Fifo IS A STUB for WIN32!!!! 
 #endif
 }
 
 Bu::Fifo::~Fifo()
 {
-	close();
+    close();
 }
 
 void Bu::Fifo::close()
 {
-	if( iIn > -1 )
-	{
-		::close( iIn );
-		iIn = -1;
-	}
-	if( iOut > -1 )
-	{
-		::close( iOut );
-		iOut = -1;
-	}
+    if( iIn > -1 )
+    {
+        ::close( iIn );
+        iIn = -1;
+    }
+    if( iOut > -1 )
+    {
+        ::close( iOut );
+        iOut = -1;
+    }
 }
 
 Bu::size Bu::Fifo::read( void *pBuf, Bu::size nBytes )
 {
-	if( iIn < 0 )
-		throw FifoException("Fifo not open for reading.");
+    if( iIn < 0 )
+        throw FifoException("Fifo not open for reading.");
 
-	return TEMP_FAILURE_RETRY( ::read( iIn, pBuf, nBytes ) );
+    return TEMP_FAILURE_RETRY( ::read( iIn, pBuf, nBytes ) );
 }
 
 Bu::size Bu::Fifo::write( const void *pBuf, Bu::size nBytes )
 {
-	if( iOut < 0 )
-		throw FifoException("Fifo not open for writing.");
+    if( iOut < 0 )
+        throw FifoException("Fifo not open for writing.");
 
-	return TEMP_FAILURE_RETRY( ::write( iOut, pBuf, nBytes ) );
+    return TEMP_FAILURE_RETRY( ::write( iOut, pBuf, nBytes ) );
 }
 
 Bu::size Bu::Fifo::tell()
 {
-	return -1;
+    return -1;
 }
 
 void Bu::Fifo::seek( Bu::size )
@@ -102,53 +102,53 @@ void Bu::Fifo::setPosEnd( Bu::size )
 
 bool Bu::Fifo::isEos()
 {
-	return false;
+    return false;
 }
 
 bool Bu::Fifo::canRead()
 {
-	return (iIn>-1);
+    return (iIn>-1);
 }
 
 bool Bu::Fifo::canWrite()
 {
-	return (iOut>-1);
+    return (iOut>-1);
 }
 
 bool Bu::Fifo::isReadable()
 {
-	return (iIn>-1);
+    return (iIn>-1);
 }
 
 bool Bu::Fifo::isWritable()
 {
-	return (iOut>-1);
+    return (iOut>-1);
 }
 
 bool Bu::Fifo::isSeekable()
 {
-	return false;
+    return false;
 }
 
 bool Bu::Fifo::isBlocking()
 {
 #ifndef WIN32
-	return ((fcntl( iIn, F_GETFL, 0 )&O_NONBLOCK) == O_NONBLOCK);
+    return ((fcntl( iIn, F_GETFL, 0 )&O_NONBLOCK) == O_NONBLOCK);
 #else
-	#warning Bu::Fifo::isBlocking IS A STUB for WIN32!!!!
-#endif	
+    #warning Bu::Fifo::isBlocking IS A STUB for WIN32!!!!
+#endif  
 }
 
 void Bu::Fifo::setBlocking( bool bBlocking )
 {
 #ifndef WIN32
-	if( bBlocking )
-		fcntl( iIn, F_SETFL, fcntl( iIn, F_GETFL, 0 )&(~O_NONBLOCK) );
-	else
-		fcntl( iIn, F_SETFL, fcntl( iIn, F_GETFL, 0 )|O_NONBLOCK );
+    if( bBlocking )
+        fcntl( iIn, F_SETFL, fcntl( iIn, F_GETFL, 0 )&(~O_NONBLOCK) );
+    else
+        fcntl( iIn, F_SETFL, fcntl( iIn, F_GETFL, 0 )|O_NONBLOCK );
 #else
-	#warning Bu::Fifo::setBlocking IS A STUB for WIN32!!!!
-#endif	
+    #warning Bu::Fifo::setBlocking IS A STUB for WIN32!!!!
+#endif  
 }
 
 void Bu::Fifo::flush()
@@ -157,6 +157,6 @@ void Bu::Fifo::flush()
 
 bool Bu::Fifo::isOpen()
 {
-	return (iIn > -1) || (iOut > -1);
+    return (iIn > -1) || (iOut > -1);
 }
 

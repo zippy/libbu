@@ -9,6 +9,6 @@
 
 namespace Bu
 {
-	subExceptionDef( FormulaException );
+    subExceptionDef( FormulaException );
 }
 

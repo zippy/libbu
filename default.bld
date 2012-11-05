@@ -19,117 +19,117 @@ CXXFLAGS += "-ggdb -W -Wall -I.";
 
 action "default"
 {
-	build: ["header-links", "libbu++.a",
-		targets("tools")];
+    build: ["header-links", "libbu++.a",
+        targets("tools")];
 }
 
 action "pkg"
 {
-	build: targets("pkg");
+    build: targets("pkg");
 }
 
 action "all"
 {
-	build: ["header-links", "libbu++.a",
-		targets("tools"), targets("tests")];
+    build: ["header-links", "libbu++.a",
+        targets("tools"), targets("tests")];
 }
 
 action "unit"
 {
-	build: targets("unit tests");
+    build: targets("unit tests");
 }
 
 action "myriadfs"
 {
-	build: "myriadfs";
+    build: "myriadfs";
 }
 
 target ["src/autoconfig.h", "src/version.h"]
 {
-	input "autoconfig";
-	display "autoconfig";
-	profile "build"
-	{
-		execute("./autoconfig ${OUTPUT}");
-	}
+    input "autoconfig";
+    display "autoconfig";
+    profile "build"
+    {
+        execute("./autoconfig ${OUTPUT}");
+    }
 }
 
 target "src/version.h"
 {
-	input ".svn";
+    input ".svn";
 }
 
 target "src/signals.h"
 {
-	input "gensigs.bld";
-	display "generate";
-	profile "build"
-	{
-		genSigs( OUTPUT );
-	}
+    input "gensigs.bld";
+    display "generate";
+    profile "build"
+    {
+        genSigs( OUTPUT );
+    }
 }
 
 target "autoconfig"
 {
-	rule "exe";
-	input "autoconfig.cpp";
+    rule "exe";
+    input "autoconfig.cpp";
 }
 
 for base in ["stable", "unstable", "experimental"] do
 {
-	target files("src/${base}/*.h").replace("src/${base}/", "bu/")
-	{
-		tag "header-links";
-		display "symlink";
-		input OUTPUT.replace("bu/","src/${base}/");
-		profile "build"
-		{
-			DIR = OUTPUT.dirName();
-			execute("mkdir -p ${DIR}; ln -s ../${INPUT} ${OUTPUT}");
-		}
-	}
+    target files("src/${base}/*.h").replace("src/${base}/", "bu/")
+    {
+        tag "header-links";
+        display "symlink";
+        input OUTPUT.replace("bu/","src/${base}/");
+        profile "build"
+        {
+            DIR = OUTPUT.dirName();
+            execute("mkdir -p ${DIR}; ln -s ../${INPUT} ${OUTPUT}");
+        }
+    }
 }
 
 target ["bu/config.h", "bu/autoconfig.h", "bu/version.h", "bu/signals.h"]
 {
-	tag "header-links";
-	display "symlink";
-	input OUTPUT.replace("bu/","src/");
-	profile "build"
-	{
-		DIR = OUTPUT.dirName();
-		execute("mkdir -p ${DIR}; ln -s ../${INPUT} ${OUTPUT}");
-	}
+    tag "header-links";
+    display "symlink";
+    input OUTPUT.replace("bu/","src/");
+    profile "build"
+    {
+        DIR = OUTPUT.dirName();
+        execute("mkdir -p ${DIR}; ln -s ../${INPUT} ${OUTPUT}");
+    }
 }
 
 target files("src/compat/*.h").replace("src/", "bu/")
 {
-	tag "header-links";
-	display "symlink";
-	input OUTPUT.replace("bu/","src/");
-	profile "build"
-	{
-		DIR = OUTPUT.dirName();
-		execute("mkdir -p ${DIR}; ln -s ../../${INPUT} ${OUTPUT}");
-	}
+    tag "header-links";
+    display "symlink";
+    input OUTPUT.replace("bu/","src/");
+    profile "build"
+    {
+        DIR = OUTPUT.dirName();
+        execute("mkdir -p ${DIR}; ln -s ../../${INPUT} ${OUTPUT}");
+    }
 }
 
 target "header-links"
 {
-	input targets("header-links");
-	display "symlinks";
-	profile "build"
-	{
-		condition always;
-	}
+    input targets("header-links");
+    display "symlinks";
+    profile "build"
+    {
+        condition always;
+    }
 }
 
 target "libbu++.a"
 {
-	input files("src/stable/*.cpp", "src/unstable/*.cpp",
-		"src/experimental/*.cpp", "src/compat/*.cpp");
-	rule "lib";
-	CXXFLAGS += "-I. -fPIC";
+    input files("src/stable/*.cpp", "src/unstable/*.cpp",
+        "src/experimental/*.cpp", "src/compat/*.cpp");
+    rule "lib";
+    CXXFLAGS += "-I. -fPIC";
 }
 
 //
@@ -138,31 +138,31 @@ target "libbu++.a"
 
 target files("src/tools/*.cpp").replace("src/tools/","").replace(".cpp","")
 {
-	input "src/tools/${OUTPUT}.cpp";
-	rule "exe";
-	requires "libbu++.a";
-	tag "tools";
-	CXXFLAGS += "-I.";
-	LDFLAGS += "-L. -lbu++";
+    input "src/tools/${OUTPUT}.cpp";
+    rule "exe";
+    requires "libbu++.a";
+    tag "tools";
+    CXXFLAGS += "-I.";
+    LDFLAGS += "-L. -lbu++";
 }
 
 target "viewcsv"
 {
-	LDFLAGS += "-lncurses";
+    LDFLAGS += "-lncurses";
 }
 
 target ["myriad", "myriadfs", "tests/myriad", "tests/myriadfs", "unit/myriad", "tests/bigmyriad", "tests/synchroqueue"]
 {
-	LDFLAGS += "-lpthread";
+    LDFLAGS += "-lpthread";
 }
 
 target files("src/extra/*.cpp").replace("src/extra/","").replace(".cpp","")
 {
-	input "src/extra/${OUTPUT}.cpp";
-	rule "exe";
-	requires "libbu++.a";
-	CXXFLAGS += "-I.";
-	LDFLAGS += "-L. -lbu++";
+    input "src/extra/${OUTPUT}.cpp";
+    rule "exe";
+    requires "libbu++.a";
+    CXXFLAGS += "-I.";
+    LDFLAGS += "-L. -lbu++";
 }
 
 //
@@ -173,17 +173,17 @@ target files("src/extra/*.cpp").replace("src/extra/","").replace(".cpp","")
 //
 target "src/extra/myriadfs.o"
 {
-	CXXFLAGS += "-D_FILE_OFFSET_BITS=64";
+    CXXFLAGS += "-D_FILE_OFFSET_BITS=64";
 }
 
 target "myriadfs"
 {
-	LDFLAGS += "-lfuse";
+    LDFLAGS += "-lfuse";
 }
 
 target "bin2cpp"
 {
-	LDFLAGS += "-lz -lbz2 -llzma";
+    LDFLAGS += "-lz -lbz2 -llzma";
 }
 
 //
@@ -192,34 +192,34 @@ target "bin2cpp"
 
 target files("src/tests/*.cpp").replace("src/","").replace(".cpp","")
 {
-	input "src/${OUTPUT}.cpp";
-	rule "exe";
-	requires "libbu++.a";
-	tag ["tests", "general tests"];
-	CXXFLAGS += "-I.";
-	LDFLAGS += "-L. -lbu++";
+    input "src/${OUTPUT}.cpp";
+    rule "exe";
+    requires "libbu++.a";
+    tag ["tests", "general tests"];
+    CXXFLAGS += "-I.";
+    LDFLAGS += "-L. -lbu++";
 }
 
 // Some tests need extra libs and whatnot, that goes here.
 
 target ["tests/bzip2", "tests/streamstack"]
 {
-	LDFLAGS += "-lbz2";
+    LDFLAGS += "-lbz2";
 }
 
 target ["tests/deflate", "tests/enc"]
 {
-	LDFLAGS += "-lz";
+    LDFLAGS += "-lz";
 }
 
 target ["tests/lzma"]
 {
-	LDFLAGS += "-llzma";
+    LDFLAGS += "-llzma";
 }
 
 target ["tests/threadid"]
 {
-	LDFLAGS += "-lpthread";
+    LDFLAGS += "-lpthread";
 }
 
 //
@@ -228,106 +228,106 @@ target ["tests/threadid"]
 
 target files("src/unit/*.unit").replace("src/","").replace(".unit","")
 {
-	input "src/${OUTPUT}.unit";
-	rule "exe";
-	requires "libbu++.a";
-	tag ["tests", "unit tests"];
-	CXXFLAGS += "-I.";
-	LDFLAGS += "-L. -lbu++";
+    input "src/${OUTPUT}.unit";
+    rule "exe";
+    requires "libbu++.a";
+    tag ["tests", "unit tests"];
+    CXXFLAGS += "-I.";
+    LDFLAGS += "-L. -lbu++";
 }
 
 PKG_BASE = "libbu++-$(cat version)-r$(svnversion "-n").tar";
 
 target PKG_BASE
 {
-	input [
-		"LICENSE",
-		"Doxyfile",
-		"Makefile",
-		"version",
-		files("*.bld"),
-		"support/vim/syntax/taf.vim",
-		"support/vim/ftdetect/taf.vim",
-		"support/vim/ftplugin/taf.vim",
-		files("*.sh"),
-		files("autoconfig.cpp"),
-		files("src/*.cpp"),
-		files("src/*.h"),
-		files("src/stable/*.cpp"),
-		files("src/stable/*.h"),
-		files("src/unstable/*.cpp"),
-		files("src/unstable/*.h"),
-		files("src/experimental/*.cpp"),
-		files("src/experimental/*.h"),
-		files("src/tests/*.cpp"),
-		files("src/tests*.h"),
-		files("src/tools/*.cpp"),
-		files("src/tools/*.h"),
-		files("src/unit/*.unit"),
-		files("src/doxy/*.dox"),
-		files("src/compat/*.cpp"),
-		files("src/compat/*.h"),
-		files("src/extra/*.cpp"),
-		files("src/extra/*.h"),
-		files("pregen/*"),
-		"api"
-		];
-	rule "tarball";
-	tag "pkg";
+    input [
+        "LICENSE",
+        "Doxyfile",
+        "Makefile",
+        "version",
+        files("*.bld"),
+        "support/vim/syntax/taf.vim",
+        "support/vim/ftdetect/taf.vim",
+        "support/vim/ftplugin/taf.vim",
+        files("*.sh"),
+        files("autoconfig.cpp"),
+        files("src/*.cpp"),
+        files("src/*.h"),
+        files("src/stable/*.cpp"),
+        files("src/stable/*.h"),
+        files("src/unstable/*.cpp"),
+        files("src/unstable/*.h"),
+        files("src/experimental/*.cpp"),
+        files("src/experimental/*.h"),
+        files("src/tests/*.cpp"),
+        files("src/tests*.h"),
+        files("src/tools/*.cpp"),
+        files("src/tools/*.h"),
+        files("src/unit/*.unit"),
+        files("src/doxy/*.dox"),
+        files("src/compat/*.cpp"),
+        files("src/compat/*.h"),
+        files("src/extra/*.cpp"),
+        files("src/extra/*.h"),
+        files("pregen/*"),
+        "api"
+        ];
+    rule "tarball";
+    tag "pkg";
 }
 
 target PKG_BASE + ".gz"
 {
-	input PKG_BASE;
-	tag "pkg";
-	display "gzip";
-	profile "build"
-	{
-		execute("gzip -9 < ${INPUT} > ${OUTPUT}");
-	}
+    input PKG_BASE;
+    tag "pkg";
+    display "gzip";
+    profile "build"
+    {
+        execute("gzip -9 < ${INPUT} > ${OUTPUT}");
+    }
 }
 
 target PKG_BASE + ".bz2"
 {
-	input PKG_BASE;
-	tag "pkg";
-	display "bzip2";
-	profile "build"
-	{
-		execute("bzip2 -9 < ${INPUT} > ${OUTPUT}");
-	}
+    input PKG_BASE;
+    tag "pkg";
+    display "bzip2";
+    profile "build"
+    {
+        execute("bzip2 -9 < ${INPUT} > ${OUTPUT}");
+    }
 }
 
 target PKG_BASE + ".xz"
 {
-	input PKG_BASE;
-	tag "pkg";
-	display "xz";
-	profile "build"
-	{
-		execute("xz -9vv < ${INPUT} > ${OUTPUT}");
-	}
+    input PKG_BASE;
+    tag "pkg";
+    display "xz";
+    profile "build"
+    {
+        execute("xz -9vv < ${INPUT} > ${OUTPUT}");
+    }
 }
 
 rule "tarball"
 {
-	input matches("LICENSE", "Makefile", "*.cpp", "*.h", "*.conf", "*.bld",
-		"Doxyfile", "*.vim", "*.sh", "*.unit", "api", "version");
-	profile "build"
-	{
-		OUTDIR = OUTPUT.replace(".tar","");
-		execute("tar -f ./${OUTPUT} --transform=\"s@^@${OUTDIR}/@\" -c ${INPUT}");
-	}
+    input matches("LICENSE", "Makefile", "*.cpp", "*.h", "*.conf", "*.bld",
+        "Doxyfile", "*.vim", "*.sh", "*.unit", "api", "version");
+    profile "build"
+    {
+        OUTDIR = OUTPUT.replace(".tar","");
+        execute("tar -f ./${OUTPUT} --transform=\"s@^@${OUTDIR}/@\" -c ${INPUT}");
+    }
 }
 
 rule "unit"
 {
-	input "*.unit";
-	output INPUT.replace(".unit", ".cpp");
+    input "*.unit";
+    output INPUT.replace(".unit", ".cpp");
 
-	profile "build"
-	{
-		execute("./mkunit \"${INPUT}\" \"${OUTPUT}\"");
-	}
+    profile "build"
+    {
+        execute("./mkunit \"${INPUT}\" \"${OUTPUT}\"");
+    }
 }
 

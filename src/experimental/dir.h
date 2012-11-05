@@ -6,15 +6,15 @@
 
 namespace Bu
 {
-	class Dir : public FileSystem
-	{
-	public:
-		Dir();
-		Dir( const Bu::String &sPath );
-		virtual ~Dir();
+    class Dir : public FileSystem
+    {
+    public:
+        Dir();
+        Dir( const Bu::String &sPath );
+        virtual ~Dir();
 
-	private:
-	};
+    private:
+    };
 };
 
 #endif

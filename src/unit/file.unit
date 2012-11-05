@@ -14,87 +14,87 @@
 
 suite File
 {
-	test writeFull
-	{
-		Bu::File sf("testfile1", Bu::File::WriteNew );
-		for( int c = 0; c < 256; c++ )
-		{
-			unsigned char ch = (unsigned char)c;
-			sf.write( &ch, 1 );
-			unitTest( sf.tell() == c+1 );
-		}
-		//unitTest( sf.canRead() == false );
-		//unitTest( sf.canWrite() == true );
-		//unitTest( sf.canSeek() == true );
-		sf.close();
-		struct stat sdat;
-		stat("testfile1", &sdat );
-		unitTest( sdat.st_size == 256 );
-	}
+    test writeFull
+    {
+        Bu::File sf("testfile1", Bu::File::WriteNew );
+        for( int c = 0; c < 256; c++ )
+        {
+            unsigned char ch = (unsigned char)c;
+            sf.write( &ch, 1 );
+            unitTest( sf.tell() == c+1 );
+        }
+        //unitTest( sf.canRead() == false );
+        //unitTest( sf.canWrite() == true );
+        //unitTest( sf.canSeek() == true );
+        sf.close();
+        struct stat sdat;
+        stat("testfile1", &sdat );
+        unitTest( sdat.st_size == 256 );
+    }
 
-	test readBlocks
-	{
-		Bu::File sf("testfile1", Bu::File::Read );
-		unsigned char buf[50];
-		size_t total = 0;
-		for(;;)
-		{
-			size_t s = sf.read( buf, 50 );
-			for( size_t c = 0; c < s; c++ )
-			{
-				unitTest( buf[c] == (unsigned char)(c+total) );
-			}
-			total += s;
-			if( s < 50 )
-			{
-				unitTest( total == 256 );
-				unitTest( sf.isEos() == false );
-				unitTest( sf.read( buf, 1 ) == 0 );
-				unitTest( sf.isEos() == true );
-				// EOS is only set when an attempt to read past the end of
-				// the stream is made, not when a short block is returned.
-				break;
-			}
-		}
-		sf.close();
-	}
+    test readBlocks
+    {
+        Bu::File sf("testfile1", Bu::File::Read );
+        unsigned char buf[50];
+        size_t total = 0;
+        for(;;)
+        {
+            size_t s = sf.read( buf, 50 );
+            for( size_t c = 0; c < s; c++ )
+            {
+                unitTest( buf[c] == (unsigned char)(c+total) );
+            }
+            total += s;
+            if( s < 50 )
+            {
+                unitTest( total == 256 );
+                unitTest( sf.isEos() == false );
+                unitTest( sf.read( buf, 1 ) == 0 );
+                unitTest( sf.isEos() == true );
+                // EOS is only set when an attempt to read past the end of
+                // the stream is made, not when a short block is returned.
+                break;
+            }
+        }
+        sf.close();
+    }
 
-	test readError1
-	{
-		try
-		{
-			Bu::File sf("doesn'texist", Bu::File::Read );
-			unitFailed("No exception thrown");
-		}
-		catch( Bu::FileException &e )
-		{
-			return;
-		}
-	}
+    test readError1
+    {
+        try
+        {
+            Bu::File sf("doesn'texist", Bu::File::Read );
+            unitFailed("No exception thrown");
+        }
+        catch( Bu::FileException &e )
+        {
+            return;
+        }
+    }
 
-	test readError2
-	{
-		Bu::File sf("testfile1", Bu::File::Read );
-		char buf[256];
-		int r = sf.read( buf, 256 );
-		unitTest( r == 256 );
-		// You have to read past the end to set the EOS flag.
-		unitTest( sf.isEos() == false );
-		try
-		{
-			if( sf.read( buf, 5 ) > 0 )
-			{
-				unitFailed("Non-zero read result");
-			}
-			else
-			{
-				sf.close();
-			}
-		}
-		catch( Bu::FileException &e )
-		{
-			sf.close();
-			return;
-		}
-	}
+    test readError2
+    {
+        Bu::File sf("testfile1", Bu::File::Read );
+        char buf[256];
+        int r = sf.read( buf, 256 );
+        unitTest( r == 256 );
+        // You have to read past the end to set the EOS flag.
+        unitTest( sf.isEos() == false );
+        try
+        {
+            if( sf.read( buf, 5 ) > 0 )
+            {
+                unitFailed("Non-zero read result");
+            }
+            else
+            {
+                sf.close();
+            }
+        }
+        catch( Bu::FileException &e )
+        {
+            sf.close();
+            return;
+        }
+    }
 }

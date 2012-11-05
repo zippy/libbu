@@ -12,24 +12,24 @@
 using namespace Bu;
 
 Bu::CsvReader::CsvReader( Bu::Stream &sIn, Bu::CsvReader::Style eStyle ) :
-	sIn( sIn )
+    sIn( sIn )
 {
-	switch( eStyle )
-	{
-		case styleExcel:
-			sDecode = Bu::slot( &decodeExcel );
-			break;
+    switch( eStyle )
+    {
+        case styleExcel:
+            sDecode = Bu::slot( &decodeExcel );
+            break;
 
-		case styleC:
-			sDecode = Bu::slot( &decodeC );
-			break;
-	}
+        case styleC:
+            sDecode = Bu::slot( &decodeC );
+            break;
+    }
 }
 
 Bu::CsvReader::CsvReader( Bu::Stream &sIn,
-		Bu::CsvReader::DecodeSignal sDecode ) :
-	sIn( sIn ),
-	sDecode( sDecode )
+        Bu::CsvReader::DecodeSignal sDecode ) :
+    sIn( sIn ),
+    sDecode( sDecode )
 {
 }
 
@@ -39,61 +39,61 @@ Bu::CsvReader::~CsvReader()
 
 Bu::StrArray Bu::CsvReader::readLine()
 {
-	Bu::StrArray aVals;
+    Bu::StrArray aVals;
 
-	Bu::String sLine = sIn.readLine();
+    Bu::String sLine = sIn.readLine();
 
-	if( !sLine.isSet() )
-		return Bu::StrArray();
+    if( !sLine.isSet() )
+        return Bu::StrArray();
 
-	Bu::String::iterator i = sLine.begin();
+    Bu::String::iterator i = sLine.begin();
 
-	aVals.append( sDecode( i ) );
+    aVals.append( sDecode( i ) );
 
-	while( i )
-	{
-		if( *i == ',' )
-		{
-			i++;
-			if( !i )
-			{
-				aVals.append("");
-				break;
-			}
-			aVals.append( sDecode( i ) );
-		}
-		else
-		{
-			// Blanks and stuff?
-			sio << "Out of bound:  '" << *i << "'" << sio.nl;
-			i++;
-		}
-	}
+    while( i )
+    {
+        if( *i == ',' )
+        {
+            i++;
+            if( !i )
+            {
+                aVals.append("");
+                break;
+            }
+            aVals.append( sDecode( i ) );
+        }
+        else
+        {
+            // Blanks and stuff?
+            sio << "Out of bound:  '" << *i << "'" << sio.nl;
+            i++;
+        }
+    }
 
-	return aVals;
+    return aVals;
 }
 
 Bu::String Bu::CsvReader::decodeExcel( Bu::String::iterator &i )
 {
-	Bu::String sRet;
+    Bu::String sRet;
 
-	for(; i && (*i == ' ' || *i == '\t'); i++ ) { }
-	
-	if( !i )
-		return sRet;
+    for(; i && (*i == ' ' || *i == '\t'); i++ ) { }
+    
+    if( !i )
+        return sRet;
 
-	if( *i == '\"' )
+    if( *i == '\"' )
 	{
 		for( i++ ; i; i++ )
 		{
 			if( *i == '\"' )
-			{
-				i++;
-				if( !i )
-				{
-					return sRet;
-				}
-				else if( *i == '\"' )
+            {
+                i++;
+                if( !i )
+                {
+                    return sRet;
+                }
+                else if( *i == '\"' )
 				{
 					sRet += *i;
 				}

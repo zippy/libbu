@@ -9,24 +9,24 @@
 #include "bu/stream.h"
 
 Bu::CsvWriter::CsvWriter( Bu::Stream &sOut, Bu::CsvWriter::Style eStyle ) :
-	sOut( sOut )
+    sOut( sOut )
 {
-	switch( eStyle )
-	{
-		case styleExcel:
-			sEncode = Bu::slot( &encodeExcel );
-			break;
+    switch( eStyle )
+    {
+        case styleExcel:
+            sEncode = Bu::slot( &encodeExcel );
+            break;
 
-		case styleC:
-			sEncode = Bu::slot( &encodeExcel );
-			break;
-	}
+        case styleC:
+            sEncode = Bu::slot( &encodeExcel );
+            break;
+    }
 }
 
 Bu::CsvWriter::CsvWriter( Bu::Stream &sOut,
-		Bu::CsvWriter::EncodeSignal sEncode ) :
-	sOut( sOut ),
-	sEncode( sEncode )
+        Bu::CsvWriter::EncodeSignal sEncode ) :
+    sOut( sOut ),
+    sEncode( sEncode )
 {
 }
 
@@ -36,46 +36,46 @@ Bu::CsvWriter::~CsvWriter()
 
 void Bu::CsvWriter::writeLine( const StrArray &aStrs )
 {
-	Bu::String sBuf;
-	for( StrArray::const_iterator i = aStrs.begin(); i; i++ )
-	{
-		if( i != aStrs.begin() )
-			sBuf += ",";
-		sBuf += sEncode( *i );
-	}
-	sBuf += "\n";
+    Bu::String sBuf;
+    for( StrArray::const_iterator i = aStrs.begin(); i; i++ )
+    {
+        if( i != aStrs.begin() )
+            sBuf += ",";
+        sBuf += sEncode( *i );
+    }
+    sBuf += "\n";
 
-	sOut.write( sBuf );
+    sOut.write( sBuf );
 }
 
 Bu::String Bu::CsvWriter::encodeExcel( const Bu::String &sIn )
 {
-	if( sIn.find('\"') || sIn.find(',') )
+    if( sIn.find('\"') || sIn.find(',') )
 	{
 		Bu::String sOut = "\"";
-		for( Bu::String::const_iterator i = sIn.begin(); i; i++ )
-		{
-			if( *i == '\"' )
+        for( Bu::String::const_iterator i = sIn.begin(); i; i++ )
+        {
+            if( *i == '\"' )
 				sOut += "\"\"";
 			else
 				sOut += *i;
 		}
 		sOut += '\"';
-		return sOut;
-	}
-	return sIn;
+        return sOut;
+    }
+    return sIn;
 }
 
 Bu::String Bu::CsvWriter::encodeC( const Bu::String &sIn )
 {
-	Bu::String sOut = "";
-	for( Bu::String::const_iterator i = sIn.begin(); i; i++ )
-	{
-		if( *i == ',' )
-			sOut += "\\,";
-		else
-			sOut += *i;
-	}
-	return sOut;
+    Bu::String sOut = "";
+    for( Bu::String::const_iterator i = sIn.begin(); i; i++ )
+    {
+        if( *i == ',' )
+            sOut += "\\,";
+        else
+            sOut += *i;
+    }
+    return sOut;
 }
 

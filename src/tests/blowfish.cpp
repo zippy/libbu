@@ -56,72 +56,72 @@ static const char *testdat[34][3] ={
 
 int main( int argc, char *argv[] )
 {
-	MemBuf mb;
-	{
-		BlowfishEcb bf( mb );
-		bf.setPassword( "01234567" );
-		for( int j = 0; j < 4; j++ )
-		{
-			bf.write("this is a test!!"+j, 1 );
-		}
-		bf.write("this is a test!!"+4, 12 );
-	}
-	mb.setPos( 0 );
-	BlowfishEcb bf( mb );
-	bf.setPassword( "01234567" );
-	for( int j = 0; j < 3; j++ )
-	{
-		char c;
-		bf.read( &c, 1 );
-		sio << "char: '" << c << "'" << sio.nl;
-	}
+    MemBuf mb;
+    {
+        BlowfishEcb bf( mb );
+        bf.setPassword( "01234567" );
+        for( int j = 0; j < 4; j++ )
+        {
+            bf.write("this is a test!!"+j, 1 );
+        }
+        bf.write("this is a test!!"+4, 12 );
+    }
+    mb.setPos( 0 );
+    BlowfishEcb bf( mb );
+    bf.setPassword( "01234567" );
+    for( int j = 0; j < 3; j++ )
+    {
+        char c;
+        bf.read( &c, 1 );
+        sio << "char: '" << c << "'" << sio.nl;
+    }
 
-	char buf[100];
-	int iR = bf.read( buf, 100 );
-	buf[iR] = '\0';
-	sio << "Got(" << iR << ") = '" << buf << "'" << sio.nl;
+    char buf[100];
+    int iR = bf.read( buf, 100 );
+    buf[iR] = '\0';
+    sio << "Got(" << iR << ") = '" << buf << "'" << sio.nl;
 
-	return 0;
+    return 0;
 
-	for( int j = 0; j < 34; j++ )
-	{
-		MemBuf mb;
-		BlowfishEcb bf( mb );
-		bf.setPassword( decodeStr<Hex>( testdat[j][0] ) );
-		bf.write( decodeStr<Hex>( testdat[j][1] ) );
-		sio << "Test " << j << ": " << (mb.getString() == decodeStr<Hex>( testdat[j][2] )) << " (" << encodeStr<Hex>( mb.getString(), true ) << " == " << testdat[j][2] << ")" << sio.nl;
+    for( int j = 0; j < 34; j++ )
+    {
+        MemBuf mb;
+        BlowfishEcb bf( mb );
+        bf.setPassword( decodeStr<Hex>( testdat[j][0] ) );
+        bf.write( decodeStr<Hex>( testdat[j][1] ) );
+        sio << "Test " << j << ": " << (mb.getString() == decodeStr<Hex>( testdat[j][2] )) << " (" << encodeStr<Hex>( mb.getString(), true ) << " == " << testdat[j][2] << ")" << sio.nl;
 
-		mb.setPos( 0 );
-		BlowfishEcb bf2( mb );
-		bf2.setPassword( decodeStr<Hex>( testdat[j][0] ) );
-		char buf[8];
-		bf2.read( buf, 8 );
-		
-		sio << "  - Back: " << (Bu::String(testdat[j][1]) == encodeStr<Hex>(String(buf,8),true)) << sio.nl;
-	}
+        mb.setPos( 0 );
+        BlowfishEcb bf2( mb );
+        bf2.setPassword( decodeStr<Hex>( testdat[j][0] ) );
+        char buf[8];
+        bf2.read( buf, 8 );
+        
+        sio << "  - Back: " << (Bu::String(testdat[j][1]) == encodeStr<Hex>(String(buf,8),true)) << sio.nl;
+    }
 
-	{
-		File fIn("data.plain", File::Read );
-		File fOut("data.crypt", File::WriteNew );
+    {
+        File fIn("data.plain", File::Read );
+        File fOut("data.crypt", File::WriteNew );
 
-		BlowfishOfb bOut( fOut );
-		bOut.setIv("01234567");
-		bOut.setPassword("abcdefghijklmnop");
-		bOut.write( fIn.readAll() );
-	}
-	{
-		File fIn("data.java", File::Read );
-		File fOut("data.stuff", File::WriteNew );
+        BlowfishOfb bOut( fOut );
+        bOut.setIv("01234567");
+        bOut.setPassword("abcdefghijklmnop");
+        bOut.write( fIn.readAll() );
+    }
+    {
+        File fIn("data.java", File::Read );
+        File fOut("data.stuff", File::WriteNew );
 
-		BlowfishOfb bIn( fIn );
-		bIn.setIv("01234567");
-		bIn.setPassword("abcdefghijklmnop");
-		char buf[64];
-		bIn.read( buf, 64 );
-		fOut.write( buf, 64 );
-		sio << sio.nl << "All done." << sio.nl;
-	}
+        BlowfishOfb bIn( fIn );
+        bIn.setIv("01234567");
+        bIn.setPassword("abcdefghijklmnop");
+        char buf[64];
+        bIn.read( buf, 64 );
+        fOut.write( buf, 64 );
+        sio << sio.nl << "All done." << sio.nl;
+    }
 
-	return 0;
+    return 0;
 }
 

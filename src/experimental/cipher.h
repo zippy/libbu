@@ -13,115 +13,115 @@
 
 namespace Bu
 {
-	template<int iBlockSize>
-	class Cipher : public Bu::Filter
-	{
-	public:
-		Cipher( Bu::Stream &rNext ) :
-			Bu::Filter( rNext ),
-			iReadBufFill( 0 ),
-			iReadBufPos( 0 ),
-			iWriteBufFill( 0 )
-		{
-		}
+    template<int iBlockSize>
+    class Cipher : public Bu::Filter
+    {
+    public:
+        Cipher( Bu::Stream &rNext ) :
+            Bu::Filter( rNext ),
+            iReadBufFill( 0 ),
+            iReadBufPos( 0 ),
+            iWriteBufFill( 0 )
+        {
+        }
 
-		virtual ~Cipher()
-		{
-		}
+        virtual ~Cipher()
+        {
+        }
 
-		virtual void start()
-		{
-		}
+        virtual void start()
+        {
+        }
 
-		virtual Bu::size stop()
-		{
-			flush();
-			return 0;
-		}
+        virtual Bu::size stop()
+        {
+            flush();
+            return 0;
+        }
 
-		virtual Bu::size read( void *pBuf, Bu::size iBytes )
-		{
-			Bu::size iRead = 0;
-			while( iRead < iBytes )
-			{
-				if( iReadBufFill < iBlockSize )
-				{
-					int iR = rNext.read(
-						aReadBuf+iReadBufFill,
-						iBlockSize-iReadBufFill
-						);
-					if( iR == 0 )
-						return iRead;
+        virtual Bu::size read( void *pBuf, Bu::size iBytes )
+        {
+            Bu::size iRead = 0;
+            while( iRead < iBytes )
+            {
+                if( iReadBufFill < iBlockSize )
+                {
+                    int iR = rNext.read(
+                        aReadBuf+iReadBufFill,
+                        iBlockSize-iReadBufFill
+                        );
+                    if( iR == 0 )
+                        return iRead;
 
-					iReadBufFill += iR;
+                    iReadBufFill += iR;
 
-					if( iReadBufFill == iBlockSize )
-						decipher( aReadBuf );
-				}
+                    if( iReadBufFill == iBlockSize )
+                        decipher( aReadBuf );
+                }
 
-				if( iReadBufFill == iBlockSize )
-				{
-					int iCpy = Bu::buMin( (int)(iBytes-iRead), iBlockSize-iReadBufPos );
-					memcpy( ((char *)pBuf)+iRead, aReadBuf+iReadBufPos, iCpy );
-					iRead += iCpy;
-					iReadBufPos += iCpy;
-					if( iReadBufPos == iBlockSize )
-					{
-						iReadBufPos = iReadBufFill = 0;
-					}
-				}
-			}
+                if( iReadBufFill == iBlockSize )
+                {
+                    int iCpy = Bu::buMin( (int)(iBytes-iRead), iBlockSize-iReadBufPos );
+                    memcpy( ((char *)pBuf)+iRead, aReadBuf+iReadBufPos, iCpy );
+                    iRead += iCpy;
+                    iReadBufPos += iCpy;
+                    if( iReadBufPos == iBlockSize )
+                    {
+                        iReadBufPos = iReadBufFill = 0;
+                    }
+                }
+            }
 
-			return iRead;
-		}
+            return iRead;
+        }
 
-		virtual Bu::size write( const void *pBuf, Bu::size iBytes )
-		{
-			Bu::size iPos = 0;
-			
-			while( iPos < iBytes )
-			{
-				int iLeft = Bu::buMin((int)(iBytes-iPos),iBlockSize-iWriteBufFill);
-				memcpy( aWriteBuf+iWriteBufFill, (char *)pBuf+iPos, iLeft );
-				iPos += iLeft;
-				iWriteBufFill += iLeft;
-				if( iWriteBufFill == iBlockSize )
-				{
-					encipher( aWriteBuf );
-					rNext.write( aWriteBuf, iBlockSize );
-					iWriteBufFill = 0;
-				}
-			}
+        virtual Bu::size write( const void *pBuf, Bu::size iBytes )
+        {
+            Bu::size iPos = 0;
+            
+            while( iPos < iBytes )
+            {
+                int iLeft = Bu::buMin((int)(iBytes-iPos),iBlockSize-iWriteBufFill);
+                memcpy( aWriteBuf+iWriteBufFill, (char *)pBuf+iPos, iLeft );
+                iPos += iLeft;
+                iWriteBufFill += iLeft;
+                if( iWriteBufFill == iBlockSize )
+                {
+                    encipher( aWriteBuf );
+                    rNext.write( aWriteBuf, iBlockSize );
+                    iWriteBufFill = 0;
+                }
+            }
 
-			return iPos;
-		}
+            return iPos;
+        }
 
-		virtual void flush()
-		{
-			if( iWriteBufFill > 0 && iWriteBufFill < iBlockSize )
-			{
-				memset( aWriteBuf+iWriteBufFill, 0, iBlockSize-iWriteBufFill );
-				encipher( aWriteBuf );
-				rNext.write( aWriteBuf, iBlockSize );
-				iWriteBufFill = 0;
-			}
-			rNext.flush();
-		}
+        virtual void flush()
+        {
+            if( iWriteBufFill > 0 && iWriteBufFill < iBlockSize )
+            {
+                memset( aWriteBuf+iWriteBufFill, 0, iBlockSize-iWriteBufFill );
+                encipher( aWriteBuf );
+                rNext.write( aWriteBuf, iBlockSize );
+                iWriteBufFill = 0;
+            }
+            rNext.flush();
+        }
 
-		using Bu::Stream::read;
-		using Bu::Stream::write;
+        using Bu::Stream::read;
+        using Bu::Stream::write;
 
-	protected:
-		virtual void encipher( void *pData )=0;
-		virtual void decipher( void *pData )=0;
+    protected:
+        virtual void encipher( void *pData )=0;
+        virtual void decipher( void *pData )=0;
 
-	private:
-		char aReadBuf[iBlockSize];
-		char aWriteBuf[iBlockSize];
-		int iReadBufFill;
-		int iReadBufPos;
-		int iWriteBufFill;
-	};
+    private:
+        char aReadBuf[iBlockSize];
+        char aWriteBuf[iBlockSize];
+        int iReadBufFill;
+        int iReadBufPos;
+        int iWriteBufFill;
+    };
 };
 
 #endif

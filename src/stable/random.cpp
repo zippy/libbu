@@ -9,39 +9,39 @@
 #include "bu/randombasic.h"
 
 Bu::Random::Random() :
-	pGen( NULL )
+    pGen( NULL )
 {
-	pGen = new RandomBasic();
+    pGen = new RandomBasic();
 }
 
 Bu::Random::~Random()
 {
-	delete pGen;
-	pGen = NULL;
+    delete pGen;
+    pGen = NULL;
 }
 
 void Bu::Random::seed( int32_t iSeed )
 {
-	getInstance().pGen->seed( iSeed );
+    getInstance().pGen->seed( iSeed );
 }
 
 int32_t Bu::Random::rand()
 {
-	return getInstance().pGen->rand();
+    return getInstance().pGen->rand();
 }
 
 int32_t Bu::Random::rand( int32_t iMax )
 {
-	return getInstance().pGen->rand( iMax );
+    return getInstance().pGen->rand( iMax );
 }
 
 int32_t Bu::Random::rand( int32_t iMin, int32_t iMax )
 {
-	return getInstance().pGen->rand( iMin, iMax );
+    return getInstance().pGen->rand( iMin, iMax );
 }
 
 double Bu::Random::randNorm()
 {
-	return getInstance().pGen->randNorm();
+    return getInstance().pGen->randNorm();
 }
 

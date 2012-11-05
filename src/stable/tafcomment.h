@@ -13,24 +13,24 @@
 
 namespace Bu
 {
-	/**
-	 *
-	 *@ingroup Taf
-	 */
-	class TafComment : public TafNode
-	{
-	public:
-		TafComment( const Bu::TafComment &rSrc );
-		TafComment( const Bu::String &sText, bool bEOL=false );
-		virtual ~TafComment();
+    /**
+     *
+     *@ingroup Taf
+     */
+    class TafComment : public TafNode
+    {
+    public:
+        TafComment( const Bu::TafComment &rSrc );
+        TafComment( const Bu::String &sText, bool bEOL=false );
+        virtual ~TafComment();
 
-		const Bu::String &getText() const;
-		bool isEOLStyle() const;
+        const Bu::String &getText() const;
+        bool isEOLStyle() const;
 
-	private:
-		Bu::String sText;
-		bool bEOL;
-	};
+    private:
+        Bu::String sText;
+        bool bEOL;
+    };
 }
 
 #endif

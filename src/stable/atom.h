@@ -15,133 +15,133 @@
 
 namespace Bu
 {
-	/**
-	 *
-	 *@ingroup Containers
-	 */
-	template <typename t, typename talloc=std::allocator<t> >
-	class Atom
-	{
-	private:
-		typedef struct Atom<t, talloc> MyType;
+    /**
+     *
+     *@ingroup Containers
+     */
+    template <typename t, typename talloc=std::allocator<t> >
+    class Atom
+    {
+    private:
+        typedef struct Atom<t, talloc> MyType;
 
-	public:
-		Atom() :
-			pData( NULL )
-		{
-		}
+    public:
+        Atom() :
+            pData( NULL )
+        {
+        }
 
-		Atom( const MyType &oth ) :
-			pData( NULL )
-		{
-			if( oth.pData )
-				set( *oth.pData );
-		}
+        Atom( const MyType &oth ) :
+            pData( NULL )
+        {
+            if( oth.pData )
+                set( *oth.pData );
+        }
 
-		Atom( const t &oth ) :
-			pData( NULL )
-		{
-			set( oth );
-		}
+        Atom( const t &oth ) :
+            pData( NULL )
+        {
+            set( oth );
+        }
 
-		virtual ~Atom()
-		{
-			clear();
-		}
+        virtual ~Atom()
+        {
+            clear();
+        }
 
-		bool has() const
-		{
-			return (pData != NULL);
-		}
+        bool has() const
+        {
+            return (pData != NULL);
+        }
 
-		void set( const t &val )
-		{
-			clear();
-			pData = ta.allocate( 1 );
-			ta.construct( pData, val );
-		}
+        void set( const t &val )
+        {
+            clear();
+            pData = ta.allocate( 1 );
+            ta.construct( pData, val );
+        }
 
-		t &get()
-		{
-			if( !pData )
-				throw Bu::ExceptionBase("Not set");
-			return *pData;
-		}
+        t &get()
+        {
+            if( !pData )
+                throw Bu::ExceptionBase("Not set");
+            return *pData;
+        }
 
-		const t &get() const
-		{
-			if( !pData )
-				throw Bu::ExceptionBase("Not set");
-			return *pData;
-		}
+        const t &get() const
+        {
+            if( !pData )
+                throw Bu::ExceptionBase("Not set");
+            return *pData;
+        }
 
-		void clear()
-		{
-			if( pData )
-			{
-				ta.destroy( pData );
-				ta.deallocate( pData, 1 );
-				pData = NULL;
-			}
-		}
+        void clear()
+        {
+            if( pData )
+            {
+                ta.destroy( pData );
+                ta.deallocate( pData, 1 );
+                pData = NULL;
+            }
+        }
 
-		operator const t &() const
-		{
-			if( !pData )
-				throw Bu::ExceptionBase("Not set");
-			return *pData;
-		}
-		
-		operator t &()
-		{
-			if( !pData )
-				throw Bu::ExceptionBase("Not set");
-			return *pData;
-		}
+        operator const t &() const
+        {
+            if( !pData )
+                throw Bu::ExceptionBase("Not set");
+            return *pData;
+        }
+        
+        operator t &()
+        {
+            if( !pData )
+                throw Bu::ExceptionBase("Not set");
+            return *pData;
+        }
 
-		MyType &operator =( const t &oth )
-		{
-			set( oth );
+        MyType &operator =( const t &oth )
+        {
+            set( oth );
 
-			return *this;
-		}
-		
-		MyType &operator =( const MyType &oth )
-		{
-			if( oth.pData )
-				set( *oth.pData );
+            return *this;
+        }
+        
+        MyType &operator =( const MyType &oth )
+        {
+            if( oth.pData )
+                set( *oth.pData );
 
-			return *this;
-		}
-		
-		bool operator ==( const MyType &oth )
-		{
-			return (*pData) == (*oth.pData);
-		}
+            return *this;
+        }
+        
+        bool operator ==( const MyType &oth )
+        {
+            return (*pData) == (*oth.pData);
+        }
 
-		bool operator ==( const t &oth )
-		{
-			return (*pData) == oth;
-		}
+        bool operator ==( const t &oth )
+        {
+            return (*pData) == oth;
+        }
 
-		t *operator ->()
-		{
-			if( !pData )
-				throw Bu::ExceptionBase("Not set");
-			return pData;
-		}
+        t *operator ->()
+        {
+            if( !pData )
+                throw Bu::ExceptionBase("Not set");
+            return pData;
+        }
 
-		t &operator *()
-		{
-			if( !pData )
-				throw Bu::ExceptionBase("Not set");
-			return *pData;
-		}
+        t &operator *()
+        {
+            if( !pData )
+                throw Bu::ExceptionBase("Not set");
+            return *pData;
+        }
 
-	private:
-		t *pData;
-		talloc ta;
-	};
+    private:
+        t *pData;
+        talloc ta;
+    };
 }
 
 #endif

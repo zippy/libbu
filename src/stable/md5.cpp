@@ -19,7 +19,7 @@
 
 Bu::Md5::Md5()
 {
-	reset();
+    reset();
 }
 
 Bu::Md5::~Md5()
@@ -28,15 +28,15 @@ Bu::Md5::~Md5()
 
 void Bu::Md5::reset()
 {
-	// These are the magic seed numbers...
+    // These are the magic seed numbers...
 
-	sum[0] = 0x67452301U;
-	sum[1] = 0xEFCDAB89U;
-	sum[2] = 0x98BADCFEU;
-	sum[3] = 0x10325476U;
+    sum[0] = 0x67452301U;
+    sum[1] = 0xEFCDAB89U;
+    sum[2] = 0x98BADCFEU;
+    sum[3] = 0x10325476U;
 
-	uBits[0] = 0;
-	uBits[1] = 0;
+    uBits[0] = 0;
+    uBits[1] = 0;
 }
 
 void Bu::Md5::setSalt( const Bu::String & /*sSalt*/ )
@@ -45,102 +45,102 @@ void Bu::Md5::setSalt( const Bu::String & /*sSalt*/ )
 
 void Bu::Md5::addData( const void *sVData, int iSize )
 {
-	const char *sData = (const char *)sVData;
-	uint32_t t;
+    const char *sData = (const char *)sVData;
+    uint32_t t;
 
-	t = uBits[0];
-	if( (uBits[0] = t + ((uint32_t)iSize << 3)) < t )
-		uBits[1]++;
-	uBits[1] += iSize >> 29;
+    t = uBits[0];
+    if( (uBits[0] = t + ((uint32_t)iSize << 3)) < t )
+        uBits[1]++;
+    uBits[1] += iSize >> 29;
 
-	t = (t >> 3) & 0x3f;	/* How many bytes we have buffered */
+    t = (t >> 3) & 0x3f;    /* How many bytes we have buffered */
 
-	/* Handle any leading odd-sized chunks */
-	if( t )
-	{
-		unsigned char *p = (unsigned char *) inbuf + t;
+    /* Handle any leading odd-sized chunks */
+    if( t )
+    {
+        unsigned char *p = (unsigned char *) inbuf + t;
 
-		t = 64 - t;
-		if( (uint32_t)iSize < t ) {
-			memcpy( p, sData, iSize );
-			return;
-		}
-		memcpy( p, sData, t );
-		toLittleEndian( inbuf, 16 );
-		compBlock( sum, (uint32_t *)inbuf );
-		sData += t;
-		iSize -= t;
-	}
+        t = 64 - t;
+        if( (uint32_t)iSize < t ) {
+            memcpy( p, sData, iSize );
+            return;
+        }
+        memcpy( p, sData, t );
+        toLittleEndian( inbuf, 16 );
+        compBlock( sum, (uint32_t *)inbuf );
+        sData += t;
+        iSize -= t;
+    }
 
-	/* Process data in 64-byte chunks */
-	while( iSize >= 64 )
-	{
-		memcpy( inbuf, sData, 64 );
-		toLittleEndian( inbuf, 16 );
-		compBlock( sum, (uint32_t *)inbuf );
-		sData += 64;
-		iSize -= 64;
-	}
+    /* Process data in 64-byte chunks */
+    while( iSize >= 64 )
+    {
+        memcpy( inbuf, sData, 64 );
+        toLittleEndian( inbuf, 16 );
+        compBlock( sum, (uint32_t *)inbuf );
+        sData += 64;
+        iSize -= 64;
+    }
 
-	/* Handle any remaining bytes of data. */
-	memcpy( inbuf, sData, iSize );
+    /* Handle any remaining bytes of data. */
+    memcpy( inbuf, sData, iSize );
 }
 
 Bu::String Bu::Md5::getResult()
 {
-	uint32_t lsum[4];
-	compCap( lsum );
-	return Bu::String( (const char *)lsum, 4*4 );
+    uint32_t lsum[4];
+    compCap( lsum );
+    return Bu::String( (const char *)lsum, 4*4 );
 }
 
 void Bu::Md5::writeResult( Bu::Stream &sOut )
 {
-	uint32_t lsum[4];
-	compCap( lsum );
-	sOut.write( lsum, 4*4 );
+    uint32_t lsum[4];
+    compCap( lsum );
+    sOut.write( lsum, 4*4 );
 }
 
 void Bu::Md5::compCap( uint32_t *sumout )
 {
-	uint8_t tmpbuf[64];
-	memcpy( sumout, sum, 4*4 );
-	memcpy( tmpbuf, inbuf, 64 );
+    uint8_t tmpbuf[64];
+    memcpy( sumout, sum, 4*4 );
+    memcpy( tmpbuf, inbuf, 64 );
 
-	uint32_t count;
-	uint8_t *p;
+    uint32_t count;
+    uint8_t *p;
 
-	/* Compute number of bytes mod 64 */
-	count = (uBits[0] >> 3) & 0x3F;
+    /* Compute number of bytes mod 64 */
+    count = (uBits[0] >> 3) & 0x3F;
 
-	/* Set the first char of padding to 0x80.  This is safe since there is
-	   always at least one byte free */
-	p = tmpbuf + count;
-	*p++ = 0x80;
+    /* Set the first char of padding to 0x80.  This is safe since there is
+       always at least one byte free */
+    p = tmpbuf + count;
+    *p++ = 0x80;
 
-	/* Bytes of padding needed to make 64 bytes */
-	count = 64 - 1 - count;
+    /* Bytes of padding needed to make 64 bytes */
+    count = 64 - 1 - count;
 
-	/* Pad out to 56 mod 64 */
-	if (count < 8) {
-		/* Two lots of padding:  Pad the first block to 64 bytes */
-		memset( p, 0, count );
-		toLittleEndian( tmpbuf, 16 );
-		compBlock( sumout, (uint32_t *)tmpbuf );
+    /* Pad out to 56 mod 64 */
+    if (count < 8) {
+        /* Two lots of padding:  Pad the first block to 64 bytes */
+        memset( p, 0, count );
+        toLittleEndian( tmpbuf, 16 );
+        compBlock( sumout, (uint32_t *)tmpbuf );
 
-		/* Now fill the next block with 56 bytes */
-		memset( tmpbuf, 0, 56);
-	} else {
-		/* Pad block to 56 bytes */
-		memset( p, 0, count - 8);
-	}
-	toLittleEndian( tmpbuf, 14 );
+        /* Now fill the next block with 56 bytes */
+        memset( tmpbuf, 0, 56);
+    } else {
+        /* Pad block to 56 bytes */
+        memset( p, 0, count - 8);
+    }
+    toLittleEndian( tmpbuf, 14 );
 
-	/* Append length in bits and transform */
-	((uint32_t *) tmpbuf)[14] = uBits[0];
-	((uint32_t *) tmpbuf)[15] = uBits[1];
+    /* Append length in bits and transform */
+    ((uint32_t *) tmpbuf)[14] = uBits[0];
+    ((uint32_t *) tmpbuf)[15] = uBits[1];
 
-	compBlock( sumout, (uint32_t *)tmpbuf );
-	toLittleEndian((unsigned char *)sumout, 4);
+    compBlock( sumout, (uint32_t *)tmpbuf );
+    toLittleEndian((unsigned char *)sumout, 4);
 }
 
 #define F1(x, y, z) (z ^ (x & (y ^ z)))
@@ -150,15 +150,15 @@ void Bu::Md5::compCap( uint32_t *sumout )
 
 /* This is the central step in the MD5 algorithm. */
 #define MD5STEP(f, w, x, y, z, data, s) \
-	( w += f(x, y, z) + data,  w = w<<s | w>>(32-s),  w += x )
+    ( w += f(x, y, z) + data,  w = w<<s | w>>(32-s),  w += x )
 
 void Bu::Md5::compBlock( uint32_t *lsum, uint32_t *x )
 {
-	register uint32_t a, b, c, d;
-	a = lsum[0];
-	b = lsum[1];
-	c = lsum[2];
-	d = lsum[3];
+    register uint32_t a, b, c, d;
+    a = lsum[0];
+    b = lsum[1];
+    c = lsum[2];
+    d = lsum[3];
 
     MD5STEP(F1, a, b, c, d, x[0] + 0xd76aa478, 7);
     MD5STEP(F1, d, a, b, c, x[1] + 0xe8c7b756, 12);
@@ -228,19 +228,19 @@ void Bu::Md5::compBlock( uint32_t *lsum, uint32_t *x )
     MD5STEP(F4, c, d, a, b, x[2] + 0x2ad7d2bb, 15);
     MD5STEP(F4, b, c, d, a, x[9] + 0xeb86d391, 21);
 
-	lsum[0] += a;
-	lsum[1] += b;
-	lsum[2] += c;
-	lsum[3] += d;
+    lsum[0] += a;
+    lsum[1] += b;
+    lsum[2] += c;
+    lsum[3] += d;
 }
 
 void Bu::Md5::_toLittleEndian( uint8_t *buf, uint32_t count )
 {
-	uint32_t t;
-	do {
-		t = (uint32_t) ((unsigned) buf[3] << 8 | buf[2]) << 16 |
-			((unsigned) buf[1] << 8 | buf[0]);
-		*(uint32_t *) buf = t;
-		buf += 4;
-	} while( --count );
+    uint32_t t;
+    do {
+        t = (uint32_t) ((unsigned) buf[3] << 8 | buf[2]) << 16 |
+            ((unsigned) buf[1] << 8 | buf[0]);
+        *(uint32_t *) buf = t;
+        buf += 4;
+    } while( --count );
 }

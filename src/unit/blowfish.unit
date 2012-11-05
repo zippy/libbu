@@ -50,29 +50,29 @@ static const char *testdat[34][3] ={
 
 suite Blowfish
 {
-	test standard
-	{
-		for( int j = 0; j < 34; j++ )
-		{
-			Bu::MemBuf mb;
-			Bu::BlowfishEcb bf( mb );
-			bf.setPassword( Bu::decodeStr<Bu::Hex>( testdat[j][0] ) );
-			bf.write( Bu::decodeStr<Bu::Hex>( testdat[j][1] ) );
-			unitTest(
-				mb.getString() == Bu::decodeStr<Bu::Hex>( testdat[j][2] )
-				);
+    test standard
+    {
+        for( int j = 0; j < 34; j++ )
+        {
+            Bu::MemBuf mb;
+            Bu::BlowfishEcb bf( mb );
+            bf.setPassword( Bu::decodeStr<Bu::Hex>( testdat[j][0] ) );
+            bf.write( Bu::decodeStr<Bu::Hex>( testdat[j][1] ) );
+            unitTest(
+                mb.getString() == Bu::decodeStr<Bu::Hex>( testdat[j][2] )
+                );
 
-			mb.setPos( 0 );
-			Bu::BlowfishEcb bf2( mb );
-			bf2.setPassword( Bu::decodeStr<Bu::Hex>( testdat[j][0] ) );
-			char buf[8];
-			bf2.read( buf, 8 );
+            mb.setPos( 0 );
+            Bu::BlowfishEcb bf2( mb );
+            bf2.setPassword( Bu::decodeStr<Bu::Hex>( testdat[j][0] ) );
+            char buf[8];
+            bf2.read( buf, 8 );
 
-			unitTest(
-				Bu::String(testdat[j][1]) ==
-					Bu::encodeStr<Bu::Hex>(Bu::String(buf,8),true)
-				);
-		}
-	}
+            unitTest(
+                Bu::String(testdat[j][1]) ==
+                    Bu::encodeStr<Bu::Hex>(Bu::String(buf,8),true)
+                );
+        }
+    }
 }
 

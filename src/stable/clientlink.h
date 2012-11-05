@@ -12,14 +12,14 @@
 
 namespace Bu
 {
-	class ClientLink
-	{
-	public:
-		ClientLink();
-		virtual ~ClientLink();
+    class ClientLink
+    {
+    public:
+        ClientLink();
+        virtual ~ClientLink();
 
-		virtual void sendMessage( const Bu::String &sMsg )=0;
-	};
+        virtual void sendMessage( const Bu::String &sMsg )=0;
+    };
 };
 
 #endif

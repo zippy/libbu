@@ -19,11 +19,11 @@
 namespace Bu
 {
 #ifdef USE_64BIT_IO
-	typedef int64_t		size;
-	typedef uint64_t	usize;
+    typedef int64_t     size;
+    typedef uint64_t    usize;
 #else
-	typedef int32_t		size;
-	typedef uint32_t	usize;
+    typedef int32_t     size;
+    typedef uint32_t    usize;
 #endif
 };
 

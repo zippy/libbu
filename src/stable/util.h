@@ -25,158 +25,158 @@
 
 namespace Bu
 {
-	/**
-	 * Swap the value of two variables, uses references, so it's pretty safe.
-	 * Objects passed in must support a basic assignemnt operator (=);
-	 *@param a Variable to recieve the value of parameter b
-	 *@param b Variable to recieve the value of parameter a
-	 */
-	template<typename item>
-	void swap( item &a, item &b )
-	{
-		item tmp = a;
-		a = b;
-		b = tmp;
-	}
+    /**
+     * Swap the value of two variables, uses references, so it's pretty safe.
+     * Objects passed in must support a basic assignemnt operator (=);
+     *@param a Variable to recieve the value of parameter b
+     *@param b Variable to recieve the value of parameter a
+     */
+    template<typename item>
+    void swap( item &a, item &b )
+    {
+        item tmp = a;
+        a = b;
+        b = tmp;
+    }
 
-	/**
-	 * Finds the lesser of the two objects, objects passed in must be
-	 * less-than-comparable.
-	 *@param a A value to test.
-	 *@param b Another value to test.
-	 *@returns A reference to the lesser of a or b.
-	 */
-	template<typename item>
-	const item &buMin( const item &a, const item &b )
-	{
-		return a<b?a:b;
-	}
-	
-	/**
-	 * Finds the lesser of the two objects, objects passed in must be
-	 * less-than-comparable.
-	 *@param a A value to test.
-	 *@param b Another value to test.
-	 *@returns A reference to the lesser of a or b.
-	 */
-	template<typename item>
-	item &buMin( item &a, item &b )
-	{
-		return a<b?a:b;
-	}
-	
-	/**
-	 * Finds the greater of the two objects, objects passed in must be
-	 * less-than-comparable.
-	 *@param a A value to test.
-	 *@param b Another value to test.
-	 *@returns A reference to the greater of a or b.
-	 */
-	template<typename item>
-	const item &buMax( const item &a, const item &b )
-	{
-		return b<a?a:b;
-	}
-	
-	/**
-	 * Finds the greater of the two objects, objects passed in must be
-	 * less-than-comparable.
-	 *@param a A value to test.
-	 *@param b Another value to test.
-	 *@returns A reference to the greater of a or b.
-	 */
-	template<typename item>
-	item &buMax( item &a, item &b )
-	{
-		return b<a?a:b;
-	}
+    /**
+     * Finds the lesser of the two objects, objects passed in must be
+     * less-than-comparable.
+     *@param a A value to test.
+     *@param b Another value to test.
+     *@returns A reference to the lesser of a or b.
+     */
+    template<typename item>
+    const item &buMin( const item &a, const item &b )
+    {
+        return a<b?a:b;
+    }
+    
+    /**
+     * Finds the lesser of the two objects, objects passed in must be
+     * less-than-comparable.
+     *@param a A value to test.
+     *@param b Another value to test.
+     *@returns A reference to the lesser of a or b.
+     */
+    template<typename item>
+    item &buMin( item &a, item &b )
+    {
+        return a<b?a:b;
+    }
+    
+    /**
+     * Finds the greater of the two objects, objects passed in must be
+     * less-than-comparable.
+     *@param a A value to test.
+     *@param b Another value to test.
+     *@returns A reference to the greater of a or b.
+     */
+    template<typename item>
+    const item &buMax( const item &a, const item &b )
+    {
+        return b<a?a:b;
+    }
+    
+    /**
+     * Finds the greater of the two objects, objects passed in must be
+     * less-than-comparable.
+     *@param a A value to test.
+     *@param b Another value to test.
+     *@returns A reference to the greater of a or b.
+     */
+    template<typename item>
+    item &buMax( item &a, item &b )
+    {
+        return b<a?a:b;
+    }
 
-	/**
-	 * Given three objects this finds the one between the other two.
-	 *@param a A value to test.
-	 *@param b Another value to test.
-	 *@param c Yet another value to test.
-	 *@returns A reference to the mid-value of a, b, and c.
-	 */
-	template<typename item>
-	const item &buMid( const item &a, const item &b, const item &c )
-	{
-		return buMin( buMax( a, b ), c );
-	}
-		
-	/**
-	 * Given three objects this finds the one between the other two.
-	 *@param a A value to test.
-	 *@param b Another value to test.
-	 *@param c Yet another value to test.
-	 *@returns A reference to the mid-value of a, b, and c.
-	 */
-	template<typename item>
-	item &buMid( item &a, item &b, item &c )
-	{
-		return buMin( buMax( a, b ), c );
-	}
-	
-	//
-	//  Basic comparison functors
-	//
-	/**
-	 * Simple less-than comparison functor.  Objects being used should be
-	 * less-than-comparable.
-	 */
-	template<typename item>
-	struct __basicLTCmp
-	{
-		bool operator()( const item &a, const item &b )
-		{
-			return a < b;
-		}
-	};
-	
-	/**
-	 * Simple greater-than comparison functor.  Objects being used should be
-	 * greater-than-comparable.
-	 */
-	template<typename item>
-	struct __basicGTCmp
-	{
-		bool operator()( const item &a, const item &b )
-		{
-			return a > b;
-		}
-	};
+    /**
+     * Given three objects this finds the one between the other two.
+     *@param a A value to test.
+     *@param b Another value to test.
+     *@param c Yet another value to test.
+     *@returns A reference to the mid-value of a, b, and c.
+     */
+    template<typename item>
+    const item &buMid( const item &a, const item &b, const item &c )
+    {
+        return buMin( buMax( a, b ), c );
+    }
+        
+    /**
+     * Given three objects this finds the one between the other two.
+     *@param a A value to test.
+     *@param b Another value to test.
+     *@param c Yet another value to test.
+     *@returns A reference to the mid-value of a, b, and c.
+     */
+    template<typename item>
+    item &buMid( item &a, item &b, item &c )
+    {
+        return buMin( buMax( a, b ), c );
+    }
+    
+    //
+    //  Basic comparison functors
+    //
+    /**
+     * Simple less-than comparison functor.  Objects being used should be
+     * less-than-comparable.
+     */
+    template<typename item>
+    struct __basicLTCmp
+    {
+        bool operator()( const item &a, const item &b )
+        {
+            return a < b;
+        }
+    };
+    
+    /**
+     * Simple greater-than comparison functor.  Objects being used should be
+     * greater-than-comparable.
+     */
+    template<typename item>
+    struct __basicGTCmp
+    {
+        bool operator()( const item &a, const item &b )
+        {
+            return a > b;
+        }
+    };
 
-	/**
-	 * As __basicLTCmp but dereferences the passed in pointers before comparing.
-	 */
-	template<typename item>
-	struct __basicPtrLTCmp
-	{
-		bool operator()( const item &a, const item &b )
-		{
-			return *a < *b;
-		}
-	};
-	
-	/**
-	 * As __basicGTCmp but dereferences the passed in pointers before comparing.
-	 */
-	template<typename item>
-	struct __basicPtrGTCmp
-	{
-		bool operator()( const item &a, const item &b )
-		{
-			return *a > *b;
-		}
-	};
+    /**
+     * As __basicLTCmp but dereferences the passed in pointers before comparing.
+     */
+    template<typename item>
+    struct __basicPtrLTCmp
+    {
+        bool operator()( const item &a, const item &b )
+        {
+            return *a < *b;
+        }
+    };
+    
+    /**
+     * As __basicGTCmp but dereferences the passed in pointers before comparing.
+     */
+    template<typename item>
+    struct __basicPtrGTCmp
+    {
+        bool operator()( const item &a, const item &b )
+        {
+            return *a > *b;
+        }
+    };
 
-	/**
-	 * Get the number of days in the month in the gregorian calendar, taking
-	 * leap years into account.
-	 */
-	int getDaysInMonth( int iMonth, int iYear );
+    /**
+     * Get the number of days in the month in the gregorian calendar, taking
+     * leap years into account.
+     */
+    int getDaysInMonth( int iMonth, int iYear );
 
-	void memcpy( void *pDest, const void *pSrc, size_t iBytes );
+    void memcpy( void *pDest, const void *pSrc, size_t iBytes );
 };
 
 #endif

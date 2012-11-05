@@ -3,19 +3,19 @@
 
 namespace Bu
 {
-	class Mutex;
-	class MutexLocker
-	{
-	public:
-		MutexLocker( Mutex &mu );
-		virtual ~MutexLocker();
+    class Mutex;
+    class MutexLocker
+    {
+    public:
+        MutexLocker( Mutex &mu );
+        virtual ~MutexLocker();
 
-		void unlock();
-		void relock();
+        void unlock();
+        void relock();
 
-	private:
-		Mutex &mu;
-	};
+    private:
+        Mutex &mu;
+    };
 };
 
 #endif

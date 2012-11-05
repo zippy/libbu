@@ -12,11 +12,11 @@ using namespace Bu;
 
 int main()
 {
-	Uuid i = Uuid::gen();
+    Uuid i = Uuid::gen();
 
-	sio << i.toString() << sio.nl;
-	sio << "Version: " << i.getVersion() << sio.nl;
+    sio << i.toString() << sio.nl;
+    sio << "Version: " << i.getVersion() << sio.nl;
 
-	return 0;
+    return 0;
 }
 

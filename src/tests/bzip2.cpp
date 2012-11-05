@@ -10,27 +10,27 @@
 
 int main( int argc, char *argv[] )
 {
-	if( argc < 3 )
-	{
-		printf("usage:  %s <in> <out>\n", argv[0] );
-		return -1;
-	}
+    if( argc < 3 )
+    {
+        printf("usage:  %s <in> <out>\n", argv[0] );
+        return -1;
+    }
 
-	char buf[1024];
-	size_t nRead;
+    char buf[1024];
+    size_t nRead;
 
-	Bu::File fin( argv[1], Bu::File::Read );
-	
-	Bu::File f( argv[2], Bu::File::WriteNew );
-	Bu::BZip2 bz2( f );
+    Bu::File fin( argv[1], Bu::File::Read );
+    
+    Bu::File f( argv[2], Bu::File::WriteNew );
+    Bu::BZip2 bz2( f );
 
-	for(;;)
-	{
-		nRead = fin.read( buf, 1024 );
-		if( nRead > 0 )
-			bz2.write( buf, nRead );
-		if( fin.isEos() )
-			break;
-	}
+    for(;;)
+    {
+        nRead = fin.read( buf, 1024 );
+        if( nRead > 0 )
+            bz2.write( buf, nRead );
+        if( fin.isEos() )
+            break;
+    }
 }
 

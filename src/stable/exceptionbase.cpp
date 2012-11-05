@@ -11,83 +11,83 @@
 #include <stdio.h>
 
 Bu::ExceptionBase::ExceptionBase( const char *lpFormat, ... ) throw() :
-	nErrorCode( 0 ),
-	sWhat( NULL )
+    nErrorCode( 0 ),
+    sWhat( NULL )
 {
-	va_list ap;
+    va_list ap;
 
-	va_start(ap, lpFormat);
-	setWhat( lpFormat, ap );
-	va_end(ap);
+    va_start(ap, lpFormat);
+    setWhat( lpFormat, ap );
+    va_end(ap);
 }
 
 Bu::ExceptionBase::ExceptionBase( int nCode, const char *lpFormat, ... ) throw() :
-	nErrorCode( nCode ),
-	sWhat( NULL )
+    nErrorCode( nCode ),
+    sWhat( NULL )
 {
-	va_list ap;
+    va_list ap;
 
-	va_start(ap, lpFormat);
-	setWhat( lpFormat, ap );
-	va_end(ap);
+    va_start(ap, lpFormat);
+    setWhat( lpFormat, ap );
+    va_end(ap);
 }
 
 Bu::ExceptionBase::ExceptionBase( int nCode ) throw() :
-	nErrorCode( nCode ),
-	sWhat( NULL )
+    nErrorCode( nCode ),
+    sWhat( NULL )
 {
 }
 
 Bu::ExceptionBase::ExceptionBase( const ExceptionBase &e ) throw () :
-	std::exception( e ),
-	nErrorCode( e.nErrorCode ),
-	sWhat( NULL )
+    std::exception( e ),
+    nErrorCode( e.nErrorCode ),
+    sWhat( NULL )
 {
-	setWhat( e.sWhat );
+    setWhat( e.sWhat );
 }
 
 Bu::ExceptionBase::~ExceptionBase() throw()
 {
-	delete[] sWhat;
-	sWhat = NULL;
+    delete[] sWhat;
+    sWhat = NULL;
 }
 
 void Bu::ExceptionBase::setWhat( const char *lpFormat, va_list &vargs )
 {
-	if( sWhat ) delete[] sWhat;
-	int nSize;
+    if( sWhat ) delete[] sWhat;
+    int nSize;
 
-	va_list vargs2;
-	va_copy( vargs2, vargs );
-	nSize = vsnprintf( NULL, 0, lpFormat, vargs2 );
-	va_end( vargs2 );
-	sWhat = new char[nSize+1];
-	vsnprintf( sWhat, nSize+1, lpFormat, vargs );
+    va_list vargs2;
+    va_copy( vargs2, vargs );
+    nSize = vsnprintf( NULL, 0, lpFormat, vargs2 );
+    va_end( vargs2 );
+    sWhat = new char[nSize+1];
+    vsnprintf( sWhat, nSize+1, lpFormat, vargs );
 }
 
 void Bu::ExceptionBase::setWhat( const char *lpText )
 {
-	if( sWhat ) delete[] sWhat;
-	int nSize;
+    if( sWhat ) delete[] sWhat;
+    int nSize;
 
-	nSize = strlen( lpText );
-	sWhat = new char[nSize+1];
-	strcpy( sWhat, lpText );
+    nSize = strlen( lpText );
+    sWhat = new char[nSize+1];
+    strcpy( sWhat, lpText );
 }
 
 const char *Bu::ExceptionBase::what() const throw()
 {
-	return sWhat;
+    return sWhat;
 }
 
 int Bu::ExceptionBase::getErrorCode()
 {
-	return nErrorCode;
+    return nErrorCode;
 }
 
 Bu::UnsupportedException::UnsupportedException() throw() :
-	ExceptionBase( 0 )
+    ExceptionBase( 0 )
 {
-	setWhat("An unsupperted operation was attempted.");
+    setWhat("An unsupperted operation was attempted.");
 }
 

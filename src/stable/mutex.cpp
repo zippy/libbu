@@ -9,26 +9,26 @@
 
 Bu::Mutex::Mutex()
 {
-	pthread_mutex_init( &mutex, NULL );
+    pthread_mutex_init( &mutex, NULL );
 }
 
 Bu::Mutex::~Mutex()
 {
-	pthread_mutex_destroy( &mutex );
+    pthread_mutex_destroy( &mutex );
 }
 
 int Bu::Mutex::lock()
 {
-	return pthread_mutex_lock( &mutex );
+    return pthread_mutex_lock( &mutex );
 }
 
 int Bu::Mutex::unlock()
 {
-	return pthread_mutex_unlock( &mutex );
+    return pthread_mutex_unlock( &mutex );
 }
 
 int Bu::Mutex::trylock()
 {
-	return pthread_mutex_trylock( &mutex );
+    return pthread_mutex_trylock( &mutex );
 }
 
