@@ -312,8 +312,8 @@ target PKG_BASE + ".xz"
 
 rule "tarball"
 {
-    input matches("LICENSE", "Makefile", "*.cpp", "*.h", "*.conf", "*.bld",
-        "Doxyfile", "*.vim", "*.sh", "*.unit", "api", "version");
+    input matches("LICENSE", "*.md", "Makefile", "*.cpp", "*.h", "*.conf",
+        "*.bld", "Doxyfile", "*.vim", "*.sh", "*.unit", "api", "version");
     profile "build"
     {
         OUTDIR = OUTPUT.replace(".tar","");
