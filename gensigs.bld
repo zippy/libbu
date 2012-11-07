@@ -1,171 +1,171 @@
 function genSigs( outName )
 {
-	if exists( outName ) then
-	{
-		unlink( outName );
-	}
-	fOut = open(outName, "w");
-	fOut.write(
-		"/*\n"
-		" * Copyright (C) 2007-2012 Xagasoft, All rights reserved.\n"
-		" *\n"
-		" * This file is part of the libbu++ library and is released under the\n"
-		" * terms of the license contained in the file LICENSE.\n"
-		" */\n"
-		"\n"
-		"#ifndef BU_SIGNALS_H\n"
-		"#define BU_SIGNALS_H\n"
-		"\n"
-		"#include \"bu/util.h\"\n"
-		"#include \"bu/exceptionbase.h\"\n"
-		"\n"
-		"namespace Bu\n"
-		"{\n"
-		"	subExceptionDecl( SignalException );\n"
-		"\n"
-		);
+    if exists( outName ) then
+    {
+        unlink( outName );
+    }
+    fOut = open(outName, "w");
+    fOut.write(
+        "/*\n"
+        " * Copyright (C) 2007-2012 Xagasoft, All rights reserved.\n"
+        " *\n"
+        " * This file is part of the libbu++ library and is released under the\n"
+        " * terms of the license contained in the file LICENSE.\n"
+        " */\n"
+        "\n"
+        "#ifndef BU_SIGNALS_H\n"
+        "#define BU_SIGNALS_H\n"
+        "\n"
+        "#include \"bu/util.h\"\n"
+        "#include \"bu/exceptionbase.h\"\n"
+        "\n"
+        "namespace Bu\n"
+        "{\n"
+        "    subExceptionDecl( SignalException );\n"
+        "\n"
+        );
 
-	for i in range( 0, 10 ) do
-	{
-		templParams = "typename ret";
-		funcParams = "";
-		funcAnonParams = "";
-		templCallParams = "ret";
-		funcCallParams = "";
-		if i >= 1 then
-		{
-			for p in range( 1, i ) do
-			{
-				if p > 1 then
-				{
-					funcCallParams << ", ";
-					funcParams << ", ";
-					funcAnonParams << ", ";
-				}
-				templParams << ", typename p${p}t";
-				funcParams << "p${p}t p${p}";
-				funcAnonParams << "p${p}t";
-				templCallParams << ", p${p}t";
-				funcCallParams << "p${p}";
-			}
-		}
-		fOut.write(
-			"#ifndef BU_SIGNAL_PARAM_COUNT_${i}\n"
-			"#define BU_SIGNAL_PARAM_COUNT_${i}\n"
-			"	//\n"
-			"	// ${i} Parameter(s)\n"
-			"	//\n"
-			"	template<${templParams}>\n"
-			"	class _Slot${i}\n"
-			"	{\n"
-			"	public:\n"
-			"		_Slot${i}() { }\n"
-			"		virtual ~_Slot${i}() { }\n"
-			"		virtual ret operator()( ${funcParams} )=0;\n"
-			"		virtual _Slot${i}<${templCallParams}> *clone() const=0;\n"
-			"	};\n"
-			"	\n"
-			"	template<typename cls, ${templParams}>\n"
-			"	class __Slot${i} : public _Slot${i}<${templCallParams}>\n"
-			"	{\n"
-			"	public:\n"
-			"		__Slot${i}( cls *pCls, ret (cls::*pFnc)( ${funcAnonParams} ) ) :\n"
-			"			pCls( pCls ), pFnc( pFnc ) { }\n"
-			"		virtual ~__Slot${i}() { }\n"
-			"	\n"
-			"		virtual ret operator()( ${funcParams} )\n"
-			"		{\n"
-			"			return (pCls->*pFnc)( ${funcCallParams} );\n"
-			"		}\n"
-			"	\n"
-			"		virtual _Slot${i}<${templCallParams}> *clone() const\n"
-			"		{\n"
-			"			return new __Slot${i}<cls, ${templCallParams}>( pCls, pFnc );\n"
-			"		}\n"
-			"	\n"
-			"	private:\n"
-			"		cls *pCls;\n"
-			"		ret (cls::*pFnc)( ${funcAnonParams} );\n"
-			"	};\n"
-			"	\n"
-			"	template<${templParams}>\n"
-			"	class __Slot${i}F : public _Slot${i}<${templCallParams}>\n"
-			"	{\n"
-			"	public:\n"
-			"		__Slot${i}F( ret (*pFnc)( ${funcAnonParams} ) ) :\n"
-			"			pFnc( pFnc ) { }\n"
-			"		virtual ~__Slot${i}F() { }\n"
-			"	\n"
-			"		virtual ret operator()( ${funcParams} )\n"
-			"		{\n"
-			"			return (*pFnc)( ${funcCallParams} );\n"
-			"		}\n"
-			"	\n"
-			"		virtual _Slot${i}<${templCallParams}> *clone() const\n"
-			"		{\n"
-			"			return new __Slot${i}F<${templCallParams}>( pFnc );\n"
-			"		}\n"
-			"	\n"
-			"	private:\n"
-			"		ret (*pFnc)( ${funcAnonParams} );\n"
-			"	};\n"
-			"	\n"
-			"	template<${templParams}>\n"
-			"	class Signal${i}\n"
-			"	{\n"
-			"	public:\n"
-			"		Signal${i}() : pCb( NULL ) { }\n"
-			"		Signal${i}( _Slot${i}<${templCallParams}> *pCb ) : pCb( pCb ) { }\n"
-			"		Signal${i}( const Signal${i}<${templCallParams}> &rSrc ) :\n"
-			"			pCb( (rSrc.pCb)?(rSrc.pCb->clone()):(NULL) ) { }\n"
-			"		virtual ~Signal${i}() { delete pCb; pCb = NULL; }\n"
-			"	\n"
-			"		ret operator()( ${funcParams} )\n"
-			"		{\n"
-			"			if( !pCb ) throw SignalException(\"Uninitialized signal called.\");\n"
-			"			return (*pCb)( ${funcCallParams} );\n"
-			"		}\n"
-			"	\n"
-			"		bool isSet() const { return pCb != NULL; }\n"
-			"		operator bool() const { return isSet(); }\n"
-			"	\n"
-			"		Signal${i}<${templCallParams}> &operator=( const Signal${i}<${templCallParams}> &rhs )\n"
-			"		{\n"
-			"			pCb = rhs.pCb->clone();\n"
-			"			return *this;\n"
-			"		}\n"
-			"	\n"
-			"	private:\n"
-			"		_Slot${i}<${templCallParams}> *pCb;\n"
-			"	};\n"
-			"	\n"
-			"	template<typename cls, ${templParams}>\n"
-			"	Signal${i}<${templCallParams}> slot( cls *pCls, ret (cls::*pFnc)( ${funcAnonParams} ) )\n"
-			"	{\n"
-			"		if( !pCls || !pFnc ) throw SignalException(\"NULL pointer in slot().\");\n"
-			"		return Signal${i}<${templCallParams}>(\n"
-			"			new __Slot${i}<cls, ${templCallParams}>( pCls, pFnc )\n"
-			"			);\n"
-			"	}\n"
-			"	\n"
-			"	template<${templParams}>\n"
-			"	Signal${i}<${templCallParams}> slot( ret (*pFnc)( ${funcAnonParams} ) )\n"
-			"	{\n"
-			"		if( !pFnc ) throw SignalException(\"NULL pointer in slot().\");\n"
-			"		return Signal${i}<${templCallParams}>(\n"
-			"			new __Slot${i}F<${templCallParams}>( pFnc )\n"
-			"			);\n"
-			"	}\n"
-			"#endif  // BU_SIGNAL_PARAM_COUNT_${i}\n"
-			"\n"
-			);
-	}
+    for i in range( 0, 10 ) do
+    {
+        templParams = "typename ret";
+        funcParams = "";
+        funcAnonParams = "";
+        templCallParams = "ret";
+        funcCallParams = "";
+        if i >= 1 then
+        {
+            for p in range( 1, i ) do
+            {
+                if p > 1 then
+                {
+                    funcCallParams << ", ";
+                    funcParams << ", ";
+                    funcAnonParams << ", ";
+                }
+                templParams << ", typename p${p}t";
+                funcParams << "p${p}t p${p}";
+                funcAnonParams << "p${p}t";
+                templCallParams << ", p${p}t";
+                funcCallParams << "p${p}";
+            }
+        }
+        fOut.write(
+            "#ifndef BU_SIGNAL_PARAM_COUNT_${i}\n"
+            "#define BU_SIGNAL_PARAM_COUNT_${i}\n"
+            "    //\n"
+            "    // ${i} Parameter(s)\n"
+            "    //\n"
+            "    template<${templParams}>\n"
+            "    class _Slot${i}\n"
+            "    {\n"
+            "    public:\n"
+            "        _Slot${i}() { }\n"
+            "        virtual ~_Slot${i}() { }\n"
+            "        virtual ret operator()( ${funcParams} )=0;\n"
+            "        virtual _Slot${i}<${templCallParams}> *clone() const=0;\n"
+            "    };\n"
+            "    \n"
+            "    template<typename cls, ${templParams}>\n"
+            "    class __Slot${i} : public _Slot${i}<${templCallParams}>\n"
+            "    {\n"
+            "    public:\n"
+            "        __Slot${i}( cls *pCls, ret (cls::*pFnc)( ${funcAnonParams} ) ) :\n"
+            "            pCls( pCls ), pFnc( pFnc ) { }\n"
+            "        virtual ~__Slot${i}() { }\n"
+            "    \n"
+            "        virtual ret operator()( ${funcParams} )\n"
+            "        {\n"
+            "            return (pCls->*pFnc)( ${funcCallParams} );\n"
+            "        }\n"
+            "    \n"
+            "        virtual _Slot${i}<${templCallParams}> *clone() const\n"
+            "        {\n"
+            "            return new __Slot${i}<cls, ${templCallParams}>( pCls, pFnc );\n"
+            "        }\n"
+            "    \n"
+            "    private:\n"
+            "        cls *pCls;\n"
+            "        ret (cls::*pFnc)( ${funcAnonParams} );\n"
+            "    };\n"
+            "    \n"
+            "    template<${templParams}>\n"
+            "    class __Slot${i}F : public _Slot${i}<${templCallParams}>\n"
+            "    {\n"
+            "    public:\n"
+            "        __Slot${i}F( ret (*pFnc)( ${funcAnonParams} ) ) :\n"
+            "            pFnc( pFnc ) { }\n"
+            "        virtual ~__Slot${i}F() { }\n"
+            "    \n"
+            "        virtual ret operator()( ${funcParams} )\n"
+            "        {\n"
+            "            return (*pFnc)( ${funcCallParams} );\n"
+            "        }\n"
+            "    \n"
+            "        virtual _Slot${i}<${templCallParams}> *clone() const\n"
+            "        {\n"
+            "            return new __Slot${i}F<${templCallParams}>( pFnc );\n"
+            "        }\n"
+            "    \n"
+            "    private:\n"
+            "        ret (*pFnc)( ${funcAnonParams} );\n"
+            "    };\n"
+            "    \n"
+            "    template<${templParams}>\n"
+            "    class Signal${i}\n"
+            "    {\n"
+            "    public:\n"
+            "        Signal${i}() : pCb( NULL ) { }\n"
+            "        Signal${i}( _Slot${i}<${templCallParams}> *pCb ) : pCb( pCb ) { }\n"
+            "        Signal${i}( const Signal${i}<${templCallParams}> &rSrc ) :\n"
+            "            pCb( (rSrc.pCb)?(rSrc.pCb->clone()):(NULL) ) { }\n"
+            "        virtual ~Signal${i}() { delete pCb; pCb = NULL; }\n"
+            "    \n"
+            "        ret operator()( ${funcParams} )\n"
+            "        {\n"
+            "            if( !pCb ) throw SignalException(\"Uninitialized signal called.\");\n"
+            "            return (*pCb)( ${funcCallParams} );\n"
+            "        }\n"
+            "    \n"
+            "        bool isSet() const { return pCb != NULL; }\n"
+            "        operator bool() const { return isSet(); }\n"
+            "    \n"
+            "        Signal${i}<${templCallParams}> &operator=( const Signal${i}<${templCallParams}> &rhs )\n"
+            "        {\n"
+            "            pCb = rhs.pCb->clone();\n"
+            "            return *this;\n"
+            "        }\n"
+            "    \n"
+            "    private:\n"
+            "        _Slot${i}<${templCallParams}> *pCb;\n"
+            "    };\n"
+            "    \n"
+            "    template<typename cls, ${templParams}>\n"
+            "    Signal${i}<${templCallParams}> slot( cls *pCls, ret (cls::*pFnc)( ${funcAnonParams} ) )\n"
+            "    {\n"
+            "        if( !pCls || !pFnc ) throw SignalException(\"NULL pointer in slot().\");\n"
+            "        return Signal${i}<${templCallParams}>(\n"
+            "            new __Slot${i}<cls, ${templCallParams}>( pCls, pFnc )\n"
+            "            );\n"
+            "    }\n"
+            "    \n"
+            "    template<${templParams}>\n"
+            "    Signal${i}<${templCallParams}> slot( ret (*pFnc)( ${funcAnonParams} ) )\n"
+            "    {\n"
+            "        if( !pFnc ) throw SignalException(\"NULL pointer in slot().\");\n"
+            "        return Signal${i}<${templCallParams}>(\n"
+            "            new __Slot${i}F<${templCallParams}>( pFnc )\n"
+            "            );\n"
+            "    }\n"
+            "#endif  // BU_SIGNAL_PARAM_COUNT_${i}\n"
+            "\n"
+            );
+    }
 
-	fOut.write(
-		"};\n"
-		"\n"
-		"#endif\n"
-		);
-	fOut.close();
+    fOut.write(
+        "};\n"
+        "\n"
+        "#endif\n"
+        );
+    fOut.close();
 }
 
