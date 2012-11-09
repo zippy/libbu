@@ -11,11 +11,12 @@
 
 #define PHI 0x9e3779b9
 
-Bu::RandomCmwc::RandomCmwc() :
+Bu::RandomCmwc::RandomCmwc( int32_t iSeed ) :
     q( 0 ),
     c( 362436 )
 {
     q = new uint32_t[4096];
+    seed( iSeed );
 }
 
 Bu::RandomCmwc::~RandomCmwc()

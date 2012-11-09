@@ -14,7 +14,7 @@ namespace Bu
     class RandomCmwc : public RandomBase
     {
     public:
-        RandomCmwc();
+        RandomCmwc( int32_t iSeed=0 );
         virtual ~RandomCmwc();
 
         virtual void seed( int32_t iSeed );

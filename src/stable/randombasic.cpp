@@ -7,10 +7,11 @@
 
 #include "bu/randombasic.h"
 
-Bu::RandomBasic::RandomBasic() :
-    a( 6364136223846793005ll ),
-    c( 1442695040888963407ll ),
-    x( 0 )
+#define a (6364136223846793005ll)
+#define c (1442695040888963407ll)
+
+Bu::RandomBasic::RandomBasic( int32_t iSeed ) :
+    x( iSeed )
 {
 }
 
@@ -20,7 +21,7 @@ Bu::RandomBasic::~RandomBasic()
 
 void Bu::RandomBasic::seed( int32_t iSeed )
 {
-    c = iSeed;
+    x = iSeed;
 }
 
 int32_t Bu::RandomBasic::rand()
