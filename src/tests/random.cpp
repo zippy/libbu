@@ -1,6 +1,7 @@
 #include <bu/randombasic.h>
 #include <bu/randomcmwc.h>
 #include <bu/randomsystem.h>
+#include <bu/randommersenne.h>
 #include <bu/sio.h>
 #include <time.h>
 
@@ -15,7 +16,7 @@ void coverage()
     uint32_t uBucket[78];
     memset( uBucket, 0, sizeof(uint32_t)*78 );
 
-    for( int j = 0; j < 1000; j++ )
+    for( int j = 0; j < 1000000; j++ )
     {
         uBucket[(int)(((uint32_t)rand.rand())/(double)(0xfffffffful)*78+0.5)]++;
     }
@@ -43,6 +44,7 @@ int main()
     coverage<RandomBasic>();
     coverage<RandomCmwc>();
     coverage<RandomSystem>();
+    coverage<RandomMersenne>();
 
     return 0;
 }
