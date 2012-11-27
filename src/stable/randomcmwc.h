@@ -11,6 +11,12 @@
 
 namespace Bu
 {
+    /**
+     * Complimentary Multiply With Carry random number generator.  This is a
+     * simpler and faster generator than Mersenne Twister, but uses about as
+     * much memory.  Many people think that it may be at least as good as
+     * Mersenne Twister, or better.
+     */
     class RandomCmwc : public RandomBase
     {
     public:

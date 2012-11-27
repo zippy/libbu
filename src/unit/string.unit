@@ -584,7 +584,7 @@ suite String
 
     test format2
     {
-        unitTest( Bu::String("0x%{1}00").arg( 75, Bu::Fmt::hex() ).end() == "0x4B00" );
+        unitTest( Bu::String("0x%{1}00").arg( 75, Bu::Fmt::hex() ).end() == "0x4b00" );
     }
 }
 // 03F09CA4F58AC8CA0E80F0D9D409D0A60700A192270004BC3A99E91D0001034F544603362E35013103313130019CA4F58AC8CA0E0002830800002C4200008AC200EBF7D9D4090127BB010000E3

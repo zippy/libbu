@@ -12,6 +12,16 @@
 namespace Bu
 {
     class File;
+    /**
+     * Access to operating system provided random number generation.  On linux
+     * this will provide access to /dev/random or /dev/urandom depending on
+     * weather Fast or Good is selected.  On Linux systems Good random number
+     * generation can block while organic sources are use to gather entropy, so
+     * Fast is the default, it will always provide a result.
+     *
+     * On Windows this uses the Windows system cryptographic level random number
+     * generation services.  Or at least, it will when I get to it.  Sorry.
+     */
     class RandomSystem : public RandomBase
     {
     public:

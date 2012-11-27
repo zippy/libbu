@@ -11,6 +11,15 @@
 
 namespace Bu
 {
+    /**
+     * Base class for random number generators.  This provides some basic
+     * implementations of standard helper functions.  If your specific random
+     * number generator does not use the full range of a 32 bit integer then
+     * you'll want to override at least randNorm() to correct the range.
+     *
+     * Random number generators are not thread safe on their own.  See
+     * Bu::Random.
+     */
     class RandomBase
     {
     public:
