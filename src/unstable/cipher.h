@@ -13,6 +13,16 @@
 
 namespace Bu
 {
+    /**
+     * Represents a nice base class for a stream filter block encryption scheme.
+     * This class handles efficient caching during reading and writing,
+     * encrypting and decrypting for block ciphers.  For each individual cipher
+     * you only have to worry about the block encryption and decryption.  Cipher
+     * modes are handled with seperate classes, see Bu::CipherModeCbc,
+     * Bu::CipherModeCfb, Bu::CipherModeEcb, and Bu::CipherModeOfb.
+     *
+     *
+     */
     template<int iBlockSize>
     class Cipher : public Bu::Filter
     {

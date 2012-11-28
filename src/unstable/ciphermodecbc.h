@@ -1,23 +1,28 @@
-#ifndef BU_MODE_CFB_H
-#define BU_MODE_CFB_H
+#ifndef BU_MODE_CBC_H
+#define BU_MODE_CBC_H
 
 #include "bu/filter.h"
 #include "bu/string.h"
 
 namespace Bu
 {
+    /**
+     * Cipher-block chaining mode.  The Initialization Vector (IV) is fed into
+     * the first block, then each subsequent block is fed into the next making
+     * each block dependant on all previous blocks.
+     */
     template<int iBlockSize, typename CipherType>
-    class CipherModeCfb : public CipherType
+    class CipherModeCbc : public CipherType
     {
     public:
-        CipherModeCfb(class Stream &rNext ) :
+        CipherModeCbc(class Stream &rNext ) :
             CipherType( rNext ),
             bStart( true )
         {
             memset( aVector, 0, iBlockSize );
         }
 
-        virtual ~CipherModeCfb()
+        virtual ~CipherModeCbc()
         {
         }
 
@@ -31,7 +36,7 @@ namespace Bu
         {
             uint8_t aTmp[iBlockSize];
             memcpy( aTmp, pBuf, iBlockSize );
-            CipherType::encipher( aVector );
+            CipherType::decipher( pBuf );
             for( int j = 0; j < iBlockSize; j++ )
                 ((uint8_t *)pBuf)[j] ^= aVector[j];
             memcpy( aVector, aTmp, iBlockSize );
@@ -39,9 +44,10 @@ namespace Bu
 
         void encipher( void *pBuf )
         {
-            CipherType::encipher( aVector );
             for( int j = 0; j < iBlockSize; j++ )
-                aVector[j] = ((uint8_t *)pBuf)[j] ^= aVector[j];
+                ((uint8_t *)pBuf)[j] ^= aVector[j];
+            CipherType::encipher( pBuf );
+            memcpy( aVector, pBuf, iBlockSize );
         }
 
     private:

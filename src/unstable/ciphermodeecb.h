@@ -3,6 +3,14 @@
 
 namespace Bu
 {
+    /**
+     * Electronic Code Book mode.  This cipher mode is the simplest, it's
+     * effectively a pass-through mode.  It's the same as using the encryption
+     * scheme without a mode, but at least you absolutely know that you've got
+     * the correct mode.  I recommend using this instead of the raw mode if for
+     * no other reason than it makes your code more self-documenting, and with
+     * optomization shouldn't add any extra calls to your code.
+     */
     template<int iBlockSize, typename CipherType>
     class CipherModeEcb : public CipherType
     {
