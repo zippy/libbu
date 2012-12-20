@@ -18,6 +18,7 @@ function genSigs( outName )
         "\n"
         "#include \"bu/util.h\"\n"
         "#include \"bu/exceptionbase.h\"\n"
+        "#include \"bu/list.h\"\n"
         "\n"
         "namespace Bu\n"
         "{\n"
@@ -28,9 +29,11 @@ function genSigs( outName )
     for i in range( 0, 10 ) do
     {
         templParams = "typename ret";
+        templSpecParams = "";
         funcParams = "";
         funcAnonParams = "";
         templCallParams = "ret";
+        templSpecCallParams = "";
         funcCallParams = "";
         if i >= 1 then
         {
@@ -41,11 +44,14 @@ function genSigs( outName )
                     funcCallParams << ", ";
                     funcParams << ", ";
                     funcAnonParams << ", ";
+                    templSpecParams << ", ";
                 }
                 templParams << ", typename p${p}t";
+                templSpecParams << "typename p${p}t";
                 funcParams << "p${p}t p${p}";
                 funcAnonParams << "p${p}t";
                 templCallParams << ", p${p}t";
+                templSpecCallParams << ", p${p}t";
                 funcCallParams << "p${p}";
             }
         }
@@ -156,6 +162,53 @@ function genSigs( outName )
             "            new __Slot${i}F<${templCallParams}>( pFnc )\n"
             "            );\n"
             "    }\n"
+            "    \n"
+            "    template<${templParams}>\n"
+            "    class SignalList${i} : public Bu::List<Bu::Signal${i}<${templCallParams}> >\n"
+            "    {\n"
+            "        typedef Bu::List<Bu::Signal${i}<${templCallParams}> > MyType;\n"
+            "    public:\n"
+            "        SignalList${i}()\n"
+            "        {\n"
+            "        }\n"
+            "    \n"
+            "        using MyType::iterator;\n"
+            "        using MyType::const_iterator;\n"
+            "    \n"
+            "        ret operator()( ${funcParams} )\n"
+            "        {\n"
+            "            typename MyType::iterator i, n;\n"
+            "            for(i = MyType::begin(); i; i=n)\n"
+            "            {\n"
+            "                n = i;\n"
+            "                n++;\n"
+            "                if( n )\n"
+            "                    (*i)( ${funcCallParams} );\n"
+            "                else\n"
+            "                    return (*i)( ${funcCallParams} );\n"
+            "            }\n"
+            "            throw Bu::ExceptionBase(\"Empty SignalList with non-void return value called.\");\n"
+            "        }\n"
+            "    };\n"
+            "    \n"
+            "    template<${templSpecParams}>\n"
+            "    class SignalList${i}<void${templSpecCallParams}> : public Bu::List<Bu::Signal${i}<void${templSpecCallParams}> >\n"
+            "    {\n"
+            "        typedef Bu::List<Bu::Signal${i}<void${templSpecCallParams}> > MyType;\n"
+            "        public:\n"
+            "        SignalList${i}()\n"
+            "        {\n"
+            "        }\n"
+            "   \n"
+            "        using MyType::iterator;\n"
+            "        using MyType::const_iterator;\n"
+            "   \n"
+            "        void operator()( ${funcParams} )\n"
+            "        {\n"
+            "            for( typename MyType::iterator i = MyType::begin(); i; i++ )\n"
+            "                (*i)( ${funcCallParams} );\n"
+            "        }\n"
+            "    };\n"
             "#endif  // BU_SIGNAL_PARAM_COUNT_${i}\n"
             "\n"
             );

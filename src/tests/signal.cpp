@@ -17,55 +17,15 @@ void PrintFancy( const Bu::String &s )
 
 int Square( int a )
 {
+    println("Square called");
 	return a*a;
 }
 
 int Double( int a )
 {
+    println("Double called");
 	return a+a;
 }
-
-template<typename R, typename P>
-class SignalList1 : public Bu::List<Bu::Signal1<R,P> >
-{
-	typedef Bu::List<Bu::Signal1<R,P> > MyType;
-public:
-	SignalList1()
-	{
-	}
-
-	using MyType::iterator;
-	using MyType::const_iterator;
-
-	R operator()( P p1 )
-	{
-		println("===Non-void um...non-specialization===");
-		R tmp;
-		for( typename MyType::iterator i = MyType::begin(); i; i++ )
-			tmp = (*i)( p1 );
-		return tmp;
-	}
-};
-
-template<typename P>
-class SignalList1<void, P> : public Bu::List<Bu::Signal1<void,P> >
-{
-	typedef Bu::List<Bu::Signal1<void,P> > MyType;
-public:
-	SignalList1()
-	{
-	}
-
-	using MyType::iterator;
-	using MyType::const_iterator;
-
-	void operator()( P p1 )
-	{
-		println("===Void specialization===");
-		for( typename MyType::iterator i = MyType::begin(); i; i++ )
-			(*i)( p1 );
-	}
-};
 
 int main()
 {
