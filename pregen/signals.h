@@ -10,6 +10,7 @@
 
 #include "bu/util.h"
 #include "bu/exceptionbase.h"
+#include "bu/list.h"
 
 namespace Bu
 {
@@ -121,6 +122,53 @@ namespace Bu
             new __Slot0F<ret>( pFnc )
             );
     }
+    
+    template<typename ret>
+    class SignalList0 : public Bu::List<Bu::Signal0<ret> >
+    {
+        typedef Bu::List<Bu::Signal0<ret> > MyType;
+    public:
+        SignalList0()
+        {
+        }
+    
+        using MyType::iterator;
+        using MyType::const_iterator;
+    
+        ret operator()(  )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)(  );
+                else
+                    return (*i)(  );
+            }
+            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<>
+    class SignalList0<void> : public Bu::List<Bu::Signal0<void> >
+    {
+        typedef Bu::List<Bu::Signal0<void> > MyType;
+        public:
+        SignalList0()
+        {
+        }
+   
+        using MyType::iterator;
+        using MyType::const_iterator;
+   
+        void operator()(  )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)(  );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_0
 
 #ifndef BU_SIGNAL_PARAM_COUNT_1
@@ -229,6 +277,53 @@ namespace Bu
             new __Slot1F<ret, p1t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t>
+    class SignalList1 : public Bu::List<Bu::Signal1<ret, p1t> >
+    {
+        typedef Bu::List<Bu::Signal1<ret, p1t> > MyType;
+    public:
+        SignalList1()
+        {
+        }
+    
+        using MyType::iterator;
+        using MyType::const_iterator;
+    
+        ret operator()( p1t p1 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1 );
+                else
+                    return (*i)( p1 );
+            }
+            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t>
+    class SignalList1<void, p1t> : public Bu::List<Bu::Signal1<void, p1t> >
+    {
+        typedef Bu::List<Bu::Signal1<void, p1t> > MyType;
+        public:
+        SignalList1()
+        {
+        }
+   
+        using MyType::iterator;
+        using MyType::const_iterator;
+   
+        void operator()( p1t p1 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_1
 
 #ifndef BU_SIGNAL_PARAM_COUNT_2
@@ -337,6 +432,53 @@ namespace Bu
             new __Slot2F<ret, p1t, p2t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t>
+    class SignalList2 : public Bu::List<Bu::Signal2<ret, p1t, p2t> >
+    {
+        typedef Bu::List<Bu::Signal2<ret, p1t, p2t> > MyType;
+    public:
+        SignalList2()
+        {
+        }
+    
+        using MyType::iterator;
+        using MyType::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2 );
+                else
+                    return (*i)( p1, p2 );
+            }
+            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t>
+    class SignalList2<void, p1t, p2t> : public Bu::List<Bu::Signal2<void, p1t, p2t> >
+    {
+        typedef Bu::List<Bu::Signal2<void, p1t, p2t> > MyType;
+        public:
+        SignalList2()
+        {
+        }
+   
+        using MyType::iterator;
+        using MyType::const_iterator;
+   
+        void operator()( p1t p1, p2t p2 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_2
 
 #ifndef BU_SIGNAL_PARAM_COUNT_3
@@ -445,6 +587,53 @@ namespace Bu
             new __Slot3F<ret, p1t, p2t, p3t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t>
+    class SignalList3 : public Bu::List<Bu::Signal3<ret, p1t, p2t, p3t> >
+    {
+        typedef Bu::List<Bu::Signal3<ret, p1t, p2t, p3t> > MyType;
+    public:
+        SignalList3()
+        {
+        }
+    
+        using MyType::iterator;
+        using MyType::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3 );
+                else
+                    return (*i)( p1, p2, p3 );
+            }
+            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t>
+    class SignalList3<void, p1t, p2t, p3t> : public Bu::List<Bu::Signal3<void, p1t, p2t, p3t> >
+    {
+        typedef Bu::List<Bu::Signal3<void, p1t, p2t, p3t> > MyType;
+        public:
+        SignalList3()
+        {
+        }
+   
+        using MyType::iterator;
+        using MyType::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_3
 
 #ifndef BU_SIGNAL_PARAM_COUNT_4
@@ -553,6 +742,53 @@ namespace Bu
             new __Slot4F<ret, p1t, p2t, p3t, p4t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t>
+    class SignalList4 : public Bu::List<Bu::Signal4<ret, p1t, p2t, p3t, p4t> >
+    {
+        typedef Bu::List<Bu::Signal4<ret, p1t, p2t, p3t, p4t> > MyType;
+    public:
+        SignalList4()
+        {
+        }
+    
+        using MyType::iterator;
+        using MyType::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4 );
+                else
+                    return (*i)( p1, p2, p3, p4 );
+            }
+            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t>
+    class SignalList4<void, p1t, p2t, p3t, p4t> : public Bu::List<Bu::Signal4<void, p1t, p2t, p3t, p4t> >
+    {
+        typedef Bu::List<Bu::Signal4<void, p1t, p2t, p3t, p4t> > MyType;
+        public:
+        SignalList4()
+        {
+        }
+   
+        using MyType::iterator;
+        using MyType::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_4
 
 #ifndef BU_SIGNAL_PARAM_COUNT_5
@@ -661,6 +897,53 @@ namespace Bu
             new __Slot5F<ret, p1t, p2t, p3t, p4t, p5t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t>
+    class SignalList5 : public Bu::List<Bu::Signal5<ret, p1t, p2t, p3t, p4t, p5t> >
+    {
+        typedef Bu::List<Bu::Signal5<ret, p1t, p2t, p3t, p4t, p5t> > MyType;
+    public:
+        SignalList5()
+        {
+        }
+    
+        using MyType::iterator;
+        using MyType::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4, p5 );
+                else
+                    return (*i)( p1, p2, p3, p4, p5 );
+            }
+            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t, typename p5t>
+    class SignalList5<void, p1t, p2t, p3t, p4t, p5t> : public Bu::List<Bu::Signal5<void, p1t, p2t, p3t, p4t, p5t> >
+    {
+        typedef Bu::List<Bu::Signal5<void, p1t, p2t, p3t, p4t, p5t> > MyType;
+        public:
+        SignalList5()
+        {
+        }
+   
+        using MyType::iterator;
+        using MyType::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4, p5 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_5
 
 #ifndef BU_SIGNAL_PARAM_COUNT_6
@@ -769,6 +1052,53 @@ namespace Bu
             new __Slot6F<ret, p1t, p2t, p3t, p4t, p5t, p6t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t>
+    class SignalList6 : public Bu::List<Bu::Signal6<ret, p1t, p2t, p3t, p4t, p5t, p6t> >
+    {
+        typedef Bu::List<Bu::Signal6<ret, p1t, p2t, p3t, p4t, p5t, p6t> > MyType;
+    public:
+        SignalList6()
+        {
+        }
+    
+        using MyType::iterator;
+        using MyType::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4, p5, p6 );
+                else
+                    return (*i)( p1, p2, p3, p4, p5, p6 );
+            }
+            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t>
+    class SignalList6<void, p1t, p2t, p3t, p4t, p5t, p6t> : public Bu::List<Bu::Signal6<void, p1t, p2t, p3t, p4t, p5t, p6t> >
+    {
+        typedef Bu::List<Bu::Signal6<void, p1t, p2t, p3t, p4t, p5t, p6t> > MyType;
+        public:
+        SignalList6()
+        {
+        }
+   
+        using MyType::iterator;
+        using MyType::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4, p5, p6 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_6
 
 #ifndef BU_SIGNAL_PARAM_COUNT_7
@@ -877,6 +1207,53 @@ namespace Bu
             new __Slot7F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t>
+    class SignalList7 : public Bu::List<Bu::Signal7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> >
+    {
+        typedef Bu::List<Bu::Signal7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> > MyType;
+    public:
+        SignalList7()
+        {
+        }
+    
+        using MyType::iterator;
+        using MyType::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4, p5, p6, p7 );
+                else
+                    return (*i)( p1, p2, p3, p4, p5, p6, p7 );
+            }
+            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t>
+    class SignalList7<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t> : public Bu::List<Bu::Signal7<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t> >
+    {
+        typedef Bu::List<Bu::Signal7<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t> > MyType;
+        public:
+        SignalList7()
+        {
+        }
+   
+        using MyType::iterator;
+        using MyType::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4, p5, p6, p7 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_7
 
 #ifndef BU_SIGNAL_PARAM_COUNT_8
@@ -985,6 +1362,53 @@ namespace Bu
             new __Slot8F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t>
+    class SignalList8 : public Bu::List<Bu::Signal8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> >
+    {
+        typedef Bu::List<Bu::Signal8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> > MyType;
+    public:
+        SignalList8()
+        {
+        }
+    
+        using MyType::iterator;
+        using MyType::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4, p5, p6, p7, p8 );
+                else
+                    return (*i)( p1, p2, p3, p4, p5, p6, p7, p8 );
+            }
+            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t>
+    class SignalList8<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> : public Bu::List<Bu::Signal8<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> >
+    {
+        typedef Bu::List<Bu::Signal8<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> > MyType;
+        public:
+        SignalList8()
+        {
+        }
+   
+        using MyType::iterator;
+        using MyType::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4, p5, p6, p7, p8 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_8
 
 #ifndef BU_SIGNAL_PARAM_COUNT_9
@@ -1093,6 +1517,53 @@ namespace Bu
             new __Slot9F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t, typename p9t>
+    class SignalList9 : public Bu::List<Bu::Signal9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> >
+    {
+        typedef Bu::List<Bu::Signal9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> > MyType;
+    public:
+        SignalList9()
+        {
+        }
+    
+        using MyType::iterator;
+        using MyType::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8, p9t p9 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9 );
+                else
+                    return (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9 );
+            }
+            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t, typename p9t>
+    class SignalList9<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> : public Bu::List<Bu::Signal9<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> >
+    {
+        typedef Bu::List<Bu::Signal9<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> > MyType;
+        public:
+        SignalList9()
+        {
+        }
+   
+        using MyType::iterator;
+        using MyType::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8, p9t p9 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_9
 
 #ifndef BU_SIGNAL_PARAM_COUNT_10
@@ -1201,6 +1672,53 @@ namespace Bu
             new __Slot10F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t>( pFnc )
             );
     }
+    
+    template<typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t, typename p9t, typename p10t>
+    class SignalList10 : public Bu::List<Bu::Signal10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> >
+    {
+        typedef Bu::List<Bu::Signal10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> > MyType;
+    public:
+        SignalList10()
+        {
+        }
+    
+        using MyType::iterator;
+        using MyType::const_iterator;
+    
+        ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8, p9t p9, p10t p10 )
+        {
+            typename MyType::iterator i, n;
+            for(i = MyType::begin(); i; i=n)
+            {
+                n = i;
+                n++;
+                if( n )
+                    (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 );
+                else
+                    return (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 );
+            }
+            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+        }
+    };
+    
+    template<typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t, typename p9t, typename p10t>
+    class SignalList10<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> : public Bu::List<Bu::Signal10<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> >
+    {
+        typedef Bu::List<Bu::Signal10<void, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> > MyType;
+        public:
+        SignalList10()
+        {
+        }
+   
+        using MyType::iterator;
+        using MyType::const_iterator;
+   
+        void operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8, p9t p9, p10t p10 )
+        {
+            for( typename MyType::iterator i = MyType::begin(); i; i++ )
+                (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 );
+        }
+    };
 #endif  // BU_SIGNAL_PARAM_COUNT_10
 
 };
