@@ -250,6 +250,11 @@ namespace Bu
             return *this;
         }
 
+        MyType &operator-=( const value &v )
+        {
+            return erase( v );
+        }
+
         MyType &operator+=( const MyType &src )
         {
             _hardCopy();

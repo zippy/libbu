@@ -8,6 +8,7 @@
 #ifndef BU_SIGNALS_H
 #define BU_SIGNALS_H
 
+#include <typeinfo>
 #include "bu/util.h"
 #include "bu/exceptionbase.h"
 #include "bu/list.h"
@@ -29,6 +30,7 @@ namespace Bu
         virtual ~_Slot0() { }
         virtual ret operator()(  )=0;
         virtual _Slot0<ret> *clone() const=0;
+        virtual bool operator==( const _Slot0<ret> &rhs ) const=0;
     };
     
     template<typename cls, typename ret>
@@ -47,6 +49,12 @@ namespace Bu
         virtual _Slot0<ret> *clone() const
         {
             return new __Slot0<cls, ret>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot0<ret> &rhs ) const
+        {
+            const __Slot0<cls, ret> &rrhs = (const __Slot0<cls, ret> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -70,6 +78,11 @@ namespace Bu
         virtual _Slot0<ret> *clone() const
         {
             return new __Slot0F<ret>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot0<ret> &rhs ) const
+        {
+            return pFnc == ((const __Slot0F<ret> &)rhs).pFnc;
         }
     
     private:
@@ -99,6 +112,17 @@ namespace Bu
         {
             pCb = rhs.pCb->clone();
             return *this;
+        }
+    
+        bool operator==( const Signal0<ret> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
         }
     
     private:
@@ -147,7 +171,7 @@ namespace Bu
                 else
                     return (*i)(  );
             }
-            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
         }
     };
     
@@ -184,6 +208,7 @@ namespace Bu
         virtual ~_Slot1() { }
         virtual ret operator()( p1t p1 )=0;
         virtual _Slot1<ret, p1t> *clone() const=0;
+        virtual bool operator==( const _Slot1<ret, p1t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t>
@@ -202,6 +227,12 @@ namespace Bu
         virtual _Slot1<ret, p1t> *clone() const
         {
             return new __Slot1<cls, ret, p1t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot1<ret, p1t> &rhs ) const
+        {
+            const __Slot1<cls, ret, p1t> &rrhs = (const __Slot1<cls, ret, p1t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -225,6 +256,11 @@ namespace Bu
         virtual _Slot1<ret, p1t> *clone() const
         {
             return new __Slot1F<ret, p1t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot1<ret, p1t> &rhs ) const
+        {
+            return pFnc == ((const __Slot1F<ret, p1t> &)rhs).pFnc;
         }
     
     private:
@@ -254,6 +290,17 @@ namespace Bu
         {
             pCb = rhs.pCb->clone();
             return *this;
+        }
+    
+        bool operator==( const Signal1<ret, p1t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
         }
     
     private:
@@ -302,7 +349,7 @@ namespace Bu
                 else
                     return (*i)( p1 );
             }
-            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
         }
     };
     
@@ -339,6 +386,7 @@ namespace Bu
         virtual ~_Slot2() { }
         virtual ret operator()( p1t p1, p2t p2 )=0;
         virtual _Slot2<ret, p1t, p2t> *clone() const=0;
+        virtual bool operator==( const _Slot2<ret, p1t, p2t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t>
@@ -357,6 +405,12 @@ namespace Bu
         virtual _Slot2<ret, p1t, p2t> *clone() const
         {
             return new __Slot2<cls, ret, p1t, p2t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot2<ret, p1t, p2t> &rhs ) const
+        {
+            const __Slot2<cls, ret, p1t, p2t> &rrhs = (const __Slot2<cls, ret, p1t, p2t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -380,6 +434,11 @@ namespace Bu
         virtual _Slot2<ret, p1t, p2t> *clone() const
         {
             return new __Slot2F<ret, p1t, p2t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot2<ret, p1t, p2t> &rhs ) const
+        {
+            return pFnc == ((const __Slot2F<ret, p1t, p2t> &)rhs).pFnc;
         }
     
     private:
@@ -409,6 +468,17 @@ namespace Bu
         {
             pCb = rhs.pCb->clone();
             return *this;
+        }
+    
+        bool operator==( const Signal2<ret, p1t, p2t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
         }
     
     private:
@@ -457,7 +527,7 @@ namespace Bu
                 else
                     return (*i)( p1, p2 );
             }
-            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
         }
     };
     
@@ -494,6 +564,7 @@ namespace Bu
         virtual ~_Slot3() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3 )=0;
         virtual _Slot3<ret, p1t, p2t, p3t> *clone() const=0;
+        virtual bool operator==( const _Slot3<ret, p1t, p2t, p3t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t>
@@ -512,6 +583,12 @@ namespace Bu
         virtual _Slot3<ret, p1t, p2t, p3t> *clone() const
         {
             return new __Slot3<cls, ret, p1t, p2t, p3t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot3<ret, p1t, p2t, p3t> &rhs ) const
+        {
+            const __Slot3<cls, ret, p1t, p2t, p3t> &rrhs = (const __Slot3<cls, ret, p1t, p2t, p3t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -535,6 +612,11 @@ namespace Bu
         virtual _Slot3<ret, p1t, p2t, p3t> *clone() const
         {
             return new __Slot3F<ret, p1t, p2t, p3t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot3<ret, p1t, p2t, p3t> &rhs ) const
+        {
+            return pFnc == ((const __Slot3F<ret, p1t, p2t, p3t> &)rhs).pFnc;
         }
     
     private:
@@ -564,6 +646,17 @@ namespace Bu
         {
             pCb = rhs.pCb->clone();
             return *this;
+        }
+    
+        bool operator==( const Signal3<ret, p1t, p2t, p3t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
         }
     
     private:
@@ -612,7 +705,7 @@ namespace Bu
                 else
                     return (*i)( p1, p2, p3 );
             }
-            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
         }
     };
     
@@ -649,6 +742,7 @@ namespace Bu
         virtual ~_Slot4() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4 )=0;
         virtual _Slot4<ret, p1t, p2t, p3t, p4t> *clone() const=0;
+        virtual bool operator==( const _Slot4<ret, p1t, p2t, p3t, p4t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t>
@@ -667,6 +761,12 @@ namespace Bu
         virtual _Slot4<ret, p1t, p2t, p3t, p4t> *clone() const
         {
             return new __Slot4<cls, ret, p1t, p2t, p3t, p4t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot4<ret, p1t, p2t, p3t, p4t> &rhs ) const
+        {
+            const __Slot4<cls, ret, p1t, p2t, p3t, p4t> &rrhs = (const __Slot4<cls, ret, p1t, p2t, p3t, p4t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -690,6 +790,11 @@ namespace Bu
         virtual _Slot4<ret, p1t, p2t, p3t, p4t> *clone() const
         {
             return new __Slot4F<ret, p1t, p2t, p3t, p4t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot4<ret, p1t, p2t, p3t, p4t> &rhs ) const
+        {
+            return pFnc == ((const __Slot4F<ret, p1t, p2t, p3t, p4t> &)rhs).pFnc;
         }
     
     private:
@@ -719,6 +824,17 @@ namespace Bu
         {
             pCb = rhs.pCb->clone();
             return *this;
+        }
+    
+        bool operator==( const Signal4<ret, p1t, p2t, p3t, p4t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
         }
     
     private:
@@ -767,7 +883,7 @@ namespace Bu
                 else
                     return (*i)( p1, p2, p3, p4 );
             }
-            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
         }
     };
     
@@ -804,6 +920,7 @@ namespace Bu
         virtual ~_Slot5() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5 )=0;
         virtual _Slot5<ret, p1t, p2t, p3t, p4t, p5t> *clone() const=0;
+        virtual bool operator==( const _Slot5<ret, p1t, p2t, p3t, p4t, p5t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t>
@@ -822,6 +939,12 @@ namespace Bu
         virtual _Slot5<ret, p1t, p2t, p3t, p4t, p5t> *clone() const
         {
             return new __Slot5<cls, ret, p1t, p2t, p3t, p4t, p5t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot5<ret, p1t, p2t, p3t, p4t, p5t> &rhs ) const
+        {
+            const __Slot5<cls, ret, p1t, p2t, p3t, p4t, p5t> &rrhs = (const __Slot5<cls, ret, p1t, p2t, p3t, p4t, p5t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -845,6 +968,11 @@ namespace Bu
         virtual _Slot5<ret, p1t, p2t, p3t, p4t, p5t> *clone() const
         {
             return new __Slot5F<ret, p1t, p2t, p3t, p4t, p5t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot5<ret, p1t, p2t, p3t, p4t, p5t> &rhs ) const
+        {
+            return pFnc == ((const __Slot5F<ret, p1t, p2t, p3t, p4t, p5t> &)rhs).pFnc;
         }
     
     private:
@@ -874,6 +1002,17 @@ namespace Bu
         {
             pCb = rhs.pCb->clone();
             return *this;
+        }
+    
+        bool operator==( const Signal5<ret, p1t, p2t, p3t, p4t, p5t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
         }
     
     private:
@@ -922,7 +1061,7 @@ namespace Bu
                 else
                     return (*i)( p1, p2, p3, p4, p5 );
             }
-            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
         }
     };
     
@@ -959,6 +1098,7 @@ namespace Bu
         virtual ~_Slot6() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6 )=0;
         virtual _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> *clone() const=0;
+        virtual bool operator==( const _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t>
@@ -977,6 +1117,12 @@ namespace Bu
         virtual _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> *clone() const
         {
             return new __Slot6<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> &rhs ) const
+        {
+            const __Slot6<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t> &rrhs = (const __Slot6<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -1000,6 +1146,11 @@ namespace Bu
         virtual _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> *clone() const
         {
             return new __Slot6F<ret, p1t, p2t, p3t, p4t, p5t, p6t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot6<ret, p1t, p2t, p3t, p4t, p5t, p6t> &rhs ) const
+        {
+            return pFnc == ((const __Slot6F<ret, p1t, p2t, p3t, p4t, p5t, p6t> &)rhs).pFnc;
         }
     
     private:
@@ -1029,6 +1180,17 @@ namespace Bu
         {
             pCb = rhs.pCb->clone();
             return *this;
+        }
+    
+        bool operator==( const Signal6<ret, p1t, p2t, p3t, p4t, p5t, p6t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
         }
     
     private:
@@ -1077,7 +1239,7 @@ namespace Bu
                 else
                     return (*i)( p1, p2, p3, p4, p5, p6 );
             }
-            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
         }
     };
     
@@ -1114,6 +1276,7 @@ namespace Bu
         virtual ~_Slot7() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7 )=0;
         virtual _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> *clone() const=0;
+        virtual bool operator==( const _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t>
@@ -1132,6 +1295,12 @@ namespace Bu
         virtual _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> *clone() const
         {
             return new __Slot7<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &rhs ) const
+        {
+            const __Slot7<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &rrhs = (const __Slot7<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -1155,6 +1324,11 @@ namespace Bu
         virtual _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> *clone() const
         {
             return new __Slot7F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &rhs ) const
+        {
+            return pFnc == ((const __Slot7F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &)rhs).pFnc;
         }
     
     private:
@@ -1184,6 +1358,17 @@ namespace Bu
         {
             pCb = rhs.pCb->clone();
             return *this;
+        }
+    
+        bool operator==( const Signal7<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
         }
     
     private:
@@ -1232,7 +1417,7 @@ namespace Bu
                 else
                     return (*i)( p1, p2, p3, p4, p5, p6, p7 );
             }
-            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
         }
     };
     
@@ -1269,6 +1454,7 @@ namespace Bu
         virtual ~_Slot8() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8 )=0;
         virtual _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> *clone() const=0;
+        virtual bool operator==( const _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t>
@@ -1287,6 +1473,12 @@ namespace Bu
         virtual _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> *clone() const
         {
             return new __Slot8<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &rhs ) const
+        {
+            const __Slot8<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &rrhs = (const __Slot8<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -1310,6 +1502,11 @@ namespace Bu
         virtual _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> *clone() const
         {
             return new __Slot8F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &rhs ) const
+        {
+            return pFnc == ((const __Slot8F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &)rhs).pFnc;
         }
     
     private:
@@ -1339,6 +1536,17 @@ namespace Bu
         {
             pCb = rhs.pCb->clone();
             return *this;
+        }
+    
+        bool operator==( const Signal8<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
         }
     
     private:
@@ -1387,7 +1595,7 @@ namespace Bu
                 else
                     return (*i)( p1, p2, p3, p4, p5, p6, p7, p8 );
             }
-            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
         }
     };
     
@@ -1424,6 +1632,7 @@ namespace Bu
         virtual ~_Slot9() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8, p9t p9 )=0;
         virtual _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> *clone() const=0;
+        virtual bool operator==( const _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t, typename p9t>
@@ -1442,6 +1651,12 @@ namespace Bu
         virtual _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> *clone() const
         {
             return new __Slot9<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &rhs ) const
+        {
+            const __Slot9<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &rrhs = (const __Slot9<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -1465,6 +1680,11 @@ namespace Bu
         virtual _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> *clone() const
         {
             return new __Slot9F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &rhs ) const
+        {
+            return pFnc == ((const __Slot9F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &)rhs).pFnc;
         }
     
     private:
@@ -1494,6 +1714,17 @@ namespace Bu
         {
             pCb = rhs.pCb->clone();
             return *this;
+        }
+    
+        bool operator==( const Signal9<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
         }
     
     private:
@@ -1542,7 +1773,7 @@ namespace Bu
                 else
                     return (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9 );
             }
-            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
         }
     };
     
@@ -1579,6 +1810,7 @@ namespace Bu
         virtual ~_Slot10() { }
         virtual ret operator()( p1t p1, p2t p2, p3t p3, p4t p4, p5t p5, p6t p6, p7t p7, p8t p8, p9t p9, p10t p10 )=0;
         virtual _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> *clone() const=0;
+        virtual bool operator==( const _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &rhs ) const=0;
     };
     
     template<typename cls, typename ret, typename p1t, typename p2t, typename p3t, typename p4t, typename p5t, typename p6t, typename p7t, typename p8t, typename p9t, typename p10t>
@@ -1597,6 +1829,12 @@ namespace Bu
         virtual _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> *clone() const
         {
             return new __Slot10<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t>( pCls, pFnc );
+        }
+    
+        virtual bool operator==( const _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &rhs ) const
+        {
+            const __Slot10<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &rrhs = (const __Slot10<cls, ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &)rhs;
+            return pCls == rrhs.pCls && pFnc == rrhs.pFnc;
         }
     
     private:
@@ -1620,6 +1858,11 @@ namespace Bu
         virtual _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> *clone() const
         {
             return new __Slot10F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t>( pFnc );
+        }
+    
+        virtual bool operator==( const _Slot10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &rhs ) const
+        {
+            return pFnc == ((const __Slot10F<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &)rhs).pFnc;
         }
     
     private:
@@ -1649,6 +1892,17 @@ namespace Bu
         {
             pCb = rhs.pCb->clone();
             return *this;
+        }
+    
+        bool operator==( const Signal10<ret, p1t, p2t, p3t, p4t, p5t, p6t, p7t, p8t, p9t, p10t> &rhs ) const
+        {
+            if( pCb == rhs.pCb )
+            return true;
+            if( pCb == NULL || rhs.pCb == NULL )
+            return false;
+            if( typeid(pCb) != typeid(rhs.pCb) )
+            return false;
+            return *pCb == *rhs.pCb;
         }
     
     private:
@@ -1697,7 +1951,7 @@ namespace Bu
                 else
                     return (*i)( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 );
             }
-            throw Bu::ExceptionBase("Empty SignalList with non-void return value called.");
+            throw Bu::SignalException("Empty SignalList with non-void return value called.");
         }
     };
     

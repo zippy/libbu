@@ -129,7 +129,7 @@ namespace Bu
     private:
         Stream &rStream;
         uint32_t nNextID;
-        Hash<uint32_t,uint32_t> hPtrID;
+        Hash<uint32_t,ptrdiff_t> hPtrID;
         Hash<uint32_t,List<void **> > hPtrDest;
         Hash<Bu::String, Variant> hProps;
     };

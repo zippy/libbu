@@ -40,6 +40,8 @@ int main()
 	lMaths += slot(Double);
 	lMaths += slot(Square);
 	println("Math'd %1 = %2").arg( 5 ).arg( lMaths(5) );
+    lMaths -= slot(Square);
+	println("Math'd %1 = %2").arg( 5 ).arg( lMaths(5) );
 
 	return 0;
 }
