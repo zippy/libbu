@@ -7,7 +7,7 @@ function genSigs( outName )
     fOut = open(outName, "w");
     fOut.write(
         "/*\n"
-        " * Copyright (C) 2007-2012 Xagasoft, All rights reserved.\n"
+        " * Copyright (C) 2007-2013 Xagasoft, All rights reserved.\n"
         " *\n"
         " * This file is part of the libbu++ library and is released under the\n"
         " * terms of the license contained in the file LICENSE.\n"
