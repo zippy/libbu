@@ -70,6 +70,7 @@ Bu::ProtocolTelnet::ProtocolTelnet() :
     oNAWS(      *this, OPT_NAWS ),
     oSuppressGA(*this, OPT_SUPGA ),
     bCanonical( true ),
+    bEcho( true ),
     bSubOpt( false )
 {
 }
@@ -230,7 +231,7 @@ void Bu::ProtocolTelnet::onNewData( Bu::Client *pClient )
                     else
                     {
                         sDataBuf += bc;
-                        if( oEcho.isLocalSet() )
+                        if( oEcho.isLocalSet() && bEcho )
                         {
                             pClient->write( &bc, 1 );
 #ifdef __TELNET_DEBUG
@@ -243,7 +244,7 @@ void Bu::ProtocolTelnet::onNewData( Bu::Client *pClient )
                 else
                 {
                     sDataBuf += bc;
-                    if( oEcho.isLocalSet() )
+                    if( oEcho.isLocalSet() && bEcho )
                     {
                         pClient->write( &bc, 1 );
                     }
@@ -271,6 +272,16 @@ void Bu::ProtocolTelnet::setCanonical( bool bCon )
 bool Bu::ProtocolTelnet::isCanonical()
 {
     return bCanonical;
+}
+
+void Bu::ProtocolTelnet::setEcho( bool bOpt )
+{
+    bEcho = bOpt;
+}
+
+bool Bu::ProtocolTelnet::isEchoEnabled()
+{
+    return bEcho;
 }
 
 void Bu::ProtocolTelnet::write( const Bu::String &sData )

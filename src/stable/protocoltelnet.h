@@ -117,6 +117,9 @@ namespace Bu
         void setCanonical( bool bCon=true );
         bool isCanonical();
 
+        void setEcho( bool bOpt=true );
+        bool isEchoEnabled();
+
         void write( const Bu::String &sData );
         void write( const char *pData, int iSize );
         void write( char cData );
@@ -213,6 +216,7 @@ namespace Bu
         char cSubOpt;   /**< Which suboption are we processing. */
 
         bool bCanonical;    /**< Are we canonicalizing incoming data? */
+        bool bEcho;         /**< Should chars be echoed? */
         bool bSubOpt;       /**< Are we processing a suboption right now? */
     };
 }
